@@ -1,9 +1,9 @@
 package com.tudou.common.base;
 
 import com.github.pagehelper.PageHelper;
-import com.zheng.common.db.DataSourceEnum;
-import com.zheng.common.db.DynamicDataSource;
-import com.zheng.common.util.SpringContextUtil;
+import com.tudou.common.db.DataSourceEnum;
+import com.tudou.common.db.DynamicDataSource;
+import com.tudou.common.util.SpringContextUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,7 +13,6 @@ import java.util.List;
 
 /**
  * 实现BaseService抽象类
- * Created by ZhangShuzheng on 2017/01/07.
  */
 public abstract class BaseServiceImpl<Mapper, Record, Example> implements BaseService<Record, Example> {
 

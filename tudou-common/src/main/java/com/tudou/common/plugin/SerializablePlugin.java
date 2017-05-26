@@ -9,7 +9,6 @@ import java.util.Properties;
 
 /**
  * Example类和model类实现序列化插件
- * Created by shuzheng on 2017/1/1.
  */
 public class SerializablePlugin extends PluginAdapter {
     private FullyQualifiedJavaType serializable = new FullyQualifiedJavaType("java.io.Serializable");

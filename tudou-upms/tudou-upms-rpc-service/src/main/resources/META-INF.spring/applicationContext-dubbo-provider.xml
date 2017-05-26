@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="tudou-upms-rpc-service"/>
+
+    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+
+    <dubbo:protocol name="dubbo" port="20881"/>
+
+    <!--&lt;!&ndash; 系统 &ndash;&gt;-->
+    <!--<bean id="upmsSystemService" class="com.zheng.upms.rpc.service.impl.UpmsSystemServiceImpl"/>-->
+    <!--<dubbo:service interface="com.zheng.upms.rpc.api.UpmsSystemService" ref="upmsSystemService" timeout="10000"/>-->
+
+    <!--&lt;!&ndash; 组织 &ndash;&gt;-->
+    <!--<bean id="upmsOrganizationService" class="com.zheng.upms.rpc.service.impl.UpmsOrganizationServiceImpl"/>-->
+    <!--<dubbo:service interface="com.zheng.upms.rpc.api.UpmsOrganizationService" ref="upmsOrganizationService" timeout="10000"/>-->
+
+    <!--&lt;!&ndash; 用户组织 &ndash;&gt;-->
+    <!--<bean id="upmsUserOrganizationService" class="com.zheng.upms.rpc.service.impl.UpmsUserOrganizationServiceImpl"/>-->
+    <!--<dubbo:service interface="com.zheng.upms.rpc.api.UpmsUserOrganizationService" ref="upmsUserOrganizationService" timeout="10000"/>-->
+
+    <!--&lt;!&ndash; 用户 &ndash;&gt;-->
+    <!--<bean id="upmsUserService" class="com.zheng.upms.rpc.service.impl.UpmsUserServiceImpl"/>-->
+    <!--<dubbo:service interface="com.zheng.upms.rpc.api.UpmsUserService" ref="upmsUserService" timeout="10000"/>-->
+
+    <!--&lt;!&ndash; 角色 &ndash;&gt;-->
+    <!--<bean id="upmsRoleService" class="com.zheng.upms.rpc.service.impl.UpmsRoleServiceImpl"/>-->
+    <!--<dubbo:service interface="com.zheng.upms.rpc.api.UpmsRoleService" ref="upmsRoleService" timeout="10000"/>-->
+
+    <!--&lt;!&ndash; 权限 &ndash;&gt;-->
+    <!--<bean id="upmsPermissionService" class="com.zheng.upms.rpc.service.impl.UpmsPermissionServiceImpl"/>-->
+    <!--<dubbo:service interface="com.zheng.upms.rpc.api.UpmsPermissionService" ref="upmsPermissionService" timeout="10000"/>-->
+
+    <!--&lt;!&ndash; 角色权限 &ndash;&gt;-->
+    <!--<bean id="upmsRolePermissionService" class="com.zheng.upms.rpc.service.impl.UpmsRolePermissionServiceImpl"/>-->
+    <!--<dubbo:service interface="com.zheng.upms.rpc.api.UpmsRolePermissionService" ref="upmsRolePermissionService" timeout="10000"/>-->
+
+    <!--&lt;!&ndash; 用户权限 &ndash;&gt;-->
+    <!--<bean id="upmsUserPermissionService" class="com.zheng.upms.rpc.service.impl.UpmsUserPermissionServiceImpl"/>-->
+    <!--<dubbo:service interface="com.zheng.upms.rpc.api.UpmsUserPermissionService" ref="upmsUserPermissionService" timeout="10000"/>-->
+
+    <!--&lt;!&ndash; 用户角色 &ndash;&gt;-->
+    <!--<bean id="upmsUserRoleService" class="com.zheng.upms.rpc.service.impl.UpmsUserRoleServiceImpl"/>-->
+    <!--<dubbo:service interface="com.zheng.upms.rpc.api.UpmsUserRoleService" ref="upmsUserRoleService" timeout="10000"/>-->
+
+    <!--&lt;!&ndash; 操作日志 &ndash;&gt;-->
+    <!--<bean id="upmsLogService" class="com.zheng.upms.rpc.service.impl.UpmsLogServiceImpl"/>-->
+    <!--<dubbo:service interface="com.zheng.upms.rpc.api.UpmsLogService" ref="upmsLogService" timeout="10000"/>-->
+
+    <!--&lt;!&ndash; 接口服务 &ndash;&gt;-->
+    <!--<bean id="upmsApiService" class="com.zheng.upms.rpc.service.impl.UpmsApiServiceImpl"/>-->
+    <!--<dubbo:service interface="com.zheng.upms.rpc.api.UpmsApiService" ref="upmsApiService" timeout="10000"/>-->
+
+</beans>

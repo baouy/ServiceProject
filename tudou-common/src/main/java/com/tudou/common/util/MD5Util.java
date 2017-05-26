@@ -2,9 +2,6 @@ package com.tudou.common.util;
 
 import java.security.MessageDigest;
 
-/**
- * Created by shuzheng on 2017/1/19.
- */
 public class MD5Util {
 
     public final static String MD5(String content) {

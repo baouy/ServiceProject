@@ -13,7 +13,6 @@ import java.security.SecureRandom;
 
 /**
  * AES加解密工具类
- * Created by shuzheng on 2017/2/5.
  */
 public class AESUtil {
 

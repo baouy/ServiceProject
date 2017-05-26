@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
 * ${model}Service实现
-* Created by shuzheng on ${ctime}.
+* Created by tudou on ${ctime}.
 */
 @Service
 @Transactional

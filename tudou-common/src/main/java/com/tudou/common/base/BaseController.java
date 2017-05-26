@@ -1,6 +1,6 @@
 package com.tudou.common.base;
 
-import com.zheng.common.util.PropertiesFileUtil;
+import com.tudou.common.util.PropertiesFileUtil;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.session.InvalidSessionException;
 import org.slf4j.Logger;
@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 控制器基类
- * Created by ZhangShuzheng on 2017/2/4.
  */
 public abstract class BaseController {
 

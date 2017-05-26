@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/tudou.iml" filepath="$PROJECT_DIR$/tudou.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-ap/tudou-ap.iml" filepath="$PROJECT_DIR$/tudou-ap/tudou-ap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-common/tudou-common.iml" filepath="$PROJECT_DIR$/tudou-common/tudou-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-mweb/tudou-mweb.iml" filepath="$PROJECT_DIR$/tudou-mweb/tudou-mweb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-oa/tudou-oa.iml" filepath="$PROJECT_DIR$/tudou-oa/tudou-oa.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-oss/tudou-oss.iml" filepath="$PROJECT_DIR$/tudou-oss/tudou-oss.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-pay/tudou-pay.iml" filepath="$PROJECT_DIR$/tudou-pay/tudou-pay.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb.iml" filepath="$PROJECT_DIR$/tudou-pcweb/tudou-pcweb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-upms/tudou-upms.iml" filepath="$PROJECT_DIR$/tudou-upms/tudou-upms.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-upms/tudou-upms-client/tudou-upms-client.iml" filepath="$PROJECT_DIR$/tudou-upms/tudou-upms-client/tudou-upms-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-upms/tudou-upms-common/tudou-upms-common.iml" filepath="$PROJECT_DIR$/tudou-upms/tudou-upms-common/tudou-upms-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-upms/tudou-upms-dao/tudou-upms-dao.iml" filepath="$PROJECT_DIR$/tudou-upms/tudou-upms-dao/tudou-upms-dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-upms/tudou-upms-rpc-api/tudou-upms-rpc-api.iml" filepath="$PROJECT_DIR$/tudou-upms/tudou-upms-rpc-api/tudou-upms-rpc-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-upms/tudou-upms-rpc-service/tudou-upms-rpc-service.iml" filepath="$PROJECT_DIR$/tudou-upms/tudou-upms-rpc-service/tudou-upms-rpc-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-upms/tudou-upms-service/tudou-upms-service.iml" filepath="$PROJECT_DIR$/tudou-upms/tudou-upms-service/tudou-upms-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-wms/tudou-wms.iml" filepath="$PROJECT_DIR$/tudou-wms/tudou-wms.iml" />
+    </modules>
+  </component>
+</project>

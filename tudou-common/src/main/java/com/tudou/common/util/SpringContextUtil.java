@@ -9,7 +9,6 @@ import java.util.Map;
 /**
  * 资源文件读取工具
  *
- * @author shuzheng
  * @date 2016年10月15日
  */
 public class SpringContextUtil implements ApplicationContextAware {

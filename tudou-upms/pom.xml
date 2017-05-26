@@ -10,6 +10,24 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tudou-upms</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.compilerVersion>1.7</maven.compiler.compilerVersion>
+    </properties>
+
+    <modules>
+        <module>tudou-upms-client</module>
+        <module>tudou-upms-common</module>
+        <module>tudou-upms-dao</module>
+        <module>tudou-upms-rpc-api</module>
+        <module>tudou-upms-rpc-service</module>
+        <module>tudou-upms-service</module>
+    </modules>
 
 
 </project>

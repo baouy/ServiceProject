@@ -9,7 +9,6 @@ import javax.servlet.ServletContext;
 
 /**
  * 启动解压zhengAdmin-x.x.x.jar到resources目录
- * Created by shuzheng on 2016/12/18.
  */
 public class ZhengAdminUtil implements InitializingBean, ServletContextAware {
 
@@ -22,15 +21,15 @@ public class ZhengAdminUtil implements InitializingBean, ServletContextAware {
 
     @Override
     public void setServletContext(ServletContext servletContext) {
-        _log.info("===== 开始解压zheng-admin =====");
-        String version = PropertiesFileUtil.getInstance().get("zheng-admin.version");
-        _log.info("zheng-admin.jar 版本: {}", version);
-        String jarPath = servletContext.getRealPath("/WEB-INF/lib/zheng-admin-" + version + ".jar");
-        _log.info("zheng-admin.jar 包路径: {}", jarPath);
-        String resources = servletContext.getRealPath("/") + "/resources/zheng-admin";
-        _log.info("zheng-admin.jar 解压到: {}", resources);
+        _log.info("===== 开始解压tudou-admin =====");
+        String version = PropertiesFileUtil.getInstance().get("tudou-admin.version");
+        _log.info("tudou-admin.jar 版本: {}", version);
+        String jarPath = servletContext.getRealPath("/WEB-INF/lib/tudou-admin-" + version + ".jar");
+        _log.info("tudou-admin.jar 包路径: {}", jarPath);
+        String resources = servletContext.getRealPath("/") + "/resources/tudou-admin";
+        _log.info("tudou-admin.jar 解压到: {}", resources);
         JarUtil.decompress(jarPath, resources);
-        _log.info("===== 解压zheng-admin完成 =====");
+        _log.info("===== 解压tudou-admin完成 =====");
     }
 
 }

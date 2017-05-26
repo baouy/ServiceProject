@@ -7,9 +7,6 @@ import org.springframework.jms.core.MessageCreator;
 import javax.jms.*;
 import java.io.Serializable;
 
-/**
- * Created by zhangshuzheng on 16/11/24.
- */
 public class JmsUtil {
 
     /**

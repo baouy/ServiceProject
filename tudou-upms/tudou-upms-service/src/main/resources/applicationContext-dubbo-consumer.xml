@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd ">
+
+    <dubbo:application name="tudou-upms-server"/>
+
+    <dubbo:registry file="./tudou-upms-server-dubbo.cache" address="zookeeper://127.0.0.1:2181"/>
+
+    <!-- 订阅服务 -->
+    <dubbo:consumer check="false"/>
+
+    <!-- 系统 -->
+    <!--<dubbo:reference id="upmsSystemService" interface="com.tudou.upms.rpc.api.UpmsSystemService" mock="true"/>-->
+    <!--&lt;!&ndash; 组织 &ndash;&gt;-->
+    <!--<dubbo:reference id="upmsOrganizationService" interface="com.tudou.upms.rpc.api.UpmsOrganizationService" mock="true"/>-->
+    <!--&lt;!&ndash; 用户组织 &ndash;&gt;-->
+    <!--<dubbo:reference id="upmsUserOrganizationService" interface="com.tudou.upms.rpc.api.UpmsUserOrganizationService" mock="true"/>-->
+    <!--&lt;!&ndash; 用户 &ndash;&gt;-->
+    <!--<dubbo:reference id="upmsUserService" interface="com.tudou.upms.rpc.api.UpmsUserService" mock="true"/>-->
+    <!--&lt;!&ndash; 角色 &ndash;&gt;-->
+    <!--<dubbo:reference id="upmsRoleService" interface="com.tudou.upms.rpc.api.UpmsRoleService" mock="true"/>-->
+    <!--&lt;!&ndash; 权限 &ndash;&gt;-->
+    <!--<dubbo:reference id="upmsPermissionService" interface="com.tudou.upms.rpc.api.UpmsPermissionService" mock="true"/>-->
+    <!--&lt;!&ndash; 角色权限 &ndash;&gt;-->
+    <!--<dubbo:reference id="upmsRolePermissionService" interface="com.tudou.upms.rpc.api.UpmsRolePermissionService" mock="true"/>-->
+    <!--&lt;!&ndash; 用户权限 &ndash;&gt;-->
+    <!--<dubbo:reference id="upmsUserPermissionService" interface="com.tudou.upms.rpc.api.UpmsUserPermissionService" mock="true"/>-->
+    <!--&lt;!&ndash; 用户角色 &ndash;&gt;-->
+    <!--<dubbo:reference id="upmsUserRoleService" interface="com.tudou.upms.rpc.api.UpmsUserRoleService" mock="true"/>-->
+    <!--&lt;!&ndash; 操作日志 &ndash;&gt;-->
+    <!--<dubbo:reference id="upmsLogService" interface="com.tudou.upms.rpc.api.UpmsLogService" mock="true"/>-->
+    <!--&lt;!&ndash; 接口服务 &ndash;&gt;-->
+    <!--<dubbo:reference id="upmsApiService" interface="com.tudou.upms.rpc.api.UpmsApiService" mock="true"/>-->
+
+</beans>
