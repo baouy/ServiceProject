@@ -8,7 +8,7 @@ import org.springframework.web.context.ServletContextAware;
 import javax.servlet.ServletContext;
 
 /**
- * 启动解压zhengAdmin-x.x.x.jar到resources目录
+ * 启动解压tudouAdmin-x.x.x.jar到resources目录
  */
 public class ZhengAdminUtil implements InitializingBean, ServletContextAware {
 

@@ -329,7 +329,7 @@
     </dependencies>
 
     <build>
-        <finalName>zheng-common</finalName>
+        <finalName>tudou-common</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

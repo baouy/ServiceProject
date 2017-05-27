@@ -1,6 +1,8 @@
 package com.tudou.upms.client.interceptor;
 
 import com.tudou.common.util.RequestUtil;
+import com.tudou.upms.dao.model.UpmsLog;
+import com.tudou.upms.rpc.api.UpmsLogService;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -39,7 +41,7 @@ public class LogAspect {
 	private long endTime = 0L;
 
 	@Autowired
-//	UpmsApiService upmsApiService;
+	UpmsLogService upmsLogService;
 
 	@Before("execution(* *..controller..*.*(..))")
 	public void doBeforeInServiceLayer(JoinPoint joinPoint) {
@@ -59,42 +61,43 @@ public class LogAspect {
 		ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
 		HttpServletRequest request = servletRequestAttributes.getRequest();
 
-//		UpmsLog upmsLog = new UpmsLog();
+		UpmsLog upmsLog = new UpmsLog();
 //		// 从注解中获取操作名称、获取响应结果
 		Object result = pjp.proceed();
-//		Signature signature = pjp.getSignature();
-//		MethodSignature methodSignature = (MethodSignature) signature;
-//		Method method = methodSignature.getMethod();
-//		if (method.isAnnotationPresent(ApiOperation.class)) {
-//			ApiOperation log = method.getAnnotation(ApiOperation.class);
-//			upmsLog.setDescription(log.value());
-//		}
-//		if (method.isAnnotationPresent(RequiresPermissions.class)) {
-//			RequiresPermissions requiresPermissions = method.getAnnotation(RequiresPermissions.class);
-//			String[] permissions = requiresPermissions.value();
-//			if (permissions.length > 0) {
-//				upmsLog.setPermissions(permissions[0]);
-//			}
-//		}
-//		endTime = System.currentTimeMillis();
-//		_log.debug("doAround>>>result={},耗时：{}", result, endTime - startTime);
-//
-//		upmsLog.setBasePath(RequestUtil.getBasePath(request));
-//		upmsLog.setIp(RequestUtil.getIpAddr(request));
-//		upmsLog.setMethod(request.getMethod());
-//		if (request.getMethod().equalsIgnoreCase("GET")) {
-//			upmsLog.setParameter(request.getQueryString());
-//		} else {
-//			upmsLog.setParameter(ObjectUtils.toString(request.getParameterMap()));
-//		}
-//		upmsLog.setResult(ObjectUtils.toString(result));
-//		upmsLog.setSpendTime((int) (endTime - startTime));
-//		upmsLog.setStartTime(startTime);
-//		upmsLog.setUri(request.getRequestURI());
-//		upmsLog.setUrl(ObjectUtils.toString(request.getRequestURL()));
-//		upmsLog.setUserAgent(request.getHeader("User-Agent"));
-//		upmsLog.setUsername(ObjectUtils.toString(request.getUserPrincipal()));
-//		upmsApiService.insertUpmsLogSelective(upmsLog);
+		Signature signature = pjp.getSignature();
+		MethodSignature methodSignature = (MethodSignature) signature;
+		Method method = methodSignature.getMethod();
+		if (method.isAnnotationPresent(ApiOperation.class)) {
+			ApiOperation log = method.getAnnotation(ApiOperation.class);
+			upmsLog.setDescription(log.value());
+		}
+		if (method.isAnnotationPresent(RequiresPermissions.class)) {
+			RequiresPermissions requiresPermissions = method.getAnnotation(RequiresPermissions.class);
+			String[] permissions = requiresPermissions.value();
+			if (permissions.length > 0) {
+				upmsLog.setPermissions(permissions[0]);
+			}
+		}
+		endTime = System.currentTimeMillis();
+		_log.debug("doAround>>>result={},耗时：{}", result, endTime - startTime);
+
+		upmsLog.setBasePath(RequestUtil.getBasePath(request));
+		upmsLog.setIp(RequestUtil.getIpAddr(request));
+		upmsLog.setMethod(request.getMethod());
+		if (request.getMethod().equalsIgnoreCase("GET")) {
+			upmsLog.setParameter(request.getQueryString());
+		} else {
+			upmsLog.setParameter(ObjectUtils.toString(request.getParameterMap()));
+		}
+		upmsLog.setResult(ObjectUtils.toString(result));
+		upmsLog.setSpendTime((int) (endTime - startTime));
+		upmsLog.setStartTime(startTime);
+		upmsLog.setUri(request.getRequestURI());
+		upmsLog.setUrl(ObjectUtils.toString(request.getRequestURL()));
+		upmsLog.setUserAgent(request.getHeader("User-Agent"));
+		upmsLog.setUsername(ObjectUtils.toString(request.getUserPrincipal()));
+		upmsLogService.insertSelective(upmsLog);
+
 		return result;
 	}
 

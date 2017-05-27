@@ -11,7 +11,6 @@ import java.util.List;
 
 /**
  * MySQL分页插件
- * Created by ZhangShuzheng on 2016/10/17.
  */
 public class PaginationPlugin extends PluginAdapter {
 
