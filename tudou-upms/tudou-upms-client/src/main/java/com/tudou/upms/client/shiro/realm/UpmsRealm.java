@@ -1,6 +1,9 @@
 package com.tudou.upms.client.shiro.realm;
 
 import com.tudou.common.util.PropertiesFileUtil;
+import com.tudou.upms.dao.model.UpmsPermission;
+import com.tudou.upms.dao.model.UpmsRole;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -9,6 +12,9 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -31,7 +37,7 @@ public class UpmsRealm extends AuthorizingRealm {
         String username = (String) principalCollection.getPrimaryPrincipal();
 //        UpmsUser upmsUser = upmsApiService.selectUpmsUserByUsername(username);
 
-//        // 当前用户所有角色
+        // 当前用户所有角色
 //        List<UpmsRole> upmsRoles = upmsApiService.selectUpmsRoleByUpmsUserId(upmsUser.getUserId());
 //        Set<String> roles = new HashSet<>();
 //        for (UpmsRole upmsRole : upmsRoles) {
