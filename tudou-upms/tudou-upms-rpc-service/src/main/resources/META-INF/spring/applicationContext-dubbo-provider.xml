@@ -54,7 +54,7 @@
     <dubbo:service interface="com.tudou.upms.rpc.api.UpmsLogService" ref="upmsLogService" timeout="10000"/>
 
     <!--&lt;!&ndash; 接口服务 &ndash;&gt;-->
-    <!--<bean id="upmsApiService" class="com.tudou.upms.rpc.service.impl.UpmsApiServiceImpl"/>-->
-    <!--<dubbo:service interface="com.tudou.upms.rpc.api.UpmsApiService" ref="upmsApiService" timeout="10000"/>-->
+    <bean id="upmsApiService" class="com.tudou.upms.rpc.service.impl.UpmsApiServiceImpl"/>
+    <dubbo:service interface="com.tudou.upms.rpc.api.UpmsApiService" ref="upmsApiService" timeout="10000"/>
 
 </beans>

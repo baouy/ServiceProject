@@ -4,7 +4,6 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          version="2.5">
 
-
     <!-- 强制进行转码 -->
     <filter>
         <filter-name>CharacterEncodingFilter</filter-name>
@@ -74,8 +73,8 @@
 
     <!-- 欢迎页面 -->
     <welcome-file-list>
-        <welcome-file>/WEB-INF/index.html</welcome-file>
-        <!--<welcome-file>index.jsp</welcome-file>-->
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 
     <!-- 错误页面 -->

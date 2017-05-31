@@ -93,6 +93,7 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
      * 认证中心登录成功带回code
      * @param request
      */
+
     private boolean validateClient(ServletRequest request, ServletResponse response) {
         Subject subject = getSubject(request, response);
         Session session = subject.getSession();

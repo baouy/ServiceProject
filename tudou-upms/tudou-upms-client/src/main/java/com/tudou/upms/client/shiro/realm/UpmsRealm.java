@@ -1,8 +1,11 @@
 package com.tudou.upms.client.shiro.realm;
 
+import com.tudou.common.util.MD5Util;
 import com.tudou.common.util.PropertiesFileUtil;
 import com.tudou.upms.dao.model.UpmsPermission;
 import com.tudou.upms.dao.model.UpmsRole;
+import com.tudou.upms.dao.model.UpmsUser;
+import com.tudou.upms.rpc.api.UpmsApiService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -14,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -25,7 +29,7 @@ public class UpmsRealm extends AuthorizingRealm {
     private static Logger _log = LoggerFactory.getLogger(UpmsRealm.class);
 
     @Autowired
-//    private UpmsApiService upmsApiService;
+    private UpmsApiService upmsApiService;
 
     /**
      * 授权：验证权限时调用
@@ -35,29 +39,29 @@ public class UpmsRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         String username = (String) principalCollection.getPrimaryPrincipal();
-//        UpmsUser upmsUser = upmsApiService.selectUpmsUserByUsername(username);
+        UpmsUser upmsUser = upmsApiService.selectUpmsUserByUsername(username);
 
         // 当前用户所有角色
-//        List<UpmsRole> upmsRoles = upmsApiService.selectUpmsRoleByUpmsUserId(upmsUser.getUserId());
-//        Set<String> roles = new HashSet<>();
-//        for (UpmsRole upmsRole : upmsRoles) {
-//            if (StringUtils.isNotBlank(upmsRole.getName())) {
-//                roles.add(upmsRole.getName());
-//            }
-//        }
-//
-//        // 当前用户所有权限
-//        List<UpmsPermission> upmsPermissions = upmsApiService.selectUpmsPermissionByUpmsUserId(upmsUser.getUserId());
-//        Set<String> permissions = new HashSet<>();
-//        for (UpmsPermission upmsPermission : upmsPermissions) {
-//            if (StringUtils.isNotBlank(upmsPermission.getPermissionValue())) {
-//                permissions.add(upmsPermission.getPermissionValue());
-//            }
-//        }
+        List<UpmsRole> upmsRoles = upmsApiService.selectUpmsRoleByUpmsUserId(upmsUser.getUserId());
+        Set<String> roles = new HashSet<>();
+        for (UpmsRole upmsRole : upmsRoles) {
+            if (StringUtils.isNotBlank(upmsRole.getName())) {
+                roles.add(upmsRole.getName());
+            }
+        }
+
+        // 当前用户所有权限
+        List<UpmsPermission> upmsPermissions = upmsApiService.selectUpmsPermissionByUpmsUserId(upmsUser.getUserId());
+        Set<String> permissions = new HashSet<>();
+        for (UpmsPermission upmsPermission : upmsPermissions) {
+            if (StringUtils.isNotBlank(upmsPermission.getPermissionValue())) {
+                permissions.add(upmsPermission.getPermissionValue());
+            }
+        }
 
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-//        simpleAuthorizationInfo.setStringPermissions(permissions);
-//        simpleAuthorizationInfo.setRoles(roles);
+        simpleAuthorizationInfo.setStringPermissions(permissions);
+        simpleAuthorizationInfo.setRoles(roles);
         return simpleAuthorizationInfo;
     }
 
@@ -78,17 +82,17 @@ public class UpmsRealm extends AuthorizingRealm {
         }
 
         // 查询用户信息
-//        UpmsUser upmsUser = upmsApiService.selectUpmsUserByUsername(username);
-//
-//        if (null == upmsUser) {
-//            throw new UnknownAccountException();
-//        }
-//        if (!upmsUser.getPassword().equals(MD5Util.MD5(password + upmsUser.getSalt()))) {
-//            throw new IncorrectCredentialsException();
-//        }
-//        if (upmsUser.getLocked() == 1) {
-//            throw new LockedAccountException();
-//        }
+        UpmsUser upmsUser = upmsApiService.selectUpmsUserByUsername(username);
+
+        if (null == upmsUser) {
+            throw new UnknownAccountException();
+        }
+        if (!upmsUser.getPassword().equals(MD5Util.MD5(password + upmsUser.getSalt()))) {
+            throw new IncorrectCredentialsException();
+        }
+        if (upmsUser.getLocked() == 1) {
+            throw new LockedAccountException();
+        }
 
         return new SimpleAuthenticationInfo(username, password, getName());
     }

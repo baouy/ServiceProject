@@ -11,7 +11,6 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 
 /**
  * 单元测试
- * Created by shuzheng on 2017/2/19.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({
