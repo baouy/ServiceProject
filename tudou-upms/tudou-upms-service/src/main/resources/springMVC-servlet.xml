@@ -10,6 +10,8 @@
     <!-- 根目录'/'对应页面 -->
     <mvc:view-controller path="/" view-name="/index.jsp"/>
 
+    <bean class="com.tudou.upms.server.swagger.SwaggerConfig"></bean>
+
     <!-- 拦截器 -->
     <mvc:interceptors>
         <!-- 获取登录信息 -->
