@@ -1,0 +1,215 @@
+<script type="text/javascript">
+function pic_upload_success(file, data) {
+    var json = $.parseJSON(data)
+
+    $(this).bjuiajax('ajaxDone', json)
+    if (json[BJUI.keys.statusCode] == BJUI.statusCode.ok) {
+        $('#j_custom_pic').val(json.filename).trigger('validate')
+        $('#j_custom_span_pic').html('<img src="'+ json.filename +'" width="100" />')
+    }
+}
+function do_OK(json, $form) {
+    console.log(json)
+    console.log($form)
+}
+
+function S_NodeCheck(e, treeId, treeNode) {
+    var zTree = $.fn.zTree.getZTreeObj(treeId),
+        nodes = zTree.getCheckedNodes(true)
+    var ids = '', names = ''
+
+    for (var i = 0; i < nodes.length; i++) {
+        ids   += ','+ nodes[i].id
+        names += ','+ nodes[i].name
+    }
+    if (ids.length > 0) {
+        ids = ids.substr(1), names = names.substr(1)
+    }
+
+    var $from = $('#'+ treeId).data('fromObj')
+
+    if ($from && $from.length) $from.val(names)
+    $('#'+ treeId +'_select_box').hide();
+    $("#personnel_roleid").val(treeNode.id);
+    $.ajax({
+        url: '/v1/other/getorgdep?pid='+treeNode.pId,
+        dataType: 'json',
+        type: 'get',
+        xhrFields: {
+            withCredentials: true
+        },
+        crossDomain: true,
+        success: function(d){
+            $("#personnel_orgname").val(d.data[0]["be_orgname"]);
+            $("#personnel_depname").val(d.data[0]["org_name"]);
+        }
+    });
+}
+
+function S_NodeClick(event, treeId, treeNode) {
+    var zTree = $.fn.zTree.getZTreeObj(treeId)
+
+    zTree.checkNode(treeNode, !treeNode.checked, true, true)
+
+    event.preventDefault()
+}
+
+function wtf(json){
+    if(json.state==200){
+        BJUI.dialog('closeCurrent',this);
+        $('#personnel_datagrid').datagrid('refresh');
+    }else{
+        $(this).alertmsg('warn', json.content);
+    }
+}
+
+</script>
+<div class="bjui-pageContent">
+    <form action="/v1/personnel/add_personnel" data-toggle="validate" data-callback="wtf">
+        <table class="table table-condensed table-hover" width="100%">
+            <tbody>
+                <tr>
+                    <td>
+                        <label for="personnel_id" class="control-label x90">编码：</label>
+                        <input type="text" id="personnel_id" value="系统自动生成" size="15" readonly="true">
+                    </td>
+                    <td>
+                        <label for="personnel_flowerName" class="control-label x90">花名：</label>
+                        <input type="text" name="flowerName" id="personnel_flowerName" value="" data-rule="required" size="15">
+                    </td>
+                    <td>
+                        <label for="personnel_loginName" class="control-label x90">登录帐号：</label>
+                        <input type="text" name="loginName" id="personnel_loginName" value="" data-rule="required" size="15">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="personnel_orgname" class="control-label x90">所属组织：</label>
+                        <input type="text" id="personnel_orgname" value="" data-rule="required" size="15" readonly="true">
+                    </td>
+                    <td>
+                        <label for="personnel_depname" class="control-label x90">部门：</label>
+                        <input type="text" id="personnel_depname" value="" data-rule="required" size="15" readonly="true">
+                    </td>
+                    <td>
+                        <label for="personnel_rolename" class="control-label x90">岗位：</label>
+                        <input type="text" id="personnel_rolename" value="" size="15" data-toggle="selectztree" data-tree="#job-ztree">
+                        <input class="hide" type="text" name="jobsIdFk" id="personnel_roleid" value="" size="15">
+                        <ul style="height:300px;width:500px" id="job-ztree" class="ztree hide" data-on-click="S_NodeClick" data-on-check="S_NodeCheck" data-radio-type="all" data-chk-style="radio" data-check-enable="true"
+                         data-expand-all="true" data-toggle="ztree"
+                         data-setting="{
+                            async:
+                            {
+                                enable: true,
+                                url:'/v1/other/getjobs',
+                                autoParam: ['id'],
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                type:'get'
+                            }
+                         }"></ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="personnel_username" class="control-label x90">姓名：</label>
+                        <input type="text" name="username" id="personnel_username" value="" data-rule="required" size="15">
+                    </td>
+                    <td>
+                        <label for="personnel_mobile" class="control-label x90">手机号码：</label>
+                        <input type="text" name="mobile" id="personnel_mobile" value="" data-rule="required" size="15">
+                    </td>
+                    <td>
+                        <label for="personnel_entryDate" class="control-label x90">入职日期：</label>
+                        <input type="text" name="entryDate" id="personnel_entryDate" data-toggle="datepicker" value="" data-rule="required" size="15">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="personnel_userlevel" class="control-label x90">等级：</label>
+                        <select name="userlevel" id="personnel_userlevel" data-toggle="selectpicker">
+                            <option value="A" selected="true">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </td>
+                    <td>
+                        <label for="personnel_email" class="control-label x90">邮箱：</label>
+                        <input type="text" name="email" id="personnel_email" value="" size="15">
+                    </td>
+                    <td>
+                        <input type="text" class="hide" name="isactive" id="personnel_isactive1" value="true">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="personnel_idNumber" class="control-label x90">身份证：</label>
+                        <input type="text" name="idNumber" id="personnel_idNumber" value=""  size="15">
+                    </td>
+                    <td>
+                        <label for="personnel_gender1" class="control-label x90">性别：</label>
+                        <input type="radio" name="gender" id="personnel_gender1" data-toggle="icheck" value="男" data-label="男&nbsp;&nbsp;">
+                        <input type="radio" name="gender" id="personnel_gender2" data-toggle="icheck" value="女" data-label="女">
+                    </td>
+                    <td>
+                        <label for="personnel_birthday" class="control-label x90">出生日期：</label>
+                        <input type="text" name="birthday" id="personnel_birthday" data-toggle="datepicker" value="" size="15">
+                    </td>
+                    <td>
+                        <label for="personnel_address" class="control-label x90">地址：</label>
+                        <input type="text" name="address" id="personnel_address" value="" size="15">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="personnel_national" class="control-label x90">民族：</label>
+                        <input type="text" name="national" id="personnel_national" value="" size="15">
+                    </td>
+                    <td>
+                        <label for="personnel_school" class="control-label x90">学校：</label>
+                        <input type="text" name="school" id="personnel_school" value="" size="15">
+                    </td>
+                    <td>
+                        <label for="personnel_education" class="control-label x90">文化程度：</label>
+                        <input type="text" name="education" id="personnel_education" value="" size="15">
+                    </td>
+                    <td>
+                        <label for="personnel_politicalLand" class="control-label x90">政治面貌：</label>
+                        <input type="text" name="politicalLand" id="personnel_politicalLand" value="" size="15">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="personnel_emerContact" class="control-label x90">紧急联系人：</label>
+                        <input type="text" name="emerContact" id="personnel_emerContact" value="" size="15">
+                    </td>
+                    <td>
+                        <label for="personnel_emerPhone" class="control-label x90">紧急联系电话：</label>
+                        <input type="text" name="emerPhone" id="personnel_emerPhone" value="" size="15">
+                    </td>
+                    <td>
+                        <label for="personnel_hobby" class="control-label x90">爱好：</label>
+                        <input type="text" name="hobby" id="personnel_hobby" value="" size="15">
+                    </td>
+                    <td>
+                        <label for="personnel_departureDate" class="control-label x90">离职日期：</label>
+                        <input type="text" name="departureDate" id="personnel_departureDate" data-toggle="datepicker" value="" size="15">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <label for="personnel_note" class="control-label x90">备注：</label>
+                        <textarea name="note" id="personnel_note" data-toggle="autoheight" cols="60" rows="1"></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="submit" class="btn-default" data-icon="save">保存</button></li>
+    </ul>
+</div>

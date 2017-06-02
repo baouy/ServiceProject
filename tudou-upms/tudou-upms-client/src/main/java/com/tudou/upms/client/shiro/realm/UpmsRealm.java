@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.tudou.common.util.MD5Util.MD5;
+
 
 /**
  * 用户认证和授权
@@ -87,7 +89,8 @@ public class UpmsRealm extends AuthorizingRealm {
         if (null == upmsUser) {
             throw new UnknownAccountException();
         }
-        if (!upmsUser.getPassword().equals(MD5Util.MD5(password + upmsUser.getSalt()))) {
+        String md5 = MD5Util.MD5(password + upmsUser.getSalt());
+        if (!upmsUser.getPassword().equals(md5)) {
             throw new IncorrectCredentialsException();
         }
         if (upmsUser.getLocked() == 1) {

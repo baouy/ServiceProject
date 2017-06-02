@@ -1,0 +1,58 @@
+<html>
+
+<head>
+	<script type="text/javascript">
+
+		$('#engineering_template_datagrid').datagrid({
+
+			local: 'remote',
+			dataUrl: '/v1/template/template_list',
+			dataType: 'json',
+			sortAll: false,
+			loadType: 'get',
+			filterAll: true,
+			height:'95%',
+			columns: [
+				{name:'modelname', width:'90', label:'模板名称'},
+				{name:'orgname', width:'90', label:'组织名称'},
+				{name:'id', width:'80', label:'主键', hide:true}
+			],
+			paging: {pageSize:20, selectPageSize:'50,100,200', pageCurrent:1},
+			columnMenu: true,
+			columnShowhide: true,
+			columnFilter: true,
+			columnLock: false,
+			fullGrid: false,
+			dblOnClick: 'selecttdlItems',
+		});
+
+		function selecttdlItems(){
+			var selected=$("#engineering_template_datagrid").find('tr.datagrid-selected-tr');
+			if(selected.length == 0){
+				$(this).alertmsg('error', '请在列表中选择要操作的对象。');
+			}else if(selected.length > 1){
+				$(this).alertmsg('error', '请选择唯一的操作对象。');
+			}else{
+				var modelname = selected[0].cells[1].innerText;
+				var id = selected[0].cells[3].innerText;
+				$("input[id='project_projectmodel']").val(modelname);
+				$("input[id='project_projectmodelid']").val(id);
+
+				BJUI.dialog('closeCurrent',this);
+			}
+		}
+
+	</script>
+</head>
+
+<body>
+<div class="bjui-pageContent">
+	<div style="margin:15px;">
+		<button class="btn-default" onclick="selecttdlItems()" data-width="1050" data-height="400">选择</button>
+		<button class="btn-close" data-width="1050" data-height="400">关闭</button>
+	</div>
+	<table id="engineering_template_datagrid" class="table table-hover" data-width="100%"> </table>
+</div>
+</body>
+
+</html>

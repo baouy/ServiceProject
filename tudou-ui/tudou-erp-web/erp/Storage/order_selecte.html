@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+        //展示获取的采购单列表
+        $("#order_selecte_list").datagrid({
+            local: 'remote',
+            dataUrl: '/v1/po/procurementorderslist?fromstorage=true',
+            dataType: 'json',
+            sortAll: false,
+            loadType: 'get',
+            filterAll: true,
+            height: '95%',
+            columns: [
+                {name: 'podoc', width: '150', label: '采购单号'},
+                {name: 'suppliername', width: '150', label: '供应商名称'},
+                {name: 'linenum', width: '150', label: '行号'},
+                {name: 'itemno', width: '150', label: '料号'},
+                {name: 'partname', width: '150', label: '品名'},
+                {name: 'partspec', width: '150', label: '规格'},
+                {name: 'partstyle', width: '150', label: '型号'},
+                {name: 'kunit', width: '150', label: '库存单位'},
+                {name: 'qty', width: '150', label: '数量'},
+                {name: 'totalinqty', width: '150', label: '入库数'},
+                {name: 'linedetails', width: '150', label: '行备注'},
+                {name: 'itemid', width: '150', label: '料号id'},
+                {name: 'recqty', width: '150', label: '关联数'},
+                {name: 'orgname', width: '150', label: '组织'},
+                {name: 'supplierid', width: '150', label: '供应商id',hide: true},
+                {name: 'id', width: '80', label: '主键', hide: true}
+            ],
+            showLinenumber: true,
+            paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+            columnMenu: true,
+            columnShowhide: true,
+            columnFilter: true,
+            columnLock: false,
+            fullGrid: false
+        })
+
+        //取出选择行的各字段的值
+        function purchase_select_supplier() {
+            var podoc = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(1)").text() + "'";//采购单号
+            var suppliername = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(2)").text() + "'";//供应商名称
+            var linenum = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(3)").text() + "'";
+            var itemno = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(4)").text() + "'";
+            var partname = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(5)").text() + "'";
+            var partspec = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(6)").text() + "'";
+            var partstyle = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(7)").text() + "'";
+            var funit = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(8)").text() + "'";
+            var qty = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(9)").text() + "'";
+            var totalinqty = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(10)").text() + "'";
+            var linedetails = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(11)").text() + "'";
+            var itemid = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(12)").text() + "'";
+            var recqty = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(13)").text() + "'";
+            var unstorage = parseInt($("#order_selecte_list .datagrid-selected-tr>td:eq(9)").text()) - parseInt($("#order_selecte_list .datagrid-selected-tr>td:eq(13)").text());
+            var orgname = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(14)").text() + "'";
+            var supplierid = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(15)").text() + "'";//业务员id
+            var id = "'" + $("#order_selecte_list .datagrid-selected-tr>td:eq(16)").text() + "'";//业务员id
+
+//            $("#selected_order").attr("data-args", "{podoc:" + podoc + "," + "suppliername:" + suppliername + "}");
+            $("#selected_order").attr("data-args", "{podoc:" + podoc + "," + "suppliername:" + suppliername + "," + "linenum:" + linenum + ","
+                    + "itemno:" + itemno + "," + "itemid:" + itemid + "," + "noinqty:" + unstorage + "," + "partname:" + partname + "," + "partspec:" + partspec + "," + "partstyle:" + partstyle + "," + "funit:" + funit + "," + "qty:" + qty + "," + "totalinqty:" + totalinqty + "," + "linedetails:" + linedetails
+                    + "," + "orgname:" + orgname +  "," + "supplierid:" + supplierid +"," + "id:" + id + "}");
+            var selected = $("#order_selecte_list").find('tr.datagrid-selected-tr');
+            //获取套餐名称
+//            var typename = selected.find('td').eq(2)[0].innerText;
+            $.ajax({
+                url: '/v1/po/procurementorderslist?fromstorage=true',
+                dataType: 'json',
+                type: 'GET',
+                data: {
+                    id: selected[0].lastChild.innerText,
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    var html = "";
+                    if (d.state == 200) {
+                        for (var i = 0; i < d.data.length; i++) {
+                            //采购未入库数量=数量-关联数量
+//                            var noinqty = d.data[i].qty * d.data[i].kcxs / d.data[i].poxs - d.data[i].recqty* d.data[i].kcxs / d.data[i].poxs;
+                            var noinqty = d.data[i].ipqty - d.data[i].recqty;
+                            var warehousename = $("#warehousename").val();
+                            html += "<tr>" +
+                                    "<td style='width:3%'><input   type=text name='order[" + i + "].linenum' readonly=true class='form-control linenum' value=" + d.data[i].linenum + "></td>" +
+                                    "<td style='width:3%'><input   type=text name='order[" + i + "].linestate' readonly=true class='form-control linestate' value=''></td>" +
+                                    "<td style='width:9%'><input   type=text name='order[" + i + "].itemno' readonly=true class='form-control itemno' value='" + d.data[i].itemno + "'></td>" +
+                                    "<td style='width:27%'><input   type=text name='order[" + i + "].partname' readonly=true class='form-control partname' value='" + d.data[i].partname + "'></td>" +
+                                    "<td style='width:8%'><input   type=text name='order[" + i + "].partspec' readonly=true class='form-control partspec' value='" + d.data[i].partspec + "'></td>" +
+                                    "<td style='width:4%'><input   type=text name='order[" + i + "].partstyle' readonly=true class='form-control partstyle' value='" + d.data[i].partstyle + "'></td>" +
+                                    "<td style='width:4%'><input   type=text name='order[" + i + "].colorlevel' readonly=true class='form-control colorlevel' value='" + d.data[i].colorlevel + "'></td>" +
+                                    "<td style='width:4%'><input   type=text name='order[" + i + "].material' readonly=true class='form-control material' value='" + d.data[i].material + "'></td>" +
+                                    "<td style='width:4%'><input   type=text name='order[" + i + "].brand' readonly=true class='form-control brand' value='" + d.data[i].brand + "'></td>" +
+                                    "<td style='width:4%'><input   type=text name='order[" + i + "].funit' readonly=true class='form-control funit' value=" + d.data[i].tipfunit + "></td>" +
+                                    "<td style='width:3%'><input   type=text name='order[" + i + "].noinqty' readonly=true class='form-control noinqty' value=" + noinqty + "></td>" +
+                                    "<td style='width:3%'><input   type=text name='order[" + i + "].qty'  class='form-control qty' value=" + noinqty + " onchange='count_add(this.parentNode.parentNode)'></td>" +
+                                    "<td style='width:3%'><input   type=text name='order[" + i + "].grossweight' readonly=true class='form-control grossweight' value=" + d.data[i].grossweight + "></td>" +
+                                    "<td style='width:3%'><input   type=text name='order[" + i + "].unitweight' readonly=true class='form-control unitweight' value=" + d.data[i].unitweight + "></td>" +
+
+                                    "<td style='width:3%'><input   type=text name='order[" + i + "].warehousename' readonly=true class='form-control warehousename' value=" + warehousename + "></td>" +
+                                    "<td style='width:3%'><input   type=text name='order[" + i + "].linedetails' readonly=true class='form-control linedetails' value=" + d.data[i].linedetails + "></td>" +
+                                    "<td style='width:3%'><input   name='order[" + i + "].recqty'  value=0 class='form-control recqty' readonly=true></td>" +
+                                    "<td style='width:3%'><input   name='order[" + i + "].returnqty'  value=0 class='form-control returnqty' readonly=true></td>" +
+                                    "<td style='width:3%'><input   class='form-control sourcenum' readonly=true name='order[" + i + "].sourcenum' value=" + d.data[i].podoc + "></td>" +
+                                    "<td style='width:3%'><input   class='form-control soucrelinenum'readonly=true name='order[" + i + "].soucrelinenum' value=" + d.data[i].linenum + " ></td>" +
+                                    "<input   class='form-control itemid' type=hidden readonly=true name='order[" + i + "].itemid' value=" + d.data[i].itemid + " >" + "</tr>";
+
+
+                            var html2 = "<table class='table table-bordered table-hover table-striped bjui-tabledit'><tr>" +
+                                    "<td  style='width:3%'><input   class='form-control'  value='合计'></td>" +
+                                    "<td style='width:3%'><input   type='text'  class='form-control' value></td>" +
+                                    "<td style='width:9%'><input   type='text'  class='form-control' value></td>" +
+                                    "<td style='width:27%'><input   type='text'  class='form-control' value></td>" +
+                                    "<td style='width:8%'><input   type='text'  class='form-control' value></td>" +
+                                    "<td style='width:4%'><input   type='text'  class='form-control' value></td>" +
+                                    "<td style='width:4%'><input   type='text'  class='form-control' value></td>" +
+                                    "<td style='width:4%'><input   type='text'  class='form-control' value></td>" +
+                                    "<td style='width:4%'><input   type='text'  class='form-control' value></td>" +
+                                    "<td style='width:4%'><input   type='text'  class='form-control' value></td>" +
+                                    "<td style='text-align: center;width: 3%;'><input   type='text' id='countnoinqty' readonly=true class='form-control' value=0></td>" +
+                                    "<td style='text-align: center;width: 3%;'><input   type='text' id='countqty' readonly=true class='form-control' value=0></td>" +
+                                    "<td style='text-align: center;width: 3%;'><input   type='text' id='countgrossweight' readonly=true class='form-control' value=0></td>" +
+                                    "<td style='width:3%'><input   type='text'  class='form-control' value></td>" +
+
+                                    "<td style='width:3%'><input   type='text'  class='form-control' value></td>" +
+                                    "<td style='width:3%'><input   type='text'  class='form-control' value></td>" +
+                                    "<td style='text-align: center;width: 3%;'><input   type='text' id='countmodifyunitqty' readonly=true class='form-control' value=0></td>" +
+                                    "<td style='text-align: center;width: 3%;'><input   type='text' id='countmpq'readonly=true  class='form-control' value=0></td>" +
+                                    "<td style='width:3%'><input   type='text'  class='form-control' value></td>" +
+                                    "<td style='width:3%'><input   type='text'  class='form-control' value></td>" +
+                                    "</tr></table>";
+
+                        }
+                        $("#storage_order_add tbody").html(html);
+
+                        $("#count").html(html2);
+//                        countline = $("#storage_order_add tbody tr").length;//todo
+                        count_add();
+                        //让选择的行变成class变成selected，其他行变成readonly
+                        $("#storage_order_add tbody tr").click(function () {
+                            $(this).removeClass("readonly")
+                                    .addClass("selected").siblings("tr").removeClass("selected")
+                                    .addClass("readonly");
+                        })
+                        //关闭对话
+//                        BJUI.dialog('closeCurrent',this);
+                    } else {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+
+            });
+        }
+        function count_add() {
+            //重新合计各数量
+            var sumnoinqty = 0;
+            var sumqty = 0;
+            var countgrossweight = 0;
+
+            for (var i = 0; i < $("#storage_order_add tbody tr").length; i++) {
+                if ($("#storage_order_add tbody tr:eq(" + i + ") td:eq(10) input").val() != '') {
+                    sumnoinqty += parseInt($("#storage_order_add tbody tr:eq(" + i + ") td:eq(10) input").val());
+                }
+                if ($("#storage_order_add tbody tr:eq(" + i + ") td:eq(11) input").val() != '') {
+                    sumqty += parseInt($("#storage_order_add tbody tr:eq(" + i + ") td:eq(11) input").val());
+                }
+                if ($("#storage_order_add tbody tr:eq(" + i + ") td:eq(12) input").val() != '') {
+                    countgrossweight += parseInt($("#storage_order_add tbody tr:eq(" + i + ") td:eq(12) input").val()*$("#storage_order_add tbody tr:eq(" + i + ") td:eq(11) input").val());
+                }
+                $("#count  td:eq(10) input").val(sumnoinqty);
+                $("#count  td:eq(11) input").val(sumqty);
+                $("#count  td:eq(12) input").val(countgrossweight);
+
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <div style="margin-bottom:15px;">
+        <!--<button class="btn-default" data-toggle="lookupback" data-icon="check" data-args="{suppliername:'sgfdg', podoc:'自由职业'}" class="btn btn-blue" id="selectedBtn">选择</button>-->
+        <!--获取选择行数据-->
+        <a href="javascript:;" data-toggle="lookupback" onclick="purchase_select_supplier()" class="btn btn-blue"
+           data-args="" title="选择本项" data-icon="check" id="selected_order"><i class="fa fa-check"></i> 选择</a>
+        <button type="button" class="btn-close btn" data-icon="close"><i class="fa fa-close"></i> 关闭</button>
+    </div>
+    <table id="order_selecte_list">
+
+    </table>
+</div>
+</body>
+</html>

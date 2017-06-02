@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        .img_box {
+            padding: 5px;
+            display: inline-block;
+        }
+        .img_box a{
+            display: block;
+            cursor: pointer;
+        }
+        .img_box .imgDownload {
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+    <script type="text/javascript">
+        var currentRow = $('#customer_design_files').find('tr.datagrid-selected-tr');
+        if (currentRow.length == 0) {
+            BJUI.alertmsg('error', '请在列表中选择要操作的对象。');
+            BJUI.dialog('closeCurrent',this);
+        } else if (currentRow.length > 1) {
+            BJUI.alertmsg('error', '请选择唯一的操作对象。');
+            BJUI.dialog('closeCurrent',this);
+        } else {
+            $("#state").val(currentRow[0].cells[1].innerText);
+            $("#createtime").val(currentRow[0].cells[2].innerText);
+            $("#createuser").val(currentRow[0].cells[3].innerText);
+            $("#style").val(currentRow[0].cells[4].innerText);
+            $("#point").val(currentRow[0].cells[5].innerText);
+            $("#details").val(currentRow[0].cells[6].innerText);
+            $("#custid_fk").val(currentRow[0].cells[8].innerText);
+            var imglist = currentRow[0].cells[8].innerText;
+            var imgArray=imglist.split(',');
+            var html = "";
+            var imgName = "";
+
+            for(var  i = 0; i<imgArray.length;i++){
+                imgName = imgArray[i].substring(imgArray[i].lastIndexOf('/')+1);
+                html += "<div class='img_box'><a>" +"<img src="+imgArray[i]+" width='100px' height='100' class='imgShow'></a>"
+                        +"<a class='imgDownload' data-toggle='tooltip' data-placement='top' title='下载图片'"+ "href="+imgArray[i]+ " download="+imgName+">"+imgName+"</a></div>";
+            }
+            $("#customer_design_img").html(html);
+
+            $("#customer_design_img .imgShow").click(function(){
+                window.open($(this).attr("src"));
+            });
+        }
+
+//        $("#customer_design_img .imgDownload").click(function() {
+//            var url = $(this).siblings("a").children("img").attr("src");
+//            $(".imgDownload").attr("href", url).attr("download", url).appendTo("body").click().remove();
+//
+//        })
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <form action="" data-toggle="validate" data-callback="saveCalback">
+        <table class="table table-condensed table-hover" width="100%">
+            <input type="hidden" name="custid_fk" id="custid_fk">
+            <tbody>
+                <tr>
+                    <td>
+                        <label class="control-label">状态:</label>
+                        <input type="text" id="state" value="" size="15" name="state" readonly="true">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="control-label">上传时间:</label>
+                        <input type="text" id="createtime" value="" size="15" name="createtime" readonly="true">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="control-label">上传人:</label>
+                        <input type="text" id="createuser" value="" size="15" name="createuser" readonly="true">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="control-label">风格:</label>
+                        <input type="text" id="style" value="" size="15" name="style" readonly="true">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="control-label">特点:</label>
+                        <input type="text" id="point" value="" size="15" name="point" readonly="true">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="control-label">备注:</label>
+                        <textarea type="text" id="details" value="" size="15" name="details" style="resize: none" readonly="true"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td name="filename">
+                        <label class="control-label">图片:</label>
+                        <div id="customer_design_img"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+   </form>
+</div>
+</body>
+</html>

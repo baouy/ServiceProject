@@ -1,0 +1,45 @@
+<script>
+	$('#enginnering_assigned_personnel_datagrid').datagrid({
+
+		local: 'remote',
+		dataUrl: '/v1/project/assigned_personnel?type=1',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height:'95%',
+		columns: [
+			{name:'contractdoc', width:'150', label:'合同单号'},
+			{name:'custname', width:'100', label:'客户姓名'},
+			{name:'mobile', width:'100', label:'手机号'},
+			{name:'community', width:'150', label:'小区'},
+			{name:'districtname', width:'100', label:'区域'},
+			{name:'supervision', width:'100', label:'质检'},
+			{name:'road', width:'100', label:'街道'},
+			{name:'salespackage', width:'100', label:'套餐'},
+			{name:'area', width:'100', label:'面积'},
+			{name:'applydate', width:'100', label:'需求时间'},
+			{name:'stagename', width:'100', label:'工程阶段'},
+			{name:'role', width:'100', label:'工人角色'},
+			{name:'worker', width:'100', label:'工人'},
+			{name:'distributionuser', width:'100', label:'分配人'},
+			{name:'distributiontime', width:'100', label:'分配时间'},
+			{name:'createtime', width:'100', label:'创建时间'},
+			{name:'orgname', width:'100', label:'组织'},
+			{name:'id', width:'80', label:'主键', hide:true},
+			{name:'roleid', width:'80', label:'', hide:true},
+			{name:'stagenameid', width:'80', label:'', hide:true},
+			{name:'contractid', width:'80', label:'', hide:true}],
+		paging: {pageSize:20, selectPageSize:'50,100,200', pageCurrent:1},
+		columnMenu: true,
+		columnShowhide: true,
+		columnFilter: true,
+		columnLock: false,
+		fullGrid: false,
+
+	});
+</script>
+<div style="margin-bottom:10px;">
+	<button type="button" class="btn btn-green" data-icon="list-alt" onclick="personnel_undistribution_1(this)">分配工人</button>
+</div>
+<table id="enginnering_assigned_personnel_datagrid"></table>

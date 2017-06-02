@@ -1,0 +1,36 @@
+<script type="text/javascript">
+	$('#customer_sales_1').datagrid({
+
+		local: 'remote',
+		dataUrl: '/v1/customer/customer_sales?type=1',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height: '95%',
+		columns: [{name: 'customercode', width: '150', label: '编码'},
+			{name: 'cusname', width: '150', label: '姓名'},
+			{name: 'mobile', width: '150', label: '手机号'},
+			{name: 'cityname', width: '150', label: '城市'},
+			{name: 'community', width: '150', label: '小区名称'},
+			{name: 'firstamout', width: '150', label: '定金'},
+			{name: 'custsales', width: '150', label: '客户经理'},
+			{name: 'designer', width: '150', label: '设计师'},
+			{name: 'followstate', width: '150', label: '跟进状态'},
+			{name: 'id', width: '80', label: '主键', hide: true}],
+		paging: {
+			pageSize: 50,
+			selectPageSize: '50,100,200',
+			pageCurrent: 1
+		},
+		columnMenu: true,
+		columnShowhide: true,
+		columnFilter: true,
+		columnLock: false,
+		fullGrid: false,
+
+	});
+
+</script>
+
+<table id="customer_sales_1" class="table table-hover" data-width="100%"></table>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+        $("#delivery_order_list").datagrid({ //采购订单列表
+            local: 'remote',
+            dataUrl: '/v1/delivery/deliverylist',
+            dataType: 'json',
+            sortAll: true,
+            loadType: 'get',
+            filterAll: true,
+            height:'95%',
+            columns: [
+                {name: 'orderno', width: '150', label: '单据号'},
+
+                {name: 'businessdate', width: '150', label: '业务日期'},
+                {name: 'plandate', width: '150', label: '计划出货日期'},
+                {name: 'plantime', width: '150', label: '计划到货时间'},
+                {name: 'receiveduser', width: '150', label: '收货人'},
+                {name: 'receivedaddress', width: '150', label: '收货地址'},
+                {name: 'receiveddatetime', width: '150', label: '确认收货时间'},
+                {name: 'custname', width: '150', label: '客户姓名'},
+                {name: 'orgname', width: '150', label: '组织'},
+//            {name: 'typedocument', width: '150', label: '单据类型'},
+                {name: 'state', width: '150', label: '状态'},
+//                {name: 'linenum', width: '150', label: '行号'},
+//                {name: 'itemno', width: '150', label: '料号'},
+//                {name: 'partname', width: '150', label: '品名'},
+//                {name: 'material', width: '150', label: '材质'},
+//                {name: 'funit', width: '150', label: '单位'},
+//                {name: 'applyqty', width: '150', label: '发货数量'},
+//                {name: 'receivedqty', width: '150', label: '收货数量'},
+//                {name: 'warehousename', width: '150', label: '仓库'},
+//                {name: 'locationname', width: '150', label: '库位'},
+//                {name: 'sourcenum', width: '150', label: '发货申请单行'},
+//                {name: 'soucrelinenum', width: '150', label: '发货申请单行号'},
+                {name: 'createuser', width: '150', label: '创建人'},
+                {name: 'createtime', width: '150', label: '创建时间'},
+                {name: 'reviewuser', width: '150', label: '审核人'},
+                {name: 'reviewtime', width: '150', label: '审核时间'},
+                {name: 'id', width: '80', label: '主键', hide: true}
+            ],
+            showLinenumber: true,
+            paging: {pageSize: 20, selectPageSize: '50,80', pageCurrent: 1},
+            columnMenu: true,
+            columnShowhide: true,
+            columnFilter: true,
+            columnLock: false,
+            fullGrid: false,
+            dblOnClick: 'delivery_order_list_edit',
+        });
+        /**
+         * 编辑
+         * **/
+        function delivery_order_list_edit(){
+            var selected = $("#delivery_order_list").find('tr.datagrid-selected-tr');
+            if(selected.length == 0){
+                $(this).alertmsg('error', '请在列表中选择要操作的对象。');
+            }else {
+                $(this).dialog({
+                    id:"delivery_OrderEdit",
+                    title:"销售出库单编辑",
+                    url:"Storage/delivery_order_edit.html",
+                    width:1052,
+                    height:602,
+                    mask:true
+                });
+
+            }
+        }
+
+        /**
+         * 提交
+         */
+        function delivery_order_list_commit(){
+            var selected = $("#delivery_order_list").find('tr.datagrid-selected-tr');
+            if (selected.length == 0) {
+                BJUI.alertmsg('error', '请在列表中选择要操作的对象。');
+                BJUI.dialog('closeCurrent',this);
+            } else if (selected.length > 1) {
+                BJUI.alertmsg('error', '请选择唯一的操作对象。');
+                BJUI.dialog('closeCurrent',this);
+            } else {
+
+                $("#delivery_commit_btn").attr("disabled", "disabled");
+                $.ajax({
+                    url: '/v1/delivery/commitdelivery',
+                    dataType: 'json',
+                    type: 'POST',
+                    data:{
+                        id:selected[0].lastChild.innerText
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        if(d.state ==200) {
+                            $("#delivery_commit_btn").removeAttr("disabled");
+
+                            BJUI.alertmsg('info', d.content,{displayMode:'fade',alertTimeout:1000,displayPosition:'middlecenter'});
+                            $('#delivery_order_list').datagrid("refresh");
+                        }else  {
+                            $("#delivery_commit_btn").removeAttr("disabled");
+
+                            BJUI.alertmsg('info', d.content,{displayMode:'fade',alertTimeout:1000,displayPosition:'middlecenter'});
+                        }
+                    }
+                });
+            }
+        }
+        /***
+         * 收回
+         * */
+        function delivery_order_list_remove_commit(){
+
+            var selected = $("#delivery_order_list").find('tr.datagrid-selected-tr');
+            if (selected.length == 0) {
+                BJUI.alertmsg('error', '请在列表中选择要操作的对象。');
+                BJUI.dialog('closeCurrent',this);
+            } else if (selected.length > 1) {
+                BJUI.alertmsg('error', '请选择唯一的操作对象。');
+                BJUI.dialog('closeCurrent',this);
+            } else {
+                $("#delivery_nocommit_btn").attr("disabled", "disabled");
+
+                $.ajax({
+                    url: '/v1/delivery/giveupcommitdelivery',
+                    dataType: 'json',
+                    type: 'POST',
+                    data:{
+                        id:selected[0].lastChild.innerText
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        if(d.state ==200) {
+                            $("#delivery_nocommit_btn").removeAttr("disabled");
+
+                            BJUI.alertmsg('info', d.content,{displayMode:'fade',alertTimeout:1000,displayPosition:'middlecenter'});
+                            $('#delivery_order_list').datagrid("refresh");
+                        }else  {
+                            $("#delivery_nocommit_btn").removeAttr("disabled");
+
+                            BJUI.alertmsg('info', d.content,{displayMode:'fade',alertTimeout:1000,displayPosition:'middlecenter'});
+                        }
+                    }
+                });
+            }
+        }
+
+
+        /**
+         * 审核
+         */
+        function delivery_order_list_audit(){
+            var selected = $("#delivery_order_list").find('tr.datagrid-selected-tr');
+            if (selected.length == 0) {
+                BJUI.alertmsg('error', '请在列表中选择要操作的对象。');
+                BJUI.dialog('closeCurrent',this);
+            } else if (selected.length > 1) {
+                BJUI.alertmsg('error', '请选择唯一的操作对象。');
+                BJUI.dialog('closeCurrent',this);
+            } else {
+                $("#delivery_audit_btn").attr("disabled", "disabled");
+
+                $.ajax({
+                    url: '/v1/delivery/revieweddelivery',
+                    dataType: 'json',
+                    type: 'POST',
+                    data:{
+                        id:selected[0].lastChild.innerText
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        if(d.state ==200) {
+                            $("#delivery_audit_btn").removeAttr("disabled");
+
+                            BJUI.alertmsg('info', d.content,{displayMode:'fade',alertTimeout:1000,displayPosition:'middlecenter'});
+                            $('#delivery_order_list').datagrid("refresh");
+                        }else  {
+                            $("#delivery_audit_btn").removeAttr("disabled");
+
+                            BJUI.alertmsg('info', d.content,{displayMode:'fade',alertTimeout:1000,displayPosition:'middlecenter'});
+                        }
+                    }
+                });
+            }
+        }
+
+        /***
+         * 弃审
+         * */
+        function delivery_order_remove_audit(){
+
+            var selected = $("#delivery_order_list").find('tr.datagrid-selected-tr');
+            if (selected.length == 0) {
+                BJUI.alertmsg('error', '请在列表中选择要操作的对象。');
+                BJUI.dialog('closeCurrent',this);
+            } else if (selected.length > 1) {
+                BJUI.alertmsg('error', '请选择唯一的操作对象。');
+                BJUI.dialog('closeCurrent',this);
+            } else {
+                $("#delivery_noaudit_btn").attr("disabled", "disabled");
+
+                $.ajax({
+                    url: '/v1/delivery/giveuprevieweddelivery',
+                    dataType: 'json',
+                    type: 'POST',
+                    data:{
+                        id:selected[0].lastChild.innerText
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        if(d.state ==200) {
+                            $("#delivery_noaudit_btn").removeAttr("disabled");
+
+                            BJUI.alertmsg('info', d.content,{displayMode:'fade',alertTimeout:1000,displayPosition:'middlecenter'});
+                            $('#delivery_order_list').datagrid("refresh");
+                        }else  {
+                            $("#delivery_noaudit_btn").removeAttr("disabled");
+
+                            BJUI.alertmsg('info', d.content,{displayMode:'fade',alertTimeout:1000,displayPosition:'middlecenter'});
+                        }
+                    }
+                });
+            }
+        }
+
+
+        function deletedelivery(){
+            var selected = $("#delivery_order_list").find('tr.datagrid-selected-tr')[0].lastChild.innerText;
+            $.ajax({
+                url: '/v1/delivery/deletedelivery',
+                dataType: 'json',
+                type: 'POST',
+                data:{
+                    id:selected
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if(d.state ==200) {
+                        BJUI.alertmsg('info', d.content,{displayMode:'fade',alertTimeout:1000,displayPosition:'middlecenter'});
+                        $('#delivery_order_list').datagrid("refresh");
+                    }else  {
+                        BJUI.alertmsg('error', d.content,{displayMode:'fade',alertTimeout:1000,displayPosition:'middlecenter'});
+                    }
+                }
+            });
+        }
+        /**
+         * 删除
+         * **/
+        function delivery_order_del(){
+            if(0<$("#delivery_order_list").find('tr.datagrid-selected-tr').length){
+                BJUI.alertmsg('confirm', '确定要删除吗?',{displayMode:'fade',displayPosition:'middlecenter',okName:"是",cancelName:"否",okCall:'deletedelivery'});
+            }else {
+                BJUI.alertmsg('error', '请选择唯一的操作对象。');
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <div style="margin:0px 0px 10px 0px;">
+        <button type="button" class="btn btn-blue" data-icon="plus" data-url="Storage/delivery_order_add.html" data-width="1050" data-height="600" data-toggle="dialog" data-id="delivery_apply_order_add" data-mask="true">新增</button>
+        <button type="button" class="btn btn-green" data-icon="edit" onclick="delivery_order_list_edit()">编辑</button>
+        <button type="button" class="btn btn-green" id="delivery_commit_btn" data-icon="thumbs-up" onclick="delivery_order_list_commit()">提交</button>
+        <button type="button" class="btn btn-orange" id="delivery_nocommit_btn" data-icon="thumbs-down" onclick="delivery_order_list_remove_commit()">驳回</button>
+
+        <button type="button" class="btn btn-green" id="delivery_audit_btn" data-icon="thumbs-up" onclick="delivery_order_list_audit()">审核</button>
+        <button type="button" class="btn btn-orange" id="delivery_noaudit_btn" data-icon="thumbs-down" onclick="delivery_order_remove_audit()">弃审</button>
+        <button type="button" class="btn btn-red" data-icon="times" onclick="delivery_order_del()">删除</button>
+    </div>
+    <table id="delivery_order_list" class="table table-hover" data-width="100%"></table>
+</div>
+</body>
+</html>

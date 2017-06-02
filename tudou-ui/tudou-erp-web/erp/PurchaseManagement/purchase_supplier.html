@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+        $("#purchase_supplier_list").datagrid({
+            local: 'remote',
+            dataUrl: '/v1/myother/getsupplier',
+            dataType: 'json',
+            sortAll: true,
+            loadType: 'get',
+            filterAll: true,
+            height:'95%',
+            columns: [
+                {name:'suppliercode', width:'150', label:'供应商编码'},
+                {name:'suppliername', width:'150', label:'供应商名称'},
+                {name:'salesid', width:'150', label:'',hide: true},
+                {name:'salesman', width:'150', label:'',hide: true},
+                {name: 'id', width: '80', label: '主键',hide: true}
+            ],
+            showLinenumber:true,
+            paging: {pageSize:20, selectPageSize:'50,80', pageCurrent:1},
+            columnMenu: true,
+            columnShowhide: true,
+            columnFilter: true,
+            columnLock: false,
+            fullGrid: false
+        })
+        function purchase_select_supplier(){
+            var suppliercode = $("#purchase_supplier_list .datagrid-selected-tr>td:eq(1)").text();//供应商编码
+            var suppliername =  $("#purchase_supplier_list .datagrid-selected-tr>td:eq(2)").text();//供应商名称
+            var salesid = $("#purchase_supplier_list .datagrid-selected-tr>td:eq(3)").text();//业务员id
+            var salesman = $("#purchase_supplier_list .datagrid-selected-tr>td:eq(4)").text();//业务员名称
+            var supplierid = $("#purchase_supplier_list .datagrid-selected-tr>td:eq(5)").text();//业务员名称
+//        $("#selected_supplier").attr("data-args","{suppliercode:"+suppliercode+","+"supplierid:"+supplierid+","+"suppliername:"+suppliername+","+"salesid:"+salesid+","+"salesman:"+salesman+"}");
+            $("#suppliercode").val(suppliercode);
+            $("#suppliername").val(suppliername);
+            $("#salesid").val(salesid);
+            $("#salesman").val(salesman);
+            $("#supplierid").val(supplierid);
+            BJUI.dialog('closeCurrent',this);
+        }
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <div style="margin-bottom:15px;">
+        <a href="javascript:;" data-toggle="lookupback" onclick="purchase_select_supplier()" class="btn btn-blue" data-args="" title="选择本项" data-icon="check" id="selected_supplier"><i class="fa fa-check"></i> 选择</a>
+        <button type="button" class="btn-close btn" data-icon="close"><i class="fa fa-close"></i> 关闭</button>
+    </div>
+    <table id="purchase_supplier_list">
+
+    </table>
+</div>
+</body>
+</html>

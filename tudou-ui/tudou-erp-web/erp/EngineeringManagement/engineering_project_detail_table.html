@@ -1,0 +1,46 @@
+<html>
+
+<head>
+	<script type="text/javascript">
+
+		$('#engineering_project_detail_list_datagrid').datagrid({
+
+			local: 'remote',
+			dataUrl: '/v1/project/project_detail_list?contractid='+e_p_d_l_contractid,
+			dataType: 'json',
+			sortAll: false,
+			loadType: 'get',
+			filterAll: true,
+			height:'95%',
+			columns: [
+				{name:'linenum', width:'90', label:'序号'},
+				{name:'stagename', width:'130', label:'阶段'},
+				{name:'state', width:'90', label:'状态'},
+				{name:'realstatedate', width:'150', label:'计划开始日期'},
+				{name:'realenddate', width:'150', label:'计划结束日期'},
+				{name:'continuedays', width:'90', label:'持续天使'},
+				{name:'workersname', width:'90', label:'工人'},
+				{name:'isperson', width:'90', label:'是否是个性包' ,items:[{'true':'是'}, {'false':'否'}]}],
+			paging: {pageSize:20, selectPageSize:'50,100,200', pageCurrent:1},
+			columnMenu: true,
+			columnShowhide: true,
+			columnFilter: true,
+			columnLock: false,
+			fullGrid: false,
+
+		});
+	</script>
+</head>
+
+<body>
+<div class="bjui-pageContent">
+	<table id="engineering_project_detail_list_datagrid" class="table table-hover" data-width="100%"> </table>
+</div>
+<div class="bjui-pageFooter">
+	<ul>
+		<li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+	</ul>
+</div>
+</body>
+
+</html>

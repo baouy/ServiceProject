@@ -1,0 +1,398 @@
+<script>
+    /**
+     * 保存后返回数据
+     */
+    function saveCalback(json) {
+        if (json.state == 200) { //保存成功
+            BJUI.dialog('closeCurrent', this);
+            /*switch (media_edit_type){
+                case 0:
+                    $('#customer_new_media').datagrid('refresh');
+                    break;
+                case 1:
+                    $('#customer_new_media_table_haspassed').datagrid('refresh');
+                    break;
+                case 2:
+                    $('#customer_new_media_table_new').datagrid('refresh');
+                    break;
+                case 3:
+                    $('#customer_new_media_table_new_following').datagrid('refresh');
+                    break;
+            }*/
+            $('#customer_new_media_follow').datagrid('refresh');
+            $(this).alertmsg('ok', '保存成功');
+        } else {
+            $(this).alertmsg('warn', json.content);
+        }
+    }
+
+    $('#customer_otherdetail').val('<p class="MsoListParagraph"><strong>家庭成员</strong></p><div style="text-align:left"><ol><li>成员：</li><li>客户年龄：</li><li>性别：男/女</li><li>职业：</li><li>谁做主：</li><li>兴趣爱好：</li></ol></div><p class="MsoListParagraphCxSpLast"><strong>预算</strong></p><ol><li>中央空调&nbsp;&nbsp;地暖</li></ol><p class="MsoListParagraph"><strong>用途</strong></p><ol><li>自主/出租/给老人</li></ol><p class="MsoListParagraph"><strong>产品匹配</strong></p><ol><li>实测/0.75&nbsp;&nbsp;税金3.14%&nbsp;&nbsp;远程费&nbsp;&nbsp;&nbsp;完整商品</li><li>个性包：WU</li></ol><p class="MsoListParagraphCxSpLast"><strong>装修经验</strong></p><ol><li>首套/非首套（以前怎么装修：）</li></ol><p class="MsoListParagraph"><strong>关注偏好</strong></p><ol><li>环保&nbsp;&nbsp;&nbsp;</li><li>施工质量&nbsp;&nbsp;&nbsp;</li><li>设计&nbsp;&nbsp;&nbsp;</li><li>自有工人&nbsp;&nbsp;&nbsp;</li><li>工期&nbsp;&nbsp;服务&nbsp;吊顶</li><li>套餐和个性包之外的产品</li></ol><p class="MsoListParagraphCxSpLast"><strong>服务模式（是否聊到）</strong></p><ol><li>先交定后量房&nbsp;&nbsp;</li><li>客户经理制</li></ol><p class="MsoListParagraph"><strong>性格匹配</strong></p><ol><li>客户性格：老虎（控制）&nbsp;&nbsp;孔雀（表现）&nbsp;&nbsp;&nbsp;猫头鹰（分析）</li><li>考拉（随和）</li><li>客户经理偏好：男/女</li><li>客户经理类型：活泼/理智/热情/成熟/服务</li></ol><p class="MsoListParagraphCxSpLast"><strong>潜在对手</strong></p><ol><li>熟人：</li><li>其他：</li></ol><p class="MsoListParagraph">&nbsp;&nbsp; &nbsp; &nbsp;乘坐交通工具（明天怎么来，如果开车的话，给您预约车位，给个提醒，坐公交地铁什么的）：</p>');
+
+    function media_save_onclick() {
+        /*if ($("#customer_markid").val()=="") {
+            $("#customer_markid").val('0')
+        }
+        if ($("#customer_marktime").val()=="") {
+            $("#customer_marktime").val('0000-00-00 00:00:00')
+        }*/
+        $('#customer_info').submit()
+
+    }
+    /*var media_select_index,media_datas;
+    $("#customer_marketactive").change(function() {
+        var mt = $('#customer_marketactive option:selected').val()
+        media_select_index = $('#customer_marketactive').get(0).selectedIndex
+
+        if (mt == '其他' || media_select_index == 0){
+            $("#customer_markid").val('0')
+            $("#customer_marktime").val('')
+            if (media_select_index != 0){
+                $("#time_a").removeAttr("class");
+                $("#customer_marktime").removeAttr("novalidate");
+                $("#customer_marktime").attr("data-rule","required;datetime");
+            }else{
+                $("#customer_marktime").val('0000-00-00 00:00:00')
+                $("#time_a").attr("class","hide");
+                $("#customer_marktime").attr("novalidate","");
+                $("#customer_marktime").attr("class","form-control");
+            }
+        }else{
+            $("#time_a").attr("class","hide");
+            $("#customer_markid").val(media_datas[media_select_index - 1].id)
+            $("#customer_marktime").val(media_datas[media_select_index - 1].activetime)
+            $("#customer_marktime").attr("novalidate","");
+            $("#customer_marktime").attr("class","form-control");
+
+        }
+    });
+*/
+    $("#customer_secondsource").change(function () {
+        var mt = $('#customer_secondsource option:selected').val()
+        if (mt == '其他') {
+            $("#other_a").removeAttr("class");
+        } else {
+            $("#other_a").attr("class", "hide");
+        }
+    });
+
+    $("#customer_roommodel").change(function () {
+        var mt = $('#customer_roommodel option:selected').val()
+        if (mt == '其他') {
+            $("#room_a").removeAttr("class");
+        } else {
+            $("#room_a").attr("class", "hide");
+        }
+    });
+
+    $("#customer_intentiontype").change(function () {
+        var mt = $('#customer_intentiontype option:selected').val()
+        if (mt == '其他') {
+            $("#intent_a").removeAttr("class");
+        } else {
+            $("#intent_a").attr("class", "hide");
+        }
+    });
+
+    $('#customer_giveup_ts').on('ifChanged', function(event){
+        $('#customer_giveup').val($(this).is(':checked'));
+
+        if ($(this).is(':checked')){
+            $("#customer_nextfellowtime").attr("novalidate","");
+            $("#customer_nextfellowtime").attr("class","form-control");
+            $("#customer_nextfellowtime").val("");
+            $("#td_b").attr("class","hide");
+        }else{
+            $("#customer_nextfellowtime").removeAttr("novalidate");
+            $("#customer_nextfellowtime").attr("data-rule","required;datetime");
+            $("#td_b").removeAttr("class");
+        }
+    });
+
+
+    /*$.ajax({
+                type: "get",
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                url: '/v1/activity/activitylist',
+                success: function (d) {
+                    $("#customer_marketactive").append("<option value=''>请选择</option>");
+                    media_datas = d.data;
+                    for (var i = 0; i < d.data.length; i++) {
+                        var value = d.data[i];
+                        $("#customer_marketactive").append("<option value='" + value.activename + "'>" + value.activename + "</option>");
+                    }
+                    $("#customer_marketactive").append("<option value='其他'>其他</option>");
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(errorThrown);
+                },
+                async: false
+            }
+    );*/
+
+
+</script>
+
+<div style="height: 100%;width: 100%">
+
+    <div style="height: 50px; padding-top: 16px">
+        <label class="control-label" style="font-size:18px;">添加客户</label>
+
+        <label class="control-label" style="font-size:18px;">跟进次数</label>
+        <label class="control-label" style="font-size:18px;" id="customer_follownum"></label>
+
+        <label class="control-label" style="font-size:18px;">完成率</label>
+        <label class="control-label" style="font-size:18px;color: #cc0000" id="customer_completion"></label>
+    </div>
+
+    <form action="/v1/newcustomer/post" id="customer_info" data-toggle="validate" data-callback="saveCalback"
+          style="width:100%;height: 100%;">
+        <div class="roleLeft"
+             style="border: 0px solid green;width: 50% !important;position: relative;height: 85%;float: left;">
+
+            <input type="hidden" value="" id="customer_id" name="id">
+            <input type="hidden" value="" id="customer_giveup" name="giveup">
+            <input type="hidden" value="" id="customer_markid" name="markid">
+            <input type="hidden" value="新媒体社区" id="customer_source" name="source">
+
+            <div class="bjui-pageContent" style="height: 100%;">
+                <table class="table table-condensed table-hover">
+                    <tbody>
+                    <tr style="height: 40px;background-color:#D0D0D0">
+                        <td><label class="control-label" style="font-size:18px;">9必</label></td>
+                    </tr>
+                    <tr style="height: 38px">
+                        <td>
+                            <label class="control-label x130" style="font-size:18px;">姓名</label>
+                            <input type="text" id="customer_cusname" name="cusname" value="" size="15"
+                                   style="margin-left: 50px;">
+                            <label id="customer_cusname_time" class="control-label x200" style="font-size:8px;"></label>
+                        </td>
+                    </tr>
+
+                    <tr style="height: 38px">
+                        <td>
+                            <label class="control-label x130" style="font-size:18px;">电话(必填)</label>
+                            <input type="text" id="customer_mobile" name="mobile" value="" size="15"
+                                   style="margin-left: 50px;" data-rule="required;mobile">
+                            <label id="customer_mobile_time" class="control-label x200" style="font-size:8px;"></label>
+                        </td>
+                    </tr>
+                    <tr style="height: 38px">
+                        <td>
+                            <label class="control-label x130" style="font-size:18px;">小区</label>
+                            <input type="text" id="customer_village" name="village" value="" size="15"
+                                   style="margin-left: 50px;">
+                            <label id="customer_village_time" class="control-label x200" style="font-size:8px;"></label>
+                        </td>
+                    </tr>
+                    <tr style="height: 38px">
+                        <td>
+                            <label class="control-label x130" style="font-size:18px;">面积</label>
+                            <input type="text" id="customer_area" name="area" value="" size="15"
+                                   style="margin-left: 50px;" data-rule="number">
+                            <label id="customer_area_time" class="control-label x200" style="font-size:8px;"></label>
+                        </td>
+                    </tr>
+                    <tr style="height: 38px">
+                        <td>
+                            <label class="control-label x130" style="font-size:18px;">交房时间</label>
+                            <input type="text" id="customer_handoverdate" value="" size="15" name="handoverdate"
+                                   data-toggle="datepicker" data-rule="date" data-pattern="yyyy-MM-dd"
+                                   style="margin-left: 50px;">
+                            <label id="customer_handoverdate_time" class="control-label x200"
+                                   style="font-size:8px;"></label>
+                        </td>
+                    </tr>
+                    <tr style="height: 38px">
+                        <td>
+                            <label class="control-label x130" style="font-size:18px;">预算</label>
+                            <a style="margin-left: 50px;"></a>
+                            <select data-toggle="selectpicker" id="customer_newbudget" name="newbudget" data-width="70">
+                                <option value="">请选择</option>
+                                <option value="7万以下">7万以下</option>
+                                <option value="7万">7万</option>
+                                <option value="8万">8万</option>
+                                <option value="9万">9万</option>
+                                <option value="10万">10万</option>
+                                <option value="11万">11万</option>
+                                <option value="12万">12万</option>
+                                <option value="13万">13万</option>
+                                <option value="14万">14万</option>
+                                <option value="15万">15万</option>
+                                <option value="15万以上">15万以上</option>
+                            </select>
+                            <label id="customer_newbudget_time" class="control-label x200"
+                                   style="font-size:8px;"></label>
+                        </td>
+                    </tr>
+                    <tr style="height: 38px">
+                        <td>
+                            <label class="control-label x130" style="font-size:18px;">毛坯平层</label>
+                            <a style="margin-left: 50px;"></a>
+                            <select data-toggle="selectpicker" id="customer_roommodel" name="roommodel" data-width="70">
+                                <option value="">请选择</option>
+                                <option value="毛坯平层">毛坯平层</option>
+                                <option value="旧房平层">旧房平层</option>
+                                <option value="复式毛坯">复式毛坯</option>
+                                <option value="跃层毛坯">跃层毛坯</option>
+                                <option value="排屋毛坯">排屋毛坯</option>
+                                <option value="别墅毛坯">别墅毛坯</option>
+                                <option value="其他">其他</option>
+                            </select>
+                            <a id="room_a" class="hide"><input type="text" id="customer_roommodeldeatil"
+                                                               name="roommodeldeatil" value="" size="15"
+                                                               style="margin-left: 10px;"></a>
+                            <label id="customer_roommodeldeatil_time" class="control-label x200"
+                                   style="font-size:8px;"></label>
+                        </td>
+                    </tr>
+                    <tr style="height: 38px">
+                        <td>
+                            <label class="control-label x130" style="font-size:18px;">预售情况</label>
+                            <input type="text" id="customer_bookingsituation" name="bookingsituation" value="" size="15"
+                                   style="margin-left: 50px;">
+                            <label id="customer_bookingsituation_time" class="control-label x200"
+                                   style="font-size:8px;"></label>
+                        </td>
+                    </tr>
+                    <tr style="height: 38px">
+                        <td>
+                            <label class="control-label x130" style="font-size:18px;">邀约</label>
+                            <a style="margin-left: 50px;"></a>
+                           <!-- <select data-toggle="selectpicker" id="customer_marketactive" name="marketactive"
+                                    data-width="70">
+                            </select>
+                            <a id="time_a" class="hide"><input type="text" name="marktime" id="customer_marktime" value=""
+                             data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" data-min-date="{%y}-%M-%d" size="15" ></a>-->
+                            <!--<input class="hide" id="customer_marketactive" name="marketactive" value="其他"> </input>-->
+                            <input type="text" name="marktime" id="customer_marktime" value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss"  data-min-date="{%y}-%M-%d" size="15" >
+                            <label id="customer_marketactive_time" class="control-label x200" style="font-size:8px;"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="height: 40px;background-color:#D0D0D0">
+                            <label class="control-label" style="font-size:18px;">结果</label>
+                        </td>
+                    </tr>
+
+                    <tr style="height: 38px">
+                        <td colspan="4">
+                            <label class="control-label x130" style="font-size: 17px;">来源(必填)：</label>
+                            <a style="margin-left: 50px;"></a>
+                            <label class="control-label x78"  style="font-size: 14px;">新媒体社区</label>
+                            <a style="margin-left: 20px;"></a>
+                            <select data-toggle="selectpicker" id="customer_secondsource" name="secondsource" data-width="70">
+                                <option value="">请选择</option>
+                                <option value="杭州日报">杭州日报</option>
+                                <option value="杭州交通91.8">杭州交通91.8</option>
+                                <option value="都市快报">都市快报</option>
+                                <option value="钱江晚报">钱江晚报</option>
+                                <option value="西湖之声">西湖之声</option>
+                                <option value="天天看余杭">天天看余杭</option>
+                                <option value="滨江生活圈">滨江生活圈</option>
+                                <option value="箫内网">箫内网</option>
+                                <option value="行周末">行周末</option>
+                                <option value="余杭晨报">余杭晨报</option>
+                                <option value="滚叔街拍">滚叔街拍</option>
+                                <option value="杭州潮生活">杭州潮生活</option>
+                                <option value="杭州家居">杭州家居</option>
+                                <option value="杭州吃货">杭州吃货</option>
+                                <option value="私家车第一广播">私家车第一广播</option>
+                                <option value="大余杭">大余杭</option>
+                                <option value="最爱杭州">最爱杭州</option>
+                                <option value="杭州楼市">杭州楼市</option>
+                                <option value="杭州潮生活">杭州潮生活</option>
+                                <option value="杭州亲子">杭州亲子</option>
+                                <option value="美窝家装公众号">美窝家装公众号</option>
+                                <option value="工地回单">工地回单</option>
+                                <option value="口碑回单">口碑回单</option>
+                                <option value="其他">其他</option>
+                            </select>
+                            <a id="other_a" class="hide"> <input type="text" id="customer_thirdsource"
+                                                                 name="thirdsource" value=""
+                                                                 size="15"
+                                                                 style="margin-left: 20px;"></a>
+
+                        </td>
+                    </tr>
+
+                    <tr style="height: 38px">
+                        <td colspan="4">
+                            <label class="control-label x130" style="font-size: 17px;">是否意向客户(必填)：</label>
+                            <a style="margin-left: 50px;"></a>
+                            <select data-toggle="selectpicker" id="customer_intentiontype" name="Intentiontype"
+                                    data-width="170" data-rule="required">
+                                <option value="">请选择</option>
+                                <option value="意向客户">意向客户</option>
+                                <option value="非意向(无人接听/关机)">非意向(无人接听/关机)</option>
+                                <option value="非意向(随便注册)">非意向(随便注册)</option>
+                                <option value="非意向(直接挂断)">非意向(直接挂断)</option>
+                                <option value="非意向(本市非服务范围内)">非意向(本市非服务范围内)</option>
+                                <option value="非意向(外地)">非意向(外地)</option>
+                                <option value="非意向(不足70㎡)">非意向(不足70㎡)</option>
+                                <option value="非意向(房子已装修好)">非意向(房子已装修好)</option>
+                                <option value="非意向(房子太旧)">非意向(房子太旧)</option>
+                                <option value="非意向(大于180㎡)">非意向(大于180㎡)</option>
+                                <option value="非意向(户型不符)">非意向(户型不符)</option>
+                                <option value="非意向(其他)">非意向(其他)</option>
+                            </select>
+                            <a id="intent_a" class="hide"><input type="text" id="customer_intentiontypedeatil" name="intentiontypedeatil" value=""
+                                                                 size="15" style="margin-left: 10px;"></a>
+                            <a style="margin-left: 20px"><input type="checkbox" id="customer_giveup_ts" data-toggle="icheck" data-label="放弃该客户"></a>
+                        </td>
+                    </tr>
+
+                    <tr style="height: 60px">
+                        <td>
+                            <label class="control-label x130" style="font-size: 18px;">备注(500字)：</label>
+                            <a style="margin-left: 50px;"></a>
+                            <textarea id="customer_details" name="details" data-toggle="autoheight" cols="65"
+                                      data-width="100%"
+                                      rows="2" maxlength="500"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="td_b">
+                            <label class="control-label x130" style="font-size:18px;">下次跟进时间(必填)</label>
+                            <a style="margin-left: 50px;"></a>
+                            <a><input type="text" name="nextfellowtime" id="customer_nextfellowtime" value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" data-min-date="{%y}-%M-%d" size="15" data-rule="required;datetime"></a>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div class="roleRight"
+             style="border: 0px solid green;width: 50% !important;position: relative;height: 85.5%;float: left;">
+            <div id="customer_adddiv" class="bjui-pageContent" style="margin-left: 1px;">
+
+                <div style="height: 40px;background-color:#D0D0D0">
+                    <label class="control-label" style="font-size:18px;margin-top: 11px;">其他信息</label>
+                </div>
+
+                <textarea name="otherdetail" id="customer_otherdetail" class="j-content" data-toggle="kindeditor"
+                          data-width="100%" data-height="675px">
+
+				</textarea>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+        <li>
+            <button type="button" class="btn-default" data-icon="save" onclick="media_save_onclick()">保存</button>
+        </li>
+    </ul>
+</div>

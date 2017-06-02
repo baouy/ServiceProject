@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+        //展示获取的采购单列表
+        $("#delivery_apply_selecte_lsit").datagrid({
+            local: 'remote',
+            dataUrl: '/v1/myother/getapplydeliverylist',
+            dataType: 'json',
+            sortAll: true,
+            loadType: 'get',
+            filterAll: true,
+            height:'95%',
+            columns: [
+                {name: 'orderno', width: '150', label: '发货申请单号'},
+
+                {name: 'custname', width: '150', label: '客户姓名'},
+                {name: 'salesorderdoc', width: '150', label: '销售单号'},
+
+                {name: 'businessdate', width: '150', label: '申请日期'},
+                {name: 'requiredate', width: '150', label: '要求日期'},
+                {name: 'requiretime', width: '150', label: '要求时间'},
+
+                {name: 'receiveduser', width: '150', label: '收货人'},
+                {name: 'receivedaddress', width: '150', label: '收货地址'},
+                {name: 'state', width: '150', label: '状态'},
+                {name: 'receivedphone', width: '150', label: '收货人手机',hide: true},
+                {name: 'contractdoc', width: '150', label: '合同号',hide: true},
+                {name: 'contractid', width: '150', label: '合同ID',hide: true},
+                {name: 'id', width: '80', label: '主键', hide: true}
+
+            ],
+            showLinenumber: true,
+            paging: {pageSize: 20, selectPageSize: '50,80', pageCurrent: 1},
+            columnMenu: true,
+            columnShowhide: true,
+            columnFilter: true,
+            columnLock: false,
+            fullGrid: false
+        })
+        function sales_order_select() {
+            var orderno = "'"+$("#delivery_apply_selecte_lsit .datagrid-selected-tr>td:eq(1)").text()+"'";//供应商编码
+            var custname =  "'"+$("#delivery_apply_selecte_lsit .datagrid-selected-tr>td:eq(2)").text()+"'";//供应商名称
+            var salesorderdoc = "'"+$("#delivery_apply_selecte_lsit .datagrid-selected-tr>td:eq(3)").text()+"'";
+            var businessdate = "'"+$("#delivery_apply_selecte_lsit .datagrid-selected-tr>td:eq(4)").text()+"'";
+            var requiredate = "'"+$("#delivery_apply_selecte_lsit .datagrid-selected-tr>td:eq(5)").text()+"'";
+            var requiretime = "'"+$("#delivery_apply_selecte_lsit .datagrid-selected-tr>td:eq(6)").text()+"'";
+            var receiveduser = "'"+$("#delivery_apply_selecte_lsit .datagrid-selected-tr>td:eq(7)").text()+"'";
+            var receivedaddress = "'"+$("#delivery_apply_selecte_lsit .datagrid-selected-tr>td:eq(8)").text()+"'";
+            var state = "'"+$("#delivery_apply_selecte_lsit .datagrid-selected-tr>td:eq(9)").text()+"'";
+            var receivedphone = "'"+$("#delivery_apply_selecte_lsit .datagrid-selected-tr>td:eq(10)").text()+"'";
+            var contractdoc = "'"+$("#delivery_apply_selecte_lsit .datagrid-selected-tr>td:eq(11)").text()+"'";
+            var contractid = "'"+$("#delivery_apply_selecte_lsit .datagrid-selected-tr>td:eq(12)").text()+"'";
+            var id = "'"+$("#delivery_apply_selecte_lsit .datagrid-selected-tr>td:eq(13)").text()+"'";
+            //将获取的值封装好,回传
+            $("#selected_order").attr("data-args","{orderno:"+orderno+","+"custname:"+custname+","+"salesorderdoc:"+salesorderdoc+","
+                    +"businessdate:"+businessdate+","+"requiredate:"+requiredate+","+"requiretime:"+requiretime+","
+                    +"receiveduser:"+receiveduser+","+"receivedaddress:"+receivedaddress+","+"state:"+state+","
+                    +"contractdoc:"+contractdoc+","+"contractid:"+contractid+","
+                    +"receivedphone:"+receivedphone+"}");
+
+            var selected = $("#delivery_apply_selecte_lsit").find('tr.datagrid-selected-tr');
+            //获取套餐名称
+//            var typename = selected.find('td').eq(2)[0].innerText;
+            $.ajax({
+                url: '/v1/myother/getapplydeliverydetaillist',
+                dataType: 'json',
+                type: 'GET',
+                data: {
+                    id: selected[0].lastChild.innerText,
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    var html = "";
+                    if (d.state == 200) {
+                        //各数量,添加合计栏时计算
+                        //构造html代码
+                        for (var i = 0; i < d.data.length; i++) {
+                            //需要合计的三个值
+                            var warehousename=$("#warehousename").val();
+                            var applyqty=d.data[i].actualapplyqty-d.data[i].recqty;
+                            html += "<tr>" +
+                                    "<td style='width: 3%'><input   type=text name='delivery_apply[" + i + "].linenum' readonly=true class='form-control linenum' value=''></td>" +
+                                    "<td style='width: 4%'><input   type=text name='delivery_apply[" + i + "].linestate' readonly=true class='form-control linestate' value=''></td>" +
+                                    "<td style='width: 12%'><input   type=text name='delivery_apply[" + i + "].itemno' readonly=true class='form-control itemno' value='" + d.data[i].itemno + "'></td>" +
+                                    "<td style='width: 28%'><input   type=text name='delivery_apply[" + i + "].partname' readonly=true class='form-control partname' value='" + d.data[i].partname + "'></td>" +
+                                    "<td style='width: 3%'><input   type=text name='delivery_apply[" + i + "].warehousename' readonly=true class='form-control warehousename' value=" + warehousename + "></td>" +
+                                    "<td style='width: 3%'><input   type=text name='delivery_apply[" + i + "].locationname' readonly=true class='form-control locationname' value=''></td>" +
+                                    "<td style='width: 3%'><input   type=text name='delivery_apply[" + i + "].funit' readonly=true class='form-control funit' value=" + d.data[i].funit + "></td>" +
+                                    "<td style='width: 3%'><input   type=text name='delivery_apply[" + i + "].grossweight' readonly=true class='form-control grossweight' value=" + d.data[i].grossweight + "></td>" +
+                                    "<td style='width: 3%'><input   type=text name='delivery_apply[" + i + "].unitweight' readonly=true class='form-control unitweight' value=" + d.data[i].unitweight + "></td>" +
+                                    "<td style='width: 3%'><input   type=text name='delivery_apply[" + i + "].planapplyqty' readonly=true class='form-control planapplyqty' value=" + d.data[i].actualapplyqty + "></td>" +
+                                    "<td style='width: 3%'><input   type=text name='delivery_apply[" + i + "].applyqty'  class='form-control applyqty' value=" + applyqty + " onchange='count_add(this.parentNode.parentNode)'></td>" +
+                                    "<td style='width: 8%'><input   type=text name='delivery_apply[" + i + "].partspec' readonly=true class='form-control partspec' value='" + d.data[i].partspec + "'></td>" +
+                                    "<td style='width: 3%'><input   type=text name='delivery_apply[" + i + "].partstyle' readonly=true class='form-control partstyle' value='" + d.data[i].partstyle + "'></td>" +
+                                    "<td style='width: 3%'><input   type=text name='delivery_apply[" + i + "].colorlevel' readonly=true class='form-control colorlevel' value='" + d.data[i].colorlevel + "'></td>" +
+                                    "<td style='width: 3%'><input   type=text name='delivery_apply[" + i + "].material' readonly=true class='form-control material' value='" + d.data[i].material + "'></td>" +
+                                    "<td style='width: 3%'><input   type=text name='delivery_apply[" + i + "].brand' readonly=true class='form-control brand' value='" + d.data[i].brand + "'></td>" +
+                                    "<td style='width: 3%'><input   type=text name='delivery_apply[" + i + "].sourcenum' readonly=true class='form-control sourcenum' value=" + d.data[i].orderno + "></td>" +
+                                    "<td style='width: 3%'><input   type=text name='delivery_apply[" + i + "].soucrelinenum' readonly=true class='form-control soucrelinenum' value=" + d.data[i].linenum + "></td>" +
+                                    "<td style='width: 3%'><input   name='delivery_apply[" + i + "].recqty'  value=0 class='form-control recqty' readonly=true></td>" +
+                                    "<td style='width: 3%'><input   name='delivery_apply[" + i + "].receivedqty'  value=0 class='form-control receivedqty' ></td>" +
+//                                    "<td><input class='form-control sodoc'readonly=true name='delivery_apply[" + i + "].sodoc' value=" + d.data[i].sodoc + "></td>" +
+                                    "<input   class='form-control itemid' type=hidden readonly=true name='delivery_apply[" + i + "].itemid' value=" + d.data[i].itemid + " >" +
+                                    "<input   class='form-control salesorderno' type=hidden readonly=true name='delivery_apply[" + i + "].salesorderno' value=" + d.data[i].sourcenum + " >" +
+                                    "<input   class='form-control salesorderlinenum' type=hidden readonly=true name='delivery_apply[" + i + "].salesorderlinenum' value=" + d.data[i].soucrelinenum + " >" + "</tr>";
+                        }
+
+                        var html2 = "<table class='table table-bordered table-hover table-striped bjui-tabledit'><tr>" +
+                                "<td  style='width: 3%'><input   class='form-control'  value='合计'></td>" +
+                                "<td style='width: 4%'><input   type='text'  class='form-control' value></td>" +
+                                "<td style='width: 12%'><input   type='text'  class='form-control' value></td>" +
+                                "<td style='width: 28%'><input   type='text'  class='form-control' value></td>" +
+                                "<td style='width: 3%'><input   type='text'  class='form-control' value></td>" +
+                                "<td style='width: 3%'><input   type='text'  class='form-control' value></td>" +
+                                "<td style='width: 3%'><input   type='text'  class='form-control' value></td>" +
+                                "<td style='width: 3%'><input   type='text'  class='form-control' value></td>" +
+                                "<td style='width: 3%'><input   type='text'  class='form-control' value></td>" +
+                                "<td style='text-align: center;width: 3%'><input   type='text' id='countunitqty' readonly=true class='form-control' value=0></td>" +
+                                "<td style='text-align: center;width: 3%'><input   type='text' id='countmodifyunitqty' readonly=true class='form-control' value=0></td>" +
+                                "<td style='width: 8%'><input   type='text'  class='form-control' value></td>" +
+                                "<td style='width: 3%'><input   type='text'  class='form-control' value></td>" +
+                                "<td style='width: 3%'><input   type='text'  class='form-control' value></td>" +
+                                "<td style='width: 3%'><input   type='text'  class='form-control' value></td>" +
+                                "<td style='width: 3%'><input   type='text'  class='form-control' value></td>" +
+                                "<td style='width: 3%'><input   type='text'  class='form-control' value></td>" +
+                                "<td style='width: 3%'><input   type='text'  class='form-control' value></td>" +
+                                "<td style='text-align: center;width: 3%'><input   type='text' id='countmodifyqty' readonly=true class='form-control' value=0></td>" +
+                                "<td style='text-align: center;width: 3%'><input   type='text' id='countchangeqty' readonly=true class='form-control' value=0></td>" +
+                                "</tr></table>";
+
+                        $("#delivery_order_add tbody").html(html);
+
+                        $("#delivery_add_count").html(html2);
+                        count_add();
+                        //让选择的行变成class变成selected，其他行变成readonly
+                        $("#delivery_order_add tbody tr").click(function () {
+                            $(this).removeClass("readonly")
+                                    .addClass("selected").siblings("tr").removeClass("selected")
+                                    .addClass("readonly");
+                        })
+                        //关闭对话
+//                        BJUI.dialog('closeCurrent',this);
+                    } else  {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <div style="margin-bottom:18px;">
+        <!--获取选择行数据-->
+        <a href="javascript:;" data-toggle="lookupback" onclick="sales_order_select()" class="btn btn-blue" data-args=""
+           title="选择本项" data-icon="check" id="selected_order"><i class="fa fa-check"></i> 选择</a>
+        <button type="button" class="btn-close btn" data-icon="close"><i class="fa fa-close"></i> 关闭</button>
+    </div>
+    <table id="delivery_apply_selecte_lsit">
+
+    </table>
+</div>
+</body>
+</html>

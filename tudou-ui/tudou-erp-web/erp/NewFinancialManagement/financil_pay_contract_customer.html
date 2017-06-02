@@ -1,0 +1,146 @@
+<script>
+	$('#tinvoice_custid_fk').val(s_c_id)
+	$('#tinvoice_mobile').val(s_c_mobile)
+	$('#tinvoice_username').val(s_c_cusname)
+
+	$.ajax({
+		url: '/v1/newfinancial/get_deposit',
+		dataType: 'json',
+		async: true,
+		type: 'GET',
+		data:{
+			'custid_fk':s_c_id
+		},
+		crossDomain: true,
+		success: function (d) {
+			if (d.state == 200) {
+				$('#tinvoice_money_ing').html(d.data.havepayamount);
+				$('#tinvoice_havepayamount').val(d.data.havepayamount)
+				if (d.data.id != null){
+					$('#tinvoice_id').val(d.data.id);
+					$('#tinvoice_contractdoc').val(d.data.contractdoc)
+				}
+				if (d.data.stateid == 51){
+					$(this).alertmsg('warn', '客户合同已经审核,无法继续收款!')
+					$('#tinvoice_savebtn').attr("class", "hide");
+				}
+				if (d.data.contractamount > 0){
+					var bf = (d.data.contractamount *0.95) - d.data.havepayamount
+					$('#tinvoice_paymentamount').val(bf.toFixed(2));
+				}
+				$('#tinvoice_contractamount').val(d.data.contractamount);
+
+			}
+		}
+	});
+
+	$('#tinvoice_contractamount').blur(function(){
+
+		var a = parseFloat($('#tinvoice_contractamount').val())
+		a = isNaN(a)?0.0:a;
+		var b = parseFloat($('#tinvoice_money_ing').html())
+		b = isNaN(b)?0.0:b;
+
+		var af = a*0.95 - b
+		if (af < 0){
+			$(this).alertmsg('warn', '合同总额不得小于已付款')
+			return;
+		}
+
+		$('#tinvoice_paymentamount').val(af.toFixed(2));
+	});
+
+	function saveCalback(json) {
+		if (json.state == 200) {
+			$('#tinvoice_savebtn').attr("class", "hide");
+			jQuery('#output').qrcode({
+				width: 120,
+				height: 120,
+				background: "#ffffff",
+				foreground: "#000000",
+				text: json.data
+			});
+		}
+	}
+	
+	function pay_contract_onclick() {
+
+		var a = parseFloat($('#tinvoice_contractamount').val())
+		a = isNaN(a)?0.0:a;
+
+		var b = parseFloat($('#tinvoice_money_ing').html())
+		b = isNaN(b)?0.0:b;
+
+		var c = parseFloat($('#tinvoice_paymentamount').val())
+		c = isNaN(c)?0.0:c;
+
+		var af = a - b
+		if (af < 0){
+			$(this).alertmsg('warn', '合同总额不得小于已付款')
+			return;
+		}
+
+		var bf = (a *0.95) - b
+		if (c > bf){
+			$(this).alertmsg('warn', '收款金额不得高于合同总额的95%')
+			return;
+		}
+
+		$('#financil_pay_contract_customer').submit()
+	}
+
+</script>
+<div class="bjui-pageContent" style="height: 100%;">
+	<form action="/v1/newfinancial/pay_contract" id="financil_pay_contract_customer" data-toggle="validate"
+		  data-callback="saveCalback"
+		  style="width:100%;">
+
+		<input type="hidden" value="合同" name="paymenttype">
+		<input type="hidden" value="" id="tinvoice_id" name="id">
+		<input type="hidden" value="" id="tinvoice_custid_fk" name="custid_fk">
+		<input type="hidden" value="" id="tinvoice_mobile" name="mobile">
+		<input type="hidden" value="" id="tinvoice_havepayamount" name="havepayamount">
+		<input type="hidden" value="" id="tinvoice_username" name="username">
+		<input type="hidden" value="" id="tinvoice_contractdoc" name="contractdoc">
+
+		<table class="table table-condensed table-hover">
+			<tbody>
+			<tr>
+				<td>
+					<label class="control-label x150" style="font-size:18px;">已付款:</label>
+					<label type="text" id="tinvoice_money_ing" value=""  size="15" style="margin-left: 20px;"></label>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label class="control-label x150" style="font-size:18px;">合同总款:</label>
+					<input type="text" id="tinvoice_contractamount" name="contractamount" value="" size="15" style="margin-left: 20px;" data-rule="required number">
+				</td>
+
+			</tr>
+			<tr>
+				<td>
+					<label class="control-label x150" style="font-size:18px;">本次交款:</label>
+					<input type="text" id="tinvoice_paymentamount" name="paymentamount" value="" size="15" style="margin-left: 20px;" data-rule="required number">
+				</td>
+
+			</tr>
+
+			</tbody>
+		</table>
+	</form>
+	<div id="output" style="margin-left: 170px;margin-top: 15px;">
+
+	</div>
+</div>
+
+<div class="bjui-pageFooter">
+	<ul>
+		<li>
+			<button type="button" class="btn-close" data-icon="close">取消</button>
+		</li>
+		<li>
+			<button type="button" class="btn-default" data-icon="save" id="tinvoice_savebtn" onclick="pay_contract_onclick()">保存</button>
+		</li>
+	</ul>
+</div>

@@ -1,0 +1,185 @@
+<html>
+
+<head>
+    <script type="text/javascript">
+        var formItems = ["id", "orderno", "parentid", "rightname", "righttype", "description", "system", "systemid", "picture", "menupath", "menutype"];
+
+        function editMenuDialog() {
+            var treeObj = $.fn.zTree.getZTreeObj("menu-all-ztree");
+            var nodes = treeObj.getSelectedNodes();
+            if (nodes == null || nodes.length == 0) {
+                $(this).alertmsg('error', '请选择要操作的对象。');
+            } else if (nodes.length > 1) {
+                $(this).alertmsg('error', '请选择唯一的操作对象。');
+            } else {
+                $(this).dialog({
+                    id: 'rolemenu_edit',
+                    url: 'SystemManagement/menu_edit.html',
+                    title: '编辑菜单',
+                    width: '800',
+                    height: '300',
+                    mask: true
+                });
+
+                $.ajax({
+                    url: '/v1/roledata/get_menu?ids=' + nodes[0].id,
+                    dataType: 'json',
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        var num = 0;
+                        $.each(d.data, function (index, item) {
+                            console.log(formItems[num] + "=" + item);
+                            if (index == "righttype") {
+                                $.CurrentDialog.find("#rolemenu_" + formItems[num]).selectpicker('val', item);
+                            } else if (index == "systemid") {
+                                $.CurrentDialog.find("#rolemenu_" + formItems[num]).selectpicker('val', item);
+                            } else {
+                                $.CurrentDialog.find("#rolemenu_" + formItems[num]).val(item);
+                            }
+                            num++;
+                        });
+                    }
+                });
+            }
+        }
+
+
+        function menu_new() {
+            var treeObj = $.fn.zTree.getZTreeObj("menu-all-ztree");
+            var nodes = treeObj.getSelectedNodes();
+            if (nodes != null && nodes.length == 1) {
+                $(this).dialog({
+                    id: 'menu_new',
+                    url: 'SystemManagement/menu_new.html',
+                    title: '新增菜单',
+                    width: '800',
+                    height: '300',
+                    mask: true
+                });
+            } else {
+                $(this).alertmsg('warn', '请选择一个菜单作为父级！');
+            }
+
+        }
+        function menu_add() {
+            var treeObj = $.fn.zTree.getZTreeObj("menu-all-ztree");
+            var nodes = treeObj.getSelectedNodes();
+            $.ajax({
+                url: '/v1/roledata/menu_add',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    parentid: nodes[0].id,
+                    rightname: $("#rolemenu_rightname").val(),
+                    orderno: $("#rolemenu_orderno").val(),
+                    menupath: $("#rolemenu_menupath").val(),
+                    righttype: $("#rolemenu_righttype").val(),
+                    description: $("#rolemenu_description").val(),
+                    systemid: $("#rolemenu_systemid").val(),
+                    picture: $("#rolemenu_picture").val(),
+                    menutype: $("#rolemenu_menutype").val()
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.dialog("close", "menu_new");
+                        var zTree = $.fn.zTree.getZTreeObj("menu-all-ztree");
+                        zTree.reAsyncChildNodes(null, "refresh");
+                        setTimeout(function () {
+                            var zTree2 = $.fn.zTree.getZTreeObj("menu-all-ztree");
+                            var node = zTree2.getNodeByParam("id", nodes[0].id, null);
+                            zTree2.expandNode(node, true, true, true);
+                        }, 300);
+                    } else {
+                        $(this).alertmsg('warn', '添加失败!');
+                    }
+                }
+            });
+        }
+
+        function menu_delete_alert() {
+            var zTree = $.fn.zTree.getZTreeObj("menu-all-ztree");
+            var nodes = zTree.getSelectedNodes();
+            if (nodes == null || nodes.length == 0) {
+                $(this).alertmsg('error', '请在列表中选择要操作的对象。');
+            } else {
+                $(this).alertmsg('confirm', '确定删除吗?', {okCall: 'menu_deleteItesm'});
+            }
+
+        }
+
+        function menu_deleteItesm() {
+            var zTree = $.fn.zTree.getZTreeObj("menu-all-ztree");
+            var nodes = zTree.getSelectedNodes();
+            var arr = [];
+            for (var i = 0; i < nodes.length; i++) {
+                arr.push(nodes[i].id);
+            }
+            $(this).alertmsg('confirm', '确定删除吗?', {
+                okCall: $.ajax({
+                    url: '/v1/roledata/delete_menu?ids=' + arr.toString(),
+                    dataType: 'json',
+                    type: 'POST',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        if (d.state == 200) {
+                            $(this).alertmsg('ok', '操作成功');
+                            zTree.reAsyncChildNodes(null, 'refresh');
+                        }
+                    }
+                })
+            });
+        }
+    </script>
+</head>
+
+<body>
+
+<div class="bjui-pageContent">
+    <div style="margin:0px 0px 10px 0px;">
+        <button type="button" class="btn btn-blue" data-icon="plus" onclick="menu_new()"><i class="fa fa-plus"></i>
+            添加
+        </button>
+
+        <button type="button" class="btn btn-green" data-icon="edit" onclick="editMenuDialog()"><i
+                class="fa fa-edit"></i> 编辑
+        </button>
+
+        <button type="button" class="btn btn-red" data-icon="times" onclick="menu_delete_alert()"><i
+                class="fa fa-times"></i> 删除
+        </button>
+    </div>
+    <div style="margin:0px 0px 10px 0px;border: 1px solid #c0c0c0;height: 93%;overflow: auto">
+        <ul id="menu-all-ztree" class="ztree" data-on-click="test" data-on-check="test" data-radio-type="all"
+            data-expand-all="true" data-toggle="ztree"
+            data-setting="{
+                            async:
+                            {
+                                enable: true,
+                                url:'/v1/roledata/menulist3',
+                                autoParam: ['id','parentid'],
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                type:'get'
+                            },view: {
+                                selectedMulti: true
+                            }
+                         }"></ul>
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

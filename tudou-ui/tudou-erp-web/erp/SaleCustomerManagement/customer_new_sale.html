@@ -1,0 +1,301 @@
+<script>
+
+	var sale_edit_type = 0;
+	var sale_foot_idx = 0;
+	$('#customer_new_sale').datagrid({
+		local: 'remote',
+		dataUrl: '/v1/newcustomer/sale_customerlist', // v2全部为自己部门的客户 // v1 ?custsalesid=1', // 1表示不为空，0表示为空
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height:'95%',
+		columns:
+				[
+				    {name: 'nextfellowtime', width: '150', label: '下次沟通时间',type:'date',pattern:'yyyy-MM-dd'},
+					{name: 'completion', width: '60', label: '完成度'},
+					{name: 'intentiontype', width: '95', label: '意向度',type:'select',items: [{'意向客户': '意向客户'}, {'非意向': '非意向'}]},
+					{name: 'cusname', width: '70', label: '姓名'},
+					{name: 'mobile', width: '90', label: '电话'},
+					{name: 'village', width: '100', label: '小区名称'},
+					{name: 'roommodel', width: '70', label: '毛坯平层',type:'select',items: [{'毛坯平层': '毛坯平层'}, {'旧房平层': '旧房平层'}, {'复式毛坯': '复式毛坯'}, {'跃层毛坯': '跃层毛坯'}, {'排屋毛坯': '排屋毛坯'}, {'别墅毛坯': '别墅毛坯'}, {'其他': '其他'}, {'0':'未填写'}]},
+					{name: 'newbudget', width: '70', label: '预算',type:'select',items: [{'7万以下': '7万以下'}, {'7万': '7万'}, {'8万': '8万'}, {'9万': '9万'}, {'10万': '10万'}, {'11万': '11万'}, {'12万': '12万'}, {'13万': '13万'}, {'14万': '14万'}, {'15万': '15万'}, {'15万以上': '15万以上'}, {'0':'未填写'}]},
+                    {name: 'area', width: '70', label: '面积',type:'select',items: [{'1': '70㎡以下'}, {'2': '70㎡-80㎡'}, {'3':'80㎡-90㎡'},{'4': '90㎡-100㎡'}, {'5': '100㎡-110㎡'}, {'6':'110㎡-120㎡'}, {'7':'120㎡以上'},{'0':'未填写'}]},
+					{name: 'roomstatus', width: '70', label: '交房状态',type:'select',items: [{'现房': '现房'}, {'期房': '期房'}, {'0':'未填写'}]},
+					{name: 'followdate', width: '100', label: '最后一次跟进时间'},
+					{name: 'followdetails', width: '200', label: '最后一次跟进内容'},
+					{name: 'state', width: '90', label: '状态',type:'select',items: [{'新增': '新增'},{'待跟进': '待跟进'}, {'已邀约': '已邀约'}, {'已分配': '已分配'}, {'已签到': '已签到'}, {'接待中': '接待中'}, {'已付定金': '已付定金'},{'已签约': '已签约'},{'施工中': '施工中'},{'已竣工': '已竣工'}]},
+					{name: 'details', width: '150', label: '备注(关注点)'},
+					{name: 'marktime', width: '150', label: '到场时间'},
+					{name: 'record', width: '150', label: '来源备注'},
+                    {name: 'source', width: '150', label: '报名渠道来源',type:'select',items:function(){
+                        return source_content;
+                    }},
+                    {name: 'mobilesalesdepname', width: '70', label: '美客部门',type:'select',items:function(){
+                        return mobilesalesdepname_content;
+                    }},
+                    {name: 'mobilesales', width: '70', label: '美客员',type:'select',items:function(){
+                        return mobilesales_content;
+                    }},
+                    {name: 'custsalesdepname', width: '70', label: '销售部门',type:'select',items:function(){
+                        return custsalesdepname_content;
+                    }},
+                    {name: 'custsales', width: '70', label: '客户经理',type:'select',items:function(){
+                        return custsales_content;
+                    }},
+                    {name: 'designer', width: '70', label: '设计师',type:'select',items:function(){
+                        return designers_content;
+                    }},
+                    {name: 'bookingsituation', width: '70', label: '预售情况'},
+					{name: 'orgname', width: '70', label: '组织'},
+					{name: 'createtime', width: '150', label: '创建时间',type:'date',pattern:'yyyy-MM-dd'},
+					{name: 'lasttime', width: '150', label: '更新时间',type:'date',pattern:'yyyy-MM-dd'},
+				],
+		paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+		hiddenFields: ['id','custsalesid'],
+		columnMenu: true,
+		columnShowhide: true,
+		columnFilter: true,
+		columnLock: false,
+		fullGrid: false,
+		dblOnClick: 'dbClickOneRow',
+		clickRow: 'clickOneRow',
+        headSureBack:'head_common_mobileAndsales'
+	});
+
+	var s_c_id=-1,s_c_ids,sale_id;
+    function clickOneRow() {
+        var selected = $("#customer_new_sale").data('selectedDatas');
+        if (null != selected || selected[0].id != s_c_id){
+            s_c_id = selected[0].id;
+            foot_sale_tab_change(sale_foot_idx);
+        }
+    }
+
+    function dbClickOneRow() {
+        var selected = $("#customer_new_sale").data('selectedDatas');
+        if (null == selected || selected.length == 0) {
+            $(this).alertmsg('warn', '请在列表中选择要操作的对象。');
+        } else {
+            s_c_id = selected[0].id;
+            sale_id = selected[0].custsalesid;
+
+            sales_show_details("#customer_new_sale");
+        }
+    }
+
+    /** 销售-人员分配公用函数*/
+    function sale_distribution_onclick(name,tt,htl) {
+        var selected = $(name).data('selectedDatas');
+        if (null == selected || selected.length == 0) {
+            $(this).alertmsg('warn', '请在列表中选择要操作的对象。');
+        } else {
+            s_c_id = selected[0].id;
+            s_c_ids = new Array();
+            var isPay = true;
+            for (var i = 0; i < selected.length; i++){
+                if(isPay && selected[i].state != '已付定金' && selected[i].state != '已签约' && selected[i].state != '施工中'){
+                    isPay = false;
+				}
+                s_c_ids.push(selected[i].id);
+            }
+            if(tt=='分配设计师' && !isPay){
+                $(this).alertmsg('warn', '分配设计师，必须是[已付定金/已签约/施工中]的客户订单');
+                return;
+            }
+            $(this).dialog({
+                title: tt,
+                url: "SaleCustomerManagement/"+htl,
+                width: 800,
+                height: 600,
+                mask: true
+            });
+        }
+    }
+
+    var s_c_mobile,s_c_cusname
+    function sale_pay_onclick(name,tt,htl) {
+		var selected = $(name).data('selectedDatas');
+		if (selected == null) {
+			$(this).alertmsg('warn', '请在列表中选择要操作的对象。');
+		} else {
+			s_c_id = selected[0].id;
+			s_c_mobile = selected[0].mobile
+			s_c_cusname = selected[0].cusname
+			$(this).dialog({
+				title: tt,
+				url: "NewFinancialManagement/"+htl,
+				width: 500,
+				height: 300,
+				mask: true
+			});
+		}
+    }
+
+    var refresh_s;
+    function sale_changeValue(num){
+        s_c_id = -1;
+        s_c_ids = [];
+		refresh_s = "refresh";
+        sale_edit_type = num;
+        setTimeout(function(){
+            sales_tab_refresh();
+        },300);
+    }
+
+    /** 对应tab 数据刷新 */
+    function sales_tab_refresh(){
+        var currTab = null;
+        switch (sale_edit_type){
+            case 0:
+                currTab ="#customer_new_sale";
+                break;
+            case 1:
+                currTab ="#customer_new_sale_tab-toBeAssigned";
+                break;
+            case 2:
+                currTab ="#customer_new_sale_tab-toBeFollowing";
+                break;
+            case 3:
+                currTab ="#customer_new_sale_tab-downPayment";
+                break;
+            case 4:
+                currTab ="#customer_new_sale_tab-toBeInvited";
+                break;
+        }
+        if(null != currTab) {
+            if(null != refresh_s){
+                refresh_s = null;
+                $(currTab).datagrid("refresh");
+			}else{
+                $(currTab).datagrid("refresh_part");
+			}
+
+            $(currTab).data('selectedDatas', null);
+		}
+        foot_sale_tab_change(sale_foot_idx);
+    }
+
+    /** 页脚 跟进/收款信息等Tab加载、刷新 */
+    function sales_fllows_refresh(){
+        foot_sale_tab_change(sale_foot_idx);
+    }
+
+    /** 销售 查看详情 @param #tb */
+    function sales_show_details(tb) {
+        var selected = $(tb).data('selectedDatas');
+        if (null == selected || selected.length == 0) {
+            $(this).alertmsg('warn', '请在列表中选择要操作的对象。');
+        } else {
+            s_c_id = selected[0].id;
+            $(this).dialog({
+                title: "客户详情",
+                url: "SaleCustomerManagement/sale_follow_edit.html",
+                width: 1800,
+                height: 900,
+                mask: true
+            });
+        }
+    }
+
+    function foot_sale_tab_change(idx) {
+        var currTab ,currHtl;
+        sale_foot_idx = idx;
+        switch (idx) {
+            case 0:
+                currTab = "#sale_follow_table";
+				currHtl = "sale_follow_table.html";
+                break;
+            case 1:
+               currTab = "#invoice_follow_div";
+               currHtl = "invoice_follow_table.html";
+                break;
+            case 2:
+                currTab = "#contract_follow_div";
+                currHtl = "financil_contract_table.html";
+                break;
+        }
+        if (null != currTab) {
+            setTimeout(function(){ // tab 切换 样式延迟
+                $(this).bjuiajax('doLoad', {
+                    url: 'SaleCustomerManagement/'+currHtl,
+                    target: currTab,
+                    loadingmask: false
+                });
+            },300);
+        }
+    }
+</script>
+<body>
+<div class="bjui-pageContent">
+<div style="border: 0px solid green;width: 100% !important;position: relative;height: 60%;">
+	<ul class="nav nav-tabs" role="tablist" id="btn_list">
+		<li class="active">
+			<a style="font-size: 13px" href="#sale_table_all" role="tab" data-toggle="tab" onclick="sale_changeValue(0)">全部客户</a>
+		</li>
+		<!--<li>
+			<a style="font-size: 13px" href="SaleCustomerManagement/customer_new_sale_tab-toBeAssigned.html" role="tab" data-toggle="ajaxtab" data-target="#sale_table_toBeAssigned" data-reload="false" onclick="sale_changeValue(1)">待分配</a>
+		</li>
+		<li>
+			<a style="font-size: 13px" href="SaleCustomerManagement/customer_new_sale_tab-toBeFollowing.html" role="tab" data-toggle="ajaxtab" data-target="#sale_table_toBeFollowing" data-reload="false" onclick="sale_changeValue(2)">待跟进</a>
+		</li>-->
+		<li>
+			<a style="font-size: 13px" href="SaleCustomerManagement/customer_new_sale_tab-toBeInvited.html" role="tab" data-toggle="ajaxtab" data-target="#sale_table_toBeInvited" data-reload="false" onclick="sale_changeValue(4)">已邀约</a>
+		</li>
+		<li>
+			<a style="font-size: 13px" href="SaleCustomerManagement/customer_new_sale_tab-downPayment.html" role="tab" data-toggle="ajaxtab" data-target="#sale_table_downPayment" data-reload="false" onclick="sale_changeValue(3)">已交定金</a>
+		</li>
+	</ul>
+
+	<div class="tab-content" style="height: 95%;padding: 0px;">
+		<!--全部客户-->
+		<div class="tab-pane fade active in" id="sale_table_all" style="height: 100%;">
+			<div style="border: 0px solid green;width: 100% !important;position: relative;height: 100%;">
+				<div style="margin: 5px;">
+					<button type="button" class="btn btn-green" data-icon="edit" onclick="dbClickOneRow()"><i class="fa fa-edit"></i>跟进 </button>
+					<button type="button" class="btn btn-green" data-icon="user" onclick="sale_distribution_onclick('#customer_new_sale','分配客户经理','customer_new_sale_to_accountManager.html')"> 分配客户经理</button>
+					<button type="button" class="btn btn-green" data-icon="user" onclick="sale_distribution_onclick('#customer_new_sale','分配设计师','customer_new_sale_to_designer.html')"> 分配设计师</button>
+					<button type="button" class="btn btn-blue" data-icon="money" onclick="sale_pay_onclick('#customer_new_sale','交定金','financil_pay_deposit_customer.html')"> 交定金</button>
+					<button type="button" class="btn btn-blue" data-icon="money" onclick="sale_pay_onclick('#customer_new_sale','交合同款','financil_pay_contract_customer.html')"> 交合同款</button>
+				</div>
+				<table id="customer_new_sale" class="table table-hover" data-width="100%"></table>
+			</div>
+
+		</div>
+
+		<!--待分配-->
+		<div class="tab-pane fade" id="sale_table_toBeAssigned" style="height: 100%;"> </div>
+
+		<!--待跟进-->
+		<div class="tab-pane fade" id="sale_table_toBeFollowing" style="height: 100%;"> </div>
+		<!--已邀约-->
+		<div class="tab-pane fade" id="sale_table_toBeInvited" style="height: 100%;"> </div>
+		<!--已交定金-->
+		<div class="tab-pane fade" id="sale_table_downPayment" style="height: 100%;"> </div>
+	</div>
+</div>
+<div id="bjui bjui-sidebar" style="border: 0px solid green;width: 100% !important;position: relative;height: 38%;margin-top: 15px">
+	<ul class="nav nav-tabs" role="tablist">
+		<li class="active in">
+			<a id="sale_toot_df" style="font-size: 13px"
+			   href="SaleCustomerManagement/sale_follow_table.html" role="tab" data-toggle="ajaxtab"
+			   data-reload="false" data-target="#sale_follow_table" onclick="foot_sale_tab_change(0)">跟进记录</a>
+		</li>
+		<li> <a style="font-size: 13px" href="SaleCustomerManagement/invoice_follow_table.html" role="tab"
+				data-reload="false" data-toggle="ajaxtab" data-target="#invoice_follow_div" onclick="foot_sale_tab_change(1)">收款信息</a>
+		</li>
+		<li> <a style="font-size: 13px" href="SaleCustomerManagement/financil_contract_table.html" role="tab"
+				data-reload="false" data-toggle="ajaxtab" data-target="#contract_follow_div" onclick="foot_sale_tab_change(2)">合同信息</a>
+		</li>
+	</ul>
+	<div class="tab-content" style="height: 95%;padding: 3px;" data-height="100%">
+		<div class="tab-pane fade  active in" id="sale_follow_table" style="height: 100%;" data-height="100%">
+			<script> sales_fllows_refresh() </script>
+		</div>
+		<div class="tab-pane fade" id="invoice_follow_div" style="height: 100%;" data-height="100%"> </div>
+		<div class="tab-pane fade" id="contract_follow_div" style="height: 100%;" data-height="100%"> </div>
+	</div>
+</div>
+
+</div>
+</body>

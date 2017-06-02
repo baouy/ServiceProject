@@ -1,0 +1,238 @@
+<style type="text/css">
+	.required{color: red}
+	.titleLabel{height: 40px;}
+	.titleLabel td label{font-size:18px;color: #adadad}
+</style>
+<script type="text/javascript">
+	get_personnel();
+	$("#personnel_householdname").change(function(){//选择省份
+		var province = $('#personnel_householdname option:selected').text();
+		var num;
+		if (province == '本地城镇（主城区）'){
+			num = 10;
+		}else if(province == '本地农村（主城区）'){
+			num = 20;
+		}else if(province == '外地城镇（省内市外）'){
+			num = 11;
+		}else if(province == '外地农村（省内市外）'){
+			num = 21;
+		}else if(province == '外地城镇（省外）'){
+			num = 12;
+		}else if(province == '外地农村（省外）'){
+			num = 22
+		}
+
+		$('#personnel_householdcode').attr("value",num);//选中的值
+	});
+
+	$("#personnel_recruitment").change(function(){
+		var type = $('#personnel_recruitment option:selected').val();
+		if(type!=11){
+			$('#personnel_recruitmentside').val('');//选中的值
+			$('#personnel_recruitmentside').attr('readonly',true);
+			$('#personnel_recruitmentside').removeAttr('data-rule');
+		}else{
+			$('#personnel_recruitmentside').attr('readonly',false);
+			$('#personnel_recruitmentside').attr('data-rule','required');
+		}
+	});
+
+	function S_NodeCheck(e, treeId, treeNode) {
+		var zTree = $.fn.zTree.getZTreeObj(treeId),
+				nodes = zTree.getCheckedNodes(true)
+		var ids = '', names = ''
+
+		for (var i = 0; i < nodes.length; i++) {
+			ids   += ','+ nodes[i].id
+			names += ','+ nodes[i].name
+		}
+		if (ids.length > 0) {
+			ids = ids.substr(1), names = names.substr(1)
+		}
+
+		var $from = $('#'+ treeId).data('fromObj')
+
+		if ($from && $from.length) $from.val(names)
+		$('#'+ treeId +'_select_box').hide();
+		$("#personnel_jobs_id_fk").val(treeNode.id);
+		console.log(treeNode.id);
+
+		$.ajax({
+			url: '/v1/other/getorgdep?pid='+treeNode.pId,
+			dataType: 'json',
+			type: 'get',
+			xhrFields: {
+				withCredentials: true
+			},
+			crossDomain: true,
+			success: function(d){
+				$("#personnel_orgname").val(d.data[0]["be_orgname"]);
+				$("#personnel_depname").val(d.data[0]["org_name"]);
+			}
+		});
+	}
+
+	function get_personnel(){
+		var selected = $("#personnel_datagrid").find('tr.datagrid-selected-tr');
+		$.ajax({
+			url: '/v1/personnel/get_personnel?ids='+selected[0].lastChild.innerText,
+			dataType: 'json',
+			type: 'GET',
+			xhrFields: {
+				withCredentials: true
+			},
+			crossDomain: true,
+			success: function(d){
+				for (var i in d.data) {
+					$.CurrentDialog.find("#personnel_" + i).val(d.data[i]);
+					if (i == "gender" || i == "education" || i == "householdname" || i == 'bank'|| i == 'leavingreason' || i=='recruitment'|| i=='probation'
+							|| i=='contractage'|| i=='contracttype'|| i=='contracttimes') {
+						$.CurrentDialog.find("#personnel_" + i).selectpicker('val', d.data[i]);
+					}
+					if (i == "isactive" || i=='ismarry'|| i=='fertility'){
+						var sval = d.data[i];
+						if (sval){
+							$.CurrentDialog.find("#personnel_" + i).selectpicker('val','1');
+						}else{
+							$.CurrentDialog.find("#personnel_" + i).selectpicker('val','0');
+						}
+					}
+					if(i=='recruitmentside'){
+						if(d.data[i]!=11){
+							$.CurrentDialog.find("#personnel_" + i).val('');
+						}
+					}
+				}
+			}
+		});
+	}
+
+	function wtf(json){
+		if(json.state == 200){
+			BJUI.dialog('closeCurrent',this);
+			$('#personnel_datagrid').datagrid('refresh');
+		}else{
+			$(this).alertmsg('error', json.content);
+		}
+	}
+
+</script>
+<div class="bjui-pageContent">
+	<form action="/v1/personnel/leave_personnel" data-toggle="validate" data-callback="wtf">
+		<input type="hidden" value="" name="id" id="personnel_id" >
+
+		<table class="table table-condensed table-hover" width="100%">
+			<tbody>
+			<tr class="titleLabel">
+				<td><label class="control-label">基本信息</label></td>
+			</tr>
+			<tr>
+				<td>
+					<label for="personnel_username" class="control-label x90 ">姓名：</label>
+					<input type="text" name="username" id="personnel_username" value="" data-rule="required" size="15" readonly="readonly">
+				</td>
+				<td>
+					<label for="personnel_companyemail" class="control-label x90 ">公司邮箱：</label>
+					<input type="text" name="companyemail" id="personnel_companyemail" value="" size="15" data-rule="required" readonly="readonly">
+				</td>
+				<td>
+					<label for="personnel_mobile" class="control-label x90 ">手机号码：</label>
+					<input type="text" name="mobile" id="personnel_mobile" value="" data-rule="required;mobile" size="15" readonly="readonly">
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<label for="personnel_flower_name" class="control-label x90 ">花名：</label>
+					<input type="text" name="flower_name" id="personnel_flower_name" value="" data-rule="required" size="15" readonly="readonly">
+				</td>
+				<td>
+					<label for="personnel_worknum" class="control-label x90 ">工号：</label>
+					<input type="text" name="worknum" id="personnel_worknum" value="" size="15" readonly="readonly">
+				</td>
+				<td>
+					<label for="personnel_companyphone" class="control-label x90">公司电话：</label>
+					<input type="text" name="companyphone" id="personnel_companyphone" value=""  size="15" data-rule="mobile" readonly="readonly">
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<label for="personnel_gender" class="control-label x90 ">性别：</label>
+					<select name="gender" id="personnel_gender" data-toggle="selectpicker" data-rule="required" readonly="readonly" disabled="disabled">
+						<option value="" selected="true"></option>
+						<option value="男">男</option>
+						<option value="女">女</option>
+					</select>
+				</td>
+				<td>
+					<label for="personnel_login_name" class="control-label x90">登录帐号：</label>
+					<input type="text" name="login_name" id="personnel_login_name" value="" size="15" readonly="readonly">
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<label for="personnel_orgname" class="control-label x90">所属组织：</label>
+					<input type="text" id="personnel_orgname" value="" size="15" readonly="readonly">
+				</td>
+				<td>
+					<label for="personnel_depname" class="control-label x90">部门：</label>
+					<input type="text" id="personnel_depname" value="" size="15" readonly="true" readonly="readonly">
+				</td>
+				<td>
+					<label for="personnel_rolename" class="control-label x90">岗位：</label>
+					<input type="text" id="personnel_rolename" value="" size="15" data-toggle="selectztree" data-tree="#job-ztree" readonly="readonly" disabled="disabled">
+					<input class="hide" type="text" name="jobs_id_fk" id="personnel_jobs_id_fk" value="" size="15" readonly="readonly">
+					<ul style="height:300px;width:500px" id="job-ztree" class="ztree hide" data-on-click="S_NodeClick" data-on-check="S_NodeCheck" data-radio-type="all" data-chk-style="radio" data-check-enable="true"
+						data-expand-all="true" data-toggle="ztree"
+						data-setting="{
+                            async:
+                            {
+                                enable: true,
+                                url:'/v1/other/getjobs',
+                                autoParam: ['id'],
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                type:'get'
+                            }
+                         }"></ul>
+				</td>
+
+			</tr>
+
+			<tr>
+
+				<td>
+					<label for="personnel_leavedate" class="control-label x90 required">离职时间：</label>
+					<input type="text" name="leavedate" id="personnel_leavedate" data-toggle="datepicker" value="" data-rule="required" size="15" readonly="true">
+				</td>
+				<td colspan="2">
+					<label for="personnel_leavingreason" class="control-label x90 required">离职原因：</label>
+					<input type="text" name="leavingreason" id="personnel_leavingreason"  value="" data-rule="required" size="60" >
+				</td>
+
+			</tr>
+			<tr>
+
+				<td>
+					<label for="personnel_securityend" class="control-label x90 required">社保缴纳至：</label>
+					<input type="text" name="securityend" id="personnel_securityend" data-toggle="datepicker" value="" data-rule="required" size="15" readonly="true">
+				</td>
+				<td colspan="2">
+					<label for="personnel_funddate" class="control-label x90">公积金缴纳至：</label>
+					<input type="text" name="funddate" id="personnel_funddate"  value="" size="15" data-toggle="datepicker" readonly="true" >
+				</td>
+
+			</tr>
+
+			</tbody>
+		</table>
+	</form>
+</div>
+<div class="bjui-pageFooter">
+	<ul>
+		<li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+		<li><button type="submit" class="btn-default" data-icon="save">保存</button></li>
+	</ul>
+</div>

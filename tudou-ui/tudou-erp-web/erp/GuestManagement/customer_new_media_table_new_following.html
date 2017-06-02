@@ -1,0 +1,204 @@
+<script>
+
+	var m_c_table_3 = '#customer_new_media_table_new_following'
+	$(m_c_table_3).datagrid({
+		local: 'remote',
+		dataUrl: '/v1/newcustomer/wx_customerlist?stateid=19',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height:'94%',
+		columns:
+				[{name: 'completion', width: '60', label: '完成度'},
+					{name: 'intentiontype', width: '95', label: '意向度',type:'select',items: [{'意向客户': '意向客户'}, {'非意向': '非意向'},{'非意向(无人接听/关机)': '非意向(无人接听/关机)'},{'非意向(随便注册)': '非意向(随便注册)'},{'非意向(直接挂断)': '非意向(直接挂断)'},{'非意向(本市非服务范围内)': '非意向(本市非服务范围内)'},{'非意向(外地)': '非意向(外地)'},{'非意向(不足70㎡)': '非意向(不足70㎡)'},{'非意向(房子已装修好)': '非意向(房子已装修好)'},{'非意向(房子太旧)': '非意向(房子太旧)'},{'非意向(大于180㎡)': '非意向(大于180㎡)'},{'非意向(户型不符)': '非意向(户型不符)'},{'非意向(其他)': '非意向(其他)'}]},
+					{name: 'cusname', width: '70', label: '姓名'},
+					{name: 'mobile', width: '90', label: '电话'},
+					{name: 'village', width: '100', label: '小区名称'},
+					{name: 'roommodel', width: '70', label: '毛坯平层',type:'select',items: [{'毛坯平层': '毛坯平层'}, {'旧房平层': '旧房平层'}, {'复式毛坯': '复式毛坯'}, {'跃层毛坯': '跃层毛坯'}, {'排屋毛坯': '排屋毛坯'}, {'别墅毛坯': '别墅毛坯'}, {'其他': '其他'}, {'NO':'未填写'}]},
+					{name: 'newbudget', width: '70', label: '预算',type:'select',items: [{'7万以下': '7万以下'}, {'7万': '7万'}, {'8万': '8万'}, {'9万': '9万'}, {'10万': '10万'}, {'11万': '11万'}, {'12万': '12万'}, {'13万': '13万'}, {'14万': '14万'}, {'15万': '15万'}, {'15万以上': '15万以上'}, {'NO':'未填写'}]},
+					{name: 'area', width: '70', label: '面积',type:'select',items: [{'1': '70㎡以下'}, {'2': '70㎡-80㎡'}, {'3':'80㎡-90㎡'},{'4': '90㎡-100㎡'}, {'5': '100㎡-110㎡'}, {'6':'110㎡-120㎡'}, {'7':'120㎡以上'},{'0':'未填写'}]},
+					{name: 'roomstatus', width: '70', label: '交房状态',type:'select',items: [{'现房': '现房'}, {'期房': '期房'}, {'NO':'未填写'}]},
+					{name: 'followdate', width: '100', label: '最后一次跟进时间'},
+					{name: 'followdetails', width: '200', label: '最后一次跟进内容'},
+					{name: 'state', width: '90', label: '状态',type:'select',items: [{'新增': '新增'},{'待跟进': '待跟进'}, {'已邀约': '已邀约'}, {'已分配': '已分配'}, {'已签到': '已签到'}, {'接待中': '接待中'}, {'已付定金': '已付定金'},{'已签约': '已签约'},{'施工中': '施工中'},{'已竣工': '已竣工'}]},
+					{name: 'details', width: '150', label: '备注(关注点)'},
+					{name: 'marktime', width: '150', label: '到场时间'},
+					{name: 'record', width: '150', label: '来源备注'},
+					{name: 'source', width: '70', label: '报名渠道来源'},
+                    {name: 'newmediadepname', width: '70', label: '渠道部门',id:'newmediadepname',type:'select',items:function(){
+                        if (newmediadepname_content == undefined){
+                            newmediadepname_content = new Array();
+                            $.ajax({
+                                url: '/v1/other/getorgdep?pid=38',
+                                dataType: 'json',
+                                async: false,
+                                type: 'GET',
+                                xhrFields: {
+                                    withCredentials: true
+                                },
+                                crossDomain: true,
+                                success: function (d) {
+                                    if (d.state == 200){
+                                        newmediadepname_data = d.data;
+                                        var c
+                                        for (var i = 0 ; i < d.data.length; i ++){
+                                            var b = d.data[i].org_name;
+                                            c = new Object();
+                                            c[b]= b;
+                                            newmediadepname_content.push(c)
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                        return newmediadepname_content;
+                    }},
+					{
+						name: 'newmedia', width: '70', label: '微聊员', type: 'select', items: function () {
+						if (wxchat_content == undefined) {
+							wxchat_content = new Array();
+							$.ajax({
+								url: '/v1/user/getdepcode_userlist?code=001002008',
+								dataType: 'json',
+								async: false,
+								type: 'GET',
+								xhrFields: {
+									withCredentials: true
+								},
+								crossDomain: true,
+								success: function (d) {
+									if (d.state == 200) {
+										var c
+										for (var i = 0; i < d.data.length; i++) {
+											var b = d.data[i].flower_name;
+											c = new Object();
+											c[b] = b;
+											wxchat_content.push(c)
+										}
+									}
+								}
+							});
+						}
+						return wxchat_content;
+					}
+					},
+					{
+						name: 'custsalesdepname', width: '70', label: '销售部门', type: 'select', items: function () {
+						if (custsalesdepname_content == undefined) {
+							custsalesdepname_content = new Array();
+							$.ajax({
+								url: '/v1/other/getorgdepdeatil?pid=37',
+								dataType: 'json',
+								async: false,
+								type: 'GET',
+								xhrFields: {
+									withCredentials: true
+								},
+								crossDomain: true,
+								success: function (d) {
+									if (d.state == 200) {
+										custsalesdepname_data = d.data
+										var c
+										for (var i = 0; i < d.data.length; i++) {
+											var b = d.data[i].org_name;
+											c = new Object();
+											c[b] = b;
+											custsalesdepname_content.push(c)
+										}
+									}
+								}
+							});
+						}
+						return custsalesdepname_content;
+					}
+					},
+					{
+						name: 'custsales', width: '70', label: '客户经理', type: 'select', items: function () {
+
+						if (custsales_content == undefined) {
+							custsales_content = new Array();
+							$.ajax({
+								url: '/v1/user/getdepcode_userlist?code=001002007',
+								dataType: 'json',
+								async: false,
+								type: 'GET',
+								xhrFields: {
+									withCredentials: true
+								},
+								crossDomain: true,
+								success: function (d) {
+									if (d.state == 200) {
+										var c
+										for (var i = 0; i < d.data.length; i++) {
+											var b = d.data[i].flower_name;
+											c = new Object();
+											c[b] = b;
+											custsales_content.push(c)
+										}
+									}
+								}
+							});
+						}
+						return custsales_content;
+					}
+					},
+					/*{name: 'firstamout', width: '70', label: '预定金'},*/
+                    {name: 'bookingsituation', width: '70', label: '预售情况'},
+					{name: 'orgname', width: '70', label: '组织'},
+					{name: 'createtime', width: '150', label: '创建时间',type:'date',pattern:'yyyy-MM-dd'},
+					{name: 'lasttime', width: '150', label: '更新时间',type:'date',pattern:'yyyy-MM-dd'},
+				],
+		paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+		hiddenFields: ['id', 'newmediaid'],
+		toolbarCustom:
+		'<button type="button" class="btn btn-blue" data-icon="plus" data-url="GuestManagement/media_follow_add.html" data-width="1800" data-height="900" data-toggle="dialog" data-id="media_follow_add" data-mask="true"><i class="fa fa-plus"></i>新增</button>'
+		+'<button type="button" class="btn btn-green" data-icon="edit" onclick="follow_customer_new_media_table_new_following()" style="margin-left: 5px;"><i class="fa fa-edit"></i>跟进 </button>'
+		+"<button type='button' class='btn btn-green' data-icon='user' style='margin-left: 5px;' onclick='media_distribution_onclick(m_c_table_3)' > 分配</button>",
+		showToolbar: true,
+		columnMenu: true,
+		columnShowhide: true,
+		columnFilter: true,
+		columnLock: false,
+		fullGrid: false,
+		dblOnClick: 'follow_customer_new_media_table_new_following',
+		clickRow: 'click_customer_new_media_table_new_following',
+		headSureBack: 'media_headSureBack'
+	});
+
+	function click_customer_new_media_table_new_following() {
+		console.log(m_c_table_3);
+		var selected = $(m_c_table_3).data('selectedDatas');
+		if (selected[0].id != m_g_id){
+			m_g_id = selected[0].id;
+			$(this).bjuiajax('doLoad', {
+				url: 'GuestManagement/media_follow_table.html',
+				target: '#media_follow_table',
+				loadingmask: false
+			});
+		}
+	}
+
+	function follow_customer_new_media_table_new_following() {
+		var selected = $(m_c_table_3).data('selectedDatas');
+		if (selected.length == 0) {
+			$(this).alertmsg('warn', '请在列表中选择要操作的对象。');
+		} else {
+			m_f_id = selected[0].id;
+			m_g_m_id = selected[0].newmediaid;
+
+			$(this).dialog({
+				title: "客户详情",
+				url: "GuestManagement/media_follow_edit.html",
+				width: 1800,
+				height: 900,
+				mask: true
+			});
+		}
+	}
+
+</script>
+
+<div style="border: 0px solid green;width: 100% !important;position: relative;height: 100%;">
+	<table id="customer_new_media_table_new_following" class="table table-hover" data-width="100%"></table>
+</div>

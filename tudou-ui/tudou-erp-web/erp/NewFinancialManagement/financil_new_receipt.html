@@ -1,0 +1,230 @@
+<script>
+    // 保留2位小数，无小数则不补.00
+    var Digit = {};
+    Digit.round = function(digit, length) {
+        length = length ? parseInt(length) : 0;
+        if (length <= 0) return Math.round(digit);
+        return Math.round(digit * Math.pow(10, length)) / Math.pow(10, length);
+    };
+
+    //强制保留2位小数，如：2，会在2后面补上00.即2.00
+    function toDecimal2(x) {
+        if (isNaN(parseFloat(x))) {
+            return false;
+        }
+        var f = Math.round(x*100)/100;
+        var s = f.toString();
+        var rs = s.indexOf('.');
+        if (rs < 0) {
+            rs = s.length;
+            s += '.';
+        }
+        while (s.length <= rs + 2) {
+            s += '0';
+        }
+        return s;
+    }
+    $('#financil_new_receipt_list').datagrid({
+		local: 'remote',
+		dataUrl: '/v1/newfinancial/voucherlist',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height: '100%',
+		columns: [
+			{name: 'banktrace', width: '120', label: '银行流水号'},
+			{name: 'invoicedoc', width: '120', label: '系统交易流水号'},
+			{name: 'agreementdoc', width: '90', label: '定金协议号'},
+			{name: 'sodoc', width: '90', label: '合同编号'},
+			{name: 'username', width: '90', label: '姓名'},
+			{name: 'mobile', width: '90', label: '手机号'},
+			{name: 'paymenttype', width: '90', label: '收款类型',type:'select',items: [{'预售': '预售'}, {'定金': '定金'}, {'合同': '合同'}, {'95%合同款': '95%合同款'}, {'尾款': '尾款'},{'其他': '其他'}]},
+			{name: 'paymentamount', width: '90', label: '收款金额',render:function(value){
+                return !value || value == 'null' ? '': toDecimal2(value)//Digit.round(value, 2);//.toPrecision(2)//.toFixed(2);
+            }},
+			{name: 'paymentaccount', width: '150', label: '付款账号'},
+			/*{name: '', width: '90', label: '付款银行'},
+			{name: '', width: '90', label: '收款银行'},*/
+			{name: 'paymentmethods', width: '60', label: '收款方式',type:'select',items: [{'POS': 'POS'},{'POS线下': 'POS线下'}, {'支付宝': '支付宝'}, {'装修贷': '装修贷'}, {'转账': '转账'},{'现金': '现金'}]},
+			{name: 'source', width: '90', label: '来源',type:'select',items: [{'ERP': 'ERP'}, {'APP': 'APP'}, {'PC官网': 'PC官网'}, {'移动官网': '移动官网'}]},
+			{name: 'businessdate', width: '150', label: '交易时间',type:'date',pattern:'yyyy-MM-dd'},
+			{name: 'stateid', width: '60', label: '审核状态',type:'select',items: [{'51': '审核'}, {'48': '新增'}]},
+			{name: 'ispay', width: '60', label: '收款状态',type:'select',items: [{'true': '是'}, {'false': '否'}]},
+			{name: 'details', width: '100', label: '备注'},
+			{name: 'createtime', width: '150', label: '创建时间',type:'date',pattern:'yyyy-MM-dd'},
+			{name: 'createuser', width: '60', label: '创建人'},
+		],
+		paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+		hiddenFields: ['id'],
+		showToolbar: true,
+		toolbarCustom:
+		'<button type="button" class="btn btn-blue" data-icon="plus" style="margin-left: 5px;" data-url="NewFinancialManagement/financil_receipt_add.html" data-width="850" data-height="250" data-title="新增收款单" data-toggle="dialog" data-id="new_receipt_add" data-mask="true">新增 </button>' +
+		'<button type="button" class="btn btn-green" data-icon="edit" style="margin-left: 5px;" onclick="newFinancial_dbClickOneRow()"> 编辑 </button><a id="new_receipt_edit" data-url="NewFinancialManagement/financil_receipt_edit.html" data-width="850" data-height="250" data-title="编辑收款单" data-toggle="dialog" data-id="new_receipt_edit" data-mask="true"></a></div>' +
+		'<button type="button" class="btn btn-red" data-icon="times" id = "dispatch_submit" style="margin-left: 5px;" onclick="new_showalert(financial_vr_delete)"> 删除 </button></div>' +
+		'<button type="button" class="btn btn-green" data-icon="thumbs-up" id = "dispatch_submit" style="margin-left: 5px;" onclick="new_showalert(financial_vr_audit_true)"> 审核 </button></div>' +
+		'<button type="button" class="btn btn-orange" data-icon="thumbs-down" id = "dispatch_submit" style="margin-left: 5px;" onclick="new_showalert(financial_vr_audit_false)"> 弃审 </button></div>' +
+		'<button type="button" class="btn btn-green" data-icon="thumbs-up" id = "dispatch_submit" style="margin-left: 5px;" onclick="new_showalert(financial_vr_change_pay_true)"> 确认收款 </button></div>' +
+		'<button type="button" class="btn btn-orange" data-icon="thumbs-down" id = "dispatch_submit" style="margin-left: 5px;" onclick="new_showalert(financial_vr_change_pay_false)"> 取消收款 </button></div>'
+		,
+		columnMenu: true,
+		columnShowhide: true,
+		columnFilter: true,
+		columnLock: false,
+		fullGrid: false,
+        dblOnClick: 'newFinancial_dbClickOneRow',
+	})
+
+	var selected_newFinancial_row
+	function new_showalert(name) {
+		selected_newFinancial_row = $("#financil_new_receipt_list").data('selectedDatas');
+		if (selected_newFinancial_row == null || selected_newFinancial_row.length == 0){
+			$(this).alertmsg('warn', '请选择要操作的对象。');
+			return
+		}
+		$(this).alertmsg('confirm', '是否确定吗?', {okCall: name});
+	}
+    function newFinancial_dbClickOneRow() {
+        selected_newFinancial_row = $("#financil_new_receipt_list").data('selectedDatas');
+        if (null == selected_newFinancial_row || selected_newFinancial_row.length == 0) {
+            $(this).alertmsg('warn', '请在列表中选择要操作的对象。');
+        } else {
+            financial_receipt_edit();
+        }
+    }
+    function financial_receipt_edit() {
+        if (selected_newFinancial_row == null || selected_newFinancial_row.length == 0){
+            $(this).alertmsg('warn', '请选择要操作的对象。');
+            return false;
+        }
+        if(selected_newFinancial_row[0].source != 'ERP'){
+            $(this).alertmsg('warn', '【温馨提示】 ['+selected_newFinancial_row[0].source+']来源的收款数据不能编辑');
+            return false;
+        }
+        if(selected_newFinancial_row[0].paymentmethods == 'POS'){
+            $(this).alertmsg('warn', '【温馨提示】 ['+selected_newFinancial_row[0].paymentmethods+']支付方式的收款数据不能编辑');
+            return false;
+        }
+        if(selected_newFinancial_row[0].stateid == '51'){
+            $(this).alertmsg('warn', '【温馨提示】当前状态为['+selected_newFinancial_row[0].state+']不能编辑');
+            return false;
+        }
+        $("#new_receipt_edit").click();
+    }
+
+	//删除
+	function financial_vr_delete() {
+		if (selected_newFinancial_row != null || selected_newFinancial_row.length == 0){
+			var sid = new Array();false
+			for (var i = 0; i < selected_newFinancial_row.length; i++){
+				sid.push(selected_newFinancial_row[i].id);
+				if (selected_newFinancial_row[i].stateid == 51){
+					$(this).alertmsg('warn', '审核状态无法删除!');
+					return
+				}
+			}
+			ajax_newfinancial('/v1/newfinancial/delete?ids=' + sid)
+		}else{
+			$(this).alertmsg('warn', '请选择要操作的对象。');
+		}
+	}
+
+	//审核
+	function financial_vr_audit_true() {
+		if (selected_newFinancial_row != null || selected_newFinancial_row.length == 0){
+			var sid = new Array();
+			for (var i = 0; i < selected_newFinancial_row.length; i++){
+				sid.push(selected_newFinancial_row[i].id);
+				if (selected_newFinancial_row[i].stateid == 51){
+					$(this).alertmsg('warn', '审核状态,无法继续审核!');
+					return
+				}
+			}
+			ajax_newfinancial('/v1/newfinancial/audit?ids=' + sid +"&type=true")
+		}else{
+			$(this).alertmsg('warn', '请选择要操作的对象。');
+		}
+	}
+
+	//弃审
+	function financial_vr_audit_false() {
+		if (selected_newFinancial_row != null || selected_newFinancial_row.length == 0){
+			var sid = new Array();
+			for (var i = 0; i < selected_newFinancial_row.length; i++){
+				sid.push(selected_newFinancial_row[i].id);
+				if (selected_newFinancial_row[i].stateid == 48){
+					$(this).alertmsg('warn', '包含未审核状态的记录,无法弃审!');
+					return
+				}
+			}
+			ajax_newfinancial('/v1/newfinancial/audit?ids=' + sid +"&type=false")
+		}else{
+			$(this).alertmsg('warn', '请选择要操作的对象。');
+		}
+	}
+
+	//确认收款
+	function financial_vr_change_pay_true() {
+		if (selected_newFinancial_row != null || selected_newFinancial_row.length == 0){
+			var sid = new Array();
+			for (var i = 0; i < selected_newFinancial_row.length; i++){
+				sid.push(selected_newFinancial_row[i].id);
+				var ispay = selected_newFinancial_row[i].ispay==null?false:selected_newFinancial_row[i].ispay
+				if (selected_newFinancial_row[i].stateid == 51 && !ispay){
+				}else{
+					$(this).alertmsg('warn', '只有审核和未确认收款的单据,才能确认!');
+					return
+				}
+			}
+			ajax_newfinancial('/v1/newfinancial/change_pay?ids=' + sid +"&type=true")
+		}else{
+			$(this).alertmsg('warn', '请选择要操作的对象。');
+		}
+	}
+
+	//取消收款
+	function financial_vr_change_pay_false() {
+		if (selected_newFinancial_row != null || selected_newFinancial_row.length == 0){
+			var sid = new Array();
+			for (var i = 0; i < selected_newFinancial_row.length; i++){
+				sid.push(selected_newFinancial_row[i].id);
+				var ispay = selected_newFinancial_row[i].ispay==null?false:selected_newFinancial_row[i].ispay
+				if (selected_newFinancial_row[i].stateid == 51 && ispay){
+				}else{
+					$(this).alertmsg('warn', '只有确认收款,才能取消!');
+					return
+				}
+			}
+			ajax_newfinancial('/v1/newfinancial/change_pay?ids=' + sid +"&type=false")
+		}else{
+			$(this).alertmsg('warn', '请选择要操作的对象。');
+		}
+	}
+	
+	function ajax_newfinancial(url) {
+		$.ajax({
+			url: url,
+			dataType: 'json',
+			type: 'POST',
+			xhrFields: {
+				withCredentials: true
+			},
+			crossDomain: true,
+			success: function (d) {
+				if (d.state == 200) {
+					$(this).alertmsg('ok', '操作成功');
+                    doNewReceiptRefresh();
+				} else {
+					$(this).alertmsg('warn', d.content);
+				}
+			}
+		});
+	}
+    function doNewReceiptRefresh(){
+        $("#financil_new_receipt_list").data(null);
+	    $('#financil_new_receipt_list').datagrid('refresh');
+
+    }
+</script>
+
+<table id="financil_new_receipt_list" class="table table-hover" data-width="100%"></table>

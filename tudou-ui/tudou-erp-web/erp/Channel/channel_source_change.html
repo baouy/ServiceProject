@@ -1,0 +1,56 @@
+
+<script type="text/javascript">
+
+	$('#sourcechange_list_datagrid').datagrid({
+
+		local: 'remote',
+		dataUrl: '/v1/summary/source_list',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height:'100%',
+		columns: [{name:'source', width:'150', label:'来源编号',rule: 'required'},
+			{name:'nsource', width:'150', label:'新来源编号',rule: 'required'},
+		],
+		paging: {pageSize:50, selectPageSize:'50,100,200', pageCurrent:1},
+		hiddenFields: ['id'],
+		columnMenu: true,
+		columnShowhide: true,
+		columnFilter: true,
+		columnLock: false,
+		inlineEditMult: false,
+		fullGrid: false,
+		showToolbar: true,
+		toolbarItem: 'add,save,del,cancel',
+		saveAll: true,
+		editUrl:'/v1/summary/source_add_reset',
+		editCallback:'source_edit_back',
+		editdblOnclick: true,
+		delConfirm:true,
+		delPK:'id',
+		delType:'POST',
+		delUrl:'/v1/summary/source_del',
+		afterDelete:'del_source_view',
+	});
+
+	function source_edit_back(json) {
+		if (json.state == 200){
+			$('#sourcechange_list_datagrid').datagrid('refresh');
+			source_change_data()
+		}else{
+			$(this).alertmsg('warn', json.content);
+		}
+	}
+
+	function del_source_view() {
+		source_change_data()
+		$(this).alertmsg('ok', '删除成功');
+	}
+
+
+
+</script>
+<div class="bjui-pageContent" >
+	<table id="sourcechange_list_datagrid" class="table table-hover" data-width="100%"> </table>
+</div>

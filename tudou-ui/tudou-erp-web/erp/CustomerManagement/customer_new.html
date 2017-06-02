@@ -1,0 +1,820 @@
+<html>
+<head>
+    <script type="text/javascript">
+        var vl,sourceText;
+        /**
+         * 获取来源列表
+         */
+        $.ajax({
+            url:"/v1/other/getalltype?type=10",
+            type:"GET",
+            dataType:"json",
+            success: function(data){
+                for(var i = 0; i<data.data.length; i++) {
+                    $("#customer_source").append($("<option value="+data.data[i].id+">"+data.data[i].enumname+"</option>"));
+                }
+
+                vl = $('#customer_source option:selected') .val();//默认选中的值
+                sourceText = $('#customer_source option:selected') .text();//默认选中的文本
+
+                $("input[name='sourceid']").attr("value",vl);
+                $("input[name='source']").attr("value",sourceText);
+
+                $('#customer_source').selectpicker('refresh');
+                $('#customer_source').selectpicker('render');
+            }
+        });
+
+        $("#customer_source").change(function(){
+            var text = $('#customer_source option:selected').text();
+            $("input[name='sourceid']").attr("value",$(this).val());//选中的值
+            $("input[name='source']").attr("value",text);//选中的文本
+        });
+
+
+        /**
+         * 获取省列表
+         */
+        $.ajax({
+            url: "/v1/other/getprovcityareastreet?levelID=1",
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                $("#customer_provincename").append($("<option selected value=''>" + ""+ "</option>"));
+                for (var i = 0; i < data.data.length; i++) {
+                    $("#customer_provincename").append($("<option value=" + data.data[i].code + ">" + data.data[i].name + "</option>"));
+                }
+
+                var province = $('#customer_provincename option:eq(0)').text();
+                $("input[name='provincename']").attr("value",province);//选中的值
+                $('#customer_provincename').selectpicker('refresh');
+                $('#customer_provincename').selectpicker('render');
+            }
+        });
+        /**
+         * 选择省份
+         */
+        $("#customer_provincename").change(function(){//选择省份
+            var province = $('#customer_provincename option:selected').text();
+            $("input[name='provincename']").attr("value",province);//选中的值
+            getCity($('#customer_provincename option:selected').val());//获取城市
+        });
+
+
+        /**
+         * 根据省份的code获取下面的城市
+         * **/
+        function getCity(id) {
+            $("#customer_cityname").empty();
+            $.ajax({
+                url: "/v1/other/getcityarea?code=" + id,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    for (var i = 0; i < data.data.length; i++) {
+                        $("#customer_cityname").append($("<option value=" + data.data[i].code + ">" + data.data[i].name + "</option>"));
+                    }
+                    var city = $('#customer_cityname option:eq(0)').text();
+                    $("input[name='cityname']").attr("value",city);//选中的值
+                    $('#customer_cityname').selectpicker('refresh');
+                    $('#customer_cityname').selectpicker('render');
+                    getRegonal($('#customer_cityname option:selected').val());//省份列表获取成功后,获取省份列表
+                }
+
+            })
+        }
+
+        /**
+         * 获取区列表
+         * **/
+        function getRegonal(id) {
+            $("#customer_districtname").empty();
+            $.ajax({
+                url: "/v1/other/getcityarea?code=" + id,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    for (var i = 0; i < data.data.length; i++) {
+                        $("#customer_districtname").append($("<option value=" + data.data[i].code + ">" + data.data[i].name + "</option>"));
+                    }
+                    var city = $('#customer_districtname option:eq(0)').text();
+                    $("input[name='districtname']").attr("value",city);//选中的值
+                    $('#customer_districtname').selectpicker('refresh');
+                    $('#customer_districtname').selectpicker('render');
+
+                }
+
+            })
+        }
+
+        /**
+         * 选择城市
+         * **/
+        $("#customer_cityname").change(function(){
+            var city = $('#customer_cityname option:selected').text();
+            $("input[name='cityname']").attr("value",city);//选中的值
+            getRegonal($('#customer_cityname option:selected').val());
+        })
+        /**
+         * 选择省份
+         * **/
+        $("#customer_districtname").change(function(){
+            var districtname = $('#customer_districtname option:selected').text();
+            $("input[name='districtname']").attr("value",districtname);//选中的值
+        })
+        /**
+         * 跟进记录列表
+         */
+        function getFollowNotes(id){
+            $('#customer_notes').datagrid({
+                local: 'remote',
+                dataUrl: '/v1/record/customerfollow?tcustomerid_fk='+id,
+                editUrl:'/v1/record/customerfollow_add',//保存编辑、添加数据的url
+                dataType: 'json',
+                sortAll: false,
+                loadType: 'get',
+                filterAll: true,
+				height:'95%',
+                columns: [
+                    {name: 'id', width: '80', label: '主键', hide: true},
+                    {name:'followstate', width:'150', label:'跟进状态'},
+                    {name:'followtype', width:'150', label:'跟进类型'},
+                    {name:'followdetails', width:'150', label:'跟进内容'},
+                    {name:'duration', width:'150', label:'沟通时长'},
+                    {name:'appdate', width:'150', label:'预约日期',type:'date'},
+                    {name:'apptime', width:'150', label:'预约时间段'},
+                    {name:'createtime', width:'150', label:'录入时间',type:'date',pattern:"yyyy-MM-dd HH:mm"},
+                    {name:'createuser', width:'150', label:'录入人'},//items:[{'true':'男'}, {'false':'女'}],type:'select'
+                    {name:'lastfollowstate', width:'150', label:'当时跟进状态'}
+                ],
+//                                editMode:'dialog',
+//                                columnResize:true,//允许调整列宽
+//                                showToolbar:true,//头部显示工具栏
+//                toolbarItem: 'all, edit, cancel',//头部显示所有工具栏
+                showLinenumber:true,
+                paging: {pageSize:20, selectPageSize:'50,100,200', pageCurrent:1},
+                columnMenu: true,
+                columnShowhide: true,
+                columnFilter: true,
+                columnLock: false,
+                fullGrid: false,
+
+            });
+        }
+
+
+        var custid ;
+        function calback(json) {
+            var enter = $(".navtab-tab .active").children("a").attr("title");//判断是哪个菜单列表进入的
+            if(json.state ==200){ //保存成功
+//                if(json.data.custid !="" || json.data.custid != null){
+//                    console.log(json.data.custid)
+//                    switch (enter) {
+//                        case "目标客户档案":
+//                            $("#customer_new_design").removeClass("hide");
+//                            $("#customer_new_sale").removeClass("hide");
+//                            $("#customer_new_electric").removeClass("hide");
+//                            break;
+//                        case "客户档案(电销)":
+//                            $("#customer_new_electric").removeClass("hide");
+//                            break;
+//                        case "客户档案(销售)":
+//                            if($("#customer_sale_menuTab .active").children("a").text()=="销售跟进"){
+//                                $("#customer_new_electric").removeClass("hide");
+//                            }
+//                        default :
+//                            break;
+//                    }
+//                    custid = json.data.custid;
+//                    $("#notes").addClass("active in");
+//                    $("#menu_notes").removeClass("hide");
+//                    $("#menu_message").removeClass("hide");
+//                    $("#menu_design").removeClass("hide");
+//                    getFollowNotes(json.data.custid); //获取跟进记录列表
+//                    getContractTable(json.data.custid);//获取合同
+//                    getDesignFiles(json.data.custid);//获取设计文件列表
+//                    getCashTable(json.data.custid); //获取收款信息
+//                    $('#customer_notes').datagrid('refresh');
+//                    $('#customer_cash_table').datagrid('refresh');
+//                    $('#customer_design_files').datagrid("refresh");
+//                    $('#customer_new_contract_table').datagrid("refresh");
+//                }
+//                $('#customer_info').datagrid('refresh');
+                BJUI.dialog('closeCurrent',this);
+
+                $('#customer_list_tabel').datagrid('refresh');
+                $('#customer_telephonesales').datagrid('refresh');
+
+//                newcustomerEdit(json.data);
+
+            }else if(json.state==9005){
+                $("#customer_add_backinfo").alertmsg('error', json.content,{displayMode:'fade',alertTimeout:1000,displayPosition:'middlecenter'});
+
+            }
+        }
+        function checkDialog($dialog){
+            $dialog.find("#tcustomerid_fk").val(custid);
+        }
+
+        /**
+         * 获取跟进记录详情
+         * */
+        var followstate,followtype;
+        var formitemlist = ["id","tcustomerid_fk","followstate","followtype","followdetails","duration","appdate","apptime","createtime","createuser","lastfollowstate"];
+        function getFollowDetails($dialog) {
+            var selected = $("#customer_notes").find('tr.datagrid-selected-tr');
+            if (selected.length == 0) {
+                $dialog.alertmsg('error', '请在列表中选择要操作的对象。');
+                this.close($dialog);
+            } else if (selected.length > 1) {
+                $dialog.alertmsg('error', '请选择唯一的操作对象。');
+                this.close($dialog);
+            } else {
+                $("#tcustomerid_fk").attr("value",$("#customer_id").val());
+                if (selected[0].lastChild.innerText > 0) {
+                    /**
+                     * 获取客户详细信息
+                     * */
+                    $.ajax({
+                        url: '/v1/record/customerfollow_get?fid=' + selected[0].lastChild.innerText,
+                        dataType: 'json',
+                        type: 'GET',
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        crossDomain: true,
+                        success: function (d) {
+                            for (var i in d.data) {
+                                if ($.inArray(i, formitemlist) > -1) {
+                                    //显示需要的 不需要的暂时去掉
+                                    $dialog.find("#" + i).val(d.data[i]);
+                                    if (i == "followstate") {
+                                        followstate = d.data["followstate"];
+                                    } else if (i == "followtype") {
+                                        followtype = d.data["followtype"];
+                                    } else if(i == "id"){
+                                        $dialog.find("input[name='id']").attr("value",d.data["id"]);
+                                    }
+                                }
+                            };
+                            getFollowState();//获取跟踪状态
+                        }
+                    });
+                }
+            }
+        }
+
+        function getFollowState(){
+            $.ajax({
+                url: "/v1/other/getfollowsate",
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    if (followstate != "") { //跟进状态不为空时,调用跟进类型列表
+                        for (var i = 0; i < data.data.length; i++) {
+                            if (data.data[i].followtypename === followstate) {
+                                $("#followstate").append($("<option selected value=" + data.data[i].id + ">" + data.data[i].followtypename + "</option>"));
+                            } else {
+                                $("#followstate").append($("<option value=" + data.data[i].id + ">" + data.data[i].followtypename + "</option>"));
+                            }
+                        }
+                        var states = $('#followstate option:selected').text();
+                        $("input[name='followstate']").attr("value",states);//选中的值
+                        $("input[name='followstateid']").attr("value",$('#followstate option:selected').val());//选中的值
+                        getFollowStype($('#followstate option:selected').val());
+                    } else {//省份为空时
+                        for (var i = 0; i < data.data.length; i++) {
+                            $("#customer_provincename").append($("<option value=" + data.data[i].id + ">" + data.data[i].followtypename + "</option>"));
+                        }
+                        var states = $('#followstate option:eq(0)').text();
+                        $("input[name='followstate']").attr("value",states);//选中的值
+                        $("input[name='followstateid']").attr("value",$("#followstate option:eq(0)").val());
+
+                        getFollowStype($("#followstate option:eq(0)").val());
+                    }
+
+                }
+            });
+        }
+
+        //跟进类型
+        function getFollowStype (id) {
+            $("#followtype").empty();
+            $.ajax({
+                url:"/v1/other/getfollowstype?id="+id,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    if (followtype != "") {
+                        for (var i = 0; i < data.data.length; i++) {
+                            if (data.data[i].labelname == followtype) {
+                                $("#followtype").append($("<option selected value=" + data.data[i].id + ">" + data.data[i].labelname + "</option>"));
+                            } else {
+                                $("#followtype").append($("<option value=" + data.data[i].id + ">" + data.data[i].labelname + "</option>"));
+                            }
+                        }
+                        var type = $('#followtype option:selected').text();
+                        $("input[name='followtype']").attr("value",type);//选中的值
+                        $("input[name='followtypeid']").attr("value",$('#followtype option:selected').val());//选中的值
+                    } else {
+                        for (var i = 0; i < data.data.length; i++) {
+                            $("#followtype").append($("<option value=" + data.data[i].id + ">" + data.data[i].labelname + "</option>"));
+                        }
+                        var type = $('#followtype option:eq(0)').text();
+                        $("input[name='followtype']").attr("value",type);//选中的值
+                        $("input[name='followtypeid']").attr("value",$("#followtype option:eq(0)").val());
+                    }
+                }
+            })
+        };
+
+        function getContractTable(){
+            $('#customer_new_contract_table').datagrid({ //合同列表
+                local: 'remote',
+                dataUrl: '/v1/contract/customer_contractlist',
+                dataType: 'json',
+                sortAll: false,
+                loadType: 'get',
+                filterAll: true,
+				height:'95%',
+                columns: [
+                    {name: 'contractdate', width: '150', label: '合同日期'},
+                    {name: 'stores', width: '150', label: '门店'},
+                    {name: 'contractdoc', width: '150', label: '合同号'},
+                    {name: 'contractamount', width: '150', label: '订单金额'},
+                    {name: 'firstamount', width: '150', label: '已付款'},
+                    {name: 'state', width: '150', label: '状态'},
+                    {name: 'projectstate', width: '150', label: '进度状态'},
+                    {name: 'id', width: '80', label: '主键', hide: true}
+                ],
+                templateWidth: 600,
+                showLinenumber: true,
+                paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+                columnMenu: true,
+                columnShowhide: true,
+                columnFilter: true,
+                columnLock: false,
+                fullGrid: false,
+
+
+            });
+        }
+
+        function getDesignFiles(){
+            $('#customer_design_files').datagrid({//设计文件列表
+                local: 'remote',
+                dataUrl: '/v1/customer/customer_designdocuments',
+                dataType: 'json',
+                sortAll: false,
+                loadType: 'get',
+                filterAll: true,
+				height:'95%',
+                columns: [
+                    {name: 'state', width: '150', label: '状态'},
+                    {name: 'createtime', width: '150', label: '上传时间'},
+                    {name: 'createuser', width: '150', label: '上传人'},
+                    {name: 'style', width: '150', label: '风格'},
+                    {name: 'point', width: '150', label: '特点'},
+                    {name: 'details', width: '150', label: '备注'},
+                    {name: 'filename', width: '150', label: ' '},
+                    {name: 'id', width: '80', label: '主键', hide: true}
+                ],
+                templateWidth: 600,
+                showLinenumber: true,
+                paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+                columnMenu: true,
+                columnShowhide: true,
+                columnFilter: true,
+                columnLock: false,
+                fullGrid: false,
+
+
+            });
+        }
+
+        function getCashTable(){
+            $('#customer_cash_table').datagrid({ //获取收款信息列表
+                local: 'remote',
+                dataUrl: '/v1/financial/customer_voucherlist',
+                dataType: 'json',
+                sortAll: false,
+                loadType: 'get',
+                filterAll: true,
+				height:'95%',
+                columns: [
+                    {name: 'createtime', width: '150', label: '收款日期'},
+                    {name: 'invoicedoc', width: '150', label: '收款单号'},
+                    {name: 'paymentmethods', width: '150', label: '收款方式'},
+                    {name: 'paymentamount', width: '150', label: '收款金额'},
+                    {name: 'paymentmethods', width: '150', label: '收款类型'},
+                    {name: 'state', width: '150', label: '收款人'},
+                    {name: 'details', width: '150', label: '备注'},
+                    {name: 'id', width: '80', label: '主键', hide: true}
+                ],
+                templateWidth: 600,
+                showLinenumber: true,
+                paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+                columnMenu: true,
+                columnShowhide: true,
+                columnFilter: true,
+                columnLock: false,
+                fullGrid: false,
+
+
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <form action="/v1/customer/post" id="customer_info" data-toggle="validate" data-callback="calback">
+        <input type="hidden" value="" name="sourceid">
+        <input type="hidden" value="" name="source">
+        <input type="hidden" value="" name="provincename">
+        <input type="hidden" value="" name="cityname">
+        <input type="hidden" value="" name="districtname">
+        <table class="table table-condensed table-hover" width="100%">
+            <tbody>
+            <tr>
+                <td><label for="first_title" class="control-label" style="font-size:18px;">客户基本信息</label></td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="customer_customercode" class="control-label x80">编码：</label>
+                    <input type="text" id="customer_customercode" value="" size="15"
+                           readonly="true">
+                </td>
+                <td>
+                    <label for="customer_state" class="control-label x80">跟进状态：</label>
+                    <input type="text" id="customer_state" value="" size="15" name="state" readonly="true">
+                </td>
+                <td>
+                    <label for="customer_mobilesales" class="control-label x80">美聊员：</label>
+                    <input type="text" id="customer_mobilesales" value="" size="15" readonly="true">
+                </td>
+                <td>
+                    <label for="customer_custsales" class="control-label x80">客户经理：</label>
+                    <input type="text" id="customer_custsales" value="" size="15" readonly="true">
+                </td>
+            </tr>
+            <tr>
+                <!--<td>-->
+                <!--<label for="customer_orgname" class="control-label x80">组织：</label>-->
+                <!--<input type="text" id="customer_orgname" value="" size="15" readonly="true">-->
+                <!--</td>-->
+                <!--<td>-->
+                <!--<label for="customer_stores" class="control-label x80">门店：</label>-->
+                <!--<input type="text" id="customer_stores" value="" size="15" name="stores" readonly="true">-->
+                <!--</td>-->
+                <td>
+                    <label for="customer_cusname" class="control-label x80"><a style="color: red">*</a>姓名：</label>
+                    <input type="text" id="customer_cusname" name="cusname" value="" size="15" data-rule="required">
+                </td>
+                <td>
+                    <label for="customer_mobile" class="control-label x80"><a style="color: red">*</a>手机号：</label>
+                    <input type="text" id="customer_mobile" name="mobile" value="" size="15" data-rule="required;mobile">
+                </td>
+                <td>
+                    <label for="customer_custusername" class="control-label x80">用户名：</label>
+                    <input type="text" id="customer_custusername" value="" size="15"
+                           readonly="true">
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">设计师：</label>
+                    <input type="text" id="customer_designer" value="" size="15" readonly="true">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="customer_source" class="control-label x80"><a style="color: red">*</a>来源：</label>
+                    <select id="customer_source" data-toggle="selectpicker" data-rule="required" >
+                        <option value=""></option>
+                    </select>
+                </td>
+                <td>
+                    <label for="customer_secondsource" class="control-label x80">二级来源：</label>
+                    <input type="text" id="customer_secondsource" name="secondsource" value="" size="15">
+                </td>
+
+                <td>
+                    <label for="customer_thirdsource" class="control-label x80">活动类型：</label>
+                    <input type="text" id="customer_thirdsource" name="thirdsource" value="" size="15">
+                </td>
+
+                <td>
+                    <label for="customer_wechatnum" class="control-label x80">微信号：</label>
+                    <input type="text" id="customer_wechatnum" value="" size="15" name="wechatnum">
+                </td>
+
+            </tr>
+            <tr>
+                <td>
+                    <label for="customer_provincename" class="control-label x80">省：</label>
+                    <select id="customer_provincename" data-toggle="selectpicker"></select>
+                </td>
+                <td>
+                    <label for="customer_cityname" class="control-label x80">城市：</label>
+                    <select id="customer_cityname" style="width: 150px" data-toggle="selectpicker"></select>
+                </td>
+                <td>
+                    <label for="customer_districtname" class="control-label x80">区：</label>
+                    <select id="customer_districtname" style="width: 150px" data-toggle="selectpicker"></select>
+                </td>
+                <td>
+                    <label for="customer_road" class="control-label x80">街道：</label>
+                    <input type="text" id="customer_road" value="" size="15" name="road">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="customer_village" class="control-label x80">小区名称：</label>
+                    <input type="text" id="customer_village" value="" size="15" name="village">
+                </td>
+                <td>
+                    <label for="customer_building" class="control-label x80">栋数：</label>
+                    <input type="text" id="customer_building" value="" size="15" name="building">
+                </td>
+                <td>
+                    <label for="customer_unit" class="control-label x60">单元：</label>
+                    <input type="text" id="customer_unit" value="" size="7" name="unit">
+                    <label for="customer_room" class="control-label x50">房号：</label>
+                    <input type="text" id="customer_room" value="" size="7" name="room">
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">面积：</label>
+                    <input type="text" id="customer_area" value="" size="15" name="area" data-rule="number"
+                           placeholder="00.00">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="customer_rooms" class="control-label x80">室：</label>
+                    <input type="text" id="customer_rooms" value="" size="15" name="rooms" data-rule="digits">
+                </td>
+                <td>
+                    <label for="customer_hall" class="control-label x80">厅：</label>
+                    <input type="text" id="customer_hall" value="" size="15" name="hall" data-rule="digits">
+                </td>
+                <td>
+                    <label for="customer_toilet" class="control-label x80">卫：</label>
+                    <input type="text" id="customer_toilet" value="" size="15" name="toilet" data-rule="digits">
+                </td>
+                <td>
+                    <label for="customer_balcony" class="control-label x80">阳台：</label>
+                    <input type="text" id="customer_balcony" value="" size="15" name="balcony" data-rule="digits">
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label for="customer_roomstatus" class="control-label x80">交房状态：</label>
+                    <select name="roomstatus" id="customer_roomstatus" data-toggle="selectpicker" >
+                        <option value=""></option>
+                        <option value="待购">待购</option>
+                        <option value="现房">现房</option>
+                        <option value="期房">期房</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">交房时间：</label>
+                    <input type="text" id="customer_handoverdate" value="" size="15" name="handoverdate"
+                           data-toggle="datepicker" data-rule="date" data-pattern="yyyy-MM-dd">
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">计划装修时间：</label>
+                    <input type="text" id="customer_decorationdate" value="" size="15" name="decorationdate"
+                           data-toggle="datepicker" data-rule="date" data-pattern="yyyy-MM-dd">
+                </td>
+                <td>
+                    <label for="customer_decoratestate" class="control-label x80">装修状态：</label>
+                    <select name="decoratestate" id="customer_decoratestate" data-toggle="selectpicker" >
+                        <option value=""></option>
+                        <option value="毛坯">毛坯</option>
+                        <option value="旧房">旧房</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label for="customer_roommodel" class="control-label x80">房型：</label>
+                    <select name="roommodel" id="customer_roommodel" data-toggle="selectpicker" >
+                        <option value=""></option>
+                        <option value="平层">平层</option>
+                        <option value="复式">复式</option>
+                        <option value="别墅">别墅</option>
+                        <option value="排屋">排屋</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">关注点：</label>
+                    <input type="text" id="customer_concerns" value="" size="15" name="concerns">
+                </td>
+                <td>
+                    <label for="customer_person" class="control-label x80">个性化：</label>
+                    <input type="text" id="customer_person" value="" size="15" name="person">
+                </td>
+                <td>
+                    <label for="customer_intention" class="control-label x80">意向度：</label>
+                    <select name="intention" id="customer_intention" data-toggle="selectpicker" >
+                        <option value=""></option>
+                        <option value="30%">30%</option>
+                        <option value="50%">50%</option>
+                        <option value="70%">70%</option>
+                        <option value="80%">80%</option>
+                        <option value="90%">90%</option>
+                        <option value="100%">100%</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label for="customer_designer" class="control-label x80">量房时间：</label>
+                    <input type="text" id="customer_scaledate" value="" size="15" data-toggle="datepicker"
+                           name="scaledate" data-rule="date" data-pattern="yyyy-MM-dd">
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">量房时间段：</label>
+                    <input type="text" id="customer_scaletime" value="" size="15" name="scaletime">
+                </td>
+                <td>
+                    <label for="customer_sex" class="control-label x80">性别：</label>
+                    <select name="sex" id="customer_sex" data-toggle="selectpicker" >
+                        <option value=""></option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </td>
+                <!--<td>-->
+                <!--<label for="customer_cuscall" class="control-label x80">称呼：</label>-->
+                <!--<input type="text" id="customer_cuscall" name="cuscall" value="" size="15">-->
+                <!--</td>-->
+                <td>
+                    <label for="customer_plandate" class="control-label x80">方案初稿日期：</label>
+                    <input type="text" id="customer_plandate" value="" size="15" data-toggle="datepicker"
+                           name="plandate" data-rule="date" data-pattern="yyyy-MM-dd">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="customer_mobiletwo" class="control-label x80">手机号2：</label>
+                    <input type="text" id="customer_mobiletwo" value="" size="15" name="mobiletwo" data-rule="mobile">
+                </td>
+                <td colspan="2">
+                    <label for="customer_details" class="control-label x80">备注：</label>
+                    <textarea type="text" id="customer_details" value="" size="15" name="details" cols="60" rows="1"
+                              style="resize:none"></textarea>
+                </td>
+                <td>
+                    <label for="customer_isplan" class="control-label x80">方案是否确认：</label>
+                    <select name="isplan" id="customer_isplan" data-toggle="selectpicker" >
+                        <option value=""></option>
+                        <option value="是">是</option>
+                        <option value="否">否</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="second_title" class="control-label" style="font-size:18px;">提高成功率</label></td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="customer_designer" class="control-label x80">推荐人：</label>
+                    <input type="text" id="customer_reccustomername" value="" size="15" name="reccustomername">
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">预算金额：</label>
+                    <input type="text" id="customer_budget" value="" size="15" name="budget" data-rule="number"
+                           placeholder="00.00">
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">已谈赠品：</label>
+                    <input type="text" id="customer_discount" value="" size="15" name="discount">
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">喜欢的风格：</label>
+                    <input type="text" id="customer_likestyle" value="" size="15" name="likestyle">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="customer_designer" class="control-label x80">竞品情况：</label>
+                    <input type="text" id="customer_rival" value="" size="15" name="rival">
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">用途：</label>
+                    <input type="text" id="customer_cususe" value="" size="15" name="cususe">
+                </td>
+
+                <td>
+                    <label for="customer_age" class="control-label x80">年龄：</label>
+                    <input type="text" id="customer_age" value="" size="15" name="age" data-rule="digits">
+                </td>
+                <td>
+                    <label for="customer_child" class="control-label x80">孩子：</label>
+                    <input type="text" id="customer_child" value="" size="15" name="child">
+                </td>
+            </tr>
+            <tr>
+                <td><label for="third_title" class="control-label" style="font-size:18px;">1比4内容</label></td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="customer_designer" class="control-label x80">单位/职业：</label>
+                    <input type="text" id="customer_occupation" value="" size="15" name="occupation">
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">生日：</label>
+                    <input type="text" id="customer_birthday" value="" size="15" data-toggle="datepicker"
+                           name="birthday" data-rule="date" data-pattern="yyyy-MM-dd">
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">乔迁日：</label>
+                    <input type="text" id="customer_movedate" value="" size="15" data-toggle="datepicker"
+                           name="movedate" data-rule="date" data-pattern="yyyy-MM-dd">
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">兴趣爱好：</label>
+                    <input type="text" id="customer_interests" value="" size="15" name="interests">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="customer_designer" class="control-label x80">车辆：</label>
+                    <input type="text" id="customer_car" value="" size="15" name="car">
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">多套房情况：</label>
+                    <input type="text" id="customer_multhouse" value="" size="15" name="multhouse">
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">籍贯：</label>
+                    <input type="text" id="customer_nativeplace" value="" size="15" name="nativeplace">
+                </td>
+                <td>
+                    <label for="customer_designer" class="control-label x80">毕业学校：</label>
+                    <input type="text" id="customer_school" value="" size="15" name="school">
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </form>
+    <div id="bjui bjui-sidebar" style="margin-top: 10px">
+        <div class="page unitBox">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="active hide" id="menu_notes"><a href="#notes" role="tab" data-toggle="tab">跟进记录</a></li>
+                <li class=""><a href="#profile" role="tab" data-toggle="tab">短信发送记录</a></li>
+                <li class="" id="menu_message"><a href="#messages" role="tab" data-toggle="tab">收款信息</a></li>
+                <li class="" id="menu_design"><a href="#design_files" role="tab" data-toggle="tab">设计文件</a></li>
+                <li class="" id="menu_contract"><a href="#contract" role="tab" data-toggle="tab">合同信息</a></li>
+                <li class=""><a href="#orders" role="tab" data-toggle="tab">订单信息</a></li>
+                <li class=""><a href="#setting" role="tab" data-toggle="tab">操作记录</a></li>
+                <li class=""><a href="#remind" role="tab" data-toggle="tab">提醒记录</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade" id="notes">
+                    <form action="" data-toggle="validate" id="notes_list" class="pageForm nice-validator n-red" novalidate="novalidate">
+                        <button type="button" class="btn btn-blue" data-icon="plus" data-url="CustomerManagement/customer_follow_record_add.html" data-height="422"
+                                data-toggle="dialog" data-id="customer_new_follow" data-mask="true" data-on-load="checkDialog"><i class="fa fa-plus"></i>添加</button>
+                        <button type="button" class="btn btn-green" data-icon="ebjui-pageContentdit"
+                                data-url="CustomerManagement/customer_follow_record_edit.html"
+                                data-toggle="dialog" data-id="customer_new_follow_edit"
+                                data-mask="true"
+                                data-on-load="getFollowDetails"><i class="fa fa-edit"></i> 编辑</button>
+                        <table class="table table-bordered table-hover table-striped table-top" id="customer_notes" data-width="100%" data-initnum="0" data-single-noindex="true" data-toggle="tabledit">
+                        </table>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="profile"></div>
+                <div class="tab-pane fade" id="messages">
+                    <table id="customer_cash_table" class="table table-bordered table-hover table-striped table-top"></table>
+                </div>
+                <div class="tab-pane fade" id="design_files">
+                    <table id="customer_design_files" class="table table-bordered table-hover table-striped table-top"></table>
+                </div>
+                <div class="tab-pane fade" id="contract">
+                    <table id="customer_new_contract_table" class="table table-bordered table-hover table-striped table-top"></table>
+                </div>
+                <div class="tab-pane fade" id="orders"></div>
+                <div class="tab-pane fade" id="setting"></div>
+                <div class="tab-pane fade" id="remind"></div>
+            </div>
+        </div>
+        <!-- 各页片内容区域 -->
+    </div>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="submit" class="btn-default" data-icon="save">保存</button></li>
+        <li><button type="button" class="btn-default hide" data-icon="user" id="customer_new_design">转设计</button></li>
+        <li><button type="button" class="btn-default hide" data-icon="user" id="customer_new_sale">转销售</button></li>
+        <li><button type="button" class="btn-default hide" data-icon="user" id="customer_new_electric">转电销</button></li>
+    </ul>
+</div>
+<div id="customer_add_backinfo"></div>
+</body>
+</html>

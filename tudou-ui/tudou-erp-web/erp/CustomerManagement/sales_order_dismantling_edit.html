@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        .footer td {
+            padding: 0;
+        }
+
+        .footer input {
+            border-radius: 0;
+            border-right: none;
+            border-top: none;
+            border-bottom: none;
+        }
+    </style>
+    <script type="text/javascript">
+        /**
+         * 销售订单编辑页面（拆单员）
+         * */
+                //定义全局变量，已做个性包和套餐的区分
+        var typedocument = "套餐";
+        //是否为第一次,判断是否需要追加合计栏
+        var isfirst = 0;
+        //获取该记录的详情
+        if(thisid==0){
+            var selected = $("#sales_order_dismantling_list").find('tr.datagrid-selected-tr')[0].lastChild.innerText;
+        }else{
+            //获取该记录的详情
+            var selected=thisid;
+            thisid=0;
+        }
+
+        //        var selected = $("#sales_order_dismantling_list").find('tr.datagrid-selected-tr');
+        countline = 0;
+        $.ajax({
+            url: '/v1/so/findeditsaleorders?id=' + selected,
+            dataType: 'json',
+            type: 'GET',
+            xhrFields: {
+                withCredentials: true
+            },
+            crossDomain: true,
+            success: function (d) {
+                if (d.state == 200) {
+                    if (d.data.tsoValid.state == "已审核") {
+                        $("#sales_order_dismantling_noaudit_btn").removeAttr("disabled");
+                        $("#sales_order_dismantling_audit_btn").attr("disabled", "disabled");
+                        $("#sales_order_dismantling_ed_de").attr("disabled", "disabled");
+                    } else if (d.data.tsoValid.state == "已提交") {
+                        $("#sales_order_dismantling_audit_btn").removeAttr("disabled");
+                        $("#sales_order_dismantling_noaudit_btn").attr("disabled", "disabled");
+                        $("#sales_order_dismantling_ed_de").attr("disabled", "disabled");
+                    }else if (d.data.tsoValid.state == "新增") {
+                        $("#sales_order_dismantling_audit_btn").attr("disabled", "disabled");
+                        $("#sales_order_dismantling_noaudit_btn").attr("disabled", "disabled");
+                        $("#sales_order_dismantling_ed_de").removeAttr("disabled");
+                    }
+                    $("#sodoc").val(d.data.tsoValid.sodoc);
+                    $("#state").val(d.data.tsoValid.state);
+                    $("#stores").val(d.data.tsoValid.stores);
+                    $("#custsales").val(d.data.tsoValid.custsales);
+                    $("#custusername").val(d.data.tsoValid.custusername);
+                    $("#mobile").val(d.data.tsoValid.mobile);
+                    $("#receivedaddress").val(d.data.tsoValid.receivedaddress);
+                    $("#businessdate").val(d.data.tsoValid.businessdate);
+                    $("#paymentaccount").val(d.data.tsoValid.paymentaccount);
+                    $("#salespackage").val(d.data.tsoValid.salespackage);
+                    $("#details").val(d.data.tsoValid.details);
+                    $("#id").val(d.data.tsoValid.id);
+                    $("#custid").val(d.data.tsoValid.custid);
+                    $("#contractid").val(d.data.tsoValid.contractid);
+                    $("#classification").selectpicker('val',d.data.tsoValid.classification);
+
+                    var html = "";
+                    var countunitqty = 0;
+                    var countmpq = 0;
+                    var countqty = 0;
+                    if (d.data.tsodetailValidList.length !== 0) {
+                        for (var i = 0; i < d.data.tsodetailValidList.length; i++) {
+
+                            countunitqty += d.data.tsodetailValidList[i].unitqty;
+                            countmpq += d.data.tsodetailValidList[i].mpq;
+                            countqty += Math.ceil(d.data.tsodetailValidList[i].unitqty / d.data.tsodetailValidList[i].mpq);
+                            var isnonstandard = d.data.tsodetailValidList[i].isnonstandard;
+                            if(isnonstandard==false){
+                                isnonstandard="不是";
+                            }
+                            if(isnonstandard==true){
+                                isnonstandard="是";
+                            }
+
+                            html += "<tr>" +
+                                    "<td style='width: 4%'><input type=text   name=salespackage[" + i + "].linenum class='linenum form-control' readonly=true   value=" + d.data.tsodetailValidList[i].linenum + "></td>" +
+                                    "<td style='width: 4%'><input type=text   name=salespackage[" + i + "].linestate class=form-control readonly=true  value=" + d.data.tsodetailValidList[i].linestate + "></td>" +
+                                    "<input type=hidden   name=salespackage[" + i + "].worker class='form-control worker' readonly=true  value= " + d.data.tsodetailValidList[i].worker + " >" +
+                                    "<input type=hidden   name=salespackage[" + i + "].materialdetailed class='form-control materialdetailed' readonly=true  value=" + d.data.tsodetailValidList[i].materialdetailed + " >" +
+                                    "<input type=hidden   name=salespackage[" + i + "].isnonstandard class='form-control isnonstandard'  readonly=true value=" + isnonstandard + " >" +
+                                    "<td style='width: 11%'><input type=text   name=salespackage[" + i + "].itemno class='form-control itemno' readonly=true value=" + d.data.tsodetailValidList[i].itemno + "></td>" +
+                                    "<td style='width: 4%'><input type=text   name=salespackage[" + i + "].itemclass class='form-control itemclass' readonly=true  value=" + d.data.tsodetailValidList[i].itemclass + "></td>" +
+                                    "<td style='width: 4%'><input type=text   name=salespackage[" + i + "].brand class='form-control brand' readonly=true   value=" + d.data.tsodetailValidList[i].brand + "></td>" +
+                                    "<td style='width: 26%'><input type=text   name=salespackage[" + i + "].partname class='form-control partname' readonly=true value=" + d.data.tsodetailValidList[i].partname + "></td>" +
+                                    "<td style='width: 7%'><input type=text   name=salespackage[" + i + "].partspec class='form-control partspec'readonly=true    value=" + d.data.tsodetailValidList[i].partspec + "></td>" +
+                                    "<td style='width: 4%'><input type=text   name=salespackage[" + i + "].partstyle class='form-control partstyle' readonly=true value=" + d.data.tsodetailValidList[i].partstyle + "></td>" +
+                                    "<td style='width: 4%'><input type=text   name=salespackage[" + i + "].colorlevel class='form-control colorlevel' readonly=true value=" + d.data.tsodetailValidList[i].colorlevel + "></td>" +
+                                    "<td style='width: 4%'><input type=text   name=salespackage[" + i + "].material class='form-control material' readonly=true value=" + d.data.tsodetailValidList[i].material + "></td>" +
+                                    "<td style='width: 4%'><input type=text   name=salespackage[" + i + "].usingphase class='form-control usingphase' readonly=true value=" + d.data.tsodetailValidList[i].usingphase + "></td>" +
+                                    "<td style='width: 4%'><input type=text   name=salespackage[" + i + "].funit class='funit form-control' readonly=true class=funit   value=" + d.data.tsodetailValidList[i].funit + "></td>" +
+                                    "<td style='width: 4%'><input type=text   name=salespackage[" + i + "].grossweight class='grossweight form-control' readonly=true class=grossweight   value=" + d.data.tsodetailValidList[i].grossweight + "></td>" +
+                                    "<td style='width: 4%'><input type=text   name=salespackage[" + i + "].unitweight class='unitweight form-control' readonly=true class=unitweight   value=" + d.data.tsodetailValidList[i].unitweight + "></td>" +
+                                    "<td style='width: 4%'><input type=text   name=salespackage[" + i + "].unitqty  class='unitqty form-control' data-rule='number' onchange='count_edit(this.parentNode.parentNode)' value=" + d.data.tsodetailValidList[i].unitqty + "></td>" +
+                                    "<td style='width: 4%'><input type=text   name=salespackage[" + i + "].mpq readonly=true class='form-control mpq' data-rule='number'   value=" + d.data.tsodetailValidList[i].mpq + "></td>" +
+                                    "<td style='width: 4%'><input type=text   name=salespackage[" + i + "].qty  class='form-control qty' data-rule='number'   value=" + d.data.tsodetailValidList[i].qty + "></td>" +
+                                    "<input  name=salespackage[" + i + "].itemid   class='form-control itemid' type='hidden' value=" + d.data.tsodetailValidList[i].itemid + ">" +
+                                    "<input  name=salespackage[" + i + "].id class='form-control id'    type='hidden' value=" + d.data.tsodetailValidList[i].id + ">" +
+                                    "</tr>";
+                        }
+                        $("#sales_order_dismantling_edit_detail_table tbody").html(html);
+                        countline = $("#sales_order_dismantling_edit_detail_table tbody tr").length;//todo
+                        if (isfirst == 0) {
+                            $("#sales_order_edit_count").append("<table class='table table-bordered table-hover table-striped bjui-tabledit'><tr>" +
+                                    "<td style='width: 4%'><input class='form-control'    value='合计'></td>" +
+                                    "<td style='width: 4%'><input type='text'    class='form-control' value></td>" +
+                                    "<input type='hidden'    class='form-control' value/>" +
+                                    "<input type='hidden'    class='form-control' value/>" +
+                                    "<input type='hidden'    class='form-control' value/>" +
+                                    "<td style='width: 11%'><input type='text'   class='form-control' value></td>" +
+                                    "<td style='width: 4%'><input type='text'    class='form-control' value></td>" +
+                                    "<td style='width: 4%'><input type='text'    class='form-control' value></td>" +
+                                    "<td style='width: 26%'><input type='text'    class='form-control' value></td>" +
+                                    "<td style='width: 7%'><input type='text'    class='form-control' value></td>" +
+                                    "<td style='width: 4%'><input type='text'    class='form-control' value></td>" +
+                                    "<td style='width: 4%'><input type='text'    class='form-control' value></td>" +
+                                    "<td style='width: 4%'><input type='text'    class='form-control' value></td>" +
+                                    "<td style='width: 4%'><input type='text'    class='form-control' value></td>" +
+                                    "<td style='width: 4%'><input type='text'    class='form-control' value></td>" +
+                                    "<td style='width: 4%'><input type='text'    class='form-control' value></td>" +
+                                    "<td style='width: 4%'><input type='text'    class='form-control' value></td>" +
+                                    "<td style='text-align: center;width: 4%'><input type='text'   id='countunitqty' readonly=true class='form-control' value=0></td>" +
+                                    "<td style='text-align: center;width: 4%''><input type='text'   id='countmpq'readonly=true  class='form-control' value=0></td>" +
+                                    "<td style='text-align: center;width: 4%''><input type='text'   id='countqty' readonly=true class='form-control' value=0></td>" +
+                                    "</tr></table>");
+                        }
+                        count_edit();
+
+                    }
+
+                    $("#sales_order_dismantling_edit_detail_table tbody tr").click(function () {
+                        $(this).removeClass("readonly")
+                                .addClass("selected").siblings("tr").removeClass("selected")
+                                .addClass("readonly");
+                    })
+                } else  {
+                    BJUI.alertmsg('error', d.content, {
+                        displayMode: 'fade',
+                        alertTimeout: 1000,
+                        displayPosition: 'middlecenter'
+                    });
+                }
+            }
+        });
+
+        /**
+         * 当table中单位用户量unitqty值发生改变时对某些数量进行计算
+         * @param theRow
+         */
+        function count_edit(theRow) {
+            //根据单位用户量unitqty,和最小包装MPQ mpq计算出所需数量qty
+            //qty=unitqty/mpq 向上取整
+            var number = $(theRow).find(".unitqty").val();
+            var mpq = $(theRow).find(".mpq").val();//税率
+            var qty = Math.ceil(number / mpq);//不含税采购金额
+            $(theRow).find(".qty").val(qty);//不含税采购单价
+
+            //重新合计各数量
+            var sumunitqty = 0;
+            var sunmpq = 0;
+            var sumqty = 0;
+            for (var i = 0; i < $("#sales_order_dismantling_edit_detail_table tbody tr").length; i++) {
+                if ($("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") td:eq(14) input").val() != '') {
+                    sumunitqty += parseInt($("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") td:eq(14) input").val());
+                }
+                if ($("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") td:eq(15) input").val() != '') {
+                    sunmpq += parseInt($("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") td:eq(15) input").val());
+                }
+                if ($("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") td:eq(16) input").val() != '') {
+                    sumqty += parseInt($("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") td:eq(16) input").val());
+                }
+
+//                if ($("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") td:eq(15) input").val() != '' && $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") td:eq(16) input").val() != '') {
+//                    sumqty += Math.ceil(parseInt($("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") td:eq(15) input").val()) / parseInt($("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") td:eq(16) input").val()));
+//                }
+                $("#sales_order_edit_count  td:eq(14) input").val(sumunitqty);
+                $("#sales_order_edit_count  td:eq(15) input").val(sunmpq);
+                $("#sales_order_edit_count  td:eq(16) input").val(sumqty);
+            }
+        }
+
+
+        /**
+         * 打开套餐选择界面
+         * */
+        function select_sales_package(type) {
+            typedocument = type;
+            //打开编辑界面
+            $(this).dialog({
+                id: "storage_edit",
+                title: "选择套餐_edit",
+                url: "CustomerManagement/sales_package_dismantling_select.html",
+
+                width: 1050,
+                height: 600,
+                mask: true
+            });
+        }
+
+        /**
+         * 编辑
+         * */
+        function sales_order_dismantling_reset() {
+            if ($("#businessdate").val() !== "" && $("#custusername").val() !== "") {
+                var tsodetailValidList = [];
+                var obj = new Object();
+                var tsoValid = new Object();
+                var selectedId = $("#sales_order_dismantling_edit_table input[name='id']").val();
+                tsoValid = {
+                    sodoc: $("#sodoc").val(),
+                    stores: $("#stores").val(),
+                    custsales: $("#custsales").val(),
+                    custusername: $("#custusername").val(),
+                    mobile: $("#mobile").val(),
+                    receivedaddress: $("#receivedaddress").val(),
+                    businessdate: $("#businessdate").val(),
+                    paymentaccount: $("#paymentaccount").val(),
+                    salespackage: $("#salespackage").val(),
+                    details: $("#details").val(),
+                    custsalesid: $("#custsalesid").val(),
+                    custid: $("#custid").val(),
+                    salespackageid: $("#salespackageid").val(),
+                    storesid: $("#storesid").val(),
+                    custid: $("#custid").val(),
+                    contractid: $("#contractid").val(),
+                    id: selectedId
+                }
+                var salesordertable = $("#sales_order_dismantling_edit_detail_table tbody tr");
+                for (var i = 0; i < salesordertable.length; i++) {
+                    var isnonstandard=$("input[name='salespackage[" + i + "].isnonstandard']").val();
+                    if(isnonstandard=="是"){
+                        isnonstandard=true;
+                    }
+                    if(isnonstandard=="不是"){
+                        isnonstandard=false;
+                    }
+                    obj = {
+                        linenum: $("input[name='salespackage[" + i + "].linenum']").val(),//ok
+                        linestate: $("input[name='salespackage[" + i + "].linestate']").val(),//ok
+                        worker: $("input[name='salespackage[" + i + "].worker']").val(),//ok
+                        materialdetailed: $("input[name='salespackage[" + i + "].materialdetailed']").val(),
+                        isnonstandard: isnonstandard,
+                        itemno: $("input[name='salespackage[" + i + "].itemno']").val(),
+                        itemclass: $("input[name='salespackage[" + i + "].itemclass']").val(),
+                        brand: $("input[name='salespackage[" + i + "].brand']").val(),
+                        partname: $("input[name='salespackage[" + i + "].partname']").val(),
+                        partspec: $("input[name='salespackage[" + i + "].partspec']").val(),
+                        partstyle: $("input[name='salespackage[" + i + "].partstyle']").val(),
+                        colorlevel: $("input[name='salespackage[" + i + "].colorlevel']").val(),
+                        material: $("input[name='salespackage[" + i + "].material']").val(),
+                        usingphase: $("input[name='salespackage[" + i + "].usingphase']").val(),
+                        funit: $("input[name='salespackage[" + i + "].funit']").val(),
+                        unitqty: $("input[name='salespackage[" + i + "].unitqty']").val(),
+                        mpq: $("input[name='salespackage[" + i + "].mpq']").val(),
+                        qty: $("input[name='salespackage[" + i + "].qty']").val(),
+                        itemid: $("input[name='salespackage[" + i + "].itemid']").val(),
+                        id: $("input[name='salespackage[" + i + "].id']").val(),
+                        grossweight: $("input[name='salespackage[" + i + "].grossweight']").val(),
+                        unitweight: $("input[name='salespackage[" + i + "].unitweight']").val(),
+                    };
+                    tsodetailValidList.push(obj);
+                }
+                objOb = {
+                    tsodetailValidList,
+                    tsoValid
+                };
+                $.ajax({
+                    url: '/v1/so/resetsaleorders',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: JSON.stringify(objOb),
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        if (d.state == 200) {
+                            $("#sales_order_dismantling_edit_detail_table tbody tr").addClass("readonly");
+                            $('#sales_order_dismantling_list').datagrid("refresh");
+//                            BJUI.dialog("closeCurrent", this);
+                            thisid=selectedId;
+                            BJUI.dialog("refresh", this);
+                            BJUI.alertmsg('info', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                        } else  {
+                            BJUI.alertmsg('error', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                        }
+                    }
+                });
+            } else {
+                $("#purchase_tips").alertmsg('info', '填写内容', {
+                    displayMode: 'fade',
+                    alertTimeout: 1000,
+                    displayPosition: 'middlecenter'
+                });
+            }
+        }
+
+        /**
+         *
+         * 审核
+         * **/
+        function sales_order_dismantling_edit_audit() {
+
+            $("#sales_order_dismantling_audit_btn").attr("disabled", "disabled");
+//            sales_order_dismantling_reset();
+            var id = $("#sales_order_dismantling_edit_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/so/reviewedsaleorders',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $("#sales_order_dismantling_audit_btn").attr("disabled", "disabled");
+                        $("#sales_order_dismantling_save_btn").attr("disabled", "disabled");
+                        $("#sales_order_dismantling_noaudit_btn").removeAttr("disabled");
+                        $("#sales_order_dismantling_ed_de").attr("disabled", "disabled");
+                        $('#sales_order_dismantling_list').datagrid("refresh");
+                        //改变各行审核状态
+                        $("#state_edit").val("已审核");
+                        for (var i = 0; i < $("#sales_order_dismantling_edit_detail_table tbody tr").length; i++) {
+                            $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") td:eq(1) input").val("已审核")
+                        }
+                    }else  {
+                        $("#sales_order_dismantling_audit_btn").removeAttr("disabled");
+
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+        /**
+         * 弃审
+         * **/
+        function sales_order_dismantling_edit_giveup_audit() {
+
+            $("#sales_order_dismantling_noaudit_btn").attr("disabled", "disabled");
+            var id = $("#sales_order_dismantling_edit_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/so/giveupreviewedsaleorders',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $("#sales_order_dismantling_save_btn").removeAttr("disabled");
+                        $("#sales_order_dismantling_audit_btn").removeAttr("disabled");
+                        $("#sales_order_dismantling_ed_de").removeAttr("disabled");
+                        $("#sales_order_dismantling_noaudit_btn").attr("disabled", "disabled");
+                        $('#sales_order_dismantling_list').datagrid("refresh");
+                        $("#state_edit").val("已提交");
+                        for (var i = 0; i < $("#sales_order_dismantling_edit_detail_table tbody tr").length; i++) {
+                            $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") td:eq(1) input").val("已提交")
+                        }
+                    }else  {
+                        $("#sales_order_dismantling_noaudit_btn").removeAttr("disabled");
+
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+
+            });
+        }
+
+
+        /**
+         * 删除明细行
+         */
+        function sales_order_dismantling_del_row() {
+            if (1 < $("#sales_order_dismantling_edit_detail_table tbody tr").length) {
+
+                var id = $("#sales_order_dismantling_edit_detail_table").find(".selected").find(".id").val();
+
+                if (id !== undefined) {
+                    sales_del_row(id);
+                } else {
+                    re_arr_edit_detail_table();
+                }
+            }
+        }
+        /**
+         * （删除列表中的数据前）弹框
+         * **/
+        var deleteRowId;
+        function sales_del_row(id) {
+            deleteRowId = id;
+            if (1 < $("#sales_order_dismantling_edit_detail_table tbody tr").length) {
+                $(this).alertmsg('confirm', '确定要删除该行信息吗',
+                        {
+                            displayMode: 'slide',
+                            displayPosition: 'middlecenter',
+                            cancelName: '关闭',
+                            okName: '确认',
+                            title: '删除',
+                            okCall: 'salesOrderDelete'
+                        });
+            }
+        }
+
+        /**
+         *  （确认弹框后）删除明细行
+         * */
+        function salesOrderDelete() {
+            $.ajax({
+                url: '/v1/so/deletesaleordersdetail',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: deleteRowId
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        re_arr_edit_detail_table();
+                    } else {
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+
+        /**
+         * （删除整单前）弹框
+         * **/
+        function sales_order_dismantling_delete() {
+            BJUI.alertmsg('confirm', '确定要删除吗?', {
+                displayMode: 'fade',
+                displayPosition: 'middlecenter',
+                okName: "是",
+                cancelName: "否",
+                okCall: 'delete_order'
+            });
+        }
+        /**
+         * （确认弹框后）删除整单
+         */
+        function delete_order() {
+            var selected = $("#sales_order_dismantling_edit_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/so/deletesaleorders',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: selected
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.dialog("closeCurrent", this);
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $('#sales_order_dismantling_list').datagrid("refresh");
+                    } else  {
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+        /**
+         * 删除选中行后重排明细行数据
+         */
+        function re_arr_edit_detail_table(){
+            $("#sales_order_dismantling_edit_detail_table").find(".selected").remove();
+            for (var i = 0; i < $("#sales_order_dismantling_edit_detail_table tbody tr").length; i++) {
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(0)").attr("name", "salespackage[" + i + "].linenum");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(1)").attr("name", "salespackage[" + i + "].linestate");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(2)").attr("name", "salespackage[" + i + "].worker");
+
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(3)").attr("name", "salespackage[" + i + "].materialdetailed");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(4)").attr("name", "salespackage[" + i + "].isnonstandard");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(5)").attr("name", "salespackage[" + i + "].itemno");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(6)").attr("name", "salespackage[" + i + "].itemclass");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(7)").attr("name", "salespackage[" + i + "].brand");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(8)").attr("name", "salespackage[" + i + "].partname");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(9)").attr("name", "salespackage[" + i + "].partspec");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(10)").attr("name", "salespackage[" + i + "].partstyle");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(11)").attr("name", "salespackage[" + i + "].colorlevel");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(12)").attr("name", "salespackage[" + i + "].material");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(13)").attr("name", "salespackage[" + i + "].usingphase");
+
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(14)").attr("name", "salespackage[" + i + "].funit");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(15)").attr("name", "salespackage[" + i + "].grossweight");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(16)").attr("name", "salespackage[" + i + "].unitweight");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(17)").attr("name", "salespackage[" + i + "].unitqty");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(18)").attr("name", "salespackage[" + i + "].mpq");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(19)").attr("name", "salespackage[" + i + "].qty");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(20)").attr("name", "salespackage[" + i + "].itemid");
+                $("#sales_order_dismantling_edit_detail_table tbody tr:eq(" + i + ") input:eq(21)").attr("name", "salespackage[" + i + "].id");
+
+            }
+            count_edit()
+        }
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <form data-toggle="validate" data-toggle="validate">
+        <div style="margin:0px 0px 10px 0px;">
+            <button class="btn btn-blue" data-icon="save" id="sales_order_dismantling_save_btn"
+                    onclick="sales_order_dismantling_reset()">保存
+            </button>
+            <button type="button" class="btn btn-green" data-icon="thumbs-up"
+                    id="sales_order_dismantling_audit_btn" onclick="sales_order_dismantling_edit_audit()">审核
+            </button>
+            <button type="button" class="btn btn-orange" data-icon="thumbs-down"
+                    id="sales_order_dismantling_noaudit_btn" onclick="sales_order_dismantling_edit_giveup_audit()">弃审
+            </button>
+            <button type="button" class="btn btn-red" data-icon="times"
+                    id="sales_order_dismantling_ed_de" onclick="sales_order_dismantling_delete()">删除
+            </button>
+            <button class="btn-close btn" data-icon="close"><i class="fa fa-close"></i>关闭</button>
+        </div>
+        <table class="table table-bordered table-hover table-striped table-top bjui-tabledit"
+               id="sales_order_dismantling_edit_table" width="100%">
+
+            <input type="hidden" name="id" id="id" value="">
+            <input type="hidden" name="invoice.custid" value="" id="custid">
+            <input type="hidden" name="invoice.contractid" value="" id="contractid">
+            <!--<input type="hidden" name="invoice.custsalesid" value="" id="custsalesid">-->
+            <!--<input type="hidden" name="invoice.salespackageid" value="" id="salespackageid">-->
+            <!--<input type="hidden" name="invoice.storesid" value="" id="storesid">-->
+            <tbody>
+
+            <!--主表第一行-->
+            <tr>
+                <td>
+                    <label for="sodoc" class="control-label x90">单号：</label>
+                    <input type="text" id="sodoc" value="" name="sodoc" size="15" readonly="true">
+                </td>
+                <td>
+                    <label for="state" class="control-label x90">状态：</label>
+                    <input type="text" id="state" value="" name="state" style="width: 150px" readonly="true">
+                </td>
+                <td>
+                    <label for="stores" class="control-label x90">门店：</label>
+                    <input type="text" id="stores" value="" name="invoice.stores" style="width: 150px" readonly="true">
+                </td>
+
+                <td>
+                    <label for="custsales" class="control-label x90">客户经理：</label>
+                    <input type="text" id="custsales" name="invoice.custsales" style="width: 150px" readonly="true">
+                </td>
+            </tr>
+            <!--主表第二行-->
+            <tr>
+                <!--<td>-->
+                <!--<label class="control-label x90" for="suppliername">供应商</label>-->
+                <!--<input type="text" id="suppliername" value="" name="supplier.suppliername" data-url="PurchaseManagement/purchase_supplier.html" data-on-load="checkHasSup" data-toggle="lookup" data-group="supplier" data-id="purchase_spplier"  data-rule="required" style="width: 150px">-->
+                <!--</td>-->
+                <td>
+                    <label class="control-label x90" for="custusername">客户姓名：</label>
+                    <input type="text" name="invoice.username" id="custusername" data-rule="required"
+                           data-url="CustomerManagement/sales_order_dismantling_invoice.html" data-toggle="lookup"
+                           data-group="invoice" data-id="sales_order_dismantling_invoice" class="doc_lookup"
+                           data-title="收款单选择" style="width: 150px" readonly="true">
+
+                </td>
+                <td>
+                    <label class="control-label x90" for="mobile">手机号：</label>
+                    <input type="text" id="mobile" name="invoice.mobile" style="width: 150px"
+                           readonly="true">
+                </td>
+                <td>
+                    <label for="receivedaddress" class="control-label x90">送货地址：</label>
+                    <input type="text" id="receivedaddress" name="invoice.receivedaddress" class="receivedaddress"
+                           data-rule="required" style="width: 150px" readonly="true">
+                </td>
+                <td>
+                    <label for="businessdate" class="control-label x90">业务日期：</label>
+                    <input type="text" id="businessdate" value="" name="businessdate" data-toggle="datepicker"
+                           data-rule="required" style="width: 150px" readonly="true">
+                </td>
+            </tr>
+            <!--主表第三行-->
+            <tr>
+                <td>
+                    <label for="paymentaccount" class="control-label x90">活动政策：</label>
+                    <input type="text" id="paymentaccount" value="" class="paymentaccount"
+                           style="width: 150px" readonly="true">
+                </td>
+                <td>
+                    <label for="salespackage" class="control-label x90">套餐名称：</label>
+                    <!--<input type="text" id="salespackage" value="" class="salespackage"-->
+                    <!--data-rule="required" style="width: 150px">-->
+                    <input type="text" name="salespackageseleted.salespackagename" id="salespackage"
+                           data-rule="required" style="width: 150px" readonly="true">
+
+                </td>
+                <td>
+                    <label for="classification" class="control-label x90">材料一级分类：</label>
+                    <select name="classification" id="classification" data-toggle="selectpicker" data-rule="required" disabled=true>
+                        <option value="" selected="true">请选择</option>
+                        <option value="主材">主材</option>
+                        <option value="辅材">辅材</option>
+                        <option value="订制品">订制品</option>
+                    </select>
+                </td>
+
+
+            </tr>
+            <tr>
+                <td colspan="3"><label for="details" class="control-label x90">备注：</label>
+                    <textarea type="text" id="details" value="" name="details" size="15"
+                              style="width:80%;resize: none"></textarea></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div style="margin:50px 0 10px 0;">
+            <!--<button class="btn-default" data-toggle="tableditadd" data-target="#sales_order_dismantling_add_detail_table" data-num="1">-->
+            <!--选择个性包-->
+            <!--</button>-->
+            <!--<button class="btn-default doc_lookup doc_lookup"  data-toggle="lookupbtn" data-url="CustomerManagement/sales_package_select.html" data-group="salespackage" data-id="sales_package" data-title="套餐选择">选择个性包</button>-->
+            <button type="button" class="btn btn-green" data-icon="edit" onclick="select_sales_package('个性包')">选择个性包
+            </button>
+
+            <button class="btn-orange" onclick="sales_order_dismantling_del_row()">删除行</button>
+            <button class="btn-blue" data-toggle="dialog" data-mask="true">查看附件</button>
+        </div>
+
+        <div id="tableContanier">
+            <table class="table table-bordered table-hover table-striped bjui-tabledit"
+                   id="sales_order_dismantling_edit_detail_table" data-single-noindex="true">
+                <!--表格的头，先加载-->
+                <thead>
+                <tr>
+                    <th title="">行号</th>
+                    <th title="">行状态</th>
+                    <th title="">料号</th>
+                    <th title="">分类</th>
+                    <th title="">品牌</th>
+                    <th title="">商品名称</th>
+                    <th title="">规格</th>
+                    <th title="">型号</th>
+                    <th title="">颜色</th>
+                    <th title="">材质</th>
+                    <th title="">使用阶段</th>
+                    <th title="">单位</th>
+                    <th title="">毛重</th>
+                    <th title="">重量单位</th>
+                    <th title="">单位用户量</th>
+                    <th title="">最小包装MPQ</th>
+                    <th title="">数量</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+        <div id="sales_order_edit_count"></div>
+    </form>
+</div>
+</body>
+</html>

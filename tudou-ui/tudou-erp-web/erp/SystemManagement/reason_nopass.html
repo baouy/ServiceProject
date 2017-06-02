@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+
+        //取出选择行的各字段的值
+        function purchase_select_supplier() {
+            var reason = $("#reason").val();
+            reviewednopass(reason);
+
+
+        }
+
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+
+    <table id="reason_table" style="text-align:center">
+        <div style="text-align:center">确定审核未通过吗？请填写原因：</div>
+        <div type="hidden" style="margin:0px 0px 10px 0px;"></div>
+        <textarea rows="10" cols="30" id="reason" name="reason">
+
+</textarea>
+        <!--<input type="text" id="reason" name="reason" data-rule="required" data-tip="你好啊，请填写原因">-->
+    </table>
+    <div style="margin-bottom:15px;text-align:center">
+        <button type="button" class="btn-close btn" data-icon="close"><i class="fa fa-close"></i> 取消</button>
+
+        <button type="button" class="btn-close btn" onclick="purchase_select_supplier()"> 确定</button>
+    </div>
+
+</div>
+</body>
+</html>

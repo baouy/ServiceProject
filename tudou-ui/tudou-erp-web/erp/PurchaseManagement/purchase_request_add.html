@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        #tableContanier {
+            height: 400px;
+            overflow-y: scroll;
+        }
+    </style>
+    <script type="text/javascript">
+
+        var deleteRowId;
+        function purchase_del_row(theRow) {
+            if (1 < $("#purchase_add tbody tr").length) {
+
+                $(this).alertmsg('confirm', '确定要删除该行信息吗',
+                        {
+                            displayMode: 'slide',
+                            displayPosition: 'middlecenter',
+                            cancelName: '关闭',
+                            okName: '确认',
+                            title: '删除',
+                            okCall: 'purchaseDelete'
+                        });
+            }
+        }
+        /**
+         * 删除行
+         * @param theRow
+         */
+        function purchaseDelete() {
+//           $("#purchase_add tr:eq("+deleteRowId+")").remove();
+            $("#purchase_add").find(".selected").remove();//如果是新增的那就直接在页面删除就好，因为还没写进数据库
+            for (var i = 0; i < $("#purchase_add tbody tr").length; i++) {
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(0)").attr("name", "test[" + i + "].linenum");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(1)").attr("name", "test[" + i + "].linestate");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(2)").attr("name", "test[" + i + "].itemno");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(3)").attr("name", "test[" + i + "].partname");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(4)").attr("name", "test[" + i + "].partstyle");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(5)").attr("name", "test[" + i + "].partspec");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(6)").attr("name", "test[" + i + "].colorlevel");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(7)").attr("name", "test[" + i + "].material");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(8)").attr("name", "test[" + i + "].brand");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(9)").attr("name", "test[" + i + "].prqty");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(10)").attr("name", "test[" + i + "].funit");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(11)").attr("name", "test[" + i + "].grossweight");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(12)").attr("name", "test[" + i + "].unitweight");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(13)").attr("name", "test[" + i + "].linedetails");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(14)").attr("name", "test[" + i + "].poqty");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(15)").attr("name", "test[" + i + "].sourcenum");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(16)").attr("name", "test[" + i + "].soucrelinenum");
+                $("#purchase_add tbody tr:eq(" + i + ") input:eq(17)").attr("name", "test[" + i + "].itemid");
+            }
+        }
+        /**
+         * 保存行
+         * @param theRow
+         */
+        function purchaseAddInfo() {
+
+            if ($("#requireddate").val() !== "" && 0 < $("#purchase_add tbody tr").length) {
+                $("#purchase_add tbody tr").addClass("readonly");
+                var tprdetailValidList = [];
+                var obj = new Object();
+                var tprValid = new Object();
+                tprValid = {
+                    requireddate: $("#requireddate").val(),
+                    details: $("#details").val(),
+                    receiveduser: $("#receiveduser").val(),
+                    receivedphone: $("#receivedphone").val(),
+                    receivedaddress: $("#receivedaddress").val(),
+                    contractid: $("#contractid").val()
+
+                }
+                if ($("#purchase_add tbody tr").length < 1) {
+                    BJUI.alertmsg('error', "至少的有一行明细行记录", {
+                        displayMode: 'fade',
+                        alertTimeout: 1000,
+                        displayPosition: 'middlecenter'
+                    });
+                } else {
+                    var purchasetable = $("#purchase_add tbody tr");
+                    for (var i = 0; i < purchasetable.length; i++) {
+                        obj = {
+                            linenum: $("input[name='test[" + i + "].linenum']").val(),
+                            linestate: $("input[name='test[" + i + "].linestate']").val(),
+                            itemno: $("input[name='test[" + i + "].itemno']").val(),
+                            partname: $("input[name='test[" + i + "].partname']").val(),
+                            partstyle: $("input[name='test[" + i + "].partstyle']").val(),
+                            partspec: $("input[name='test[" + i + "].partspec']").val(),
+                            colorlevel: $("input[name='test[" + i + "].colorlevel']").val(),
+                            material: $("input[name='test[" + i + "].material']").val(),
+                            brand: $("input[name='test[" + i + "].brand']").val(),
+                            prqty: $("input[name='test[" + i + "].prqty']").val(),
+                            funit: $("input[name='test[" + i + "].funit']").val(),
+                            linedetails: $("input[name='test[" + i + "].linedetails']").val(),
+                            poqty: $("input[name='test[" + i + "].poqty']").val(),
+                            sourcenum: $("input[name='test[" + i + "].sourcenum']").val(),
+                            soucrelinenum: $("input[name='test[" + i + "].soucrelinenum']").val(),
+                            itemid: $("input[name='test[" + i + "].itemid']").val(),
+                            grossweight: $("input[name='test[" + i + "].grossweight']").val(),
+                            unitweight: $("input[name='test[" + i + "].unitweight']").val(),
+                        };
+                        tprdetailValidList.push(obj);
+                    }
+                    objOb = {
+                        tprdetailValidList,
+                        tprValid
+                    };
+                    $("#purchase_save_btn").attr("disabled","disabled");
+
+                    $.ajax({
+                        url: '/v1/pr/addprocurement',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        type: 'POST',
+                        data: JSON.stringify(objOb),
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        crossDomain: true,
+                        success: function (d) {
+                            if (d.state == 200) {
+                                $('#purchase_request_list').datagrid("refresh");
+                                $("#purchase_add_tips").alertmsg('info', d.content, {
+                                    displayMode: 'fade',
+                                    alertTimeout: 1000,
+                                    displayPosition: 'middlecenter'
+                                });
+//                            $("#podoc").val(d.data.podoc);
+//                        $("#requireddate").val(d.data.requireddate);
+//                            $("#state").val(d.data.state);
+//                            $("#orgname").val(d.data.orgname);
+//                            $("#businessdate").val(d.data.businessdate);
+//                            $("#purchase_audit_btn").removeAttr("disabled");
+//                            $("#purchase_ad_de").removeAttr("disabled");
+////                            $("#purchase_save_btn").attr("disabled","disabled");
+//                            $("#purchase_add_table input[name='id']").val(d.data.id);
+//                            $("#state").val("新增");
+//                            for (var i = 0; i < $("#purchase_add tbody tr").length; i++) {
+//                                $("#purchase_add tbody tr:eq(" + i + ") td:eq(1) input").val("新增")
+//                            }
+                                BJUI.dialog("closeCurrent", this);
+                            } else {
+                                $("#purchase_save_btn").removeAttr("disabled");
+                                BJUI.alertmsg('error', d.content, {
+                                    displayMode: 'fade',
+                                    alertTimeout: 1000,
+                                    displayPosition: 'middlecenter'
+                                });
+                            }
+                        }
+                    });
+                }
+
+
+            }
+        }
+            /**
+             * 审核
+             */
+            function purchase_add_audit() {
+                var id = $("#purchase_add_table input[name='id']").val();
+                $.ajax({
+                    url: '/v1/pr/reviewedprocurement',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: {
+                        id: id
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        if (d.state == 200) {
+                            $("#purchase_add_tips").alertmsg('info', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                            $("#purchase_audit_btn").attr("disabled", "disabled");
+                            $("#purchase_add_create_po_bt").removeAttr("disabled");
+                            $("#purchase_save_btn").attr("disabled", "disabled");
+                            $("#purchase_ad_de").attr("disabled", "disabled");
+                            $("#purchase_noaudit_btn").removeAttr("disabled");
+                            $('#purchase_request_list').datagrid("refresh");
+                            $("#state").val("已审核");
+                            for (var i = 0; i < $("#purchase_add tbody tr").length; i++) {
+                                $("#purchase_add tbody tr:eq(" + i + ") td:eq(1) input").val("已审核")
+                            }
+
+                        } else {
+                            $("#purchase_add_tips").alertmsg('error', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                            $("#purchase_audit_btn").attr("disabled", "disabled");
+                            $("#purchase_noaudit_btn").removeAttr("disabled");
+                        }
+                    }
+                });
+            }
+
+            /***
+             * 弃审
+             * */
+            function purchase_remove_audit() {
+                var id = $("#purchase_add_table input[name='id']").val();
+                $.ajax({
+                    url: '/v1/pr/giveupreviewedprocurement',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: {
+                        id: id
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        if (d.state == 200) {
+                            $("#purchase__add_tips").alertmsg('info', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                            $("#purchase_noaudit_btn").attr("disabled", "disabled");
+                            $("#purchase_save_btn").removeAttr("disabled");
+                            $("#purchase_audit_btn").removeAttr("disabled");
+                            $('#purchase_request_list').datagrid("refresh");
+                            $("#state").val("新增");
+                            for (var i = 0; i < $("#purchase_add tbody tr").length; i++) {
+                                $("#purchase_add tbody tr:eq(" + i + ") td:eq(1) input").val("新增")
+                            }
+                            $("#purchase_add_create_po_bt").attr("disabled", "disabled");
+                        } else {
+                            $("#purchase_add_tips").alertmsg('error', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                            $("#purchase_noaudit_btn").attr("disabled", "disabled");
+                            $("#purchase_audit_btn").removeAttr("disabled");
+                        }
+                    }
+                });
+            }
+
+            function purchase_add_create_po() {
+                var podoc = $("#podoc").val();
+                $.ajax({
+                    url: '/v1/pr/generateprocurementorders',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: {
+                        podoc: podoc
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        if (d.state == 200) {
+                            $("#purchase_add_tips").alertmsg('info', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                            $('#purchase_request_list').datagrid("refresh");
+                            $("#purchase_add_create_po_bt").attr("disabled", "disabled");
+                            $("#purchase_noaudit_btn").attr("disabled", "disabled");
+                            $("#purchase_save_btn").removeAttr("disabled");
+                            $("#purchase_audit_btn").removeAttr("disabled");
+
+                            BJUI.dialog("closeCurrent", this);
+                        } else {
+                            $("#purchase_add_tips").alertmsg('error', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                        }
+                    }
+                });
+            }
+
+
+            function delete_purchase() {
+                var selected = $("#purchase_add_table input[name='id']").val();
+                $.ajax({
+                    url: '/v1/pr/deleteprocurement',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: {
+                        id: selected
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        if (d.state == 200) {
+                            BJUI.dialog("closeCurrent", this);
+                            $("#purchase_add_tips").alertmsg('info', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                            $('#purchase_request_list').datagrid("refresh");
+                        } else {
+                            $("#purchase_add_tips").alertmsg('error', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                        }
+                    }
+                });
+            }
+
+            function purchase_ad_delete() {
+                $("#purchase_add_tips").alertmsg('confirm', '确定要删除吗?', {
+                    displayMode: 'fade',
+                    displayPosition: 'middlecenter',
+                    okName: "是",
+                    cancelName: "否",
+                    okCall: 'delete_purchase'
+                });
+            }
+
+
+            $("#purchase_add").on('bjui.initUI', function () {
+                $("#purchase_add tbody tr").click(function () {
+                    $(this).removeClass("readonly")
+                            .addClass("selected").siblings("tr").removeClass("selected")
+                            .addClass("readonly");
+                })
+            })
+
+            /**
+             * 打开套餐选择界面
+             * */
+//            function select_sales_package() {
+//
+//                //打开编辑界面
+//                $(this).dialog({
+//                    id: "storage_edit",
+//                    title: "选择套餐_edit",
+//                    url: "PurchaseManagement/delivery_apply_selecte.html",
+//
+//                    width: 1050,
+//                    height: 600,
+//                    mask: true
+//                });
+//
+//                $("#add").attr("disabled", "disabled");
+//            }
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <form data-toggle="validate" data-toggle="validate">
+        <div style="margin:0px 0px 10px 0px;">
+            <button class="btn btn-blue" data-icon="save" onclick="purchaseAddInfo()" id="purchase_save_btn">保存</button>
+            <button type="button" class="btn btn-green" data-icon="thumbs-up" disabled="disabled"
+                    id="purchase_audit_btn" onclick="purchase_add_audit()">审核
+            </button>
+            <button type="button" class="btn btn-orange" data-icon="thumbs-down" disabled="disabled"
+                    id="purchase_noaudit_btn" onclick="purchase_remove_audit()">弃审
+            </button>
+            <button type="button" class="btn btn-red" data-icon="times" disabled="disabled"
+                    onclick="purchase_ad_delete()" id="purchase_ad_de">删除
+            </button>
+            <button class="btn-close btn" data-icon="close"><i class="fa fa-close"></i>关闭</button>
+            <button class="btn btn-green" onclick="purchase_add_create_po()" disabled="disabled"
+                    id="purchase_add_create_po_bt">生成采购单
+            </button>
+            <button id="delivery_apply_selected" class="btn-default doc_lookup doc_lookup" data-toggle="lookupbtn"
+            data-url="PurchaseManagement/delivery_apply_selecte.html" data-group="applyInfo"
+            data-id="delivery_apply_se" data-title="选择发货申请">选择发货申请
+            </button>
+
+            <!--<button type="button" class="btn btn-green" data-icon="edit" onclick="select_sales_package()">选择发货申请-->
+            <!--</button>-->
+        </div>
+        <table class="table table-bordered table-hover table-striped table-top bjui-tabledit" id="purchase_add_table"
+               width="100%">
+            <input type="hidden" name="id" value="">
+            <input type="hidden" name="applyInfo.contractid" value="" id="contractid">
+            <tbody>
+            <tr>
+                <td>
+                    <label for="podoc" class="control-label x90">单据号：</label>
+                    <input type="text" id="podoc" value="" name="podoc" size="15" readonly="true">
+                </td>
+                <td>
+                    <label for="businessdate" class="control-label x90">申请日期：</label>
+                    <input type="text" id="businessdate" value="" name="businessdate" style="width: 150px"
+                           readonly="true">
+                </td>
+                <td>
+                    <label for="state" class="control-label x90">状态：</label>
+                    <input type="text" id="state" value="" name="state" style="width: 150px" readonly="true">
+                </td>
+                <td>
+                    <label for="orgname" class="control-label x90">组织：</label>
+                    <input type="text" id="orgname" value="" name="orgname" style="width: 150px" readonly="true">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="receiveduser" class="control-label x90">收货人：</label>
+                    <input type="text" id="receiveduser" value="" name="applyInfo.receiveduser" style="width: 150px"
+                           readonly="true">
+                </td>
+                <td><label for="receivedphone" class="control-label x90">收货人手机：</label>
+                    <input type="text" id="receivedphone" value="" name="applyInfo.receivedphone" style="width: 150px"
+                           readonly="true"></td>
+                <td>
+                    <label for="receivedaddress" class="control-label x90">收货地址：</label>
+                    <input type="text" id="receivedaddress" value="" name="applyInfo.receivedaddress"
+                           style="width: 150px"
+                           readonly="true">
+                </td>
+                <td>
+                    <label for="requireddate" class="control-label x90">要求交期：</label>
+                    <input type="text" id="requireddate" value="" name="applyInfo.requireddate" data-toggle="datepicker"
+                           data-rule="required" style="width: 150px">
+                </td>
+
+            </tr>
+            <tr>
+                <td colspan="3"><label for="details" class="control-label x90">备注：</label>
+                    <textarea type="text" id="details" value="" name="details" size="15"
+                              style="width:300px;height:25px;resize: none"></textarea></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div style="margin:50px 0 10px 0;"><!--data-toggle="tableditadd" data-target="#purchase_add" data-num="1"-->
+            <button class="btn-default" data-toggle="tableditadd" data-target="#purchase_add" id="add" data-num="1">
+                新增行
+            </button>
+            <button class="btn-orange" data-toggle="dialog" data-mask="true" onclick="purchase_del_row()">删除行</button>
+            <button class="btn-blue" data-toggle="dialog" data-mask="true">查看附件</button>
+        </div>
+        <div id="tableContanier">
+            <!--<table class="table table-condensed table-hover" width="100%" id="purchaseTable"></table>-->
+            <table class="table table-bordered table-hover table-striped bjui-tabledit" data-toggle="tabledit"
+                   data-initnum="1" data-layout-h="0" id="purchase_add" data-single-noindex="true">
+                <thead>
+                <tr>
+                    <th title="行号"><input type="text" name="test[#index#].linenum" class="no" readonly="true" value="1"
+                                          size="2"></th>
+                    <th title="行状态"><input type="text" name="test[#index#].linestate" readonly="true" value=""></th>
+                    <th title="料号"><input type="text" name="test[#index#].itemno" data-rule="required" placeholder="必填项"
+                                          data-toggle="lookup" class="doc_lookup form-control materialname"
+                                          data-height="400" data-group="test[#index#]"
+                                          data-url="PurchaseManagement/purchase_materials.html"></th>
+                    <th title="品名"><input type="text" name="test[#index#].partname" placeholder="" readonly="true"></th>
+                    <th title="型号"><input type="text" name="test[#index#].partstyle" placeholder="" readonly="true">
+                    </th>
+                    <th title="规格"><input type="text" name="test[#index#].partspec" placeholder="" readonly="true"></th>
+                    <th title="颜色"><input type="text" name="test[#index#].colorlevel" placeholder="" readonly="true">
+                    </th>
+                    <th title="材质"><input type="text" name="test[#index#].material" placeholder="" readonly="true"></th>
+                    <th title="品牌"><input type="text" name="test[#index#].brand" placeholder="" readonly="true"></th>
+                    <th title="数量"><input type="text" name="test[#index#].prqty" placeholder="" value="0"></th>
+                    <th title="单位"><input type="text" name="test[#index#].funit" placeholder="" readonly="true"></th>
+                    <th title="重量"><input type="text" name="test[#index#].grossweight" placeholder="" value="0" readonly=true></th>
+                    <th title="重量单位"><input type="text" name="test[#index#].unitweight" placeholder="" readonly="true"></th>
+
+                    <th title="行备注"><input type="text" name="test[#index#].linedetails" placeholder=""></th>
+                    <th title="关联数"><input type="text" name="test[#index#].poqty" placeholder="" value="0"
+                                           readonly="true"></th>
+                    <th title="来源单号"><input type="text" name="test[#index#].sourcenum" placeholder=""
+                                            readonly="true"></th>
+                    <th title="来源行号"><input type="text" name="test[#index#].soucrelinenum" placeholder=""
+                                            readonly="true"></th>
+
+                    <!--<th title="" data-addtool="true" width="100">-->
+                    <input type="hidden" name="test[#index#].itemid" style="display: none" placeholder="" value="">
+
+                    <!--&lt;!&ndash;<button class="btn btn-green" onclick="purchase_save_row(this.parentNode.parentNode)">保存</button>&ndash;&gt;-->
+                    <!--<a class="btn btn-green" onclick="purchase_del_row(this.parentNode.parentNode)">删</a>-->
+                    <!--</th>-->
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+            <div id="purchase_add_count"></div>
+        </div>
+    </form>
+</div>
+<div id="purchase_add_tips"></div>
+</body>
+</html>

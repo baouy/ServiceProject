@@ -1,0 +1,102 @@
+<html>
+
+<head>
+<script type="text/javascript">
+$('#version_datagrid').datagrid({
+    local: 'remote',
+    dataUrl: '/v1/version/versionlist',
+    dataType: 'json',
+    sortAll: false,
+    loadType: 'get',
+    filterAll: true,
+	height:'95%',
+    columns: [
+    {name:'appname', width:'120', label:'APP名称'},
+    {name:'platform', width:'150', label:'平台'},
+    {name:'code', width:'150', label:'版本号'},
+    {name:'must', type:'select',items:[{'true':'是'}, {'false':'否'}], width:'80', label:'是否升级'},
+    {name:'isnew', type:'select',items:[{'true':'是'}, {'false':'否'}], width:'80', label:'是否最新'},
+    {name:'address', width:'300', label:'路径地址'},
+    {name:'updateinfor', width:'500', label:'更新日志'},
+    {name:'createtime', width:'200', label:'创建时间'},
+    {name:'id', width:'80', label:'主键', hide:true}],
+    paging: {pageSize:20, selectPageSize:'50,100,200', pageCurrent:1},
+    columnMenu: true,
+    columnShowhide: true,
+    columnFilter: true,
+    columnLock: false,
+    fullGrid: false,
+    dblOnClick: 'upLevel',
+});
+
+
+var formItems = ["id","code","appname", "updateinfor","must","platform","platformid","isnew","address"];
+
+function upLevel(){
+    var datas = $("#version_datagrid").data('selectedDatas');
+    if(!datas){
+        $(this).alertmsg('error', '请在列表中选择要操作的对象。');
+    }else if(datas.length > 1){
+        $(this).alertmsg('error', '请选择唯一的操作对象。');
+    }else{
+        $(this).dialog({
+            id: 'version_edit',
+            url: 'SystemManagement/version_new.html',
+            title: '升级',
+            width: '700',
+            height: '300',
+            mask: true
+        });
+        setTimeout(function(){
+            $.ajax({
+                url: '/v1/version/get_version?id='+datas[0].id,
+                dataType: 'json',
+                type: 'GET',
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function(d){
+                    var num = 0;
+                    $.each(d.data,function(index,item){
+                        if(index == "platformid"){
+                            $.CurrentDialog.find("#version_" + formItems[num]).selectpicker('val',item);
+                            switch (item){
+                                case 97:
+                                    $("#container").hide();
+                                    break;
+                                case 98:
+                                    $("#container").hide();
+                                    break;
+                                case 99:
+                                    $("#container").hide();
+                                    break;
+                            }
+                        }else if(index == "isnew" || index== "must"){
+                        }else
+                        {
+                            $.CurrentDialog.find("#version_"+formItems[num]).val(item);
+                        }
+                        num++;
+                    });
+                }
+            });
+        },500);
+    }
+}
+
+</script>
+</head>
+
+<body>
+        <div class="bjui-pageContent">
+            <div style="margin:0px 0px 10px 0px;">
+                <button type="button" data-url="SystemManagement/version_new.html" class="btn btn-blue" data-icon="plus" data-width="700" data-height="300" data-toggle="dialog" data-mask="true"><i class="fa fa-plus"></i> 添加</button>
+                <button type="button" onclick="upLevel()" class="btn btn-orange" data-icon="plus" data-width="700" data-height="300" data-toggle="dialog" data-mask="true"><i class="fa fa-level-up"></i> 升级</button>
+            </div>
+            <table id="version_datagrid" class="table table-hover" data-width="100%"> </table>
+        </div>
+
+</body>
+
+</html>

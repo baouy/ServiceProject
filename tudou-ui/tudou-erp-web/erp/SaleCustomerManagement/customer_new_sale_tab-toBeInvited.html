@@ -1,0 +1,86 @@
+<script>
+/** 已邀约 */
+	$('#customer_new_sale_tab-toBeInvited').datagrid({
+        local: 'remote',
+        dataUrl: '/v1/newcustomer/sale_customerlist?statelist='+20,
+        dataType: 'json',
+        sortAll: false,
+        loadType: 'get',
+        filterAll: true,
+        height:'95%',
+        columns:
+            [
+                {name: 'nextfellowtime', width: '150', label: '下次沟通时间',type:'date',pattern:'yyyy-MM-dd'},
+                {name: 'completion', width: '60', label: '完成度'},
+                {name: 'intentiontype', width: '95', label: '意向度',type:'select',items: [{'意向客户': '意向客户'}, {'非意向': '非意向'}]},
+                {name: 'cusname', width: '70', label: '姓名'},
+                {name: 'mobile', width: '90', label: '电话'},
+                {name: 'village', width: '100', label: '小区名称'},
+                {name: 'roommodel', width: '70', label: '毛坯平层',type:'select',items: [{'毛坯平层': '毛坯平层'}, {'旧房平层': '旧房平层'}, {'复式毛坯': '复式毛坯'}, {'跃层毛坯': '跃层毛坯'}, {'排屋毛坯': '排屋毛坯'}, {'别墅毛坯': '别墅毛坯'}, {'其他': '其他'}, {'NO':'未填写'}]},
+                {name: 'newbudget', width: '70', label: '预算',type:'select',items: [{'7万以下': '7万以下'}, {'7万': '7万'}, {'8万': '8万'}, {'9万': '9万'}, {'10万': '10万'}, {'11万': '11万'}, {'12万': '12万'}, {'13万': '13万'}, {'14万': '14万'}, {'15万': '15万'}, {'15万以上': '15万以上'}, {'NO':'未填写'}]},
+                {name: 'area', width: '70', label: '面积',type:'select',items: [{'1': '70㎡以下'}, {'2': '70㎡-80㎡'}, {'3':'80㎡-90㎡'},{'4': '90㎡-100㎡'}, {'5': '100㎡-110㎡'}, {'6':'110㎡-120㎡'}, {'7':'120㎡以上'},{'0':'未填写'}]},
+                {name: 'roomstatus', width: '70', label: '交房状态',type:'select',items: [{'现房': '现房'}, {'期房': '期房'}, {'NO':'未填写'}]},
+                {name: 'followdate', width: '100', label: '最后一次跟进时间'},
+                {name: 'followdetails', width: '200', label: '最后一次跟进内容'},
+                {name: 'state', width: '90', label: '状态',type:'select',items: [{'已邀约': '已邀约'}]},
+                {name: 'details', width: '150', label: '备注(关注点)'},
+                {name: 'marktime', width: '150', label: '到场时间'},
+                {name: 'record', width: '150', label: '来源备注'},
+                {name: 'source', width: '150', label: '报名渠道来源',type:'select',items:function(){
+                    return source_content;
+                }},
+                {name: 'mobilesalesdepname', width: '70', label: '美客部门',type:'select',items:function(){
+                    return mobilesalesdepname_content;
+                }},
+                {name: 'mobilesales', width: '70', label: '美客员',type:'select',items:function(){
+                    return mobilesales_content;
+                }},
+                {name: 'custsalesdepname', width: '70', label: '销售部门',type:'select',items:function(){
+                    return custsalesdepname_content;
+                }},
+                {name: 'custsales', width: '70', label: '客户经理',type:'select',items:function(){
+                    return custsales_content;
+                }},
+                {name: 'designer', width: '70', label: '设计师',type:'select',items:function(){
+                    return designers_content;
+                }},
+                /*{name: 'firstamout', width: '70', label: '预定金'},*/
+                {name: 'bookingsituation', width: '70', label: '预售情况'},
+                {name: 'orgname', width: '70', label: '组织'},
+                {name: 'createtime', width: '150', label: '创建时间',type:'date',pattern:'yyyy-MM-dd'},
+                {name: 'lasttime', width: '150', label: '更新时间',type:'date',pattern:'yyyy-MM-dd'},
+            ],
+        paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+        hiddenFields: ['id','custsalesid'],
+        columnMenu: true,
+        columnShowhide: true,
+        columnFilter: true,
+        columnLock: false,
+        fullGrid: false,
+        dblOnClick: 'dbClickOneRow_invited',
+        clickRow: 'clickOneRow_invited',
+        headSureBack:'head_common_mobileAndsales'
+	});
+
+    function clickOneRow_invited() {
+        var selected = $("#customer_new_sale_tab-toBeInvited").data('selectedDatas');
+        if (selected != null && selected[0].id != s_c_id){
+            s_c_id = selected[0].id;
+            sales_fllows_refresh();
+        }
+    }
+
+    function dbClickOneRow_invited() {
+        sales_show_details("#customer_new_sale_tab-toBeInvited");
+    }
+</script>
+<div style="border: 0px solid green;width: 100% !important;position: relative;height: 100%;">
+	<div style="margin: 5px;">
+		<button type="button" class="btn btn-green" data-icon="edit" onclick="dbClickOneRow_invited()"><i class="fa fa-edit"></i>跟进 </button>
+		<button type="button" class="btn btn-green" data-icon="user" onclick="sale_distribution_onclick('#customer_new_sale_tab-toBeInvited','分配客户经理','customer_new_sale_to_accountManager.html')"> 分配客户经理</button>
+		<!--<button type="button" class="btn btn-green" data-icon="user" onclick="sale_distribution_onclick('#customer_new_sale_tab-toBeInvited','分配设计师','customer_new_sale_to_designer.html')"> 分配设计师</button>
+		<button type="button" class="btn btn-blue" data-icon="user" onclick="sale_pay_onclick('#customer_new_sale_tab-toBeInvited','交定金','xxxdj.html')"> 交定金</button>
+		<button type="button" class="btn btn-blue" data-icon="user" onclick="sale_pay_onclick('#customer_new_sale_tab-toBeInvited','交合同款','xxxhtk.html')"> 交合同款</button>-->
+	</div>
+	<table id="customer_new_sale_tab-toBeInvited" class="table table-hover" data-width="100%"></table>
+</div>

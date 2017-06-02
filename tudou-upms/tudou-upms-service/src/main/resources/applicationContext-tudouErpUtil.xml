@@ -4,6 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
     <!-- 启动解压tudouAdmin-x.x.x.jar到resources目录 -->
-    <!--<bean id="tudouAdminUtil" class="com.tudou.common.util.tudouAdminUtil"></bean>-->
+    <bean id="tudouErpUtil" class="com.tudou.common.util.TudouErpUtil"></bean>
 
 </beans>

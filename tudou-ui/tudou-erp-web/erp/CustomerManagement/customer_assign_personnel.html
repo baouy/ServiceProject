@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<script type="text/javascript">
+
+		$('#personnel_user_list').datagrid({
+			local: 'remote',
+			dataUrl: '/v1/personnel/user_list',
+			dataType: 'json',
+			sortAll: false,
+			loadType: 'get',
+			filterAll: true,
+			height:'95%',
+			columns: [
+				{name:'id', width:'150', label:'编码'},
+				{name:'flower_name', width:'150', label:'花名'},
+				{name:'depname', width:'150', label:'部门'},
+				{name:'orgname', width:'150', label:'组织'},
+			],
+			showLinenumber:true,
+			paging: {pageSize:20, selectPageSize:'50,100,200', pageCurrent:1},
+			hiddenFields: ['orgcode','orgid','depcode','depid'],
+			columnMenu: true,
+			columnShowhide: true,
+			columnFilter: true,
+			columnLock: false,
+			fullGrid: false,
+			dblOnClick:'db_onclick',
+		});
+
+		function db_onclick() {
+			$('#selected').click()
+		}
+
+
+		function personnel_user_select(){
+			var datas = $("#personnel_user_list").data('selectedDatas');
+			if(datas.length == 0){
+				$(this).alertmsg('error', '请在列表中选择要操作的对象。');
+			}else if(datas.length > 1){
+				$(this).alertmsg('error', '请选择唯一的操作对象。');
+			}else {
+				var id = datas[0].id;
+				var flower_name = datas[0].flower_name;
+				var depcode = datas[0].depcode;
+				var depname = datas[0].depname;
+				var depid = datas[0].depid;
+
+				var orgname = datas[0].orgname;
+				var orgcode = datas[0].orgcode;
+				var orgid = datas[0].orgid;
+
+				var data = '{userid:'+id+',username:\"'+flower_name+'\",depname:\"'+depname+'\",depid:\"'+depid+'\",orgname:\"'+orgname+'\",orgcode:\"'+orgcode+'\",orgid:\"'+orgid+'\",depcode:\"'+depcode+'\"}';
+				$('#selected').attr("data-args",data);
+			}
+		}
+
+	</script>
+</head>
+
+<body>
+<div class="bjui-pageContent" id="materialsTable">
+	<div style="margin-bottom:15px;" id="purchase_materials_btn">
+		<a href="javascript:;" data-toggle="lookupback" onclick="personnel_user_select()" class="btn btn-blue" data-args="" title="选择本项" data-icon="check" id="selected"><i class="fa fa-check"></i> 选择</a>
+		<button type="button" class="btn-close btn" data-icon="close"><i class="fa fa-close"></i> 关闭</button>
+	</div>
+	<table id="personnel_user_list">
+
+	</table>
+</div>
+</body>
+
+</html>

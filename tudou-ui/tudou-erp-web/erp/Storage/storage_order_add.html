@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+
+        /**
+         * 新增
+         * */
+        function storage_order_save() {
+
+            if ($("#warehousename ").val() !== "") {
+
+                var tipdetailValidList = [];
+                var obj = new Object();
+                var tipValid = new Object();
+                tipValid = {
+                    warehousename: $("#warehousename").val(),
+                    supplierid: $("#supplierid").val(),
+                    suppliername: $("#suppliername").val(),
+                    supplierbatchno: $("#supplierbatchno").val(),
+                    batchno: $("#batchno").val(),
+                    podoc: $("#podoc").val(),
+                    details: $("#details").val(),
+                    warehouseid: $("#warehouseid").val(),
+                }
+                if ($("#storage_order_add tbody tr").length < 1) {
+                    BJUI.alertmsg('error', "至少的有一行明细行记录", {
+                        displayMode: 'fade',
+                        alertTimeout: 1000,
+                        displayPosition: 'middlecenter'
+                    });
+                } else {
+                    var ordertable = $("#storage_order_add tbody tr");
+                    for (var i = 0; i < ordertable.length; i++) {
+                        obj = {
+                            itemid: $("input[name='order[" + i + "].itemid']").val(),//ok
+                            linenum: $("input[name='order[" + i + "].linenum']").val(),//ok
+                            itemno: $("input[name='order[" + i + "].itemno']").val(),//ok
+                            partname: $("input[name='order[" + i + "].partname']").val(),
+                            partspec: $("input[name='order[" + i + "].partspec']").val(),
+                            partstyle: $("input[name='order[" + i + "].partstyle']").val(),
+                            colorlevel: $("input[name='order[" + i + "].colorlevel']").val(),
+                            material: $("input[name='order[" + i + "].material']").val(),
+                            brand: $("input[name='order[" + i + "].brand']").val(),
+                            funit: $("input[name='order[" + i + "].funit']").val(),
+                            noinqty: $("input[name='order[" + i + "].noinqty']").val(),
+                            qty: $("input[name='order[" + i + "].qty']").val(),
+                            warehousename: $("input[name='order[" + i + "].warehousename']").val(),
+                            linedetails: $("input[name='order[" + i + "].linedetails']").val(),
+                            returnqty: $("input[name='order[" + i + "].returnqty']").val(),
+                            sourcenum: $("input[name='order[" + i + "].sourcenum']").val(),
+                            soucrelinenum: $("input[name='order[" + i + "].soucrelinenum']").val(),
+                            grossweight: $("input[name='order[" + i + "].grossweight']").val(),
+                            unitweight: $("input[name='order[" + i + "].unitweight']").val(),
+                            warehouseid: $("#warehouseid").val(),
+                        };
+                        tipdetailValidList.push(obj);
+                    }
+                    objOb = {
+                        tipdetailValidList,
+                        tipValid
+                    };
+
+                    $("#save_btn").attr("disabled", "disabled");
+                    $.ajax({
+                        url: "/v1/pi/addstorageorders",
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        type: 'POST',
+                        data: JSON.stringify(objOb),
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        crossDomain: true,
+                        success: function (d) {
+                            if (d.state == 200) {
+                                BJUI.alertmsg('info', d.content, {
+                                    displayMode: 'fade',
+                                    alertTimeout: 1000,
+                                    displayPosition: 'middlecenter'
+                                });
+                                //刷新采购入库单列表
+                                $("#storage_order_list").datagrid("refresh");
+                                //修改按钮状态
+                                $("#order_audit").removeAttr("disabled");
+                                $("#order_delete").removeAttr("disabled");
+                                $("#save_btn").attr("disabled", "disabled");
+                                $("#order_selected").attr("disabled", "disabled");
+
+                                //显示后台传过来的字段
+                                $("input[name='id']").val(d.data.id);
+                                $("#doc").val(d.data.doc);
+                                $("#businessdate").val(d.data.businessdate);
+                                $("#state").val(d.data.state);
+                                $("#orgname").val(d.data.orgname);
+
+                                for (var i = 0; i < $("#storage_order_add tbody tr").length; i++) {
+                                    $("#storage_order_add tbody tr:eq(" + i + ") td:eq(1) input").val("新增")
+                                }
+                                BJUI.dialog("closeCurrent", this);
+                            } else {
+                                $("#save_btn").removeAttr("disabled");
+
+                                BJUI.alertmsg('error', d.content, {
+                                    displayMode: 'fade',
+                                    alertTimeout: 1000,
+                                    displayPosition: 'middlecenter'
+                                });
+                            }
+                        }
+                    })
+                }
+            }
+        }
+        /**
+         * 审核
+         * **/
+        function storage_order_add_audit() {
+            var id = $("#storage_order_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/pi/reviewedstorageorders',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $('#storage_order_list').datagrid("refresh");
+                        $("#order_audit").attr("disabled", "disabled");//不能审核
+                        $("#order_giveup_audit").removeAttr("disabled"); //弃审点亮
+                        $("#order_delete").attr("disabled", "disabled");
+                    } else {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+        /**
+         * 弃审
+         * **/
+        function storage_order_add_giveup_audit() {
+            var id = $("#storage_order_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/pi/giveupreviewedstorageorders',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $('#storage_order_list').datagrid("refresh");
+                        //设置按钮可选不可选
+                        $("#order_giveup_audit").attr("disabled", "disabled");
+                        $("#order_audit").removeAttr("disabled");
+                        $("#order_delete").removeAttr("disabled");
+                    } else {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+
+
+        function storage_add_delete_row() {
+            if (1 < $("#storage_order_add tbody tr").length) {
+                var id = $("#storage_order_add").find(".selected").find(".id").val();
+                if (id !== undefined) {//如果改行不是新增的，那就掉接口删除数据库中的数据
+                    storage_del_row(id);
+                } else {
+                    $("#storage_order_add").find(".selected").remove();//如果是新增的那就直接在页面删除就好，因为还没写进数据库
+                }
+            } else {
+                alert(1)
+                BJUI.alertmsg('info', "请保证明细行至少有一行", {
+                    displayMode: 'fade',
+                    alertTimeout: 1000,
+                    displayPosition: 'middlecenter'
+                });
+            }
+        }
+        $("#storage_order_add").on('bjui.initUI', function () {
+            $("#storage_order_add tbody tr").click(function () {
+                $(this).removeClass("readonly")
+                        .addClass("selected").siblings("tr").removeClass("selected")
+                        .addClass("readonly");
+            })
+        })
+
+
+        /**
+         * 删除列表中的数据
+         * **/
+        var deleteRowId;
+        function storage_del_row(id) {
+            deleteRowId = id;
+            if (1 < $("#storage_order_add tbody tr").length) {
+                $(this).alertmsg('confirm', '确定要删除该行信息吗',
+                        {
+                            displayMode: 'slide',
+                            displayPosition: 'middlecenter',
+                            cancelName: '关闭',
+                            okName: '确认',
+                            title: '删除',
+                            okCall: 'storageDelete'
+                        });
+            }
+        }
+
+        function storageDelete() {
+            $.ajax({
+                url: '/v1/pi/deletestorageordersdetail',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: deleteRowId
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $("#storage_order_add").find(".selected").remove();//如果是新增的那就直接在页面删除就好，因为还没写进数据库
+                        for (var i = 0; i < $("#storage_order_add tbody tr").length; i++) {
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(0)").attr("name", "test[" + i + "].linenum");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(1)").attr("name", "test[" + i + "].linestate");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(2)").attr("name", "test[" + i + "].itemno");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(3)").attr("name", "test[" + i + "].partname");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(4)").attr("name", "test[" + i + "].partspec");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(5)").attr("name", "test[" + i + "].partstyle");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(6)").attr("name", "test[" + i + "].colorlevel");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(7)").attr("name", "test[" + i + "].material");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(8)").attr("name", "test[" + i + "].brand");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(9)").attr("name", "test[" + i + "].funit");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(10)").attr("name", "test[" + i + "].noinqty");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(11)").attr("name", "test[" + i + "].qty");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(12)").attr("name", "test[" + i + "].grossweight");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(13)").attr("name", "test[" + i + "].unitweight");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(14)").attr("name", "test[" + i + "].warehousename");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(15)").attr("name", "test[" + i + "].linedetails");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(16)").attr("name", "test[" + i + "].recqty");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(17)").attr("name", "test[" + i + "].returnqty");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(18)").attr("name", "test[" + i + "].sourcenum");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(19)").attr("name", "test[" + i + "].soucrelinenum");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(20)").attr("name", "test[" + i + "].itemid");
+                            $("#storage_order_add tbody tr:eq(" + i + ") input:eq(21)").attr("name", "test[" + i + "].id");
+                        }
+                        count_add();
+                    } else {
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <form data-toggle="validate" data-toggle="validate">
+        <!--按钮区域-->
+        <div style="margin:15px;">
+            <button class="btn btn-blue" data-icon="save" id="save_btn" onclick="storage_order_save()">保存</button>
+            <button type="button" class="btn btn-green" data-icon="thumbs-up" disabled="disabled" id="order_audit"
+                    onclick="storage_order_add_audit()">审核
+            </button>
+            <button type="button" class="btn btn-orange" data-icon="thumbs-down" disabled="disabled"
+                    id="order_giveup_audit" onclick="storage_order_add_giveup_audit()">弃审
+            </button>
+            <button type="button" class="btn btn-red" data-icon="times" disabled="disabled" id="order_delete"
+                    onclick="storage_order_delete()">删除
+            </button>
+            <button class="btn-close btn" data-icon="close"><i class="fa fa-close"></i>关闭</button>
+            <!--选择采购单,并获取传回来的值,放到data-group中-->
+            <button id="order_selected" class="btn-default doc_lookup doc_lookup" data-toggle="lookupbtn"
+                    data-url="Storage/order_selecte.html" data-group="storageInfo" data-id="storage_order_se"
+                    data-title="采购订单选择">选择采购单
+            </button>
+        </div>
+
+        <table class="table table-bordered table-hover table-striped table-top bjui-tabledit" id="storage_order_table"
+               width="100%">
+            <!--将取出来的值放到table中-->
+            <input name="storageInfo.supplierid" id="supplierid" type="hidden">
+            <input name="storage.id" id="warehouseid" type="hidden">
+            <input name="id" type="hidden">
+            <tbody>
+            <tr>
+                <td>
+                    <label for="doc" class="control-label x90">单据号：</label>
+                    <!--只读-->
+                    <input type="text" id="doc" value="" name="doc" size="15" readonly="true">
+                </td>
+                <td>
+                    <label for="businessdate" class="control-label x90">入库日期：</label>
+                    <input type="text" id="businessdate" value="" name="businessdate" data-toggle="datepicker"
+                           style="width: 150px" readonly="true">
+                </td>
+                <td>
+                    <label for="state" class="control-label x90">状态：</label>
+                    <input type="text" id="state" value="" name="state" style="width: 150px" readonly="true">
+                </td>
+                <td>
+                    <label for="orgname" class="control-label x90">组织：</label>
+                    <input type="text" id="orgname" value="" name="orgname" style="width: 150px" readonly="true">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="control-label x90">仓库</label>
+                    <!--选择仓库-->
+                    <input type="text" name="storage.warehousename" id="warehousename" data-rule="required" readonly="true"
+                           data-url="Storage/storage_selecte.html" data-toggle="lookup" data-group="storage"
+                           class="doc_lookup" data-title="仓库选择" style="width: 150px">
+                </td>
+                <td>
+                    <label class="control-label x90" for="suppliername">供应商</label>
+
+                    <input type="text" id="suppliername" value="" name="storageInfo.suppliername" data-rule="required" readonly="true"
+                           style="width: 150px">
+                    <!--<input type="text" id="suppliername" value="" name="supplier.suppliername" data-url="PurchaseManagement/purchase_supplier.html" data-on-load="checkHasSup" data-toggle="lookup" data-group="supplier" data-id="purchase_spplier"  data-rule="required" style="width: 150px">-->
+                </td>
+                <td>
+                    <label for="supplierbatchno" class="control-label x90">供应商批次号：</label>
+                    <input type="text" id="supplierbatchno" value="" name="supplierbatchno"
+                           style="width: 150px">
+                </td>
+                <td>
+                    <label for="batchno" class="control-label x90">入库批次：</label>
+                    <input type="text" id="batchno" value="" class="batchno" name="batchno"
+                           style="width: 150px">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="podoc" class="control-label x90">采购单号：</label>
+                    <input type="text" id="podoc" value="" class="podoc" name="storageInfo.podoc" data-rule="required" readonly="true"
+                           style="width: 150px">
+                </td>
+                <td colspan="3"><label for="details" class="control-label x90">备注：</label>
+                    <textarea type="text" id="details" value="" name="details" size="15"
+                              style="width:150px;resize: none"></textarea></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div id="tableContanier">
+
+            <div style="margin:50px 0 10px 0;">
+                <button class="btn-orange" onclick="storage_add_delete_row()">删除行</button>
+                <!--<button class="btn-blue" data-toggle="dialog" data-mask="true">查看附件</button>-->
+            </div>
+
+            <table class="table table-bordered table-hover table-striped bjui-tabledit" id="storage_order_add"
+                   data-single-noindex="true">
+                <!--表格的头，先加载-->
+                <thead>
+                <tr>
+                    <th title="">行号</th>
+                    <th title="">行状态</th>
+                    <th title="">料号</th>
+                    <th title="">品名</th>
+                    <th title="">规格</th>
+                    <th title="">型号</th>
+                    <th title="">颜色</th>
+                    <th title="">材质</th>
+                    <th title="">品牌</th>
+                    <th title="">单位</th>
+                    <th title="">采购未入库数</th>
+                    <th title="">入库数</th>
+                    <th title="">毛重</th>
+                    <th title="">重量单位</th>
+                    <th title="">仓库</th>
+                    <th title="">行备注</th>
+                    <th title="">退货关联数</th>
+                    <th title="">退货数</th>
+                    <th title="">来源单号</th>
+                    <th title="">来源行号</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div id="count"></div>
+
+    </form>
+</div>
+</body>
+</html>

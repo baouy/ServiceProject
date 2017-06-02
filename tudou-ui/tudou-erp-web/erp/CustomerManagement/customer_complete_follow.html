@@ -1,0 +1,181 @@
+<script type="text/javascript">
+	$('#complete_follow').datagrid({
+		local: 'remote',
+		dataUrl: '/v1/customer/complete_follow_list',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height: '100%',
+		columns: [
+			{name: 'designer', width: '60', label: '设计师'},
+			{name: 'cusname', width: '60', label: '客户名'},
+			{name: 'mobile', width: '100', label: '手机号'},
+			{name: 'village', width: '100', label: '小区名'},
+			{name: 'mobilesales', width: '60', label: '渠道人员'},
+			{name: 'custsales', width: '60', label: '客户经理'},
+			{name: 'roomstatus', width: '40', label: '交房状态'},
+			{name: 'handoverdate', width: '80', label: '交房日期'},
+			{name: 'sffd', width: '50', label: '是否付定'},
+			{name: 'fdrq', width: '80', label: '付定日期'},
+			{name: 'sflf', width: '40', label: '是否量房'},
+			{name: 'lfrq', width: '80', label: '量房日期'},
+			{name: 'sfht', width: '50', label: '合同状态'},
+			{name: 'contracttype', width: '50', label: '合同类型'},
+			{name: 'contractamount', width: '90', label: '合同金额'},
+			{name: 'paymentamount', width: '90', label: '已收金额'},
+			{name: 'contractdate', width: '80', label: '合同日期'},
+			{name: 'plandate', width: '80', label: '初稿日期'},
+			{name: 'cgrq', width: '80', label: '初稿沟通日期'},
+			{name: 'ecgtrq', width: '80', label: '二次沟通日期'},
+			{name: 'isplan', width: '50', label: '方案是否确认'},
+			{name: 'concerns', width: '100', label: '关注点'},
+			{name: 'followstate', width: '70', label: '跟进状态'},
+			{name: 'followdate', width: '80', label: '跟进日期'},
+			{name: 'followtype', width: '90', label: '跟进类型'},
+			{name: 'followdetails', width: '100', label: '跟进内容'},
+			{name: 'createuser', width: '70', label: '跟进人'},
+			{name: 'details', width: '150', label: '备注'},
+			{name: 'id', width: '80', label: '主键', hide: true},
+		],
+		paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+//            ,
+		columnMenu: true,
+		columnShowhide: true,
+		columnFilter: true,
+		columnLock: false,
+		fullGrid: false,
+		dblOnClick: 'complete_followEdit',
+	});
+
+
+	function complete_followEdit() {
+		var selected = $("#complete_follow").find('tr.datagrid-selected-tr');
+		if (selected.length == 0) {
+			$(this).alertmsg('error', '请在列表中选择要操作的对象。');
+		} else {
+			$(this).dialog({
+				id: "complete_follow",
+				title: "客户信息编辑",
+				url: "CustomerManagement/customer_edit.html",
+				width: 1800,
+				height: 900,
+				mask: true
+			});
+		}
+	}
+	function customerfollow_download_alert() {
+		$(this).alertmsg('confirm', '确定导出吗?', {okCall: 'customerfollow_download'});
+	}
+
+	function customerfollow_download(){
+		var designer = $("input[name='designer']").val();
+		var cusname = $("input[name='cusname']").val();
+		var village = $("input[name='village']").val();
+		var mobilesales = $("input[name='mobilesales']").val();
+		var custsales = $("input[name='custsales']").val();
+		var roomstatus = $("input[name='roomstatus']").val();
+		var handoverdate = $("input[name='handoverdate']").val();
+		var sffd = $("input[name='sffd']").val();
+		var fdrq = $("input[name='fdrq']").val();
+		var sflf = $("input[name='sflf']").val();
+		var lfrq = $("input[name='lfrq']").val();
+		var sfht = $("input[name='sfht']").val();
+		var contractamount = $("input[name='contractamount']").val();
+		var paymentamount = $("input[name='paymentamount']").val();
+		var contractdate = $("input[name='contractdate']").val();
+		var plandate = $("input[name='plandate']").val();
+		var cgrq = $("input[name='cgrq']").val();
+		var ecgtrq = $("input[name='ecgtrq']").val();
+		var isplan = $("input[name='isplan']").val();
+		var concerns = $("input[name='concerns']").val();
+		var followstate = $("input[name='followstate']").val();
+		var followdate = $("input[name='followdate']").val();
+		var followtype = $("input[name='followtype']").val();
+		var followdetails = $("input[name='followdetails']").val();
+		var createuser = $("input[name='createuser']").val();
+		var details = $("input[name='details']").val();
+		var contracttype = $("input[name='contracttype']").val();
+
+		var url="/v1/customer/customer_follow_excel?pageCurrent=1&pageSize=10000";
+
+		if(designer.length > 0){
+			url+="&designer="+designer;
+		}
+		if(cusname.length > 0){
+			url+="&cusname="+cusname;
+		}
+		if(village.length > 0){
+			url+="&village="+village;
+		}
+		if(mobilesales.length > 0){
+			url+="&mobilesales="+mobilesales;
+		}
+		if(custsales.length > 0){
+			url+="&custsales="+custsales;
+		}
+		if(roomstatus.length > 0){
+			url+="&roomstatus="+roomstatus;
+		}
+		if(handoverdate.length > 0){
+			url+="&handoverdate="+handoverdate;
+		}
+		if(sffd.length > 0){
+			url+="&sffd="+sffd;
+		}
+		if(fdrq.length > 0){
+			url+="&fdrq="+fdrq;
+		}
+		if(sflf.length > 0){
+			url+="&sflf="+sflf;
+		}
+		if(lfrq.length > 0){
+			url+="&lfrq="+lfrq;
+		}
+		if(sfht.length > 0){
+			url+="&sfht="+sfht;
+		}
+		if(contractamount.length > 0){
+			url+="&contractamount="+contractamount;
+		}
+		if(paymentamount.length > 0){
+			url+="&paymentamount="+paymentamount;
+		}
+		if(contractdate.length > 0){
+			url+="&contractdate="+contractdate;
+		}
+		if(plandate.length > 0){
+			url+="&plandate="+plandate;
+		}
+		if(cgrq.length > 0){
+			url+="&cgrq="+cgrq;
+		}if(ecgtrq.length > 0){
+			url+="&ecgtrq="+ecgtrq;
+		}if(isplan.length > 0){
+			url+="&isplan="+isplan;
+		}if(concerns.length > 0){
+			url+="&concerns="+concerns;
+		}if(followstate.length > 0){
+			url+="&followstate="+followstate;
+		}if(followdate.length > 0){
+			url+="&followdate="+followdate;
+		}if(followtype.length > 0){
+			url+="&followtype="+followtype;
+		}if(followdetails.length > 0){
+			url+="&followdetails="+followdetails;
+		}if(createuser.length > 0){
+			url+="&createuser="+createuser;
+		}if(details.length > 0){
+			url+="&details="+details;
+		}if(contracttype.length > 0){
+			url+="&contracttype="+contracttype;
+		}
+
+		window.open(url);
+	}
+
+</script>
+<div class="bjui-pageContent">
+		<button type="button" class="btn btn-green" data-icon="sign-out" onclick="customerfollow_download_alert()"><i class="fa fa-sign-out"></i> 导出</button>
+		<table id="complete_follow" class="table table-hover" data-width="100%" data-selected-multi="true"/>
+</div>

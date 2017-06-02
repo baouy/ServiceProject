@@ -1,0 +1,138 @@
+<html>
+<head>
+    <script type="text/javascript">
+
+        /*$("#financial_vr_paymenttype").change(function() {
+           var select = $('#financial_vr_paymenttype option:selected').text();
+            if (select == "定金"){
+                $("#financial_vr_agreementdoc").removeAttr("novalidate");
+                $("#financial_vr_agreementdoc").attr("data-rule","required");
+            }else{
+                $("#financial_vr_agreementdoc").attr("novalidate","");
+                $("#financial_vr_agreementdoc").attr("class","form-control");
+                $("#financial_vr_agreementdoc_td").find(".msg-box").attr("style","display: none;");
+            }
+        });*/
+        $("#financial_vr_username").click(function(){
+            $("#financial_vr_username_td").find(".msg-box").attr("style","display: none;");
+        });
+        $("#financial_vr_username").blur(function(){
+            $("#financial_vr_username_td").find(".msg-box").attr("style","display: none;");
+        });
+        $("#financial_vr_paymentmethods").change(function() {
+            var select = $('#financial_vr_paymentmethods option:selected').text();
+            if (select != "现金"){
+                $("#financial_vr_chequesaccount").removeAttr("novalidate");
+                $("#financial_vr_chequesaccount").attr("data-rule","required");
+                $("#financial_vr_chequesaccount").attr("class","form-control required");
+
+                //$("#financial_vr_banktrace").removeAttr("novalidate");
+                //$("#financial_vr_banktrace").attr("data-rule","required");
+                //$("#financial_vr_banktrace").attr("class","form-control required");
+            }else{
+                $("#financial_vr_chequesaccount").val('');
+                $("#financial_vr_chequesaccount").attr("novalidate","");
+                $("#financial_vr_chequesaccount").attr("class","form-control");
+                $("#financial_vr_chequesaccount_td").find(".msg-box").attr("style","display: none;");
+
+                //$("#financial_vr_banktrace").attr("novalidate","");
+                //$("#financial_vr_banktrace").attr("class","form-control");
+                //$("#financial_vr_banktrace_td").find(".msg-box").attr("style","display: none;");
+            }
+        });
+
+        function new_receipt_save_onclick(){
+            $('#financial_add_info').submit();
+        }
+
+        function receipt_add_back(json) {
+            if (json.state == 200) { //保存成功
+                BJUI.dialog('closeCurrent', this);
+                doNewReceiptRefresh();
+                $(this).alertmsg('ok', '保存成功');
+            } else {
+                $(this).alertmsg('warn', json.content);
+            }
+        }
+
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <form action="/v1/newfinancial/voucher_add" data-toggle="validate" id="financial_add_info" data-callback="receipt_add_back">
+
+        <input type="hidden" value="" name="contractid" id="financial_vr_contractid">
+        <input type="hidden" value="" name="custsalesid" id="financial_vr_custsalesid">
+        <input type="hidden" value="" name="mobile" id="financial_vr_mobile">
+        <input type="hidden" value="ERP" name="source" id="financial_vr_source">
+       <!-- <input type="hidden" value="" name="beautychatid" id="financial_vr_beautychatid">-->
+        <input type="hidden" value="" name="custid_fk" id="financial_vr_custid_fk">
+        <table class="table table-condensed table-hover" width="100%">
+            <tr>
+                <td id="financial_vr_banktrace_td">
+                    <label for="financial_vr_banktrace" class="control-label x100">交易流水号：</label>
+                    <input type="text" id="financial_vr_banktrace" value="" size="15" name="banktrace" class="form-control ">
+                </td>
+                <td>
+                    <label for="financial_vr_paymenttype" class="control-label x100">收款类型：</label>
+                    <select name="paymenttype" data-toggle="selectpicker" id="financial_vr_paymenttype" data-rule="required" data-width="150" class="form-control required">
+                        <option value="">请选择</option>
+                        <option value="预售">预售</option>
+                        <option value="定金">定金</option>
+                        <option value="95%合同款">95%合同款</option>
+                        <option value="尾款">尾款</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="financial_vr_businessdate" class="control-label x100">收款日期：</label>
+                    <input type="text" id="financial_vr_businessdate" value="" size="15" name="businessdate" data-toggle="datepicker"  data-rule="required" class="form-control required">
+                </td>
+                <td>
+                    <label for="financial_vr_paymentmethods" class="control-label x100">支付方式：</label>
+                    <select data-toggle="selectpicker" id="financial_vr_paymentmethods" name="paymentmethods" data-rule="required" data-width="150" class="form-control required">
+                        <option value="">请选择</option>
+                        <option value="POS线下">POS线下</option>
+                        <option value="支付宝">支付宝</option>
+                        <option value="装修贷">装修贷</option>
+                        <option value="转账">转账</option>
+                        <option value="现金">现金</option>
+                    </select>
+                </td>
+            </tr>
+        <tr>
+            <td id="financial_vr_username_td">
+                <label for="financial_vr_username" class="control-label x100">客户：</label>
+                <input type="text" name="username" id="financial_vr_username" class="form-control required" readonly value=""data-rule="required" size="15">
+                <a class="btn btn-blue" data-icon="user" data-title="选择客户" title="点我" data-url="NewFinancialManagement/financil_customer_table.html" data-width="1050" data-height="800"
+                        data-toggle="dialog" data-id="financil_c" data-mask="true"></a>
+            </td>
+            <td id="financial_vr_chequesaccount_td">
+                <label for="financial_vr_chequesaccount" class="control-label x100">客户付款账号：</label>
+                <input type="text" id="financial_vr_chequesaccount" value="" placeholder="刷卡输入卡号后4位" size="15" minlength="4" maxlength="4" name="chequesaccount" class="form-control " data-rule=" digits">
+            </td>
+        </tr>
+            <tr>
+            <td colspan="2">
+                    <label for="financial_vr_paymentamount" class="control-label x100">收款金额：</label>
+                    <input type="text" id="financial_vr_paymentamount" name="paymentamount" class="form-control required" value="" size="15" data-rule="required number">
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div class="bjui-pageFooter">
+    <ul>
+        <li >
+            <button type="button" class="btn btn-blue" data-icon="save" onclick="new_receipt_save_onclick()" id="save_receipt_btn">保存</button>
+        </li>
+        <li >
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

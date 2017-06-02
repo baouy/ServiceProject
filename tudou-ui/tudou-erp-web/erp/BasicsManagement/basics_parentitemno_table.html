@@ -1,0 +1,49 @@
+
+    <script type="text/javascript">
+
+        $('#basics_parentitemno_datagrid').datagrid({
+
+            local: 'remote',
+            dataUrl: '/v1/titem/item_list',
+            dataType: 'json',
+            sortAll: false,
+            loadType: 'get',
+            filterAll: true,
+            height:'90%',
+            columns: [
+                {name:'itemno', width:'150', label:'料号'},
+                {name:'partname', width:'150', label:'品名'},
+                {name:'partspec', width:'150', label:'规格'},
+                {name:'isactive', items:[{'true':'有效'}, {'false':'无效'}], width:'80', label:'是否有效'},
+            ],
+            hiddenFields: ['id'],
+            paging: {pageSize:50, selectPageSize:'50,100,200', pageCurrent:1},
+            fullGrid: true,
+            dblOnClick:'selecttdlItems',
+        });
+
+        function selecttdlItems(){
+            var selected=$("#basics_parentitemno_datagrid").data('selectedDatas');
+            if(selected.length == 0){
+                $(this).alertmsg('error', '请在列表中选择要操作的对象。');
+            }else if(selected.length > 1){
+                $(this).alertmsg('error', '请选择唯一的操作对象。');
+            }else{
+                var parentitemno = selected[0].itemno;
+                var id = selected[0].id;
+
+                $("input[id='item_parentitemno']").val(parentitemno);
+                $("input[id='item_parentitemnoid']").val(id);
+
+                BJUI.dialog('closeCurrent',this);
+            }
+        }
+
+    </script>
+<div class="bjui-pageContent">
+    <div style="margin:0px 0px 10px 0px;">
+        <button class="btn btn-blue" data-icon="save" onclick="selecttdlItems()">选择</button>
+        <button class="btn-close btn"  data-icon="close">关闭</button>
+    </div>
+    <table id="basics_parentitemno_datagrid" class="table table-hover" data-width="100%"> </table>
+</div>

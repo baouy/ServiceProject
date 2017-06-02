@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+        $("#storage_order_list").datagrid({ //采购申请列表
+            local: 'remote',
+            dataUrl: '/v1/pi/storageorderslist',
+            dataType: 'json',
+            sortAll: false,
+            loadType: 'get',
+            filterAll: true,
+            height: '95%',
+            columns: [
+                {name: 'doc', width: '150', label: '采购入库单号'},
+                {name: 'businessdate', width: '150', label: '入库日期'},
+//                {name: 'linestate', width: '150', label: '行状态'},
+                {name: 'suppliername', width: '150', label: '供应商'},
+//                {name: 'linenum', width: '150', label: '行号'},
+//                {name: 'itemno', width: '150', label: '料号'},
+//                {name: 'partname', width: '150', label: '品名'},
+//                {name: 'partspec', width: '150', label: '规格'},
+//                {name: 'partstyle', width: '150', label: '型号'},
+//                {name: 'funit', width: '150', label: '单位'},
+//                {name: 'qty', width: '150', label: '入库数'},
+                {name: 'warehousename', width: '150', label: '仓库'},
+                {name: 'locationname', width: '150', label: '库位'},
+                {name: 'linedetails', width: '150', label: '行备注'},
+                {name: 'details', width: '150', label: '备注'},
+                {name: 'createuser', width: '150', label: '制单人'},
+                {name: 'createtime', width: '150', label: '制单时间'},
+                {name: 'reviewuser', width: '150', label: '审核人'},
+                {name: 'reviewtime', width: '150', label: '审核时间'},
+                {name: 'id', width: '80', label: '主键', hide: true}
+            ],
+            showLinenumber: true,
+            paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+            columnMenu: true,
+            columnShowhide: true,
+            columnFilter: true,
+            columnLock: false,
+            fullGrid: false,
+            dblOnClick: 'storage_order_checkDialog',
+        });
+
+        /**
+         * 审核
+         */
+        function storage_order_audit() {
+
+            //获取选中行
+            var selected = $("#storage_order_list").find('tr.datagrid-selected-tr');
+            if (selected.length == 0) {
+                //弹出错误提示
+                BJUI.alertmsg('error', '请在列表中选择要操作的对象。');
+                BJUI.dialog('closeCurrent', this);
+            } else if (selected.length > 1) {
+                BJUI.alertmsg('error', '请选择唯一的操作对象。');
+                BJUI.dialog('closeCurrent', this);
+            } else {
+
+                $("#storage_audit_btn").attr("disabled", "disabled");
+                $.ajax({
+                    url: '/v1/pi/reviewedstorageorders',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: {
+                        //获取改行id,因为id为最后一个字段，所以用lastChild
+                        id: selected[0].lastChild.innerText
+                    },
+
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    //跨域
+                    crossDomain: true,
+                    success: function (d) {
+                        if (d.state == 200) {
+                            $("#storage_audit_btn").removeAttr("disabled");
+
+                            BJUI.alertmsg('info', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                            $('#storage_order_list').datagrid("refresh");
+                        } else {
+                            $("#storage_audit_btn").removeAttr("disabled");
+
+                            BJUI.alertmsg('info', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                        }
+                    }
+                });
+            }
+        }
+
+
+        /***
+         * 弃审
+         * */
+        function storage_order_cancel_audit() {
+            var selected = $("#storage_order_list").find('tr.datagrid-selected-tr');
+            if (0 < $("#storage_order_list").find('tr.datagrid-selected-tr').length) {
+                $("#storage_noaudit_btn").attr("disabled", "disabled");
+
+                $.ajax({
+                    url: '/v1/pi/giveupreviewedstorageorders',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: {
+                        id: selected[0].lastChild.innerText
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        //通过接口响应对象state的值做相应操作
+                        if (d.state == 200) {
+                            $("#storage_noaudit_btn").removeAttr("disabled");
+
+                            BJUI.alertmsg('info', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                            //成功后刷新数据
+                            $('#storage_order_list').datagrid("refresh");
+                        } else {
+                            $("#storage_noaudit_btn").removeAttr("disabled");
+                            BJUI.alertmsg('info', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                        }
+                    }
+                });
+            } else {
+                BJUI.alertmsg('error', '请在列表中选择要操作的对象。');
+                BJUI.dialog('closeCurrent', this);
+            }
+        }
+
+        /**
+         * 删除入库单
+         * **/
+        function storage_order_delete() {
+            if (0 < $("#storage_order_list").find('tr.datagrid-selected-tr').length) {
+                //弹出选择框，选择成功后调用相应方法
+                BJUI.alertmsg('confirm', '确定要删除吗?', {
+                    displayMode: 'fade',
+                    displayPosition: 'middlecenter',
+                    okName: "是",
+                    cancelName: "否",
+                    okCall: 'deletestorageorder'
+                });
+            } else {
+                BJUI.alertmsg('error', '请选择唯一的操作对象。');
+            }
+        }
+        function deletestorageorder() {
+            var selected = $("#storage_order_list").find('tr.datagrid-selected-tr')[0].lastChild.innerText;
+            $.ajax({
+                url: '/v1/pi/deletestorageorders',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: selected
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $('#storage_order_list').datagrid("refresh");
+                    } else {
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+        /**
+         * 编辑
+         */
+        function storage_order_checkDialog() {
+            //获取选中的行
+            var selected = $("#storage_order_list").find('tr.datagrid-selected-tr');
+            if (selected.length == 0) {
+                $(this).alertmsg('error', '请在列表中选择要操作的对象。');
+            } else {
+                //打开编辑界面
+                $(this).dialog({
+                    id: "storage_edit",
+                    title: "审核编辑",
+                    url: "Storage/storage_order_edit.html",
+                    width: 1050,
+                    height: 600,
+                    mask: true
+                });
+
+                $.ajax({
+                    url: '/v1/pi/findeditstorageorders',
+                    dataType: 'json',
+                    type: 'GET',
+                    data: {
+                        id: selected[0].lastChild.innerText
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        var html = " ";
+                        if (d.state == 200) {
+                            //按钮状态设置
+                            if (d.data.tipValid.state == "已审核") {
+                                $("#storage_giveup").removeAttr("disabled");
+                                $("#storage_audit").attr("disabled", "disabled");
+                                $("#storage_delete").attr("disabled", "disabled");
+                            } else if (d.data.tipValid.state == "新增") {
+                                $("#storage_giveup").attr("disabled", "disabled");
+                            }
+                            //把获取的表头数据放到表中回显
+                            $("#storage_main_table input[name='doc']").val(d.data.tipValid.doc);
+                            $("#storage_main_table input[name='businessdate']").val(d.data.tipValid.businessdate);
+                            $("#storage_main_table input[name='state']").val(d.data.tipValid.state);
+                            $("#storage_main_table input[name='orgname']").val(d.data.tipValid.orgname);
+                            $("#id").val(d.data.tipValid.id);
+                            $("#warehouseid").val(d.data.tipValid.warehouseid);
+                            $("#warehousename").val(d.data.tipValid.warehousename);
+                            $("#suppliername").val(d.data.tipValid.suppliername);
+                            $("#supplierid").val(d.data.tipValid.supplierid);
+                            $("#storage_main_table input[name='supplierbatchno']").val(d.data.tipValid.supplierbatchno);
+                            $("#storage_main_table input[name='batchno']").val(d.data.tipValid.batchno);
+                            $("#storage_main_table .podoc").val(d.data.tipValid.podoc);
+                            $("#details").val(d.data.tipValid.details);
+
+                            //构造html代码
+                            for (var i = 0; i < d.data.tipdetailValidList.length; i++) {
+                                html += "<tr>" +
+//                                "<td><input name=storageInfo.itemid class='form-control itemid' type=hidden value="+d.data.tipdetailValidList[i].itemid+"></td>"+
+                                        "<td style='width: 3%'><input name='order[" + i + "].linenum' readonly=true  class='form-control linenum' value=" + d.data.tipdetailValidList[i].linenum + "></td>" +
+                                        "<td style='width: 3%'><input name='order[" + i + "].linestate' readonly=true  class='form-control linestate' value=" + d.data.tipdetailValidList[i].linestate + "></td>" +
+                                        "<td style='width: 9%'><input name='order[" + i + "].itemno' readonly=true  class='form-control itemno' value=" + d.data.tipdetailValidList[i].itemno + "></td>" +
+                                        "<td style='width: 27%'><input name='order[" + i + "].partname' readonly=true class='form-control partname'  value=" + d.data.tipdetailValidList[i].partname + "></td>" +
+                                        "<td style='width: 8%'><input name='order[" + i + "].partspec' readonly=true   class='form-control partspec' value=" + d.data.tipdetailValidList[i].partspec + "></td>" +
+                                        "<td style='width: 4%'><input name='order[" + i + "].partstyle'   readonly=true class='form-control partstyle' value=" + d.data.tipdetailValidList[i].partstyle + "></td>" +
+                                        "<td style='width: 4%'><input name='order[" + i + "].colorlevel'   readonly=true class='form-control colorlevel' value=" + d.data.tipdetailValidList[i].colorlevel + "></td>" +
+                                        "<td style='width: 4%'><input name='order[" + i + "].material'   readonly=true class='form-control material' value=" + d.data.tipdetailValidList[i].material + "></td>" +
+                                        "<td style='width: 4%'><input name='order[" + i + "].brand'   readonly=true class='form-control brand' value=" + d.data.tipdetailValidList[i].brand + "></td>" +
+                                        "<td style='width: 4%'><input name='order[" + i + "].funit'   readonly=true class='form-control funit' value=" + d.data.tipdetailValidList[i].funit + "></td>" +
+                                        "<td style='width: 3%'><input class='form-control noinqty'    readonly=true name='order[" + i + "].noinqty' value=" + d.data.tipdetailValidList[i].noinqty + "></td>" +
+                                        "<td style='width: 3%'><input name='order[" + i + "].qty'   class='form-control qty' data-rule=number value=" + d.data.tipdetailValidList[i].qty + " onchange='count_edit(this.parentNode.parentNode)'></td>" +
+                                        "<td style='width: 3%'><input name='order[" + i + "].grossweight'   class='form-control grossweight' data-rule=number value=" + d.data.tipdetailValidList[i].grossweight + "></td>" +
+                                        "<td style='width: 3%'><input name='order[" + i + "].unitweight'   class='form-control unitweight' data-rule=number value=" + d.data.tipdetailValidList[i].unitweight + "></td>" +
+                                        "<td style='width: 3%'><input name='order[" + i + "].warehousename'   readonly=true class='form-control warehousename' value=" + d.data.tipdetailValidList[i].warehousename + "></td>" +
+                                        "<td style='width: 3%'><input name='order[" + i + "].linedetails'   class='form-control linedetails' readonly=true value=" + d.data.tipdetailValidList[i].linedetails + "></td>" +
+                                        "<td style='width: 3%'><input name='order[" + i + "].recqty'   class='form-control recqty' readonly=true value=" + d.data.tipdetailValidList[i].recqty + "></td>" +
+                                        "<td style='width: 3%'><input name='order[" + i + "].returnqty'   readonly=true class='form-control returnqty' value=0.0000></td>" +
+                                        "<td style='width: 3%'><input name='order[" + i + "].sourcenum'   readonly=true class='form-control sourcenum'  value=" + d.data.tipdetailValidList[i].sourcenum + "></td>" +
+                                        "<td style='width: 3%'><input name='order[" + i + "].soucrelinenum'    class='form-control soucrelinenum' readonly=true value=" + d.data.tipdetailValidList[i].soucrelinenum + "></td>" +
+                                        "<input name='order[" + i + "].itemid'   class='form-control itemid' type=hidden value=" + d.data.tipdetailValidList[i].itemid + ">" +
+                                        "<input name='order[" + i + "].id'   class='form-control id' type=hidden value=" + d.data.tipdetailValidList[i].id + ">";
+                                html += "</tr>";
+                            }
+                            var html2 = "<table class='table table-bordered table-hover table-striped bjui-tabledit'><tr>" +
+                                    "<td style='width: 3%'><input class='form-control'  value='合计'></td>" +
+                                    "<td style='width: 3%'><input type='text'  class='form-control'  value></td>" +
+                                    "<td style='width: 9%'><input type='text'  class='form-control'   value></td>" +
+                                    "<td style='width: 27%'><input type='text'  class='form-control'  value></td>" +
+                                    "<td style='width: 8%'><input type='text'  class='form-control'  value></td>" +
+                                    "<td style='width: 4%'><input type='text'  class='form-control'  value></td>" +
+                                    "<td style='width: 4%'><input type='text'  class='form-control' value></td>" +
+                                    "<td style='width: 4%'><input type='text'  class='form-control'   value></td>" +
+                                    "<td style='width: 4%'><input type='text'  class='form-control'  value></td>" +
+                                    "<td style='width: 4%'><input type='text'  class='form-control'   value></td>" +
+                                    "<td style='text-align: center;width: 3%'><input type='text' id='countnoinqty' readonly=true class='form-control'  value=0></td>" +
+                                    "<td style='text-align: center;width: 3%'><input type='text' id='countqty' readonly=true class='form-control'  value=0></td>" +
+                                    "<td style='width: 3%'><input type='text'  class='form-control'   value></td>" +
+                                    "<td style='width: 3%'><input type='text'  class='form-control'  value></td>" +
+                                    "<td style='width: 3%'><input type='text'  class='form-control' value></td>" +
+                                    "<td style='width: 3%'><input type='text'  class='form-control'   value></td>" +
+                                    "<td style='text-align: center;width: 3%;'><input type='text' id='countmodifyunitqty' readonly=true class='form-control'  value=0></td>" +
+                                    "<td style='text-align: center;width: 3%'><input type='text' id='countmpq'readonly=true  class='form-control'  value=0></td>" +
+                                    "<td style='width: 3%'><input type='text'  class='form-control' value></td>" +
+                                    "<td style='width: 3%'><input type='text'  class='form-control'  value></td>" +
+                                    "</tr></table>";
+
+
+                            //把html代码写入明细行table中
+                            $("#storage_order_ed tbody").append(html);
+                            $("#count_edit").html(html2);
+                            count_edit();
+                            $("#storage_order_ed tbody tr").click(function () {
+                                $(this).removeClass("readonly")
+                                        .addClass("selected").siblings("tr").removeClass("selected")
+                                        .addClass("readonly");
+                            })
+                        } else {
+                            BJUI.alertmsg('error', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                        }
+                    }
+                })
+            }
+        }
+        function count_edit() {
+            //重新合计各数量
+            var sumnoinqty = 0;
+            var sumqty = 0;
+            var countgrossweight = 0;
+
+
+            for (var i = 0; i < $("#storage_order_ed tbody tr").length; i++) {
+                if ($("#storage_order_ed tbody tr:eq(" + i + ") td:eq(10) input").val() != '') {
+                    sumnoinqty += parseInt($("#storage_order_ed tbody tr:eq(" + i + ") td:eq(10) input").val());
+                }
+                if ($("#storage_order_ed tbody tr:eq(" + i + ") td:eq(11) input").val() != '') {
+                    sumqty += parseInt($("#storage_order_ed tbody tr:eq(" + i + ") td:eq(11) input").val());
+                }
+                if ($("#storage_order_ed tbody tr:eq(" + i + ") td:eq(12) input").val() != '') {
+                    countgrossweight += parseInt($("#storage_order_ed tbody tr:eq(" + i + ") td:eq(12) input").val()*$("#storage_order_ed tbody tr:eq(" + i + ") td:eq(11) input").val());
+                }
+                $("#count_edit  td:eq(10) input").val(sumnoinqty);
+                $("#count_edit  td:eq(11) input").val(sumqty);
+                $("#count_edit  td:eq(12) input").val(countgrossweight);
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <!--按钮区域-->
+    <div style="margin:0px 0px 10px 0px;">
+        <button type="button" class="btn btn-blue" data-icon="plus" data-url="Storage/storage_order_add.html"
+                data-width="1050" data-height="600" data-toggle="dialog" data-id="storage_order_add" data-mask="true">新增
+        </button>
+        <button type="button" class="btn btn-green" data-icon="edit" onclick="storage_order_checkDialog()">编辑</button>
+        <button type="button" class="btn btn-green" id="storage_audit_btn" data-icon="thumbs-up" onclick="storage_order_audit()">审核</button>
+        <button type="button" class="btn btn-orange" id="storage_noaudit_btn" data-icon="thumbs-down" onclick="storage_order_cancel_audit()">弃审
+        </button>
+        <button type="button" class="btn btn-red" data-icon="times" onclick="storage_order_delete()">删除</button>
+        <!--<button type="button" class="btn btn-green" data-icon="sign-out">导出</button>-->
+    </div>
+    <!--采购入库单列表展示-->
+    <table id="storage_order_list" class="table table-hover" data-width="100%"></table>
+</div>
+</body>
+</html>

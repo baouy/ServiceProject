@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+        var selected = $("#delivery_applyreturn_order_list").find('tr.datagrid-selected-tr');
+        $.ajax({
+            url:"/v1/applyreturn/findeditapplydelivery?id="+selected[0].lastChild.innerText,
+            dataType: 'json',
+            type: 'GET',
+            xhrFields: {
+                withCredentials: true
+            },
+            crossDomain: true,
+            success: function (d) {
+                if(d.state ==200) {
+
+                    $("#apply_save_btn").removeAttr("disabled");
+
+                    if (d.data.tapplyreturnValid.state == "已审核") {
+                        $("#giveup_audit_btn").removeAttr("disabled");
+                        $("#audit_btn").attr("disabled", "disabled");
+                        $("#del_btn").attr("disabled", "disabled");
+                    } else if (d.data.tapplyreturnValid.state == "已提交") {
+                        $("#audit_btn").removeAttr("disabled");
+                        $("#giveup_audit_btn").attr("disabled", "disabled");
+                        $("#del_btn").attr("disabled", "disabled");
+                    }else if (d.data.tapplyreturnValid.state == "新增") {
+                        $("#del_btn").attr("disabled", "disabled");
+                        $("#audit_btn").attr("disabled", "disabled");
+                        $("#del_btn").removeAttr("disabled");
+                    }
+                    $("#orderno").val(d.data.tapplyreturnValid.orderno);
+                    $("#id").val(d.data.tapplyreturnValid.id);
+                    $("#salesorderdoc").val(d.data.tapplyreturnValid.salesorderdoc);
+                    $("#state").val(d.data.tapplyreturnValid.state);
+                    $("#businessdate").val(d.data.tapplyreturnValid.businessdate);
+                    $("#receiveduser").val(d.data.tapplyreturnValid.receiveduser);
+                    $("#receivedphone").val(d.data.tapplyreturnValid.receivedphone);
+                    $("#receivedaddress").val(d.data.tapplyreturnValid.receivedaddress);
+//                    $("#usingphase").val(d.data.tapplyreturnValid.receivedphone);//todo
+                    $("#usingphase").selectpicker('val',d.data.tapplyreturnValid.usingphase);//todo
+
+                    $("#requiredate").val(d.data.tapplyreturnValid.requiredate);
+                    $("#requiretime").val(d.data.tapplyreturnValid.requiretime);
+                    $("#details").val(d.data.tapplyreturnValid.details);
+                    $("#orderid").val(d.data.tapplyreturnValid.orderid);
+                    $("#custid").val(d.data.tapplyreturnValid.custid);
+                    $("#custname").val(d.data.tapplyreturnValid.custname);
+                    $("#contractid").val(d.data.tapplyreturnValid.contractid);
+                    $("#contractdoc").val(d.data.tapplyreturnValid.contractdoc);
+
+                    var childtabelList = d.data.tapplyreturndetailValidList;
+//                    createTable();//渲染子表
+                    var html = "";
+                    if (childtabelList.length !== 0) {
+                        for (var i = 0; i < childtabelList.length; i++) {
+                            html += "<tr class=readonly><td  style='width: 3%'><input   type=text name=return_apply[" + i + "].linenum class='linenum form-control' readonly=true  style='width: 90px' size=2 value=" + childtabelList[i].linenum + "></td>" +
+                                    "<td  style='width: 4%'><input   type=text name=return_apply[" + i + "].linestate class=form-control readonly=true value=" + childtabelList[i].linestate + "></td>" +
+                                    "<td style='width: 12%'><input  style='width: 60px' type=text name=return_apply[" + i + "].itemno class='form-control itemno' data-toggle='dialog'  value= " + childtabelList[i].itemno + "></td>" +
+                                    "<td style='width: 4%'><input   type=text name=return_apply[" + i + "].brand class='form-control brand' readonly=true value=" + childtabelList[i].brand + "></td>" +
+                                    "<td style='width: 4%'><input  style='width: 270px' type=text name=return_apply[" + i + "].partname class='form-control partname' readonly=true value=" + childtabelList[i].partname + "></td>" +
+                                    "<td style='width: 28%'><input   type=text name=return_apply[" + i + "].partspec class='form-control partspec' readonly=true value=" + childtabelList[i].partspec + "></td>" +
+                                    "<td style='width: 8%'><input   type=text name=return_apply[" + i + "].partstyle class='form-control partstyle' readonly=true value=" + childtabelList[i].partstyle + "></td>" +
+                                    "<td style='width: 4%'><input   type=text name=return_apply[" + i + "].colorlevel class='form-control colorlevel' readonly=true value=" + childtabelList[i].colorlevel + "></td>" +
+                                    "<td style='width: 4%'><input   type=text name=return_apply[" + i + "].material class='form-control material' value=" + childtabelList[i].material + "></td>" +
+                                    "<td style='width: 4%'><input   type=text name=return_apply[" + i + "].funit class='form-control funit' readonly=true value=" + childtabelList[i].funit + "></td>" +
+                                    "<td style='width: 4%'><input   type=text name=return_apply[" + i + "].grossweight class='form-control grossweight' readonly=true value=" + childtabelList[i].grossweight + "></td>" +
+                                    "<td style='width: 4%'><input   type=text name=return_apply[" + i + "].unitweight class='form-control unitweight' readonly=true value=" + childtabelList[i].unitweight + "></td>" +
+                                    "<td style='width: 4%'><input   type=text name=return_apply[" + i + "].applyqty class='form-control applyqty' onchange='countNmu()' data-rule='number' value=" + childtabelList[i].applyqty + "></td>" +
+                                    "<td style='width: 4%'><input   type=text name=return_apply[" + i + "].sourcenum class='form-control sourcenum'   readonly=true value=" + childtabelList[i].sourcenum + "></td>" +
+                                    "<td style='width: 4%'><input   type=text name=return_apply[" + i + "].soucrelinenum class='form-control soucrelinenum' readonly=true value=" + childtabelList[i].soucrelinenum + "></td>" +
+                                    "<td style='width: 4%'><input   type=text name=return_apply[" + i + "].recqty class='form-control recqty' readonly=true value=" + childtabelList[i].recqty + "></td>" +
+                                    "<input   type=hidden name=return_apply[" + i + "].orderdetailid class='form-control orderdetailid' style='display: none' value=" + childtabelList[i].orderdetailid + ">" +
+                                    "<input   type=hidden name=return_apply[" + i + "].itemid class='form-control itemid' style='display: none' value=" + childtabelList[i].itemid + ">" +
+                                    "<input   type=hidden name=return_apply[" + i + "].id class='form-control id'  value=" + childtabelList[i].id + ">" +
+                                    "</tr>";//<a class='btn btn-red' onclick=purchase_del_row("+childtabelList[i].id+")>删</a>
+
+                        }
+                        $("#return_apply_order_edit tbody").html(html);
+
+                        $("#return_apply_order_edit tbody tr").click(function () {
+                            $(this).removeClass("readonly")
+                                    .addClass("selected").siblings("tr").removeClass("selected")
+                                    .addClass("readonly");
+                        })
+                    }
+                }else  {
+                    BJUI.alertmsg('error', d.content,{displayMode:'fade',alertTimeout:1000,displayPosition:'middlecenter'});
+                }
+            }
+        })
+        /**
+         * 新增
+         * */
+        function return_apply_order_reset() {
+            if ($("#usingphase ").val() !== "" && $("#businessdate ").val() !== "" && $("#receivedaddress").val() !== "") {
+                var selectedId = $("#order_edit_table input[name='id']").val();
+                var tapplyreturndetailValidList = [];
+                var obj = new Object();
+                var tapplyreturnValid = new Object();
+                tapplyreturnValid = {
+                    businessdate: $("#businessdate").val(),
+                    receiveduser: $("#receiveduser").val(),
+                    receivedphone: $("#receivedphone").val(),
+                    receivedaddress: $("#receivedaddress").val(),
+                    requiredate: $("#requiredate").val(),
+                    requiretime: $("#requiretime").val(),
+                    details: $("#details").val(),
+                    id:selectedId,
+
+                }
+
+                if ($("#return_apply_order_edit tbody tr").length < 1) {
+                    BJUI.alertmsg('error', "至少的有一行明细行记录", {
+                        displayMode: 'fade',
+                        alertTimeout: 1000,
+                        displayPosition: 'middlecenter'
+                    });
+                } else {
+                    var ordertable = $("#return_apply_order_edit tbody tr");
+                    for (var i = 0; i < ordertable.length; i++) {
+                        obj = {
+                            itemid: $("input[name='return_apply[" + i + "].itemid']").val(),//ok
+                            linenum: $("input[name='return_apply[" + i + "].linenum']").val(),//ok
+                            itemno: $("input[name='return_apply[" + i + "].itemno']").val(),//ok
+                            partname: $("input[name='return_apply[" + i + "].partname']").val(),
+                            funit: $("input[name='return_apply[" + i + "].funit']").val(),
+                            partspec: $("input[name='return_apply[" + i + "].partspec']").val(),
+                            partstyle: $("input[name='return_apply[" + i + "].partstyle']").val(),
+                            colorlevel: $("input[name='return_apply[" + i + "].colorlevel']").val(),
+                            material: $("input[name='return_apply[" + i + "].material']").val(),
+                            brand: $("input[name='return_apply[" + i + "].brand']").val(),
+                            applyqty: $("input[name='return_apply[" + i + "].applyqty']").val(),
+                            sourcenum: $("input[name='return_apply[" + i + "].sourcenum']").val(),
+                            soucrelinenum: $("input[name='return_apply[" + i + "].soucrelinenum']").val(),
+                            recqty: $("input[name='return_apply[" + i + "].recqty']").val(),
+                            orderdetailid: $("input[name='return_apply[" + i + "].orderdetailid']").val(),
+                            id: $("input[name='return_apply[" + i + "].id']").val()
+                        };
+                        tapplyreturndetailValidList.push(obj);
+                    }
+
+                    objOb = {
+                        tapplyreturndetailValidList,
+                        tapplyreturnValid
+                    };
+                    $.ajax({
+                        url: "/v1/applyreturn/resetapplyreturn",
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        type: 'POST',
+                        data: JSON.stringify(objOb),
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        crossDomain: true,
+                        success: function (d) {
+                            if (d.state == 200) {
+                                BJUI.alertmsg('info', d.content, {
+                                    displayMode: 'fade',
+                                    alertTimeout: 1000,
+                                    displayPosition: 'middlecenter'
+                                });
+//                        //刷新采购入库单列表
+                                $("#delivery_applyreturn_order_list").datagrid("refresh");
+                                BJUI.dialog("closeCurrent", this);
+                            } else {
+                                BJUI.alertmsg('error', d.content, {
+                                    displayMode: 'fade',
+                                    alertTimeout: 1000,
+                                    displayPosition: 'middlecenter'
+                                });
+                            }
+                        }
+                    })
+                }
+            }
+        }
+        /**
+         * 审核
+         * **/
+        function return_apply_order_edit_audit() {
+//            var id = $("#return_order_table input[name='id']").val();
+            var id = $("#id").val()
+            console.log(id)
+            $.ajax({
+                url: '/v1/applyreturn/reviewedapplyreturn',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $('#delivery_applyreturn_order_list').datagrid("refresh");
+                        $("#audit_btn").attr("disabled", "disabled");//不能审核
+                        $("#giveup_audit_btn").removeAttr("disabled"); //弃审点亮
+                        $("#del_btn").attr("disabled", "disabled");
+                        $("#commit_btn").attr("disabled", "disabled");
+                        $("#rollback_btn").attr("disabled", "disabled");
+                    } else {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+        /**
+         * 弃审
+         * **/
+        function return_apply_order_edit_giveup_audit() {
+            var id = $("#id").val()
+
+            $.ajax({
+                url: '/v1/applyreturn/giveupreviewedapplyreturn',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $('#delivery_applyreturn_order_list').datagrid("refresh");
+                        //设置按钮可选不可选
+                        $("#giveup_audit_btn").attr("disabled", "disabled");
+                        $("#audit_btn").removeAttr("disabled");
+                        $("#del_btn").removeAttr("disabled");
+                        $("#commit_btn").attr("disabled", "disabled");
+                        $("#rollback_btn").removeAttr("disabled");
+
+                    } else {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+/**
+         * 提交
+         * **/
+        function return_apply_order_edit_commit() {
+            var id = $("#id").val()
+
+            $.ajax({
+                url: '/v1/applyreturn/commitapplyreturn',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $('#delivery_applyreturn_order_list').datagrid("refresh");
+                        //设置按钮可选不可选
+                        $("#giveup_audit_btn").attr("disabled", "disabled");
+                        $("#audit_btn").removeAttr("disabled");
+                        $("#del_btn").removeAttr("disabled");
+                        $("#commit_btn").attr("disabled", "disabled");
+                        $("#rollback_btn").removeAttr("disabled");
+
+
+                    } else {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+        /**
+         * 提交
+         * **/
+        function return_apply_order_edit_rollback() {
+            var id = $("#id").val()
+
+            $.ajax({
+                url: '/v1/applyreturn/rollbackapplyreturn',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $('#delivery_applyreturn_order_list').datagrid("refresh");
+                        //设置按钮可选不可选
+                        $("#giveup_audit_btn").attr("disabled", "disabled");
+                        $("#commit_btn").removeAttr("disabled");
+                        $("#del_btn").removeAttr("disabled");
+                        $("#audit_btn").attr("disabled", "disabled");
+                        $("#rollback_btn").attr("disabled", "disabled");
+
+                    } else {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+
+        /**
+         * 删除
+         * */
+        function return_edit_delete_row() {
+
+            if (1 < $("#return_apply_order_edit tbody tr").length) {
+                var id = $("#return_apply_order_edit").find(".selected").find(".id").val();
+                if (id !== undefined) {//如果改行不是新增的，那就掉接口删除数据库中的数据
+                    return_del_row(id);
+                } else {
+                    re_arr_edit_detail_table();
+                }
+            } else {
+                BJUI.alertmsg('info', "请保证明细行至少有一行", {
+                    displayMode: 'fade',
+                    alertTimeout: 1000,
+                    displayPosition: 'middlecenter'
+                });
+            }
+        }
+
+
+        /**
+         * 删除列表中的数据
+         * **/
+        var deleteRowId;
+        function return_del_row(id) {
+            deleteRowId = id;
+            if (1 < $("#return_apply_order_edit tbody tr").length) {
+                $(this).alertmsg('confirm', '确定要删除该行信息吗',
+                        {
+                            displayMode: 'slide',
+                            displayPosition: 'middlecenter',
+                            cancelName: '关闭',
+                            okName: '确认',
+                            title: '删除',
+                            okCall: 'returnDelete'
+                        });
+            }
+        }
+
+        function returnDelete() {
+            $.ajax({
+                url: '/v1/applyreturn/deleteapplyreturndetail',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: deleteRowId
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        re_arr_edit_detail_table();
+//                        count_edit();
+                    } else {
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+//        function count_edit(theRow) {
+//
+//
+//            //重新合计各数量
+//            var sumplanapplyqty = 0;
+//            var sumapplyqty = 0;
+//            var sumrecqty = 0;
+//            var sumreceivedqty = 0;
+//
+//            for (var i = 0; i < $("#return_apply_order_edit tbody tr").length; i++) {
+//                if ($("#return_apply_order_edit tbody tr:eq(" + i + ") td:eq(7) input").val() != '') {
+//                    sumplanapplyqty += parseInt($("#return_apply_order_edit tbody tr:eq(" + i + ") td:eq(7) input").val());
+//                }
+//                if ($("#return_apply_order_edit tbody tr:eq(" + i + ") td:eq(8) input").val() != '') {
+//                    sumapplyqty += parseInt($("#return_apply_order_edit tbody tr:eq(" + i + ") td:eq(8) input").val());
+//                }
+//                if ($("#return_apply_order_edit tbody tr:eq(" + i + ") td:eq(16) input").val() != '') {
+//                    sumrecqty += parseInt($("#return_apply_order_edit tbody tr:eq(" + i + ") td:eq(16) input").val());
+//                }
+//
+//                if ($("#return_apply_order_edit tbody tr:eq(" + i + ") td:eq(17) input").val() != '') {
+//                    sumreceivedqty += parseInt($("#return_apply_order_edit tbody tr:eq(" + i + ") td:eq(17) input").val());
+//                }
+//                $("#return_edit_count  td:eq(7) input").val(sumplanapplyqty);
+//                $("#return_edit_count  td:eq(8) input").val(sumapplyqty);
+//                $("#return_edit_count  td:eq(16) input").val(sumrecqty);
+//                $("#return_edit_count  td:eq(17) input").val(sumreceivedqty);
+//            }
+//        }
+
+
+        function re_arr_edit_detail_table() {
+            $("#return_apply_order_edit").find(".selected").remove();//如果是新增的那就直接在页面删除就好，因为还没写进数据库
+            for (var i = 0; i < $("#return_apply_order_edit tbody tr").length; i++) {
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(0)").attr("name", "return_apply[" + i + "].linenum");
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(1)").attr("name", "return_apply[" + i + "].linestate");
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(2)").attr("name", "return_apply[" + i + "].itemno");
+
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(3)").attr("name", "return_apply[" + i + "].brand");
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(4)").attr("name", "return_apply[" + i + "].partname");
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(5)").attr("name", "return_apply[" + i + "].partspec");
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(6)").attr("name", "return_apply[" + i + "].partstyle");
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(7)").attr("name", "return_apply[" + i + "].colorlevel");
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(8)").attr("name", "return_apply[" + i + "].material");
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(9)").attr("name", "return_apply[" + i + "].funit");
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(10)").attr("name", "return_apply[" + i + "].applyqty");
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(11)").attr("name", "return_apply[" + i + "].sourcenum");
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(12)").attr("name", "return_apply[" + i + "].soucrelinenum");
+
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(13)").attr("name", "return_apply[" + i + "].recqty");
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(14)").attr("name", "return_apply[" + i + "].orderdetailid");
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(15)").attr("name", "return_apply[" + i + "].itemid");
+                $("#return_apply_order_edit tbody tr:eq(" + i + ") input:eq(16)").attr("name", "return_apply[" + i + "].id");
+            }
+//            count_edit()
+        }
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <form data-toggle="validate" data-toggle="validate">
+        <div style="margin:15px;">
+            <button class="btn btn-blue" data-icon="save" onclick="return_apply_order_reset()" id="apply_save_btn">保存</button>
+            <button type="button" class="btn btn-green" data-icon="thumbs-up" id="audit_btn" onclick="return_apply_order_edit_audit()">审核</button>
+            <button type="button" class="btn btn-orange" data-icon="thumbs-down" id="giveup_audit_btn" onclick="return_apply_order_edit_giveup_audit()">弃审</button>
+            <button type="button" class="btn btn-green" data-icon="thumbs-up" id="commit_btn" onclick="return_apply_order_edit_commit()">提交</button>
+            <button type="button" class="btn btn-green" data-icon="thumbs-down" id="rollback_btn" onclick="return_apply_order_edit_rollback()">驳回</button>
+            <button type="button" class="btn btn-red" data-icon="times" id="del_btn" onclick="return_del_row()">删除</button>
+            <button class="btn-close btn" data-icon="close"><i class="fa fa-close"></i>关闭</button>
+        </div>
+        <table class="table table-bordered table-hover table-striped table-top bjui-tabledit" id="order_edit_table"
+               width="100%">
+            <input type="hidden" name="id" value="" id="id">
+            <input type="hidden" name="salaorder.orderid" value="" id="orderid">
+            <input type="hidden" name="salaorder.custid" value="" id="custid">
+            <input type="hidden" name="salaorder.custname" value="" id="custname">
+            <input type="hidden" name="salaorder.contractid" value="" id="contractid">
+            <input type="hidden" name="salaorder.contractdoc" value="" id="contractdoc">
+            <tbody>
+            <tr>
+                <td>
+                    <label for="orderno" class="control-label x90">单据号:</label>
+                    <input type="text" id="orderno" value="" name="orderno" size="15" readonly="true">
+                </td>
+                <td>
+                    <label for="salesorderdoc" class="control-label x90">销售订单:</label>
+                    <input type="text" id="salesorderdoc" value="" name="salaorder.sodoc"
+                           readonly="true" style="width: 150px">
+                </td>
+                <td>
+                    <label for="state" class="control-label x90">状态：</label>
+                    <input type="text" id="state" value="" name="state" readonly="true" style="width: 150px">
+                </td>
+                <td>
+                    <label for="businessdate" class="control-label x90">申请日期：</label>
+                    <input type="text" id="businessdate" value="" name="businessdate" data-toggle="datepicker"
+                           data-rule="required" style="width: 150px">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="receiveduser" class="control-label x90">收货人：</label>
+                    <input type="text" id="receiveduser" value="" name="receiveduser" style="width: 150px">
+                </td>
+                <td><label for="receivedphone" class="control-label x90">收货人手机：</label>
+                    <input type="text" id="receivedphone" value="" name="receivedphone" style="width: 150px">
+                </td>
+                <td>
+                    <label for="receivedaddress" class="control-label x90">收货地址：</label>
+                    <input type="text" id="receivedaddress" value="" name="salaorder.receivedaddress"
+                           readonly="true" style="width: 150px">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="requiredate" class="control-label x90">要求日期：</label>
+                    <input type="text" id="requiredate" value="" name="requiredate" data-toggle="datepicker"
+                           data-rule="required" style="width: 150px">
+                </td>
+                <td>
+                    <label for="requiretime" class="control-label x90">要求时间：</label>
+                    <input type="text" id="requiretime" value="" name="requiretime"
+                            style="width: 150px">
+                </td>
+
+                <td colspan="3"><label for="details" class="control-label x90">备注：</label>
+                    <textarea type="text" id="details" value="" name="details" size="15"
+                              style="width:300px;height:25px;resize: none"></textarea></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div id="tableContanier">
+
+            <div style="margin:50px 0 10px 0;">
+                <button class="btn-orange" onclick="return_edit_delete_row()">删除行</button>
+            </div>
+
+            <table class="table table-bordered table-hover table-striped bjui-tabledit" id="return_apply_order_edit"
+                   data-single-noindex="true">
+                <!--表格的头，先加载-->
+                <thead>
+                <tr>
+                    <th title="">行号</th>
+                    <th title="">行状态</th>
+                    <th title="">料号</th>
+                    <th title="">品牌</th>
+                    <th title="">品名</th>
+                    <th title="">规格</th>
+                    <th title="">型号</th>
+                    <th title="">颜色</th>
+                    <th title="">材质</th>
+                    <th title="">单位</th>
+                    <th title="">毛重</th>
+                    <th title="">重量单位</th>
+                    <th title="">数量</th>
+                    <th title="">订单号</th>
+                    <th title="">订单行号</th>
+                    <th title="">关联数</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+<div id="purchase_edit_tips"></div>
+</body>
+</html>

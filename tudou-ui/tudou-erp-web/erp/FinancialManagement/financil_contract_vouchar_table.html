@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<script type="text/javascript">
+
+		$('#finacil_contract_voucher_list').datagrid({
+
+			local: 'remote',
+			dataUrl: '/v1/contract/voucher_list',
+			dataType: 'json',
+			sortAll: false,
+			loadType: 'get',
+			filterAll: true,
+			height:'95%',
+			columns: [
+				{name:'invoicedoc', width:'150', label:'收款单号'},
+				{name:'username', width:'70', label:'姓名'},
+				{name:'mobile', width:'100', label:'手机号'},
+				{name:'paymentamount', width:'150', label:'收款金额'},
+				{name:'paymentmethods', width:'100', label:'收款方式'},
+				{name:'customercode', width:'0',hide : true, label:'客户编号'},
+				{name:'custsales', width:'0',hide : true, label:'客户经理'},
+				{name:'custsalesid', width:'0',hide : true, label:'客户经理ID'},
+				{name:'designer', width:'0',hide : true, label:'设计师'},
+				{name:'designerid', width:'0',hide : true, label:'设计师ID'},
+				{name:'idnumber', width:'0',hide : true, label:'身份证号'},
+				{name:'roommodel', width:'0',hide : true, label:'房型'},
+				{name:'area', width:'0',hide : true, label:'面积'},
+				{name:'provincename', width:'0',hide : true, label:'省'},
+				{name:'cityname', width:'0',hide : true, label:'市'},
+				{name:'districtname', width:'0',hide : true, label:'区'},
+				{name:'road', width:'0',hide : true, label:'街道'},
+				{name:'community', width:'0',hide : true, label:'小区名称'},
+				{name:'building', width:'0',hide : true, label:'栋数'},
+				{name:'room', width:'0',hide : true, label:'房号'},
+				{name:'custid_fk', width:'0',hide : true, label:'客户ID'},
+				{name:'projectmanager', width:'0',hide : true, label:'监理'},
+				{name:'projectmanagerid', width:'0',hide : true, label:'监理ID'},
+				{name:'id', width:'0',hide : true, label:'收款单ID'},
+				{name:'unit', width:'0',hide : true, label:'单元'},
+				{name:'rooms', width:'0',hide : true, label:'室'},
+				{name:'hall', width:'0',hide : true, label:'厅'},
+				{name:'kitchen', width:'0',hide : true, label:'厨'},
+				{name:'toilet', width:'0',hide : true, label:'卫'},
+				{name:'balcony', width:'0',hide : true, label:'阳台'},
+				{name:'wechatnum', width:'0',hide : true, label:'微信号'},
+				{name:'mobilesales', width:'0',hide : true, label:'渠道员'},
+				{name:'mobilesalesid', width:'0',hide : true, label:'渠道员ID'},
+				{name:'paymenttype', width:'100', label:'收款类型'}
+		],
+			paging: {pageSize:20, selectPageSize:'50,100,200', pageCurrent:1},
+			columnMenu: true,
+			columnShowhide: true,
+			columnFilter: true,
+			columnLock: false,
+			fullGrid: false,
+			dblOnClick: 'selectfcvlItems',
+		});
+
+		function selectfcvlItems(){
+			var selected=$("#finacil_contract_voucher_list").find('tr.datagrid-selected-tr');
+			if(selected.length == 0){
+				$(this).alertmsg('error', '请在列表中选择要操作的对象。');
+			}else if(selected.length > 1){
+				$(this).alertmsg('error', '请选择唯一的操作对象。');
+			}else{
+				var custcode = selected[0].cells[6].innerText;
+				var cusname = selected[0].cells[2].innerText;
+				var designer = selected[0].cells[9].innerText;
+				var designerid = selected[0].cells[10].innerText;
+				var custsales = selected[0].cells[7].innerText;
+				var custsalesid = selected[0].cells[8].innerText;
+
+				var mobile = selected[0].cells[3].innerText;
+				var idnumber = selected[0].cells[11].innerText;
+
+				var roommodel = selected[0].cells[12].innerText;
+				var area = selected[0].cells[13].innerText;
+				var provincename = selected[0].cells[14].innerText;
+				var cityname = selected[0].cells[15].innerText;
+				var districtname = selected[0].cells[16].innerText;
+
+				var road = selected[0].cells[17].innerText;
+				var village = selected[0].cells[18].innerText;
+				var building = selected[0].cells[19].innerText;
+				var room = selected[0].cells[20].innerText;
+
+				var id = selected[0].cells[21].innerText;
+
+				var projectmanager = selected[0].cells[22].innerText;
+				var projectmanagerid = selected[0].cells[23].innerText;
+				var invoiceid = selected[0].cells[24].innerText;
+
+				var unit = selected[0].cells[25].innerText;
+				var rooms = selected[0].cells[26].innerText;
+				var hall = selected[0].cells[27].innerText;
+				var kitchen = selected[0].cells[28].innerText;
+				var toilet = selected[0].cells[29].innerText;
+				var balcony = selected[0].cells[30].innerText;
+				var wechatnum = selected[0].cells[31].innerText;
+				var mobilesales = selected[0].cells[32].innerText;
+				var mobilesalesid = selected[0].cells[33].innerText;
+
+				$("input[id='contract_custcode']").val(custcode);
+				$("input[id='contract_custname']").val(cusname);
+				$("input[id='contract_designer']").val(designer);
+				$("input[id='contract_designerid']").val(designerid);
+				$("input[id='contract_custsales']").val(custsales);
+				$("input[id='contract_custsalesid']").val(custsalesid);
+
+				$("input[id='contract_mobile']").val(mobile);
+				$("input[id='contract_idnumber']").val(idnumber);
+
+				$('#contract_doormodel').selectpicker('val',roommodel);
+
+				$("input[id='contract_area']").val(area);
+
+				$('#contract_provincename').selectpicker('val',provincename);
+				$('#contract_cityname').selectpicker('val',cityname);
+				$('#contract_districtname').selectpicker('val',districtname);
+
+				$("input[id='contract_road']").val(road);
+				$("input[id='contract_community']").val(village);
+				$("input[id='contract_building']").val(building);
+				$("input[id='contract_room']").val(room);
+
+				$("input[id='contract_custid_fk']").val(id);
+				$("input[id='contract_supervision']").val(projectmanager);
+				$("input[id='contract_supervisionid']").val(projectmanagerid);
+				$("input[id='contract_invoiceid']").val(invoiceid);
+
+				$("input[id='contract_unit']").val(unit);
+				$("input[id='contract_rooms']").val(rooms);
+				$("input[id='contract_hall']").val(hall);
+				$("input[id='contract_kitchen']").val(kitchen);
+				$("input[id='contract_toilet']").val(toilet);
+				$("input[id='contract_balcony']").val(balcony);
+				$("input[id='contract_wechat']").val(wechatnum);
+				$("input[id='contract_beautychat']").val(mobilesales);
+				$("input[id='contract_beautychatid']").val(mobilesalesid);
+
+				BJUI.dialog('closeCurrent',this);
+			}
+		}
+	</script>
+</head>
+<body>
+
+<div class="bjui-pageContent">
+	<div style="margin:0px 0px 10px 0px;">
+		<button class="btn-default" onclick="selectfcvlItems()" data-width="1050" data-height="400">选择</button>
+		<button class="btn-close btn" data-icon="close" data-width="1050" data-height="400">关闭</button>
+	</div>
+	<table id="finacil_contract_voucher_list" class="table table-hover" data-width="100%"> </table>
+</div>
+
+</body>
+</html>

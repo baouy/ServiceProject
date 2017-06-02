@@ -1,0 +1,191 @@
+<div id="tsalespackage_layout" style="width: 100%; height: 100%;">
+    <script type="text/javascript">
+
+        itemdetail();
+        function itemdetail(){
+            $.ajax({
+                url: '/v1/SalesPackage/detail?sid='+salespackage_id,
+                dataType: 'json',
+                type: 'GET',
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function(d){
+                    if(d.state == 200){
+                        var val;
+                        for(var i in d.data){
+                            $.CurrentDialog.find("#tsalespackage_"+i).val(d.data[i]);
+                            if (i == "typedocument") {
+                                $.CurrentDialog.find("#tsalespackage_" + i).selectpicker('val',d.data[i]);
+                            }
+
+                            if (i == "isactive"){
+                                if (d.data[i]){
+                                    $.CurrentDialog.find('#tsalespackage_isactive1').iCheck('check');
+                                    $.CurrentDialog.find('#tsalespackage_isactive2').iCheck('uncheck');
+                                }else{
+                                    $.CurrentDialog.find('#tsalespackage_isactive2').iCheck('check');
+                                    $.CurrentDialog.find('#tsalespackage_isactive1').iCheck('uncheck');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        var tsalesAUValid = null,tsalespackagedetails = null;
+        var is_post_data = false;
+        $('#basics_salespackage_from').bind('valid.form', function() {
+            if (is_post_data){
+                return;
+            }
+            var isactive = $('input:radio[name="isactive"]:checked').val();
+
+            tsalesAUValid = {
+                id:salespackage_id,
+                salespackagecode:$("#tsalespackage_salespackagecode").val(),//料号
+                salespackagename:$("#tsalespackage_salespackagename").val(),//分类
+                isactive:isactive,//分类ID
+                typedocument:$("#tsalespackage_typedocument").val(),//分类code
+            }
+
+            $('#basics_salespackage_datagrid_item').datagrid('saveAll');
+        });
+
+
+        $('#basics_salespackage_datagrid_item').datagrid({
+            gridTitle:'料品信息',
+            dataUrl: '/v1/salespackagedetail/list?sid='+salespackage_id,
+            dataType: 'json',
+            sortAll: false,
+            loadType: 'get',
+            addLocation: 'next',
+            filterThead:false,
+            columns: [{name:'itemno', width:'100', label:'料号',type:'lookup',attrs: {'readonly':"true",'data-rule':'required','data-url':'BasicsManagement/basics_salespackage_item_table_add.html','data-width':600,'data-title':"料品列表",'class':'doc_lookup form-control'}},
+                {name:'itemclass', width:'100', label:'分类',attrs: {'readonly':"true"}},
+                {name:'brand', width:'100',label:'品牌',attrs: {'readonly':"true"}},
+                {name:'partname', width:'100',label:'商品名称',attrs: {'readonly':"true"}},
+                {name:'partspec', width:'100',label:'规格',attrs: {'readonly':"true"}},
+                {name:'partstyle', width:'100',label:'型号',attrs: {'readonly':"true"}},
+                {name:'funit', width:'100',label:'单位',attrs: {'readonly':"true"}},
+                {name:'material', width:'100',label:'材质',attrs: {'readonly':"true"}},
+                {name:'usingphase', hide:true},
+                {name:'itemid', hide:true},
+                {name:'isnonstandard',hide:true},
+                {name:'colorlevel',hide:true},
+                {name:'id',hide:true},
+            ],
+            paging:false,
+            showToolbar: true,
+            toolbarItem: 'add,cancel,del',
+            saveAll: false,
+            editUrl:'meiwo',
+            issaveallback:'salespackage_save_json',
+            contextMenuB:true,
+            delConfirm:true,
+            delPK:'id',
+            delType:'POST',
+            delUrl:'/v1/salespackagedetail/delete',
+            afterDelete:'del_item_view',
+            showEditbtnscol:true,
+            editdblOnclick: true,
+        });
+
+        function salespackage_save_json(json) {
+            if (json.length > 0) {
+                tsalespackagedetails = json;
+            }
+
+            var objOb = new Object();
+            objOb.tsalesAUValid = tsalesAUValid;
+            if (tsalespackagedetails != null){
+                objOb.tsalespackagedetails = tsalespackagedetails;
+            }
+
+            console.log(objOb);
+            if (is_post_data){
+                return;
+            }
+            is_post_data = true;
+            $.ajax({
+                url: '/v1/SalesPackage/reset',
+                contentType:"application/json",
+                dataType: 'json',
+                type: 'POST',
+                data:JSON.stringify(objOb),
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if(d.state == 200) {
+
+                        if (tsalespackagedetails != null){
+                            $('#basics_salespackage_datagrid_item').datagrid('refresh');
+                        }
+
+                        $('#tsalespackage_list_datagrid').datagrid('refresh');
+                        tsalespackagedetails = null;
+                    }else{
+                        $(this).alertmsg('ok', '保存失败');
+                    }
+                    is_post_data = false;
+                }
+            });
+
+        }
+
+        function del_item_view() {
+            $(this).alertmsg('ok', '删除成功');
+        }
+
+    </script>
+
+    <div class="bjui-pageContent">
+        <form id="basics_salespackage_from" data-toggle="validate" >
+
+            <div style="margin:0px 0px 10px 0px;">
+                <button class="btn btn-blue" data-icon="save" id="tsalespackage_btn">
+                    保存
+                </button>
+                <button class="btn-close btn" data-icon="close"><i class="fa fa-close"></i>关闭</button>
+            </div>
+
+            <table class="table table-bordered table-hover table-striped table-top bjui-tabledit" width="100%">
+                <tbody>
+                <tr>
+                    <td>
+                        <label for="tsalespackage_salespackagecode" class="control-label x90">编码：</label>
+                        <input type="text" id="tsalespackage_salespackagecode" value="" class="tsalespackage_salespackagecode" name="salespackagecode" data-rule="required"  size="15">
+                    </td>
+                    <td>
+                        <label for="tsalespackage_salespackagename" class="control-label x90">名称：</label>
+                        <input type="text" name="salespackagename" id="tsalespackage_salespackagename" value=""  data-rule="required" size="15">
+                    </td>
+                    <td>
+                        <label for="tsalespackage_isactive1" class="control-label x90">是否生效：</label>
+                        <input type="radio" name="isactive" id="tsalespackage_isactive1" data-toggle="icheck" value="true" data-label="有效&nbsp;&nbsp;" checked>
+                        <input type="radio" name="isactive" id="tsalespackage_isactive2" data-toggle="icheck" value="false" data-label="无效">
+                    </td>
+                    <td>
+                        <label for="tsalespackage_typedocument" class="control-label x90">类型：</label>
+                        <select name="typedocument" id="tsalespackage_typedocument" data-toggle="selectpicker" data-rule="required">
+                            <option value="套餐" selected="true">套餐</option>
+                            <option value="个性包">个性包</option>
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div style="margin-top: 20px;height: auto;">
+
+                <table id="basics_salespackage_datagrid_item" class="table table-hover" data-width="100%" data-single-noindex = true></table>
+            </div>
+
+
+        </form>
+    </div>
+</div>

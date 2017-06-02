@@ -1,0 +1,116 @@
+<script type="text/javascript">
+	$('#customer_telephonesales_1').datagrid({
+
+		local: 'remote',
+		dataUrl: '/v1/customer/customer_telephonesales?type=1',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height: '95%',
+		columns: [{
+			name: 'customercode',
+			width: '150',
+			label: '编码'
+		}, {
+			name: 'cusname',
+			width: '100',
+			label: '姓名'
+		}, {
+			name: 'mobile',
+			width: '120',
+			label: '手机号'
+		}, {
+			name: 'community',
+			width: '150',
+			label: '小区名称'
+		}, {
+			name: 'source',
+			width: '90',
+			label: '来源'
+		}, {
+			name: 'secondsource',
+			width: '90',
+			label: '二级来源'
+		}, {
+			name: 'thirdsource',
+			width: '90',
+			label: '三级来源'
+		},{
+			name: 'semsources',
+			width: '50',
+			label: 'sem来源'
+		}, {
+			name: 'semkeys',
+			width: '100',
+			label: 'sem关键词'
+		}, {
+			name: 'record',
+			width: '200',
+			label: '客户操作记录'
+		}, {
+			name: 'custlevel',
+			width: '50',
+			label: '客户等级'
+		}, {
+			name: 'state',
+			width: '90',
+			label: '状态'
+		}, {
+			name: 'mobilesales',
+			width: '90',
+			label: '美聊员'
+		}, {
+			name: 'orgname',
+			width: '90',
+			label: '组织'
+		}, {
+			name: 'createuser',
+			width: '90',
+			label: '创建人'
+		}, {
+			name: 'createtime',
+			width: '150',
+			label: '创建时间'
+		}, {
+			name: 'lastuser',
+			width: '90',
+			label: '最后修改人'
+		}, {
+			name: 'lasttime',
+			width: '150',
+			label: '最后修改时间'
+		}, {
+			name: 'id',
+			width: '80',
+			label: '主键',
+			hide: true
+		}],
+		paging: {
+			pageSize: 50,
+			selectPageSize: '50,100,200',
+			pageCurrent: 1
+		},
+		columnMenu: true,
+		columnShowhide: true,
+		columnFilter: true,
+		columnLock: false,
+		fullGrid: false,
+		dblOnClick: 'customer_to_edit2',
+
+	});
+</script>
+
+	<div style="margin-bottom:10px;">
+		<button type="button" class="btn btn-green" data-icon="edit"
+				onclick="customer_to_edit('needFollowCustomer','customer_telephonesales_1')"><i
+				class="fa fa-edit"></i>跟进
+		</button>
+		<button type="button" class="btn btn-green" data-icon="user"
+				onclick="toElectric('tosale','customer_telephonesales_1')">转美聊
+		</button>
+		<button type="button" class="btn btn-green" data-icon="user"
+				onclick="toWechat('towechat','customer_telephonesales_1')">转微聊
+		</button>
+	</div>
+	<table id="customer_telephonesales_1" class="table table-hover" data-width="100%"></table>

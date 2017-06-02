@@ -1,5 +1,6 @@
 package com.tudou.upms.service;
 
+import com.tudou.common.util.CpUtil;
 import com.tudou.upms.dao.model.UpmsSystemExample;
 import com.tudou.upms.rpc.api.UpmsSystemService;
 import org.junit.Test;
@@ -25,8 +26,10 @@ public class UpmsServiceTest {
 
     @Test
     public void index() {
-        int count = upmsSystemService.countByExample(new UpmsSystemExample());
-        System.out.println("num-"+count);
+//        String dest = "/Users/DavidWang/ServiceProject/tudou-upms/tudou-upms-service/src/main/resources/erp";
+//        CpUtil.copy(dest,"ServiceProject","/tudou-ui/tudou-erp-web/erp");
+//        int count = upmsSystemService.countByExample(new UpmsSystemExample());
+//        System.out.println("num-"+count);
     }
 
 }

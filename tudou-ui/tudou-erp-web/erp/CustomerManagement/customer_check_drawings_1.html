@@ -1,0 +1,34 @@
+<script>
+
+	$('#customer_checked_list').datagrid({
+		local: 'remote',
+		dataUrl: '/v1/customer/customer_desingerfilelist?type=13',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height:'95%',
+		columns: [
+			{name:'state', width:'150', label:'状态'},
+			{name:'createtime', width:'150', label:'提交时间'},
+			{name:'custname', width:'150', label:'客户姓名'},
+			{name:'createuser', width:'150', label:'提交人'},
+			{name:'style', width:'150', label:'风格'},
+			{name:'point', width:'150', label:'特点'},
+			{name:'details', width:'150', label:'备注'},
+			{name:'filename', width:'150', label:'上传文件'},
+			{name: 'id', width: '80', label: '主键',hide: true}
+		],
+		showLinenumber:true,
+		paging: {pageSize:20, selectPageSize:'50,100,200', pageCurrent:1},
+		columnMenu: true,
+		columnShowhide: true,
+		columnFilter: true,
+		columnLock: false,
+		fullGrid: false,
+
+	});
+
+</script>
+
+<table id="customer_checked_list"></table>

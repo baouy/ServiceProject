@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        .footer td {
+            padding: 0;
+        }
+
+        .footer input {
+            border-radius: 0;
+            border-right: none;
+            border-top: none;
+            border-bottom: none;
+        }
+    </style>
+    <script type="text/javascript">
+
+        var selected = $("#delivery_order_list").find('tr.datagrid-selected-tr')[0].lastChild.innerText;
+        $.ajax({
+            url: '/v1/delivery/findeditdeliveryorders?id=' + selected,
+            dataType: 'json',
+            type: 'GET',
+            xhrFields: {
+                withCredentials: true
+            },
+            crossDomain: true,
+            success: function (d) {
+                if (d.state == 200) {
+                    if (d.data.tdeliveryValid.state == "新增") {
+                        $("#delivery_order_commit_btn").removeAttr("disabled");
+                        $("#delivery_order_nocommit_btn").attr("disabled", "disabled");
+
+                        $("#delivery_order_audit_btn").removeAttr("disabled");
+                        $("#delivery_order_noaudit_btn").attr("disabled", "disabled");
+                        $("#delivery_order_ed_de").removeAttr("disabled");
+                    } else if (d.data.tdeliveryValid.state == "已提交") {
+                        $("#delivery_order_commit_btn").attr("disabled", "disabled");
+                        $("#delivery_order_nocommit_btn").removeAttr("disabled");
+
+                        $("#delivery_order_audit_btn").removeAttr("disabled");
+                        $("#delivery_order_noaudit_btn").attr("disabled", "disabled");
+                        $("#delivery_order_ed_de").attr("disabled", "disabled");
+                    }else if (d.data.tdeliveryValid.state == "已审核") {
+                        $("#delivery_order_commit_btn").attr("disabled", "disabled");
+                        $("#delivery_order_nocommit_btn").attr("disabled", "disabled");
+
+                        $("#delivery_order_audit_btn").attr("disabled", "disabled");
+                        $("#delivery_order_noaudit_btn").removeAttr("disabled");
+                        $("#delivery_order_ed_de").attr("disabled", "disabled");
+
+                    }
+                    $("#orderno_edit").val(d.data.tdeliveryValid.orderno);
+                    $("#applyorderno_edit").val(d.data.tdeliveryValid.applyorderno);
+                    $("#state_edit").val(d.data.tdeliveryValid.state);
+                    $("#businessdate_edit").val(d.data.tdeliveryValid.businessdate);
+                    $("#receiveduser_edit").val(d.data.tdeliveryValid.receiveduser);
+                    $("#receivedphone_edit").val(d.data.tdeliveryValid.receivedphone);
+                    $("#receivedaddress_edit").val(d.data.tdeliveryValid.receivedaddress);
+                    $("#warehousename_edit").val(d.data.tdeliveryValid.warehousename);
+                    $("#driver_edit").val(d.data.tdeliveryValid.driver);
+                    $("#driverphone_edit").val(d.data.tdeliveryValid.driverphone);
+                    $("#plandate_edit").val(d.data.tdeliveryValid.plandate);
+                    $("#plantime_edit").val(d.data.tdeliveryValid.plantime);
+                    $("#details_edit").val(d.data.tdeliveryValid.details);
+                    $("#id_edit").val(d.data.tdeliveryValid.id);
+                    $("#contractid_edit").val(d.data.tdeliveryValid.contractid);
+                    $("#contractdoc_edit").val(d.data.tdeliveryValid.contractdoc);
+                    $("#custname_edit").val(d.data.tdeliveryValid.custname);
+
+
+                    var html = "";
+                    if (d.data.tdeliverydetailValidList.length !== 0) {
+                        for (var i = 0; i < d.data.tdeliverydetailValidList.length; i++) {
+
+                            html += "<tr>" +
+                                    "<td  style='width: 3%'><input type=text name=delivery_apply[" + i + "].linenum  class='linenum form-control' readonly=true   value=" + d.data.tdeliverydetailValidList[i].linenum + "></td>" +
+                                    "<td style='width: 4%'><input type=text name=delivery_apply[" + i + "].linestate  class=form-control readonly=true  value=" + d.data.tdeliverydetailValidList[i].linestate + "></td>" +
+                                    "<td style='width: 12%'><input type=text name=delivery_apply[" + i + "].itemno    class='form-control itemno' readonly=true  value= " + d.data.tdeliverydetailValidList[i].itemno + " ></td>" +
+                                    "<td style='width: 28%'><input type=text name=delivery_apply[" + i + "].partname   class='form-control partname' readonly=true  value=" + d.data.tdeliverydetailValidList[i].partname + " ></td>" +
+                                    "<td style='width: 3%'><input type=text name=delivery_apply[" + i + "].warehousename  class='form-control warehousename'  readonly=true value=" + d.data.tdeliverydetailValidList[i].warehousename + " ></td>" +
+                                    "<td style='width: 3%'><input type=text name=delivery_apply[" + i + "].locationname  class='form-control locationname' readonly=true value=" + d.data.tdeliverydetailValidList[i].locationname + "></td>" +
+                                    "<td style='width: 3%'><input type=text name=delivery_apply[" + i + "].funit  class='form-control funit' readonly=true  value=" + d.data.tdeliverydetailValidList[i].funit + "></td>" +
+                                    "<td style='width: 3%'><input type=text name=delivery_apply[" + i + "].grossweight   class='form-control grossweight' readonly=true  value=" + d.data.tdeliverydetailValidList[i].grossweight + "></td>" +
+                                    "<td style='width: 3%'><input type=text name=delivery_apply[" + i + "].unitweight   class='form-control unitweight' readonly=true  value=" + d.data.tdeliverydetailValidList[i].unitweight + "></td>" +
+                                    "<td style='width: 3%'><input type=text name=delivery_apply[" + i + "].planapplyqty   class='form-control planapplyqty' readonly=true   value=" + d.data.tdeliverydetailValidList[i].planapplyqty + "></td>" +
+                                    "<td style='width: 3%'><input type=text name=delivery_apply[" + i + "].applyqty   class='form-control applyqty'  value=" + d.data.tdeliverydetailValidList[i].applyqty + " onchange='count_edit(this.parentNode.parentNode)'></td>" +
+                                    "<td style='width: 8%'><input type=text name=delivery_apply[" + i + "].partspec   class='form-control partspec 'readonly=true    value=" + d.data.tdeliverydetailValidList[i].partspec + "></td>" +
+                                    "<td style='width: 3%'><input type=text name=delivery_apply[" + i + "].partstyle   class='form-control partstyle' readonly=true value=" + d.data.tdeliverydetailValidList[i].partstyle + "></td>" +
+                                    "<td style='width: 3%'><input type=text name=delivery_apply[" + i + "].colorlevel   class='form-control colorlevel' readonly=true value=" + d.data.tdeliverydetailValidList[i].colorlevel + "></td>" +
+                                    "<td style='width: 3%'><input type=text name=delivery_apply[" + i + "].material   class='form-control material' readonly=true value=" + d.data.tdeliverydetailValidList[i].material + "></td>" +
+                                    "<td style='width: 3%'><input type=text name=delivery_apply[" + i + "].brand   class='form-control brand' readonly=true value=" + d.data.tdeliverydetailValidList[i].brand + "></td>" +
+
+                                    "<td style='width: 3%'><input type=text name=delivery_apply[" + i + "].sourcenum   class='sourcenum form-control' readonly=true   value=" + d.data.tdeliverydetailValidList[i].sourcenum + "></td>" +
+                                    "<td style='width: 3%'><input type=text name=delivery_apply[" + i + "].soucrelinenum    class='soucrelinenum form-control'  readonly=true data-rule='number' value=" + d.data.tdeliverydetailValidList[i].soucrelinenum + "></td>" +
+                                    "<td style='width: 3%'><input type=text name=delivery_apply[" + i + "].recqty readonly=true   class='form-control recqty' data-rule='number'   value=" + d.data.tdeliverydetailValidList[i].recqty + "></td>" +
+                                    "<td style='width: 3%'><input type=text name=delivery_apply[" + i + "].receivedqty   readonly=true class='form-control receivedqty' data-rule='number'   value=" + d.data.tdeliverydetailValidList[i].receivedqty + "></td>" +
+                                    "<input  name=delivery_apply[" + i + "].itemid class='form-control itemid'   type='hidden' value=" + d.data.tdeliverydetailValidList[i].itemid + ">" +
+                                    "<input  name=delivery_apply[" + i + "].id class='form-control id'    type='hidden' value=" + d.data.tdeliverydetailValidList[i].id + ">" +
+                                    "<input  name=delivery_apply[" + i + "].salesorderno class='form-control salesorderno'    type='hidden' value=" + d.data.tdeliverydetailValidList[i].salesorderno + ">" +
+                                    "<input  name=delivery_apply[" + i + "].salesorderlinenum class='form-control salesorderlinenum'    type='hidden' value=" + d.data.tdeliverydetailValidList[i].salesorderlinenum + ">" +
+                                    "</tr>";
+                        }
+                        $("#delivery_order_edit_detail tbody").html(html);
+                    }
+                    $("#delivery_edit_count").append("<table class='table table-bordered table-hover table-striped bjui-tabledit'><tr>" +
+                            "<td style='width: 3%'><input class='form-control'    value='合计'></td>" +
+                            "<td style='width: 4%'><input type='text'  class='form-control'   value></td>" +
+                            "<td style='width: 12%'><input type='text'  class='form-control'   value></td>" +
+                            "<td style='width: 28%'><input type='text'  class='form-control'   value></td>" +
+                            "<td style='width: 3%'><input type='text'  class='form-control'   value></td>" +
+                            "<td style='width: 3%'><input type='text'  class='form-control'   value></td>" +
+                            "<td style='width: 3%'><input type='text'  class='form-control'   value></td>" +
+                            "<td style='width: 3%'><input type='text'  class='form-control'   value></td>" +
+                            "<td style='width: 3%'><input type='text'  class='form-control'   value></td>" +
+                            "<td style='text-align: center;width: 3%'><input type='text' id='countunitqty'   readonly=true class='form-control' value=0></td>" +
+                            "<td style='text-align: center;width: 3%'><input type='text' id='countmodifyunitqty'   readonly=true class='form-control' value=0></td>" +
+                            "<td style='width: 8%'><input type='text'  class='form-control'   value></td>" +
+                            "<td style='width: 3%'><input type='text'  class='form-control'   value></td>" +
+                            "<td style='width: 3%'><input type='text'  class='form-control'   value></td>" +
+                            "<td style='width: 3%'><input type='text'  class='form-control'   value></td>" +
+                            "<td style='width: 3%'><input type='text'  class='form-control'   value></td>" +
+                            "<td style='width: 3%'><input type='text'  class='form-control'   value></td>" +
+                            "<td style='width: 3%'><input type='text'  class='form-control'   value></td>" +
+                            "<td style='text-align: center;width: 3%'><input type='text'   id='countmodifyqty' readonly=true class='form-control' value=0></td>" +
+                            "<td style='text-align: center;width: 3%'><input type='text'   id='countchangeqty' readonly=true class='form-control' value=0></td>" +
+                            "</tr></table>");
+                    count_edit();
+
+                    $("#delivery_order_edit_detail tbody tr").click(function () {
+                        $(this).removeClass("readonly")
+                                .addClass("selected").siblings("tr").removeClass("selected")
+                                .addClass("readonly");
+                    })
+                } else {
+                    BJUI.alertmsg('error', d.content, {
+                        displayMode: 'fade',
+                        alertTimeout: 1000,
+                        displayPosition: 'middlecenter'
+                    });
+                }
+            }
+        });
+
+        /**
+         * 当table中单位用户量unitqty值发生改变时对某些数量进行计算
+         * @param theRow
+         */
+        function count_edit(theRow) {
+            //重新合计各数量
+            var sumplanapplyqty = 0;
+            var sumapplyqty = 0;
+            var sumrecqty = 0;
+            var sumreceivedqty = 0;
+            var sumgrossweight = 0;
+
+
+            for (var i = 0; i < $("#delivery_order_edit_detail tbody tr").length; i++) {
+                if ($("#delivery_order_edit_detail tbody tr:eq(" + i + ") td:eq(9) input").val() != '') {
+                    sumplanapplyqty += parseInt($("#delivery_order_edit_detail tbody tr:eq(" + i + ") td:eq(9) input").val());
+                }
+                if ($("#delivery_order_edit_detail tbody tr:eq(" + i + ") td:eq(10) input").val() != '') {
+                    sumapplyqty += parseInt($("#delivery_order_edit_detail tbody tr:eq(" + i + ") td:eq(10) input").val());
+                }
+                if ($("#delivery_order_edit_detail tbody tr:eq(" + i + ") td:eq(18) input").val() != '') {
+                    sumrecqty += parseInt($("#delivery_order_edit_detail tbody tr:eq(" + i + ") td:eq(18) input").val());
+                }
+
+                if ($("#delivery_order_edit_detail tbody tr:eq(" + i + ") td:eq(19) input").val() != '') {
+                    sumreceivedqty += parseInt($("#delivery_order_edit_detail tbody tr:eq(" + i + ") td:eq(19) input").val());
+                }
+                if ($("#delivery_order_edit_detail tbody tr:eq(" + i + ") td:eq(7) input").val() != '') {
+                    sumgrossweight += parseInt($("#delivery_order_edit_detail tbody tr:eq(" + i + ") td:eq(7) input").val()*$("#delivery_order_edit_detail tbody tr:eq(" + i + ") td:eq(10) input").val());
+                }
+                $("#delivery_edit_count  td:eq(9) input").val(sumplanapplyqty);
+                $("#delivery_edit_count  td:eq(10) input").val(sumapplyqty);
+                $("#delivery_edit_count  td:eq(18) input").val(sumrecqty);
+                $("#delivery_edit_count  td:eq(19) input").val(sumreceivedqty);
+                $("#delivery_edit_count  td:eq(7) input").val(sumgrossweight);
+            }
+        }
+
+
+        /**
+         * 打开套餐选择界面
+         * */
+        function select_sales_package(type) {
+            typedocument = type;
+            //打开编辑界面
+            $(this).dialog({
+                id: "storage_edit",
+                title: "选择套餐_edit",
+                url: "CustomerManagement/sales_package_select.html",
+
+                width: 1050,
+                height: 600,
+                mask: true
+            });
+        }
+
+        /**
+         * 编辑
+         * */
+        function delivery_order_reset() {
+            if ($("#businessdate_edit").val() !== "" && $("#custusername_edit").val() !== "") {
+                var tdeliverydetailValidList = [];
+                var obj = new Object();
+                var tdeliveryValid = new Object();
+                var selectedId = $("#delivery_order_edit_table input[name='id']").val();
+                tdeliveryValid = {
+                    orderno: $("#orderno_edit").val(),
+                    applyorderno: $("#applyorderno_edit").val(),
+                    state: $("#state_edit").val(),
+                    businessdate: $("#businessdate_edit").val(),
+                    receiveduser: $("#receiveduser_edit").val(),
+                    receivedphone: $("#receivedphone_edit").val(),
+                    receivedaddress: $("#receivedaddress_edit").val(),
+                    warehousename: $("#warehousename_edit").val(),
+                    driver: $("#driver_edit").val(),
+                    driverphone: $("#driverphone_edit").val(),
+                    plandate: $("#plandate_edit").val(),
+                    plantime: $("#plantime_edit").val(),
+                    details: $("#details_edit").val(),
+                    contractid: $("#contractid_edit").val(),
+                    contractdoc: $("#contractdoc_edit").val(),
+                    custname: $("#custname_edit").val(),
+                    id: selectedId
+                }
+                var salesordertable = $("#delivery_order_edit_detail tbody tr");
+                for (var i = 0; i < salesordertable.length; i++) {
+                    obj = {
+                        itemid: $("input[name='delivery_apply[" + i + "].itemid']").val(),//ok
+                        linenum: $("input[name='delivery_apply[" + i + "].linenum']").val(),//ok
+                        itemno: $("input[name='delivery_apply[" + i + "].itemno']").val(),//ok
+                        partname: $("input[name='delivery_apply[" + i + "].partname']").val(),
+                        warehousename: $("input[name='delivery_apply[" + i + "].warehousename']").val(),
+                        locationname: $("input[name='delivery_apply[" + i + "].locationname']").val(),
+                        funit: $("input[name='delivery_apply[" + i + "].funit']").val(),
+                        planapplyqty: $("input[name='delivery_apply[" + i + "].planapplyqty']").val(),
+                        applyqty: $("input[name='delivery_apply[" + i + "].applyqty']").val(),
+                        partspec: $("input[name='delivery_apply[" + i + "].partspec']").val(),
+                        partstyle: $("input[name='delivery_apply[" + i + "].partstyle']").val(),
+                        colorlevel: $("input[name='delivery_apply[" + i + "].colorlevel']").val(),
+                        material: $("input[name='delivery_apply[" + i + "].material']").val(),
+                        brand: $("input[name='delivery_apply[" + i + "].brand']").val(),
+                        sourcenum: $("input[name='delivery_apply[" + i + "].sourcenum']").val(),
+                        soucrelinenum: $("input[name='delivery_apply[" + i + "].soucrelinenum']").val(),
+                        recqty: $("input[name='delivery_apply[" + i + "].recqty']").val(),
+                        receivedqty: $("input[name='delivery_apply[" + i + "].receivedqty']").val(),
+                        salesorderno: $("input[name='delivery_apply[" + i + "].salesorderno']").val(),
+                        salesorderlinenum: $("input[name='delivery_apply[" + i + "].salesorderlinenum']").val(),
+                        grossweight: $("input[name='delivery_apply[" + i + "].grossweight']").val(),
+                        unitweight: $("input[name='delivery_apply[" + i + "].unitweight']").val(),
+                        id: $("input[name='delivery_apply[" + i + "].id']").val(),
+                    };
+                    tdeliverydetailValidList.push(obj);
+                }
+                objOb = {
+                    tdeliverydetailValidList,
+                    tdeliveryValid
+                };
+                $.ajax({
+                    url: '/v1/delivery/resetdelivery',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: JSON.stringify(objOb),
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        if (d.state == 200) {
+                            thisid = selectedId;
+                            //刷新列表
+                            $('#delivery_order_list').datagrid("refresh");
+                            BJUI.dialog("closeCurrent", this);
+                            //提示成功
+                            BJUI.alertmsg('info', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                        } else {
+                            BJUI.alertmsg('error', d.content, {
+                                displayMode: 'fade',
+                                alertTimeout: 1000,
+                                displayPosition: 'middlecenter'
+                            });
+                        }
+                    }
+                });
+            } else {
+//                $("#purchase_tips").alertmsg('info', '填写内容', {
+//                    displayMode: 'fade',
+//                    alertTimeout: 1000,
+//                    displayPosition: 'middlecenter'
+//                });
+            }
+        }
+
+        /**
+         *
+         * 提交
+         * **/
+        function delivery_order_edit_commit() {
+
+            $("#delivery_order_commit_btn").attr("disabled", "disabled");
+//            //提交前必须先保存
+//            delivery_order_reset();
+            var id = $("#delivery_order_edit_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/delivery/commitdelivery',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $("#delivery_order_commit_btn").attr("disabled", "disabled");
+                        $("#delivery_order_nocommit_btn").removeAttr("disabled");
+
+                        $("#delivery_order_audit_btn").removeAttr("disabled");
+                        $("#delivery_order_noaudit_btn").attr("disabled", "disabled");
+                        $("#delivery_order_ed_de").attr("disabled", "disabled");
+
+                        $('#delivery_order_list').datagrid("refresh");
+                        //改变各行审核状态
+                        $("#state_edit").val("已提交");
+                        for (var i = 0; i < $("#delivery_order_edit_detail tbody tr").length; i++) {
+                            $("#delivery_order_edit_detail tbody tr:eq(" + i + ") td:eq(1) input").val("已提交")
+                        }
+                    } else {
+                        $("#delivery_order_commit_btn").removeAttr("disabled");
+
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+        /**
+         * 收回
+         * **/
+        function delivery_order_edit_giveup_commit() {
+
+            $("#delivery_order_nocommit_btn").attr("disabled", "disabled");
+            var id = $("#delivery_order_edit_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/delivery/giveupcommitdelivery',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $("#delivery_order_commit_btn").removeAttr("disabled");
+                        $("#delivery_order_nocommit_btn").attr("disabled", "disabled");
+
+                        $("#delivery_order_audit_btn").attr("disabled", "disabled");
+                        $("#delivery_order_noaudit_btn").attr("disabled", "disabled");
+                        $("#delivery_order_ed_de").removeAttr("disabled");
+
+                        $('#delivery_order_list').datagrid("refresh");
+                        $("#state_edit").val("新增");
+                        for (var i = 0; i < $("#delivery_order_edit_detail tbody tr").length; i++) {
+                            $("#delivery_order_edit_detail tbody tr:eq(" + i + ") td:eq(1) input").val("新增")
+                        }
+                    } else {
+                        $("#delivery_order_nocommit_btn").removeAttr("disabled");
+
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+
+            });
+        }
+        /**
+         * 审核
+         * **/
+        function delivery_order_edit_audit() {
+
+            $("#delivery_order_audit_btn").attr("disabled", "disabled");
+            var id = $("#delivery_order_edit_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/delivery/revieweddelivery',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $("#delivery_order_commit_btn").attr("disabled", "disabled");
+                        $("#delivery_order_nocommit_btn").attr("disabled", "disabled");
+
+                        $("#delivery_order_audit_btn").attr("disabled", "disabled");
+                        $("#delivery_order_noaudit_btn").removeAttr("disabled");
+                        $("#delivery_order_ed_de").attr("disabled", "disabled");
+
+                        $('#delivery_order_list').datagrid("refresh");
+                        $("#state_edit").val("已审核");
+                        for (var i = 0; i < $("#delivery_order_edit_detail tbody tr").length; i++) {
+                            $("#delivery_order_edit_detail tbody tr:eq(" + i + ") td:eq(1) input").val("已审核")
+                        }
+                    } else {
+                        $("#delivery_order_audit_btn").removeAttr("disabled");
+
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+
+            });
+        }
+
+        /**
+         * 弃审
+         * **/
+        function delivery_order_edit_giveup_audit() {
+
+            $("#delivery_order_noaudit_btn").attr("disabled", "disabled");
+            var id = $("#delivery_order_edit_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/delivery/giveuprevieweddelivery',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $("#delivery_order_commit_btn").attr("disabled", "disabled");
+                        $("#delivery_order_nocommit_btn").removeAttr("disabled");
+
+                        $("#delivery_order_audit_btn").removeAttr("disabled");
+                        $("#delivery_order_noaudit_btn").attr("disabled", "disabled");
+                        $("#delivery_order_ed_de").attr("disabled", "disabled");
+                        $('#delivery_order_list').datagrid("refresh");
+                        $("#state_edit").val("新增");
+                        for (var i = 0; i < $("#delivery_order_edit_detail tbody tr").length; i++) {
+                            $("#delivery_order_edit_detail tbody tr:eq(" + i + ") td:eq(1) input").val("新增")
+                        }
+                    } else {
+                        $("#delivery_order_noaudit_btn").removeAttr("disabled");
+
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+
+            });
+        }
+        /**
+         * 删除明细行
+         */
+        function delivery_order_del_row() {
+            if (1 < $("#delivery_order_edit_detail tbody tr").length) {
+
+                var id = $("#delivery_order_edit_detail").find(".selected").find(".id").val();
+
+                if (id !== undefined) {
+                    sales_del_row(id);
+                } else {
+                    re_arr_edit_detail_table();
+                }
+            }
+        }
+
+        /**
+         * （删除明细行数据前）弹框
+         * **/
+        var deleteRowId;
+        function sales_del_row(id) {
+            deleteRowId = id;
+            if (1 < $("#delivery_order_edit_detail tbody tr").length) {
+                $(this).alertmsg('confirm', '确定要删除该行信息吗',
+                        {
+                            displayMode: 'slide',
+                            displayPosition: 'middlecenter',
+                            cancelName: '关闭',
+                            okName: '确认',
+                            title: '删除',
+                            okCall: 'salesOrderDelete'
+                        });
+            }
+        }
+        /**
+         * （确认弹框后）删除明细行数据（实际）
+         * **/
+        function salesOrderDelete() {
+            $.ajax({
+                url: '/v1/delivery/deletedeliverydetail',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: deleteRowId
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        re_arr_edit_detail_table();
+                    } else {
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+
+
+        /**
+         * （删除整单前）弹框
+         * **/
+        function delivery_order_delete() {
+            BJUI.alertmsg('confirm', '确定要删除吗?', {
+                displayMode: 'fade',
+                displayPosition: 'middlecenter',
+                okName: "是",
+                cancelName: "否",
+                okCall: 'delete_order'
+            });
+        }
+        /**
+         * （确认弹框后）删除整单（实际）
+         * **/
+        function delete_order() {
+            var selected = $("#delivery_order_edit_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/delivery/deletedelivery',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: selected
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.dialog("closeCurrent", this);
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $('#delivery_order_list').datagrid("refresh");
+                    } else {
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+        /**
+         * 删除选中行后重新排排列明细行
+         */
+        function re_arr_edit_detail_table() {
+            $("#delivery_order_edit_detail").find(".selected").remove();
+            for (var i = 0; i < $("#delivery_order_edit_detail tbody tr").length; i++) {
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(0)").attr("name", "delivery_apply[" + i + "].linenum");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(1)").attr("name", "delivery_apply[" + i + "].linestate");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(2)").attr("name", "delivery_apply[" + i + "].itemno");
+
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(3)").attr("name", "delivery_apply[" + i + "].partname");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(4)").attr("name", "delivery_apply[" + i + "].warehousename");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(5)").attr("name", "delivery_apply[" + i + "].locationname");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(6)").attr("name", "delivery_apply[" + i + "].funit");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(7)").attr("name", "delivery_apply[" + i + "].planapplyqty");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(8)").attr("name", "delivery_apply[" + i + "].applyqty");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(9)").attr("name", "delivery_apply[" + i + "].partspec");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(10)").attr("name", "delivery_apply[" + i + "].partstyle");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(11)").attr("name", "delivery_apply[" + i + "].colorlevel");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(12)").attr("name", "delivery_apply[" + i + "].material");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(13)").attr("name", "delivery_apply[" + i + "].brand");
+
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(14)").attr("name", "delivery_apply[" + i + "].sourcenum");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(15)").attr("name", "delivery_apply[" + i + "].soucrelinenum");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(16)").attr("name", "delivery_apply[" + i + "].recqty");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(17)").attr("name", "delivery_apply[" + i + "].receivedqty");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(18)").attr("name", "delivery_apply[" + i + "].itemid");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(19)").attr("name", "delivery_apply[" + i + "].id");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(20)").attr("name", "delivery_apply[" + i + "].salesorderno");
+                $("#delivery_order_edit_detail tbody tr:eq(" + i + ") input:eq(21)").attr("name", "delivery_apply[" + i + "].salesorderlinenum");
+
+            }
+            count_edit()
+        }
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <form data-toggle="validate" data-toggle="validate">
+        <div style="margin:0px 0px 10px 0px;">
+            <button class="btn btn-blue" data-icon="save" id="delivery_order_save_btn"
+                    onclick="delivery_order_reset()">保存
+            </button>
+            <button type="button" class="btn btn-green" data-icon="thumbs-up"
+            id="delivery_order_commit_btn" onclick="delivery_order_edit_commit()">提交
+            </button>
+            <button type="button" class="btn btn-orange" data-icon="thumbs-down"
+            id="delivery_order_nocommit_btn" onclick="delivery_order_edit_giveup_commit()">驳回
+            </button>
+            <button type="button" class="btn btn-green" data-icon="thumbs-up"
+                    id="delivery_order_audit_btn" onclick="delivery_order_edit_audit()">审核
+            </button>
+            <button type="button" class="btn btn-orange" data-icon="thumbs-down"
+                    id="delivery_order_noaudit_btn" onclick="delivery_order_edit_giveup_audit()">弃审
+            </button>
+            <button type="button" class="btn btn-red" data-icon="times"
+                    id="delivery_order_ed_de" onclick="delivery_order_delete()">删除
+            </button>
+            <button class="btn-close btn" data-icon="close"><i class="fa fa-close"></i>关闭</button>
+        </div>
+        <table class="table table-bordered table-hover table-striped table-top bjui-tabledit"
+               id="delivery_order_edit_table" width="100%">
+
+            <input type="hidden" name="id" id="id_edit" value="">
+            <!--<input type="hidden" name="invoice.custsalesid" value="" id="custsalesid">-->
+            <!--<input type="hidden" name="invoice.salespackageid" value="" id="salespackageid">-->
+            <!--<input type="hidden" name="invoice.storesid" value="" id="storesid">-->
+            <input type="hidden" name="contractid" value="" id="contractid_edit">
+            <input type="hidden" name="contractdoc" value="" id="contractdoc_edit">
+            <input type="hidden" name="custname" value="" id="custname_edit">
+            <tbody>
+            <tr>
+                <td>
+                    <label for="orderno_edit" class="control-label x90">单据号：</label>
+                    <!--只读-->
+                    <input type="text" id="orderno_edit" value="" name="orderno" size="15" readonly="true">
+                </td>
+                <td>
+                    <label for="applyorderno_edit" class="control-label x90">申请单号：</label>
+                    <input type="text" id="applyorderno_edit" value="" name="applyInfo.orderno"
+                           style="width: 150px" readonly="true">
+                </td>
+                <td>
+                    <label for="state_edit" class="control-label x90">状态：</label>
+                    <input type="text" id="state_edit" value="" name="state" style="width: 150px" readonly="true">
+                </td>
+                <td>
+                    <label for="businessdate_edit" class="control-label x90">业务日期：</label>
+                    <input type="text" id="businessdate_edit" value="" name="businessdate" data-toggle="datepicker"
+                           style="width: 150px" readonly="true">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="control-label x90" for="receiveduser_edit">收货人</label>
+                    <!--选择仓库-->
+                    <input type="text" name="applyInfo.receiveduser" id="receiveduser_edit" data-rule="required"
+                           style="width: 150px">
+                </td>
+                <td>
+                    <label class="control-label x90" for="receivedphone_edit">收货人手机</label>
+
+                    <input type="text" id="receivedphone_edit" value="" name="applyInfo.receivedphone"
+                           data-rule="required"
+                           style="width: 150px">
+                    <!--<input type="text" id="suppliername" value="" name="supplier.suppliername" data-url="PurchaseManagement/purchase_supplier.html" data-on-load="checkHasSup" data-toggle="lookup" data-group="supplier" data-id="purchase_spplier"  data-rule="required" style="width: 150px">-->
+                </td>
+                <td>
+                    <label for="receivedaddress_edit" class="control-label x90">收货地址：</label>
+                    <input type="text" id="receivedaddress_edit" value="" name="applyInfo.receivedaddress"
+                           style="width: 150px">
+                </td>
+                <td>
+                    <label for="warehousename_edit" class="control-label x90">出货仓库：</label>
+                    <input type="text" name="storage.warehousename" id="warehousename_edit" data-rule="required"
+                           data-url="Storage/storage_selecte.html" data-toggle="lookup" data-group="storage"
+                           class="doc_lookup" data-title="仓库选择" style="width: 150px">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="driver_edit" class="control-label x90">送货司机：</label>
+                    <input type="text" id="driver_edit" value="" class="driver" name="driver" data-rule="required"
+                           style="width: 150px">
+                </td>
+                <td>
+                    <label for="driverphone_edit" class="control-label x90">送货司机电话：</label>
+                    <input type="text" id="driverphone_edit" value="" class="driverphone" name="driverphone"
+                           data-rule="required"
+                           style="width: 150px">
+                </td>
+                <td>
+                    <label for="plandate_edit" class="control-label x90">计划出货日期：</label>
+                    <input type="text" id="plandate_edit" value="" class="plandate" name="applyInfo.requiredate"
+                           data-toggle="datepicker" data-rule="required"
+                           style="width: 150px">
+                </td>
+                <td>
+                    <label for="plantime_edit" class="control-label x90">计划到货时间：</label>
+                    <input type="text" id="plantime_edit" value="" class="plantime" name="applyInfo.requiretime"
+                           data-rule="required"
+                           style="width: 150px">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3"><label for="details_edit" class="control-label x90">备注：</label>
+                    <textarea type="text" id="details_edit" value="" name="details" size="15"
+                              style="width:150px;resize: none"></textarea></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div style="margin:50px 0 10px 0;">
+            <!--<button class="btn-default" data-toggle="tableditadd" data-target="#delivery_order_add_detail_table" data-num="1">-->
+            <!--选择个性包-->
+            <!--</button>-->
+            <!--<button class="btn-default doc_lookup doc_lookup"  data-toggle="lookupbtn" data-url="CustomerManagement/sales_package_select.html" data-group="salespackage" data-id="sales_package" data-title="套餐选择">选择个性包</button>-->
+            <!--<button type="button" class="btn btn-green" data-icon="edit" onclick="select_sales_package('个性包')">选择个性包-->
+            <!--</button>-->
+
+            <button class="btn-orange" onclick="delivery_order_del_row()">删除行</button>
+            <!--<button class="btn-blue" data-toggle="dialog" data-mask="true">查看附件</button>-->
+        </div>
+
+        <div id="tableContanier">
+            <table class="table table-bordered table-hover table-striped bjui-tabledit"
+                   id="delivery_order_edit_detail" data-single-noindex="true">
+                <!--表格的头，先加载-->
+                <thead>
+                <tr>
+                    <th title="">行号</th>
+                    <th title="">行状态</th>
+                    <th title="">料号</th>
+                    <th title="">品名</th>
+                    <th title="">仓库</th>
+                    <th title="">库位</th>
+                    <th title="">单位</th>
+                    <th title="">毛重</th>
+                    <th title="">重量单位</th>
+                    <th title="">申请数</th>
+                    <th title="">发货数</th>
+                    <th title="">规格</th>
+                    <th title="">型号</th>
+                    <th title="">颜色</th>
+                    <th title="">材质</th>
+                    <th title="">品牌</th>
+                    <th title="">申请单号</th>
+                    <th title="">申请行号</th>
+                    <th title="">关联数</th>
+                    <th title="">收货数</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+        <div id="delivery_edit_count"></div>
+    </form>
+</div>
+</body>
+</html>

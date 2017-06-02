@@ -1,0 +1,84 @@
+<html>
+
+<head>
+    <script type="text/javascript">
+
+        $.ajax({
+            url:'/v1/financial/org_list',
+            type:'get',
+            success:function(d){
+                var arr=[];
+                for(var dd of d.data){
+                    var a = "{'"+dd.id+"':'"+dd.orgName+"'}";
+                    arr.push(eval("("+a+")"));
+                }
+                $('#financil_charge_datagrid').datagrid({
+                    local: 'remote',
+                    dataUrl: '/v1/financial/charge_list',
+                    dataType: 'json',
+                    sortAll: false,
+                    loadType: 'get',
+                    filterAll: true,
+                    height: '95%',
+                    columns: [
+                        {name: 'meibi', width: '120', label: '美币'},
+                        {name: 'createuser', width: '120', label: '操作人'},
+                        // {name: 'id', width: '90', label: '编码'},
+                        {name: 'orgname', width: '150', label: '组织',type: 'select',items: arr},
+                        {name: 'createtime', width: '250', label: '充值时间'}],
+                    paging: {pageSize: 20, selectPageSize: '50,100,200', pageCurrent: 1},
+                    columnMenu: true,
+                    columnShowhide: true,
+                    columnFilter: true,
+                    columnLock: false,
+                    fullGrid: false
+                });
+            }
+        });
+
+        /*$('#financil_charge_datagrid').datagrid({
+
+            local: 'remote',
+            dataUrl: '/v1/financial/charge_list',
+            dataType: 'json',
+            sortAll: false,
+            loadType: 'get',
+            filterAll: true,
+            height: '95%',
+            columns: [
+                {name: 'meibi', width: '120', label: '美币'},
+               // {name: 'id', width: '90', label: '编码'},
+                {name: 'orgname', width: '150', label: '组织',items: [{'true': '是'}, {'false': '否'}]},
+                {name: 'createtime', width: '250', label: '充值时间'}],
+            paging: {pageSize: 20, selectPageSize: '50,100,200', pageCurrent: 1},
+            columnMenu: true,
+            columnShowhide: true,
+            columnFilter: true,
+            columnLock: false,
+            fullGrid: false
+        });*/
+
+        function charge() {
+            $(this).dialog({
+                id: 'personnel_employees_edit',
+                url: 'FinancialManagement/financil_chagre_new.html',
+                title: '美币充值',
+                width: '700',
+                height: '130',
+                mask: true
+            });
+        }
+    </script>
+</head>
+
+<body>
+<div class="bjui-pageContent">
+    <div style="margin:15px;">
+        <button class="btn-default" onclick="charge()">充值</button>
+        <button class="btn-close">关闭</button>
+    </div>
+    <table id="financil_charge_datagrid" class="table table-hover" data-width="100%"></table>
+</div>
+</body>
+
+</html>

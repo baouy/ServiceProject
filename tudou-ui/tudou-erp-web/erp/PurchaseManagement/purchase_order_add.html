@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+        /***
+         * 添加采购单
+         * */
+        function purchase_order_save() {
+
+
+            if ($("#requireddate").val() !== "" && $("#suppliername").val() !== "") {
+                var tpodetailValidList = [];
+                var obj = new Object();
+                var tpoValid = new Object();
+                tpoValid = {
+                    supplierid: $("#supplierid").val(),
+                    requireddate: $("#requireddate").val(),
+                    details: $("#details").val(),
+                    suppliername: $("#suppliername").val(),
+                    username: $("#salesman").val,//业务员名称
+                    userid: $("#salesid").val(),//业务员ID
+                    receiveduser: $("#receiveduser").val(),
+                    receivedphone: $("#receivedphone").val(),
+                    receivedaddress: $("#receivedaddress").val(),
+                    contractid: $("#contractid").val(),
+
+                }
+                if ($("#purchase_add_supplier tbody tr").length < 1) {
+                    BJUI.alertmsg('error', "至少的有一行明细行记录", {
+                        displayMode: 'fade',
+                        alertTimeout: 1000,
+                        displayPosition: 'middlecenter'
+                    });
+                } else {
+                    var purchasetable = $("#purchase_add_supplier tbody tr");
+
+                    for (var i = 0; i < purchasetable.length; i++) {
+                        obj = {
+                            linenum: $("input[name='test[" + i + "].linenum']").val(),
+                            linestate: $("input[name='test[" + i + "].linestate']").val(),
+                            itemno: $("input[name='test[" + i + "].itemno']").val(),
+                            partname: $("input[name='test[" + i + "].partname']").val(),
+                            partstyle: $("input[name='test[" + i + "].partstyle']").val(),
+                            partspec: $("input[name='test[" + i + "].partspec']").val(),
+                            colorlevel: $("input[name='test[" + i + "].colorlevel']").val(),
+                            material: $("input[name='test[" + i + "].material']").val(),
+                            brand: $("input[name='test[" + i + "].brand']").val(),
+                            qty: $("input[name='test[" + i + "].qty']").val(),
+                            funit: $("input[name='test[" + i + "].funit']").val(),
+                            taxcostamount: $("input[name='test[" + i + "].taxcostamount']").val(),
+                            taxamount: $("input[name='test[" + i + "].taxamount']").val(),
+                            taxrate: $("input[name='test[" + i + "].taxrate']").val(),
+                            taxunitprice: $("input[name='test[" + i + "].procost']").val(),
+                            notaxunitprice: $("input[name='test[" + i + "].notaxunitprice']").val(),
+                            notaxcostamount: $("input[name='test[" + i + "].notaxcostamount']").val(),
+                            linedetails: $("input[name='test[" + i + "].linedetails']").val(),
+                            poqty: $("input[name='test[" + i + "].poqty']").val(),
+                            totalinqty: $("input[name='test[" + i + "].totalinqty']").val(),
+                            sourcenum: $("input[name='test[" + i + "].sourcenum']").val(),
+                            soucrelinenum: $("input[name='test[" + i + "].soucrelinenum']").val(),
+                            applydeliverynum: $("input[name='test[" + i + "].soucrelinenum']").val(),
+                            applydeliverylinenum: $("input[name='test[" + i + "].soucrelinenum']").val(),
+                            receivedqty: $("input[name='test[" + i + "].soucrelinenum']").val(),
+                            itemid: $("input[name='test[" + i + "].itemid']").val(),
+                        };
+                        tpodetailValidList.push(obj);
+                    }
+                    objOb = {
+                        tpodetailValidList,
+                        tpoValid
+                    };
+                    $("#purchase_order_save_btn").attr("disabled", "disabled");
+
+                    $.ajax({
+                        url: '/v1/po/addprocurementorders',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        type: 'POST',
+                        data: JSON.stringify(objOb),
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        crossDomain: true,
+                        success: function (d) {
+                            if (d.state == 200) {
+                                $("#purchase_add_supplier tbody tr").addClass("readonly");
+                                $('#purchase_order_list').datagrid("refresh");
+                                BJUI.alertmsg('info', d.content, {
+                                    displayMode: 'fade',
+                                    alertTimeout: 1000,
+                                    displayPosition: 'middlecenter'
+                                });
+                                $("#podoc").val(d.data.podoc);
+//                        $("#requireddate").val(d.data.requireddate);
+                                $("#state").val(d.data.state);
+                                $("#orgname").val(d.data.orgname);
+                                $("#businessdate").val(d.data.businessdate);
+                                $("#purchase_order_audit_btn").removeAttr("disabled");
+                                $("#purchase_order_noaudit_btn").attr("disabled", "disabled");
+                                $("#purchase_order_ad_de").removeAttr("disabled");
+//                            $("#purchase_save_btn").attr("disabled","disabled");
+                                $("#purchase_order_table input[name='id']").val(d.data.id);
+
+                                for (var i = 0; i < $("#purchase_add_supplier tbody tr").length; i++) {
+                                    $("#purchase_add_supplier tbody tr:eq(" + i + ") td:eq(1) input").val("新增")
+                                }
+                                BJUI.dialog("closeCurrent", this);
+                            } else {
+                                $("#purchase_order_save_btn").removeAttr("disabled");
+
+                                BJUI.alertmsg('error', d.content, {
+                                    displayMode: 'fade',
+                                    alertTimeout: 1000,
+                                    displayPosition: 'middlecenter'
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        var int = self.setInterval(function () {
+            if ($("#supplierid").val() == "") {
+                $("#purchase_add_supplier .materialname").attr("readonly", true);
+            } else {
+                $("#purchase_add_supplier .materialname").removeAttr("readonly");
+            }
+        }, 100)
+
+
+        $("#purchase_add_supplier").on('bjui.beforeInitUI', function (e) {
+            $("#purchase_add_supplier .number").change(function () {
+
+                var number = $(this).val();
+                var taxrate = $(this).parent("td").siblings("td").children(".taxrate").val();//税率
+                var procost = $(this).parent("td").siblings("td").children(".taxunitprice").val();//含税采购单价
+                var taxcostamount = number * procost;
+                $(this).parent("td").siblings("td").children(".taxcostamount").val(taxcostamount);//采购金额
+
+                var notaxunitprice = procost / (1 + taxrate / 100);
+                $(this).parent("td").siblings("td").children(".notaxunitprice").val(notaxunitprice);//不含税采购单价
+
+
+                var notaxcostamount = notaxunitprice * number;//不含税采购金额
+                $(this).parent("td").siblings("td").children(".notaxcostamount").val(notaxcostamount);//不含税采购单价
+
+                var taxamount = taxcostamount - notaxcostamount;
+                $(this).parent("td").siblings("td").children(".taxamount").val(taxamount);//税额
+
+            })
+        })
+        var deleteRowId;
+        function purchase_order_del_row(theRow) {
+            if (1 < $("#purchase_add_supplier tbody tr").length) {
+                deleteRowId = $(theRow).index() + 1;
+                $(this).alertmsg('confirm', '确定要删除该行信息吗',
+                        {
+                            displayMode: 'slide',
+                            displayPosition: 'middlecenter',
+                            cancelName: '关闭',
+                            okName: '确认',
+                            title: '删除',
+                            okCall: 'purchaseOrderDelete'
+                        });
+            }
+        }
+        function purchaseOrderDelete() {
+            $("#purchase_add_supplier tr:eq(" + deleteRowId + ")").remove();
+        }
+        /**
+         *
+         * 审核
+         * **/
+        function purchase_order_add_audit() {
+            var id = $("#purchase_order_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/po/reviewedprocurementorders',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $("#purchase_order_audit_btn").attr("disabled", "disabled");
+                        $("#purchase_order_save_btn").attr("disabled", "disabled");
+                        $("#purchase_order_noaudit_btn").removeAttr("disabled");
+                        $("#purchase_order_ad_de").attr("disabled", "disabled");
+                        $('#purchase_order_list').datagrid("refresh");
+                        $("#state").val("已审核");
+
+                        for (var i = 0; i < $("#purchase_add_supplier tbody tr").length; i++) {
+                            $("#purchase_add_supplier tbody tr:eq(" + i + ") td:eq(1) input").val("已审核")
+                        }
+                    } else {
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+        /**
+         * 弃审
+         * **/
+        function purchase_giveup_add_audit() {
+            var id = $("#purchase_order_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/po/giveupreviewedprocurementorders',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $("#purchase_order_save_btn").removeAttr("disabled");
+                        $("#purchase_order_audit_btn").removeAttr("disabled");
+                        $("#purchase_order_ad_de").removeAttr("disabled");
+                        $("#purchase_order_noaudit_btn").attr("disabled", "disabled");
+                        $('#purchase_order_list').datagrid("refresh");
+                        $("#state").val("新增");
+                        for (var i = 0; i < $("#purchase_add_supplier tbody tr").length; i++) {
+                            $("#purchase_add_supplier tbody tr:eq(" + i + ") td:eq(1) input").val("新增")
+                        }
+                    } else {
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+        /**
+         * 删除
+         * **/
+        function purchase_order_delete() {
+            BJUI.alertmsg('confirm', '确定要删除吗?', {
+                displayMode: 'fade',
+                displayPosition: 'middlecenter',
+                okName: "是",
+                cancelName: "否",
+                okCall: 'delete_order'
+            });
+        }
+
+        function delete_order() {
+            var selected = $("#purchase_order_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/po/deleteprocurementorders',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: selected
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.dialog("closeCurrent", this);
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $('#purchase_request_list').datagrid("refresh");
+                    } else {
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+
+
+        $("#purchase_add_supplier").on('bjui.beforeInitUI', function (e) {
+            $("#purchase_add_supplier .materialname").click(function () {
+                if ($("#supplierid").val() == "") {
+                    BJUI.alertmsg('confirm', '请选择供应商',
+                            {
+                                displayMode: 'slide',
+                                displayPosition: 'middlecenter',
+                                cancelName: '关闭',
+                                okName: '确认',
+                                title: '选择供应商',
+                            });
+                }
+            })
+        })
+        function delete_row() {
+            if (1 < $("#purchase_add_supplier tbody tr").length) {
+                $("#purchase_add_supplier").find(".selected").remove();
+            }
+
+        }
+
+
+        $("#purchase_add_supplier").on('bjui.initUI', function () {
+            $("#purchase_add_supplier tbody tr").click(function () {
+                $(this).addClass("selected").siblings("tr").removeClass("selected");
+            })
+        })
+
+        function select_supplier() {
+
+            if ($("#suppliername").val() != "") {
+                BJUI.alertmsg('confirm', '修改后明细行料号将清空，确认该操作?', {
+                    displayMode: 'fade',
+                    displayPosition: 'middlecenter',
+                    okName: "是",
+                    cancelName: "否",
+                    okCall: 'open_supplier'
+                });
+            } else {
+                open_supplier();
+            }
+        }
+
+        function open_supplier() {
+            for (var i = 0; i < $("#purchase_add_supplier tbody tr").length; i++) {
+//                $("#purchase_add_supplier tbody tr:eq(" + i + ") td:eq(1) input").val("新增")
+                $("#purchase_add_supplier tbody  tr:not(:first)").remove();
+                for (var i = 1; i < $("#purchase_add_supplier tbody tr:eq(0) td").length; i++) {
+                    if (i == 18 || i == 19) {
+                        $("#purchase_add_supplier tbody tr:eq(0) td:eq(" + i + ") input").val("0.0000");
+                    } else {
+                        $("#purchase_add_supplier tbody tr:eq(0) td:eq(" + i + ") input").val("");
+                    }
+
+                }
+            }
+            //打开编辑界面
+            $(this).dialog({
+                id: "suppliername_add",
+                title: "选择供应商",
+                url: "PurchaseManagement/purchase_supplier.html",
+                width: 402,
+                height: 502,
+                mask: true
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <form data-toggle="validate" data-toggle="validate">
+        <div style="margin:0px 0px 10px 0px;">
+            <button class="btn btn-blue" data-icon="save" id="purchase_order_save_btn" onclick="purchase_order_save()">
+                保存
+            </button>
+            <button type="button" class="btn btn-green" data-icon="thumbs-up" disabled="disabled"
+                    id="purchase_order_audit_btn" onclick="purchase_order_add_audit()">审核
+            </button>
+            <button type="button" class="btn btn-orange" data-icon="thumbs-down" disabled="disabled"
+                    id="purchase_order_noaudit_btn" onclick="purchase_giveup_add_audit()">弃审
+            </button>
+            <button type="button" class="btn btn-red" data-icon="times" disabled="disabled" id="purchase_order_ad_de"
+                    onclick="purchase_order_delete()">删除
+            </button>
+            <button class="btn-close btn" data-icon="close"><i class="fa fa-close"></i>关闭</button>
+        </div>
+
+        <table class="table table-bordered table-hover table-striped table-top bjui-tabledit" id="purchase_order_table"
+               width="100%">
+            <input type="hidden" name="id" value="">
+            <input type="hidden" name="supplier.supplierid" value="" id="supplierid">
+            <input type="hidden" name="supplier.salesid" value="" id="salesid">
+            <input type="hidden" name="supplier.contractid" value="" id="contractid">
+            <tbody>
+            <tr>
+                <td>
+                    <label for="podoc" class="control-label x90">单据号：</label>
+                    <input type="text" id="podoc" value="" name="podoc" size="15" readonly="true">
+                </td>
+                <td>
+                    <label for="businessdate" class="control-label x90">申请日期：</label>
+                    <input type="text" id="businessdate" value="" name="businessdate" data-toggle="datepicker"
+                           style="width: 150px" readonly="true">
+                </td>
+                <td>
+                    <label for="state" class="control-label x90">状态：</label>
+                    <input type="text" id="state" value="" name="state" style="width: 150px" readonly="true">
+                </td>
+                <td>
+                    <label for="orgname" class="control-label x90">组织：</label>
+                    <input type="text" id="orgname" value="" name="orgname" style="width: 150px" readonly="true">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="control-label x90" for="suppliername">供应商</label>
+                    <!--<input type="text" id="suppliername" value="" name="supplier.suppliername" data-url="PurchaseManagement/purchase_supplier.html" data-on-load="checkHasSup" data-toggle="lookup" data-group="supplier" data-id="purchase_spplier"  data-rule="required" style="width: 150px">-->
+                    <input type="text" id="suppliername" value="" name="supplier.suppliername"
+                           onclick="select_supplier()" data-rule="required"
+                           style="width: 150px">
+                </td>
+                <td>
+                    <label for="requireddate" class="control-label x90">要求交期：</label>
+                    <input type="text" id="requireddate" value="" name="requireddate" data-toggle="datepicker"
+                           data-rule="required" style="width: 150px">
+                </td>
+                <td>
+                    <label for="salesman" class="control-label x90">业务员：</label>
+                    <input type="text" id="salesman" value="" class="salesman" name="supplier.salesman"
+                            style="width: 150px">
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="receiveduser" class="control-label x90">收货人：</label>
+                    <input type="text" id="receiveduser" value="" name="applyInfo.receiveduser" style="width: 150px"
+                           readonly="true">
+                </td>
+                <td><label for="receivedphone" class="control-label x90">收货人手机：</label>
+                    <input type="text" id="receivedphone" value="" name="applyInfo.receivedphone" style="width: 150px"
+                           readonly="true"></td>
+                <td>
+                    <label for="receivedaddress" class="control-label x90">收货地址：</label>
+                    <input type="text" id="receivedaddress" value="" name="applyInfo.receivedaddress"
+                           style="width: 150px"
+                           readonly="true">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4"><label for="details" class="control-label x90">备注：</label>
+                    <textarea type="text" id="details" value="" name="details" size="15"
+                              style="width:90%;resize: none"></textarea></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div style="margin:50px 0 10px 0;">
+            <button class="btn-default" data-toggle="tableditadd" data-target="#purchase_add_supplier" data-num="1">
+                新增行
+            </button>
+            <button class="btn-orange" onclick="delete_row()">删除行</button>
+            <!--<button class="btn-blue" data-toggle="dialog" data-mask="true">查看附件</button>-->
+            <!--<button class="btn-blue" data-toggle="dialog" data-mask="true">停止采购</button>-->
+        </div>
+
+        <div id="tableContanier">
+            <table class="table table-bordered table-hover table-striped bjui-tabledit" data-toggle="tabledit"
+                   data-initnum="1" data-layout-h="0" id="purchase_add_supplier" data-single-noindex="true">
+                <thead>
+                <tr>
+                    <th title="行号"><input type="text" name="test[#index#].linenum" class="no" readonly="true" value="1"
+                                          size="2"></th>
+                    <th title="行状态"><input type="text" name="test[#index#].linestate" readonly="true" value=""></th>
+                    <th title="料号"><input type="text" name="test[#index#].itemno" style="width:90px"
+                                          data-rule="required" placeholder="必填项" data-toggle="lookup"
+                                          class="doc_lookup form-control materialname" data-group="test[#index#]"
+                                          data-url="PurchaseManagement/purchase_materials.html"></th>
+                    <th title="品名"><input type="text" name="test[#index#].partname" placeholder="" readonly="true"></th>
+                    <th title="型号"><input type="text" name="test[#index#].partstyle" placeholder="" readonly="true">
+                    </th>
+                    <th title="规格"><input type="text" name="test[#index#].partspec" placeholder="" readonly="true"></th>
+                    <th title="颜色"><input type="text" name="test[#index#].colorlevel" placeholder="" readonly="true">
+                    </th>
+                    <th title="材质"><input type="text" name="test[#index#].material" placeholder="" readonly="true"></th>
+                    <th title="品牌"><input type="text" name="test[#index#].brand" placeholder="" readonly="true"></th>
+                    <th title="采购数量"><input type="text" name="test[#index#].qty" placeholder="" value="0" class="number">
+                    </th>
+                    <th title="单位"><input type="text" name="test[#index#].funit" placeholder="" readonly="true"></th>
+                    <th title="采购库存数"><input type="text" name="test[#index#].ipqty" placeholder="" value="0" class="number">
+                    </th>
+                    <th title="库存单位"><input type="text" name="test[#index#].kunit" placeholder="" readonly="true"></th>
+
+                    <th title=采购单价 class=purchase_order_param><input type=text name=test[#index#].procost placeholder
+                                                                     readonly=true class="taxunitprice"></th>
+                    <!--传值时taxunitprice-->
+                    <th title=采购金额 class=purchase_order_param style="width:90px"><input type=text
+                                                                                        name=test[#index#].taxcostamount
+                                                                                        placeholder readonly=true
+                                                                                        class="taxcostamount"></th>
+
+                    <th title=税额 class=purchase_order_param><input type=text name=test[#index#].taxamount placeholder
+                                                                   readonly=true class="taxamount"></th>
+                    <th title=税率 class=purchase_order_param><input type=text name=test[#index#].taxrate placeholder
+                                                                   readonly=true class="taxrate"></th>
+
+                    <th title="不含税采购单价" class=purchase_order_param><input type=text name=test[#index#].notaxunitprice
+                                                                          placeholder readonly=true
+                                                                          class="notaxunitprice"></th>
+                    <th title="不含税采购金额" class=purchase_order_param><input type=text name=test[#index#].notaxcostamount
+                                                                          placeholder readonly=true
+                                                                          class="notaxcostamount"></th>
+
+                    <th title="行备注"><input type="text" name="test[#index#].linedetails" placeholder=""></th>
+                    <th title="关联数"><input type="text" name="test[#index#].poqty" placeholder="" value="0.0000"
+                                           readonly="true"></th>
+
+                    <th title=入库数 class=purchase_order_param><input type=text name=test[#index#].totalinqty placeholder
+                                                                    value=0.0000 readonly=true></th>
+                    <th title=来源单号 class=purchase_order_param><input type=text name=test[#index#].sourcenum placeholder
+                                                                     readonly=true></th>
+                    <th title=来源行号 class=purchase_order_param><input type=text name=test[#index#].soucrelinenum
+                                                                     placeholder readonly=true></th>
+                    <th title=发货申请单号 class=purchase_order_param><input type=text name=test[#index#].applydeliverynum
+                                                                       placeholder readonly=true></th>
+                    <th title=发货申请行号 class=purchase_order_param><input type=text name=test[#index#].applydeliverylinenum
+                                                                       placeholder readonly=true></th>
+                    <th title=收货数量 class=purchase_order_param><input type=text name=test[#index#].receivedqty
+                                                                     placeholder readonly=true></th>
+
+                    <th title="" data-addtool="true">
+                        <input type="hidden" name="test[#index#].itemid" style="display: none" placeholder="" value="">
+                        <!--<button class="btn btn-green" onclick="purchase_save_row(this.parentNode.parentNode)">保存</button>-->
+                        <a class="btn btn-green" onclick="purchase_order_del_row(this.parentNode.parentNode)">删</a>
+                    </th>
+
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+
+    </form>
+</div>
+</body>
+</html>

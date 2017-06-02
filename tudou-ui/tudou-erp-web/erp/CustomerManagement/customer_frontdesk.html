@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+        $('#customer_reception_list').datagrid({
+
+            local: 'remote',
+            dataUrl: '/v1/customer/customer_frontdesk',
+            dataType: 'json',
+            sortAll: false,
+            loadType: 'get',
+            filterAll: true,
+			height:'95%',
+            columns: [{name: 'customercode', width: '150', label: '编码'},
+                {name: 'cusname', width: '150', label: '姓名'},
+                {name: 'mobile', width: '150', label: '手机号'},
+                {name: 'state', width: '150', label: '跟进状态'},
+                {name: 'appdate', width: '150', label: '预约日期'},
+                {name:'apptime', width:'150', label:'预约时间段'},
+                {name: 'custsales', width: '150', label: '客户经理'},
+                {name: 'designer', width: '150', label: '设计师'},
+                {name: 'community', width: '150', label: '小区名称'},
+                {name: 'orgname', width: '150', label: '组织'},
+                {name: 'isverify', items: [{'true': '已验证'}, {'false': '未验证'}], width: '150', label: '验证状态'},
+                {name: 'createtime', width: '150', label: '注册时间'},
+                {name: 'source', width: '150', label: '来源'},
+                {name: 'id', width: '80', label: '主键', hide: true}],
+            paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+            columnMenu: true,
+            columnShowhide: true,
+            columnFilter: true,
+            columnLock: false,
+            fullGrid: false,
+
+//    showEditbtnscol: true,//是否显示编辑按钮列。
+//    editUrl:'/v1/customer/customerlist', //保存编辑、添加数据的url
+        });
+
+        function customer_notice(){
+            var selectedRowId = $('#customer_reception_list').data('selectedTrs').children("td").last().text();//选中那行的最后一个单元格的值
+            $.ajax({
+                url: "/v1/customer/customer_notice?ids=" + selectedRowId,
+                type: "POST",
+                dataType: "json",
+                success: function (data) {
+                    if(data.state == 200) {
+                        $("#customer_tips").alertmsg('ok', '签到成功!',{displayMode:'fade',alertTimeout:1000,displayPosition:'middlecenter'});
+                    }
+                }
+            })
+        }
+
+        function customer_receptionClock() {
+            var selectedRows = $('#customer_reception_list').data('selectedTrs');
+            if(selectedRows.length == 0) {
+                $(this).alertmsg('error', '请在列表中选择要操作的对象。');
+            }else {
+                $(this).alertmsg('confirm', '确认客户到店',
+                        { displayMode:'slide', displayPosition:'middlecenter', okName:'确认', cancelName:'关闭', title:'签到',
+                            okCall:'customer_notice'})
+            }
+        }
+
+        function customer_judge_selected(){
+            var selectedRows = customer_reception_list_getselectedKey();
+            if(selectedRows.length == 0){
+                $(this).alertmsg('error', '请在列表中选择要操作的对象。');
+            }else {
+                $(this).dialog({
+                    id:"tosale_btn",
+                    title:"转销售",
+                    url:"CustomerManagement/customer_to_sale.html",
+                    width:1800,
+                    height:900,
+                    mask:true
+                })
+            }
+        }
+
+        function customer_reception_list_getselectedKey() {
+            var selected = $('#customer_reception_list').find('tr.datagrid-selected-tr');
+            var selectedKey = "";
+            selected.each(function (index, item) {
+                selectedKey += item.lastChild.innerText + ",";
+            });
+            selectedKey = selectedKey.substring(0, selectedKey.length - 1);
+            return selectedKey;
+        }
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <div style="margin:0px 0px 10px 0px;">
+        <button type="button" class="btn btn-blue" data-icon="plus" data-url="CustomerManagement/customer_new.html"
+                data-toggle="dialog" data-id="add_btn" data-mask="true" data-width="1800" data-height="900"><i class="fa fa-plus"></i> 新增
+        </button>
+        <button type="button" class="btn btn-green" data-icon="plane" class="btn-default" data-width="200" data-height="200" onclick="customer_receptionClock()"> 签到
+        </button>
+
+        <button type="button" class="btn btn-green" data-icon="user" onclick="customer_judge_selected()">转销售</button>
+
+    </div>
+    <table id="customer_reception_list" class="table table-hover" data-width="100%"></table>
+    <div id="customer_tips"></div>
+</div>
+</body>
+</html>

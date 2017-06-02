@@ -1,0 +1,321 @@
+<script type="text/javascript">
+    contract_detail();
+    function contract_detail() {
+        var selected = $("#contract_list_datagrid").find('tr.datagrid-selected-tr');
+        $.ajax({
+            url: '/v1/contract/contract_detail?cid=' + selected[0].lastChild.innerText,
+            dataType: 'json',
+            type: 'GET',
+            xhrFields: {
+                withCredentials: true
+            },
+            crossDomain: true,
+            success: function (d) {
+                if (d.state == 200) {
+                    var val;
+                    for (var i in d.data) {
+                        if (i == "stateid") {
+                            val = d.data["stateid"];
+                            if (val == 51) {
+                                $('#contract_save_btn').attr("disabled", "disabled");
+                                $('#contract_financil_btn').attr("disabled", "disabled");
+                            }
+                        }
+                        switch (i) {
+                            case "rooms":
+                            case "hall":
+                            case "kitchen":
+                            case "toilet":
+                            case "balcony":
+                            case "roomtype":
+                            case "districtname":
+                                $.CurrentDialog.find("#contract_" + i).selectpicker('val', d.data[i]);
+                                break;
+                            default :
+                                $.CurrentDialog.find("#contract_" + i).val(d.data[i]);
+                                break;
+                        }
+                    }
+                    cl_chooseItems(val);
+                }
+            }
+        });
+    }
+    $(function () {
+        var roleid = $.cookie("roleid");
+        if (roleid == '5') {
+            $('#contract_contractdoc').attr('name', "contractdoc");
+            $('#contract_contractdoc').removeAttr("readonly");
+        }
+    });
+    /*
+     $('#contract_standardcost').blur(function(){
+     changeValue();
+     });
+
+     $('#contract_servicecost').blur(function(){
+     changeValue();
+     });
+
+     $('#contract_taxes').blur(function(){
+     changeValue();
+     });
+
+     $('#contract_contractamount').blur(function(){
+     changeMoney();
+     });
+
+     function chaneValueDate() {
+     var a1 = parseFloat($('#contract_standardtime').val());
+     a1 = isNaN(a1)?0.0:a1;
+     var a2 = parseFloat($('#contract_persontime').val());
+     a2 = isNaN(a2)?0.0:a2;
+     var a = a1 + a2;
+     $('#contract_totaltime').val(a);
+     }
+
+     function changeValue() {
+     var a = parseFloat($('#contract_standardcost').val()) + parseFloat($('#contract_personproject').val()) + parseFloat($('#contract_servicecost').val()) + parseFloat($('#contract_taxes').val());
+     var a1 = parseFloat($('#contract_standardcost').val());
+     a1 = isNaN(a1)?0.0:a1;
+     var a2 = parseFloat($('#contract_personproject').val());
+     a2 = isNaN(a2)?0.0:a2;
+     var a3 = parseFloat($('#contract_servicecost').val());
+     a3 = isNaN(a3)?0.0:a3;
+     var a4 = parseFloat($('#contract_taxes').val());
+     a4 = isNaN(a4)?0.0:a4;
+     var a = a1 + a2 + a3 + a4;
+     var af=a*0.95;
+     $('#contract_contractamount').val(a);
+     //$('#contract_firstamount').val(af.toFixed(2));
+     changeMoney();
+     }
+
+     function changeMoney(){
+     var a1 = parseFloat($('#contract_contractamount').val());
+     a1 = isNaN(a1)?0.0:a1;
+     var a2 = parseFloat($('#contract_firstamount').val());
+     a2 = isNaN(a2)?0.0:a2;
+     var a = a1 - a2;
+     $('#contract_lastpayment').val(a.toFixed(2));
+     }*/
+    function contract_save_onclick() {
+        $('#contract_info').submit()
+    }
+</script>
+<div style="height: 100%;width: 100%">
+    <form action="/v1/contract/contract_reset" data-toggle="validate" data-callback="contract_back" id="contract_info">
+        <input type="hidden" value="" name="id" id="contract_id">
+        <input type="hidden" value="" name="custid_fk" id="contract_custid_fk">
+        <input type="hidden" value="" name="invoiceid" id="contract_invoiceid">
+
+        <table class="table table-condensed table-hover" width="100%">
+            <tr>
+                <!--<td>
+                    <label for="contract_agreementdoc" class="control-label x90">定金协议号：</label>
+                    <input type="text" name="agreementdoc" id="contract_agreementdoc" value="" size="15"
+                           readonly="true">
+                </td>-->
+                <td>
+                    <label for="contract_contractdoc" class="control-label x90">合同号：</label>
+                    <input type="text" name="contractdoc" id="contract_contractdoc" value="" size="15" readonly="true">
+                </td>
+                <td>
+                    <label for="contract_custname" class="control-label x90">姓名：</label>
+                    <input type="text" id="contract_custname" name="custname" value="" size="15" class="form-control required" data-rule="required">
+                </td>
+                <td>
+                    <label for="contract_handoverdate" class="control-label x90">交房日期：</label>
+                    <input type="text" name="handoverdate" id="contract_handoverdate" data-toggle="datepicker" value="" class="form-control required"
+                           size="15" data-rule="required">
+                </td>
+                <td>
+                    <label for="contract_roomtype" class="control-label x90">毛坯平层：</label>
+                    <select name="roomtype" id="contract_roomtype" data-toggle="selectpicker" data-rule="required" data-width="150">
+                        <option value="毛坯平层">毛坯平层</option>
+                        <option value="旧房平层">旧房平层</option>
+                        <option value="复式毛坯">复式毛坯</option>
+                        <option value="跃层毛坯">跃层毛坯</option>
+                        <option value="排屋毛坯">排屋毛坯</option>
+                        <option value="别墅毛坯">别墅毛坯</option>
+                        <option value="其他">其他</option>
+                    </select><label style="color: #ff0000;"> *</label>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <label for="contract_rooms" class="control-label x90">室 厅 厨 卫 阳台：</label>
+                    <select name="rooms" id="contract_rooms" data-toggle="selectpicker" data-rule="required" data-width="60">
+                        <option value="0">0室</option>
+                        <option value="1">1室</option>
+                        <option value="2">2室</option>
+                        <option value="3">3室</option>
+                        <option value="4">4室</option>
+                        <option value="5">5室</option>
+                    </select><label style="color: #ff0000;"> *</label>
+                    <select name="hall" id="contract_hall" data-toggle="selectpicker" data-rule="required" data-width="60">
+                        <option value="0">0厅</option>
+                        <option value="1">1厅</option>
+                        <option value="2">2厅</option>
+                        <option value="3">3厅</option>
+                        <option value="4">4厅</option>
+                        <option value="5">5厅</option>
+                    </select><label style="color: #ff0000;"> *</label>
+                    <select name="kitchen" id="contract_kitchen" data-toggle="selectpicker" data-rule="required" data-width="60">
+                        <option value="0">0厨</option>
+                        <option value="1">1厨</option>
+                        <option value="2">2厨</option>
+                        <option value="3">3厨</option>
+                        <option value="4">4厨</option>
+                        <option value="5">5厨</option>
+                    </select><label style="color: #ff0000;"> *</label>
+                    <select name="toilet" id="contract_toilet" data-toggle="selectpicker" data-rule="required" data-width="60">
+                        <option value="0">0卫</option>
+                        <option value="1">1卫</option>
+                        <option value="2">2卫</option>
+                        <option value="3">3卫</option>
+                        <option value="4">4卫</option>
+                        <option value="5">5卫</option>
+                    </select><label style="color: #ff0000;"> *</label>
+                    <select name="balcony" id="contract_balcony" data-toggle="selectpicker" data-rule="required" data-width="60">
+                        <option value="0">0阳台</option>
+                        <option value="1">1阳台</option>
+                        <option value="2">2阳台</option>
+                        <option value="3">3阳台</option>
+                        <option value="4">4阳台</option>
+                        <option value="5">5阳台</option>
+                    </select><label style="color: #ff0000;"> *</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="contract_mobile" class="control-label x90">电话：</label>
+                    <input type="text" name="mobile" id="contract_mobile" value="" size="15" readonly="true">
+                </td>
+                <td>
+                    <label for="contract_districtname" class="control-label x90">城区：</label>
+                    <select name="districtname" id="contract_districtname" data-toggle="selectpicker" class="form-control required"
+                            data-rule="required" data-width="150">
+                        <option value="">请选择</option>
+                        <option value="上城区">上城区</option>
+                        <option value="下城区">下城区</option>
+                        <option value="江干区">江干区</option>
+                        <option value="拱墅区">拱墅区</option>
+                        <option value="西湖区">西湖区</option>
+                        <option value="滨江区">滨江区</option>
+                        <option value="萧山区">萧山区</option>
+                        <option value="余杭区">余杭区</option>
+                        <option value="桐庐县">桐庐县</option>
+                        <option value="淳安县">淳安县</option>
+                        <option value="建德市">建德市</option>
+                        <option value="富阳市">富阳市</option>
+                        <option value="临安市">临安市</option>
+                    </select><label style="color: #ff0000;"> *</label>
+                </td>
+                <td>
+                    <label for="contract_community" class="control-label x90">小区：</label>
+                    <input type="text" name="community" id="contract_community" value="" size="15" data-rule="required" class="form-control required">
+                </td>
+                <td>
+                    <label for="contract_room" class="control-label x90">门牌号：</label>
+                    <input type="text" name="room" id="contract_room" value="" size="15" data-rule="required" class="form-control required">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="contract_buildarea" class="control-label x90">产权面积：</label>
+                    <input type="text" name="buildarea" id="contract_buildarea" value="" size="15" class="form-control required"
+                           data-rule="required;number">
+                </td>
+                <td>
+                    <label for="contract_usearea" class="control-label x90">量房面积：</label>
+                    <input type="text" name="usearea" id="contract_usearea" value="" size="15" class="form-control required"
+                           data-rule="required;number">
+                </td>
+                <td>
+                    <label for="contract_measuredate" class="control-label x90">量房时间：</label>
+                    <input type="text" name="measuredate" id="contract_measuredate" value="" size="15" class="form-control required"
+                           data-toggle="datepicker" data-rule="required">
+                </td>
+                <td>
+                    <label for="contract_checkdate" class="control-label x90">验房时间：</label>
+                    <input type="text" name="checkdate" id="contract_checkdate" data-toggle="datepicker" value="" class="form-control required"
+                           size="15" data-rule="required">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="contract_contractamount" class="control-label x90">合同金额：</label>
+                    <input type="text" name="contractamount" id="contract_contractamount" value="" size="15" class="form-control required"
+                           data-rule="required;number">
+                </td>
+                <td>
+                    <label for="contract_standardcost" class="control-label x90">1020基本造价：</label>
+                    <input type="text" name="standardcost" id="contract_standardcost" value="" size="15" class="form-control required"
+                           data-rule="required;number" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                </td>
+                <td>
+                    <label for="contract_taxes" class="control-label x90">税金：</label>
+                    <input type="text" name="taxes" id="contract_taxes" value="" size="15" data-rule="required;number" class="form-control required"
+                           placeholder="无则填0" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                </td>
+                <td>
+                    <label for="contract_servicecost" class="control-label x90">远程服务：</label>
+                    <input type="text" name="servicecost" id="contract_servicecost" value="" size="15" class="form-control required"
+                           placeholder="无则填0" data-rule="required;number" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="contract_personalpkg" class="control-label x90">个性包造价：</label>
+                    <input type="text" name="personalpkg" id="contract_personalpkg" value="" size="15" class="form-control required"
+                           placeholder="无则填0" data-rule="required;number" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                </td>
+                <td colspan="3">
+                    <label for="contract_personalpkginfo" class="control-label x90">个性包：</label>
+                    <textarea name="personalpkginfo" id="contract_personalpkginfo" data-toggle="autoheight" cols="67"
+                              rows="1" minlength="0" maxlength="225"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="contract_preferential" class="control-label x90">优惠金额：</label>
+                    <input type="text" name="preferential" id="contract_preferential" value="" size="15" class="form-control required"
+                           placeholder="无则填0" data-rule="required;number" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                </td>
+                <td colspan="3">
+                    <label for="contract_preferential" class="control-label x90">优惠信息：</label>
+                    <textarea name="preferentialinfo" id="contract_preferentialinfo" data-toggle="autoheight" cols="67"
+                              rows="1" minlength="0" maxlength="225"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="contract_personchange" class="control-label x90">个性化变动：</label>
+                    <input type="text" name="personchange" id="contract_personchange" value="" size="15" class="form-control required"
+                           placeholder="无则填0" data-rule="required;number" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                </td>
+                <td colspan="3">
+                    <label for="contract_personchangeinfo" class="control-label x90">个性化变动信息：</label>
+                    <textarea name="personchangeinfo" id="contract_personchangeinfo" data-toggle="autoheight" cols="67"
+                              rows="1" minlength="0" maxlength="225"></textarea>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+        <li>
+            <button type="button" class="btn btn-blue" data-icon="save" data-icon="save"
+                    onclick="contract_save_onclick()" id="contract_save_btn">保存
+            </button>
+        </li>
+    </ul>
+
+</div>

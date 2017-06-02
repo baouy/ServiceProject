@@ -1,0 +1,28 @@
+<script>
+	$('#statistical_table').datagrid({
+		local: 'remote',
+		dataUrl: '/v1/newcustomer/dispatch_customerlistnum?stime='+g_h_b_i_data+'&etime='+g_e_b_i_data,
+		dataType: 'json',
+		loadType: 'get',
+		height: '100%',
+		filterThead: false,
+		columns: [{name: 'typename', width: '150', label: '分类'},
+			{name: 'one_maxnum', width: '80', label: '销售一部', calc: 'sum', calcTit: '合计'},
+			{name: 'two_maxnum', width: '80', label: '销售二部', calc: 'sum', calcTit: '合计'},
+			{name: 'difference_num', width: '80', label: '差额', calc: 'sum', calcTit: '合计'},
+			{name: 'combined_num', width: '80', label: '合计', calc: 'sum', calcTit: '合计'}
+		],
+		columnMenu: true,
+		columnShowhide: true,
+		columnFilter: true,
+		columnLock: false,
+		fullGrid: false,
+		showTfoot: true,
+		paging: false,
+		notrheight : true,
+	});
+
+</script>
+
+
+<table id="statistical_table" class="table table-hover" data-width="100%"></table>

@@ -1,0 +1,327 @@
+<script>
+	var intentiontype, type_28, type_10, followstate,followstatedetail,selected_channel_name;
+
+
+
+	/**
+	 * 获取跟进类型列表
+	 */
+	function channel_followsate() {
+		$.ajax({
+			url: "/v1/other/getfollowsate",
+			type: "GET",
+			dataType: "json",
+			success: function (d) {
+				followstate = [];
+				var c;
+				for (var i = 0; i < d.data.length; i++) {
+					var b = d.data[i].followtypename;
+					c =  {};
+					c[b] = b;
+					followstate.push(c);
+				}
+				c = {};
+				c[''] = '';
+				followstate.push(c);
+				channel_followstypestate();
+			}
+		});
+	}
+
+	/**
+	 * 获取跟进类型详情列表
+	 */
+	function channel_followstypestate() {
+		$.ajax({
+			url: "/v1/other/getfollowstypestate",
+			type: "GET",
+			dataType: "json",
+			success: function (d) {
+				followstatedetail = [];
+				var c;
+				for (var i = 0; i < d.data.length; i++) {
+					var b = d.data[i].labelname;
+					c =  {};
+					c[b] = b;
+					followstatedetail.push(c);
+				}
+				c = {};
+				c[''] = '';
+				followstatedetail.push(c);
+				table_create_new_channel();
+			}
+		});
+	}
+
+
+	/**
+	 * 获取来源类型列表
+	 */
+	function channel_type_10() {
+		$.ajax({
+			url: "/v1/other/getalltype?type=10",
+			type: "GET",
+			dataType: "json",
+			success: function (d) {
+				type_10 = [];
+				var c;
+				for (var i = 0; i < d.data.length; i++) {
+					var b = d.data[i].enumname;
+					c = {};
+					c[b] = b;
+					type_10.push(c)
+				}
+				c = {};
+				c[''] = '';
+				type_10.push(c);
+				channel_followsate();
+			}
+		});
+	}
+	/**
+	 * 获取意向类型列表
+	 */
+	function channel_type_28() {
+		$.ajax({
+			url: "/v1/other/getalltype?type=28",
+			type: "GET",
+			dataType: "json",
+			success: function (d) {
+				type_28 = [];
+				var c;
+				for (var i = 0; i < d.data.length; i++) {
+					var b = d.data[i].enumname;
+					c = {};
+					c[b] = b;
+					type_28.push(c)
+				}
+				c = {};
+				c[''] = '';
+				type_28.push(c);
+				channel_type_10();
+			}
+		});
+	}
+
+	$.ajax({
+		url: "/v1/other/getalltype?type=27",
+		type: "GET",
+		dataType: "json",
+		success: function (d) {
+			intentiontype = [];
+			var c;
+			for (var i = 0; i < d.data.length; i++) {
+				var b = d.data[i].enumname;
+				c = {};
+				c[b] = b;
+				intentiontype.push(c)
+			}
+			c = {};
+			c[''] = '';
+			intentiontype.push(c);
+			channel_type_28();
+		}
+	});
+
+
+	function table_create_new_channel() {
+		$('#customer_channel_new_tabel').datagrid({
+			local: 'remote',
+			dataUrl: '/v1/customer/customer_channel_list?followstatus=2',
+			dataType: 'json',
+			sortAll: false,
+			loadType: 'get',
+			filterAll: true,
+			height: '95%',
+			columns: [
+				{name: 'cusname', width: '70', label: '姓名'},
+				{name: 'mobile', width: '90', label: '电话'},
+				{name: 'wechatnum', width: '70', label: '微信号'},
+				{name: 'districtname', width: '70', label: '城区'},
+				{name: 'community', width: '70', label: '小区'},
+				{name: 'area', width: '70', label: '面积'},
+				{
+					name: 'roomstatus',
+					width: '70',
+					label: '交房状态',
+					type: 'select',
+					items: [{'现房': '现房'}, {'期房': '期房'}, {'待购': '待购'}, {'': ''}]
+				},
+				{
+					name: 'decorationdate',
+					width: '70',
+					label: '计划装修时间',
+					type: 'date',
+					pattern: 'yyyy-MM-dd',
+					attrs: {'readonly': "true"}
+				},
+				{
+					name: 'marketactive',
+					width: '70',
+					label: '营销活动',
+					type: 'select',
+					items: intentiontype
+				},
+				{name: 'concerns', width: '70', label: '关注点'},
+				{
+					name: 'intentiontype', width: '70', label: '意向类型', type: 'select',
+					items: type_28
+
+				},
+				{name: 'age', width: '70', label: '年龄'},
+				{
+					name: 'followstate', width: '70', label: '跟进状态', type: 'select',
+					items: followstate
+				},
+				{
+					name: 'followtype', width: '70', label: '跟进类型' , type: 'select',
+					items:  followstatedetail
+				},
+				{name: 'followstateid', width: '70', label: '跟进状态ID', hide: true},
+				{
+					name: 'followdate',
+					width: '70',
+					label: '跟进日期',
+					type: 'date',
+					pattern: 'yyyy-MM-dd',
+					attrs: {'readonly': "true"}
+				},
+
+				{name: 'followdetails', width: '70', label: '跟进内容'},
+				{
+					name: 'appdate',
+					width: '70',
+					label: '预约日期',
+					type: 'date',
+					pattern: 'yyyy-MM-dd',
+					attrs: {'readonly': "true"}
+				},
+				{name: 'apptime', width: '70', label: '预约时间段'},
+				{
+					name: 'todate', width: '70', label: '实际到场日期', type: 'date',
+					pattern: 'yyyy-MM-dd',
+					attrs: {'readonly': "true"}
+				},
+				{name: 'adults', width: '70', label: '成年人数'},
+				{name: 'oldman', width: '70', label: '父母'},
+				{name: 'child', width: '70', label: '小孩'},
+				{name: 'createuser', width: '70', label: '跟进人', attrs: {'readonly': "true"}},
+				{name: 'createtime', width: '70', label: '报名日期', attrs: {'readonly': "true"}},
+				{name: 'type', width: '70', label: '来源', type: 'select', items: type_10},
+				{name: 'activnewname', width: '70', label: '二级来源'},
+				{name: 'activname', width: '70', label: '三级来源'},
+				{name: 'id', width: '70', label: '客户id', hide: true},
+
+			],
+			paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+			columnMenu: true,
+			columnShowhide: true,
+			columnFilter: true,
+			columnLock: false,
+			inlineEditMult: false,
+			fullGrid: false,
+			showToolbar: true,
+			toolbarItem: 'add,save,cancel',
+			saveAll: true,
+			editUrl: '/v1/customer/customer_channel_reset',
+			editdblOnclick: true,
+			editCallback:'back_edit_test',
+		});
+	}
+
+
+	function customer_new_changeValue(num) {
+		setTimeout(function () {
+			if (num == 0) {
+				$('#customer_channel_new_tabel').datagrid('refresh');
+			} else if (num == 1) {
+				$('#customer_channel_sales').datagrid('refresh');
+			}
+		}, 300);
+	}
+
+	function customer_to_channel(dialogId, tableId) {
+		var selected = $("#" + tableId).find('tr.datagrid-selected-tr');
+		console.log(selected);
+		if (selected.length == 0) {
+			$(this).alertmsg('error', '请在列表中选择要操作的对象。');
+		} else {
+			selected_channel_name = '#'+tableId;
+			$(this).dialog({
+				id: "customer_" + dialogId,
+				title: "跟进",
+				url: "CustomerManagement/customer_edit.html",
+				width: 1800,
+				height: 900,
+				mask: true
+			});
+		}
+	}
+	function customer_channel_getselectedKey(tableId) {
+		tableId = "#" + tableId;
+		var selected = $(tableId).find('tr.datagrid-selected-tr');
+		var selectedKey = "";
+		selected.each(function (index, item) {
+			selectedKey += item.lastChild.innerText + ",";
+		});
+		selectedKey = selectedKey.substring(0, selectedKey.length - 1);
+		return selectedKey;
+	}
+
+	function change_three_type_channel(name, tableId, url, title) {
+		var selected = customer_channel_getselectedKey(tableId);
+		if (selected.length == 0) {
+			$(this).alertmsg('error', '请在列表中选择要操作的对象。');
+		} else {
+			$(this).dialog({
+				id: "customers_" + name,
+				title: title,
+				url: "CustomerManagement/" + url,
+				width: 1800,
+				height: 900,
+				mask: true
+			});
+		}
+	}
+
+</script>
+
+<div class="bjui-pageContent">
+	<ul class="nav nav-tabs" role="tablist" id="channel_list">
+		<li class="active">
+			<a style="font-size: 13px" href="#customer_new_channel_1" role="tab" data-toggle="tab"
+			   onclick="customer_new_changeValue(0)">未回访</a>
+		</li>
+		<li>
+			<a style="font-size: 13px" href="Channel/customer_channel.html" role="tab" data-toggle="ajaxtab"
+			   data-target="#customer_new_channel_2" data-reload="false" onclick="customer_new_changeValue(1)">已回访</a>
+		</li>
+	</ul>
+	<div class="tab-content" style="height: 95%">
+
+
+		<!--未成交-->
+		<div class="tab-pane fade active in" id="customer_new_channel_1" style="height: 100%;">
+			<button type="button" class="btn btn-green" data-icon="edit"
+					onclick="customer_to_channel('customer_to_channel','customer_channel_new_tabel')"><i
+					class="fa fa-edit"></i>查看详情
+			</button>
+			<button type="button" class="btn btn-green" data-icon="user"
+					onclick="change_three_type_channel('change_customer_channel','customer_channel_new_tabel','customer_to_electric.html','转美聊')">
+				转渠道
+			</button>
+			<button type="button" class="btn btn-green" data-icon="user"
+					onclick="change_three_type_channel('change_customer_sales_1','customer_channel_new_tabel','customer_to_sale.html','转销售')">
+				<i
+						class="fa fa-user"></i> 转客户经理
+			</button>
+
+			<table id="customer_channel_new_tabel" class="table table-hover" data-width="100%"></table>
+		</div>
+
+		<!--已成交-->
+		<div class="tab-pane fade" id="customer_new_channel_2" style="height: 100%;">
+
+		</div>
+	</div>
+</div>

@@ -1,0 +1,127 @@
+<html>
+
+<head>
+	<script type="text/javascript">
+
+		$('#engineering_project_datagrid').datagrid({
+
+			local: 'remote',
+			dataUrl: '/v1/project/detail_list',
+			dataType: 'json',
+			sortAll: false,
+			loadType: 'get',
+			filterAll: true,
+			height:'95%',
+			columns: [
+				{name:'id', width:'90', label:'项目ID'},
+				{name:'contractdoc', width:'150', label:'合同单号'},
+				{name:'community', width:'100', label:'小区'},
+				{name:'building', width:'100', label:'幢数'},
+				{name:'unit', width:'100', label:'单元'},
+				{name:'room', width:'100', label:'房号'},
+				{name:'districtname', width:'100', label:'区域'},
+				{name:'road', width:'150', label:'街道'},
+				{name:'projectmanager', width:'100', label:'项目经理'},
+				{name:'supervision', width:'100', label:'质检'},
+				{name:'projectmodel', width:'100', label:'工程模板'},
+				{name:'startdate', width:'100', label:'合同开工日期'},
+				{name:'enddate', width:'100', label:'合同完工日期'},
+				{name:'realstatedate', width:'100', label:'实际开工日期'},
+				{name:'realenddate', width:'100', label:'实际完工日期'},
+				{name:'custname', width:'100', label:'客户姓名'},
+				{name:'mobile', width:'100', label:'手机'},
+				{name:'custsales', width:'100', label:'客户经理'},
+				{name:'designer', width:'100', label:'设计师'},
+				{name:'salespackage', width:'100', label:'套餐名'},
+				{name:'area', width:'80', label:'面积'},
+				{name:'projectstate', width:'80', label:'状态'}],
+			paging: {pageSize:20, selectPageSize:'50,100,200', pageCurrent:1},
+			columnMenu: true,
+			columnShowhide: true,
+			columnFilter: true,
+			columnLock: false,
+			columnResize:true,
+			fullGrid: false,
+			dblOnClick: 'engineering_editDialog',
+
+		});
+
+		function engineering_editDialog() {
+			var selected = $("#engineering_project_datagrid").find('tr.datagrid-selected-tr');
+			if (selected.length == 0) {
+				$(this).alertmsg('error', '请在列表中选择要操作的对象。');
+			} else if (selected.length > 1) {
+				$(this).alertmsg('error', '请选择唯一的操作对象。');
+			} else {
+				$(this).dialog({
+					id:'engineering_project_edit',
+					url:'EngineeringManagement/engineering_project_edit.html',
+					title:'编辑',
+					width:'800',
+					height:'300',
+					mask:true});
+
+				$.ajax({
+					url: '/v1/project/project_detail?pid='+selected[0].cells[1].innerText,
+					dataType: 'json',
+					type: 'GET',
+					xhrFields: {
+						withCredentials: true
+					},
+					crossDomain: true,
+					success: function(d){
+						for (var i in d.data) {
+							$.CurrentDialog.find("#project_" + i).val(d.data[i]);
+						};
+					}
+				})
+			}
+		}
+
+		var e_p_d_l_contractid;
+		function engineering_project_detail_list_showDialog() {
+			var selected = $("#engineering_project_datagrid").find('tr.datagrid-selected-tr');
+			if (selected.length == 0) {
+				$(this).alertmsg('error', '请在列表中选择要操作的对象。');
+			} else if (selected.length > 1) {
+				$(this).alertmsg('error', '请选择唯一的操作对象。');
+			} else {
+				e_p_d_l_contractid = selected[0].cells[1].innerText;
+				$(this).dialog({
+					id:'engineering_project_detail_table',
+					url:'EngineeringManagement/engineering_project_detail_table.html',
+					title:'项目详情',
+					width:'950',
+					height:'900',
+					mask:true});
+			}
+		}
+
+		function engineering_au_back(json){
+			if(json.state==200){
+				BJUI.dialog('closeCurrent',this);
+				$('#engineering_project_datagrid').datagrid('refresh');
+			}
+		}
+
+	</script>
+</head>
+
+<body>
+<div class="bjui-pageContent">
+
+	<div style="margin:0px 0px 10px 0px;">
+		<button type="button" class="btn btn-green" data-icon="edit" onclick="engineering_editDialog()">编辑</button>
+
+		<button type="button" class="btn-default" data-icon="desktop" onclick="engineering_project_detail_list_showDialog()">项目详情
+		</button>
+	</div>
+
+	<table id="engineering_project_datagrid" class="table table-hover" data-width="100%"> </table>
+
+</div>
+
+
+</body>
+
+</html>

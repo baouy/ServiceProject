@@ -96,9 +96,29 @@ public class SSOController {
 			RedisUtil.set(TUDOU_UPMS_SERVER_CODE + "_" + code, code, (int) subject.getSession().getTimeout() / 1000);
 		}
 
-		// 回跳登录前地址
 		return new UpmsResult(UpmsResultConstant.SUCCESS, null);
 	}
 
+	@ApiOperation(value = "校验code")
+	@RequestMapping(value = "/code", method = RequestMethod.POST)
+	@ResponseBody
+	public Object code(HttpServletRequest request) {
+		String codeParam = request.getParameter("code");
+		String code = RedisUtil.get(TUDOU_UPMS_SERVER_CODE + "_" + codeParam);
+		if (StringUtils.isBlank(codeParam) || !codeParam.equals(code)) {
+			new UpmsResult(UpmsResultConstant.FAILED, "无效code");
+		}
+		return new UpmsResult(UpmsResultConstant.SUCCESS, code);
+	}
+
+	@ApiOperation(value = "退出登录")
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	@ResponseBody
+	public Object logout(HttpServletRequest request) {
+		// shiro退出登录
+		SecurityUtils.getSubject().logout();
+
+		return new UpmsResult(UpmsResultConstant.SUCCESS, null);
+	}
 
 }

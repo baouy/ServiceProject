@@ -1,0 +1,47 @@
+<html>
+<head>
+	<script type="text/javascript">
+
+	</script>
+</head>
+<body>
+<div class="bjui-pageContent">
+	<form action="/v1/project/project_reset" data-toggle="validate" data-callback="engineering_au_back" id="contract_info">
+		<input type="hidden" value="" name="id" id="project_id">
+		<div style="margin:15px;">
+			<button type="submit" class="btn-blue" data-icon="save" id="c_save">保存</button>
+			<button type="button" class="btn-close" data-icon="close" >关闭</button>
+		</div>
+		<table class="table table-condensed table-hover" width="100%">
+			<tbody>
+			<tr>
+				<td>
+					<label class="control-label x90">项目经理：</label>
+					<input type="hidden" value="" name="projectmanagerid" id="project_projectmanagerid">
+					<input type="text" data-toggle="lookup" data-width="700" data-height="400"   data-original-title="项目经理"
+data-url="EngineeringManagement/engineering_projectmanage_table.html" id="project_projectmanager" data-title="项目经理" name="projectmanager" size="10">
+				</td>
+				<td>
+					<label class="control-label x90">工程模板：</label>
+					<input type="hidden" value="" name="projectmodelid" id="project_projectmodelid">
+					<input type="text" data-toggle="lookup" data-url="EngineeringManagement/engineering_template_table.html" id="project_projectmodel" name="projectmodel" data-title="工程模板" size="10" >
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label class="control-label x90">质检：</label>
+					<input type="hidden" value="" name="supervisionid" id="project_supervisionid">
+					<input type="text" data-toggle="lookup" data-url="EngineeringManagement/engineering_supervision_table.html" id="project_supervision"  name="supervision" size="10" data-title="质检">
+				</td>
+				<td>
+					<label class="control-label x90">实际开工日期：</label>
+					<input type="text" id="project_realstatedate" name="realstatedate" value="" data-toggle="datepicker" size="15" >
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+
+</body>
+</html>

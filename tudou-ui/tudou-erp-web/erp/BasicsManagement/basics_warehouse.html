@@ -1,0 +1,79 @@
+<script type="text/javascript">
+	var warehouse_type;
+	$.ajax({
+		url: '/v1/other/getalltype?type='+7,
+		dataType: 'json',
+		type: 'GET',
+		xhrFields: {
+			withCredentials: true
+		},
+		crossDomain: true,
+		success: function(d){
+			if(d.state == 200){
+				warehouse_type = new Array();
+				var c
+				for (var i = 0; i < d.data.length; i ++){
+					var b = d.data[i].enumname;
+					c = new Object();
+					c[b]= b;
+					warehouse_type.push(c)
+				}
+				c = new Object();
+				c['']='';
+				warehouse_type.push(c)
+
+				console.log(warehouse_type.toString());
+
+				$('#warehouse_list_datagrid').datagrid({
+
+					local: 'remote',
+					dataUrl: '/v1/warehouse/list',
+					dataType: 'json',
+					sortAll: false,
+					loadType: 'get',
+					filterAll: true,
+					height:'100%',
+					columns: [{name:'warehousecode', width:'150', label:'仓库编码'},
+						{name:'warehousename', width:'150', label:'仓库名称'},
+						{name:'orgname', width:'150', label:'所属组织'},
+						{name:'isactive', type:'select',items:[{'true':'有效'}, {'false':'无效'},{'':''}], width:'80', label:'是否有效'},
+						{name:'islocation', width:'150',type:'select',items:[{'true':'是'}, {'false':'否'},{'':''}], width:'80', label:'是否按库位管理'},
+						{name:'warehousetype',type:'select', width:'150', label:'仓库类型',items:warehouse_type},
+					],
+					paging: {pageSize:20, selectPageSize:'50,100,200', pageCurrent:1},
+					hiddenFields: ['id'],
+					columnMenu: true,
+					columnShowhide: true,
+					columnFilter: true,
+					columnLock: false,
+					inlineEditMult: false,
+					fullGrid: false,
+					showToolbar: true,
+					toolbarItem: 'add,save,del,cancel',
+					delConfirm:true,
+					delPK:'id',
+					delType:'POST',
+					delUrl:'/v1/warehouse/warehouse_del',
+					saveAll: true,
+					editUrl:'/v1/warehouse/warehouse_add_reset',
+					afterDelete:'warehouser_del_back',
+					editdblOnclick: true,
+				});
+
+			}
+		}
+	});
+
+
+
+	function warehouser_del_back() {
+		$('#warehouse_list_datagrid').datagrid('refresh');
+	}
+
+
+
+	
+</script>
+<div class="bjui-pageContent" >
+	<table id="warehouse_list_datagrid" class="table table-hover" data-width="100%"> </table>
+</div>

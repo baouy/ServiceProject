@@ -1,0 +1,439 @@
+<style type="text/css">
+	.required{color: red}
+	.titleLabel{height: 40px;}
+	.titleLabel td label{font-size:18px;color: #adadad}
+</style>
+<script type="text/javascript">
+	$("#personnel_householdname").change(function(){//选择省份
+		var province = $('#personnel_householdname option:selected').text();
+		var num;
+		if (province == '本地城镇（主城区）'){
+			num = 10;
+		}else if(province == '本地农村（主城区）'){
+			num = 20;
+		}else if(province == '外地城镇（省内市外）'){
+			num = 11;
+		}else if(province == '外地农村（省内市外）'){
+			num = 21;
+		}else if(province == '外地城镇（省外）'){
+			num = 12;
+		}else if(province == '外地农村（省外）'){
+			num = 22
+		}
+
+		$('#personnel_householdcode').attr("value",num);//选中的值
+	});
+
+
+	$("#personnel_recruitment").change(function(){
+		var type = $('#personnel_recruitment option:selected').val();
+		if(type!=11){
+			$('#personnel_recruitmentside').val('');//选中的值
+			$('#personnel_recruitmentside').attr('readonly',true);
+			$('#personnel_recruitmentside').attr("novalidate",true);
+			$('#recruitmentside_i').addClass('hide');
+		}else{
+			$('#personnel_recruitmentside').attr('readonly',false);
+			$('#personnel_recruitmentside').removeAttr("novalidate");
+			$('#personnel_recruitmentside').attr('data-rule','required');
+			$('#recruitmentside_i').removeClass('hide');
+		}
+	});
+
+	function S_NodeCheck(e, treeId, treeNode) {
+		var zTree = $.fn.zTree.getZTreeObj(treeId),
+				nodes = zTree.getCheckedNodes(true)
+		var ids = '', names = ''
+
+		for (var i = 0; i < nodes.length; i++) {
+			ids   += ','+ nodes[i].id
+			names += ','+ nodes[i].name
+		}
+		if (ids.length > 0) {
+			ids = ids.substr(1), names = names.substr(1)
+		}
+
+		var $from = $('#'+ treeId).data('fromObj')
+
+		if ($from && $from.length) $from.val(names)
+		$('#'+ treeId +'_select_box').hide();
+		$("#personnel_jobs_id_fk").val(treeNode.id);
+		console.log(treeNode.id);
+
+		$.ajax({
+			url: '/v1/other/getorgdep?pid='+treeNode.pId,
+			dataType: 'json',
+			type: 'get',
+			xhrFields: {
+				withCredentials: true
+			},
+			crossDomain: true,
+			success: function(d){
+				$("#personnel_orgname").val(d.data[0]["be_orgname"]);
+				$("#personnel_depname").val(d.data[0]["org_name"]);
+			}
+		});
+	}
+
+	function wtf(json){
+		if(json.state == 200){
+			BJUI.dialog('closeCurrent',this);
+			$('#personnel_datagrid').datagrid('refresh');
+		}else{
+			$(this).alertmsg('error', json.content);
+		}
+	}
+
+</script>
+<div class="bjui-pageContent">
+	<form action="/v1/personnel/add_personnel" data-toggle="validate" data-callback="wtf">
+
+		<input type="hidden" value="" name="householdcode" id="personnel_householdcode">
+
+		<table class="table table-condensed table-hover" width="100%">
+			<tbody>
+			<tr class="titleLabel">
+				<td><label class="control-label" >基本信息</label></td>
+			</tr>
+
+			<tr>
+				<td>
+					<label for="personnel_username" class="control-label x90 required">姓名：</label>
+					<input type="text" name="username" id="personnel_username" value="" data-rule="required" size="15">
+				</td>
+				<td>
+					<label for="personnel_companyemail" class="control-label x90 required">公司邮箱：</label>
+					<input type="text" name="companyemail" id="personnel_companyemail" value="" size="15" data-rule="required">
+				</td>
+				<td>
+					<label for="personnel_mobile" class="control-label x90 required">手机号码：</label>
+					<input type="text" name="mobile" id="personnel_mobile" value="" data-rule="required;mobile" size="15">
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<label for="personnel_flower_name" class="control-label x90 required">花名：</label>
+					<input type="text" name="flower_name" id="personnel_flower_name" value="" data-rule="required" size="15">
+				</td>
+				<td>
+					<label for="personnel_worknum" class="control-label x90 required">工号：</label>
+					<input type="text" name="worknum" id="personnel_worknum" value="" data-rule="required" size="15">
+				</td>
+				<td>
+					<label for="personnel_companyphone" class="control-label x90">公司电话：</label>
+					<input type="text" name="companyphone" id="personnel_companyphone" value=""  size="15" data-rule="mobile">
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<label for="personnel_gender" class="control-label x90 required">性别：</label>
+					<select name="gender" id="personnel_gender" data-toggle="selectpicker" data-rule="required">
+						<option value="" selected="true"></option>
+						<option value="男">男</option>
+						<option value="女">女</option>
+					</select>
+				</td>
+				<td>
+					<label for="personnel_login_name" class="control-label x90 required">登录帐号：</label>
+					<input type="text" name="login_name" id="personnel_login_name" value="" data-rule="required" size="15">
+				</td>
+			</tr>
+			<!--<tr>
+				<td>
+					<label for="personnel_indepname" class="control-label x90">录入部门：</label>
+					<input type="text" id="personnel_indepname" name="indepname" value="" data-rule="required" size="15">
+				</td>
+				<td>
+					<label for="personnel_injobsname" class="control-label x90">录入岗位：</label>
+					<input type="text" id="personnel_injobsname" name="injobsname" value="" data-rule="required" size="15">
+				</td>
+			</tr>-->
+
+			<tr>
+				<td>
+					<label for="personnel_orgname" class="control-label x90">所属组织：</label>
+					<input type="text" id="personnel_orgname" value="" size="15" readonly="readonly" data-rule="required">
+				</td>
+				<td>
+					<label for="personnel_depname" class="control-label x90">部门：</label>
+					<input type="text" id="personnel_depname" value=""  size="15" readonly="true" data-rule="required">
+				</td>
+				<td>
+					<label for="personnel_rolename" class="control-label x90 required">岗位：</label>
+					<input type="text" id="personnel_rolename" value="" size="15" data-toggle="selectztree" data-tree="#job-ztree" data-rule="required">
+					<input class="hide" type="text" name="jobs_id_fk" id="personnel_jobs_id_fk" value="" size="15">
+					<ul style="height:300px;width:500px" id="job-ztree" class="ztree hide" data-on-click="S_NodeClick" data-on-check="S_NodeCheck" data-radio-type="all" data-chk-style="radio" data-check-enable="true"
+						data-expand-all="true" data-toggle="ztree"
+						data-setting="{
+                            async:
+                            {
+                                enable: true,
+                                url:'/v1/other/getjobs',
+                                autoParam: ['id'],
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                type:'get'
+                            }
+                         }"></ul>
+				</td>
+
+			</tr>
+			<tr class="titleLabel">
+				<td><label class="control-label" style="font-size:18px;">招聘相关</label></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<label for="personnel_recruitment" class="control-label x90 required">招聘渠道：</label>
+					<select name="recruitment" id="personnel_recruitment" data-toggle="selectpicker" data-rule="required" onchange="">
+						<option value="" selected="true"></option>
+						<option value="1">拉勾网</option>
+						<option value="2">51job</option>
+						<option value="3">智联招聘</option>
+						<option value="4">猎聘网</option>
+						<option value="5">BOSS直聘</option>
+						<option value="6">实习僧</option>
+						<option value="7">青团社</option>
+						<option value="8">58同城</option>
+						<option value="9">赶集网</option>
+						<option value="10">大街网</option>
+						<option value="11">其他</option>
+					</select>
+					<i class = 'hide' id ="recruitmentside_i"> <input type="text" name="recruitmentside" id="personnel_recruitmentside" value="" size="15"  ></i>
+				</td>
+				<td>
+					<label for="personnel_recommended" class="control-label x90">推荐人：</label>
+					<input type="text" name="recommended" id="personnel_recommended"  value="" size="15"  >
+				</td>
+			</tr>
+
+			<tr class="titleLabel">
+				<td><label class="control-label" >劳务信息</label></td>
+			</tr>
+			<tr>
+				<!--<td>
+					<label for="personnel_birthday" class="control-label x90">出生日期：</label>
+					<input type="text" name="birthday" id="personnel_birthday" data-toggle="datepicker" value="" size="15" data-rule="required" readonly="true">
+				</td>
+				<td>
+					<label for="personnel_star" class="control-label x90">星座：</label>
+					<input type="text" name="star" id="personnel_star" value="" size="15" data-rule="required">
+				</td>-->
+				<td>
+					<label for="personnel_entry_date" class="control-label x90 required">入职时间：</label>
+					<input type="text" name="entry_date" id="personnel_entry_date" data-toggle="datepicker" value="" data-rule="required" size="15" readonly="true">
+				</td>
+				<td>
+					<label for="personnel_probation" class="control-label x90 required">试用期：</label>
+					<select name="probation" id="personnel_probation" data-toggle="selectpicker" data-rule="required">
+						<option value="" selected="true"></option>
+						<option value="1">1</option><option value="2">2</option><option value="3">3</option>
+						<option value="4">4</option><option value="5">5</option><option value="6">6</option>
+					</select>个月
+				</td>
+				<td>
+					<label for="personnel_positivedate" class="control-label x90 required">转正时间：</label>
+					<input type="text" name="positivedate" id="personnel_positivedate" data-toggle="datepicker" value="" data-rule="required" size="15" readonly="true">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="personnel_contractage" class="control-label x90 required">合同年限：</label>
+					<select name="contractage" id="personnel_contractage" data-toggle="selectpicker" data-rule="required">
+						<option value="" selected="true"></option>
+						<option value="1">1</option><option value="2">2</option><option value="3">3</option>
+						<option value="4">4</option><option value="5">5</option><option value="6">6</option>
+					</select>年
+				</td>
+
+				<td>
+					<label for="personnel_contracttype" class="control-label x90 required">合同类型：</label>
+					<select name="contracttype" id="personnel_contracttype" data-toggle="selectpicker" data-rule="required">
+						<option value="" selected="true"></option>
+						<option value="1">全日制劳务合同</option>
+						<option value="2">实习协议</option>
+						<option value="3">返聘协议</option>
+						<option value="4">BPO</option>
+					</select>
+				</td>
+				<td>
+					<label for="personnel_contracttimes" class="control-label x90 required">合同签订次数：</label>
+					<select name="contracttimes" id="personnel_contracttimes" data-toggle="selectpicker" data-rule="required">
+						<option value="" selected="true"></option>
+						<option value="1">1</option><option value="2">2</option><option value="3">3</option>
+						<option value="4">4</option><option value="5">5</option><option value="6">6</option>
+					</select>
+				</td>
+			</tr>
+
+
+			<!--<tr>
+				<td>
+					<label for="personnel_isactive" class="control-label x90">是否有效：</label>
+					<select name="isactive" id="personnel_isactive" data-toggle="selectpicker" data-rule="required">
+						<option value="" selected="true"></option>
+						<option value="1">有效</option>
+						<option value="0">无效</option>
+					</select>
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>-->
+			<tr class="titleLabel">
+				<td><label class="control-label" >社保公积金相关</label></td>
+			</tr>
+
+			<tr>
+				<td>
+					<label for="personnel_id_number" class="control-label x90 required">身份证号：</label>
+					<input type="text" name="id_number" id="personnel_id_number" value="" size="18" data-rule="required">
+				</td>
+				<td>
+					<label for="personnel_address" class="control-label x90 required">身份证地址：</label>
+					<input type="text" name="address" id="personnel_address" value="" size="15" data-rule="required">
+				</td>
+				<td>
+					<label for="personnel_householdname" class="control-label x90 required">户籍类型：</label>
+					<select name="householdname" id="personnel_householdname" data-toggle="selectpicker" data-rule="required">
+						<option value="" selected="true"></option>
+						<option value="本地城镇（主城区）">本地城镇（主城区）</option>
+						<option value="本地农村（主城区）">本地农村（主城区）</option>
+						<option value="外地城镇（省内市外）">外地城镇（省内市外）</option>
+						<option value="外地农村（省内市外）">外地农村（省内市外）</option>
+						<option value="外地城镇（省外）">外地城镇（省外）</option>
+						<option value="外地农村（省外）">外地农村（省外）</option>
+					</select>
+				</td>
+				<td>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="personnel_securitystart" class="control-label x90 required">社保缴纳起始月份：</label>
+					<input type="text" name="securitystart" id="personnel_securitystart" value="" size="18" data-rule="required" data-toggle="datepicker" readonly="readonly">
+				</td>
+				<td></td><td></td>
+			</tr>
+
+
+
+			<tr class="titleLabel">
+				<td><label class="control-label">薪酬福利</label></td>
+			</tr>
+
+			<tr>
+				<!--<td>
+					<label for="personnel_contractenddate" class="control-label x90">合同结束日期：</label>
+					<input type="text" name="contractenddate" id="personnel_contractenddate" data-toggle="datepicker" value="" data-rule="required" size="15" readonly="true">
+				</td>-->
+				<td>
+					<label for="personnel_cardnumber" class="control-label x90 required">工资卡卡号：</label>
+					<input type="text" name="cardnumber" id="personnel_cardnumber" value="" size="18" data-rule="required">
+				</td>
+				<td>
+					<label for="personnel_bank" class="control-label x90">开户银行：</label>
+					<select name="bank" id="personnel_bank" data-toggle="selectpicker" data-rule="required">
+						<option value="招商银行">招商银行</option>
+						<option value="杭州银行">杭州银行</option>
+					</select>
+				</td>
+				<td></td>
+			</tr>
+			<tr class="titleLabel">
+				<td><label class="control-label">其他信息</label></td>
+			</tr>
+
+			<tr>
+				<td>
+					<label for="personnel_ismarry" class="control-label x90">婚否：</label>
+					<select name="ismarry" id="personnel_ismarry" data-toggle="selectpicker" >
+						<option value="" selected="true"></option>
+					<option value="0">否</option><option value="1">是</option>
+					</select>
+				</td>
+				<td>
+					<label for="personnel_fertility" class="control-label x90">育否：</label>
+					<select name="fertility" id="personnel_fertility" data-toggle="selectpicker">
+						<option value="" selected="true"></option>
+						<option value="0">否</option><option value="1">是</option>
+					</select>
+				</td>
+				<td>
+					<label for="personnel_nation" class="control-label x90">民族：</label>
+					<input type="text" name="nation" id="personnel_nation" value="" size="15" >
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="personnel_nativeplace" class="control-label x90">籍贯：</label>
+					<input type="text" name="nativeplace" id="personnel_nativeplace" value="" size="15" >
+				</td>
+				<td>
+					<label for="personnel_email" class="control-label x90">个人邮箱：</label>
+					<input type="text" name="email" id="personnel_email" value="" size="15" >
+				</td>
+				<td>
+					<label for="personnel_qq" class="control-label x90">QQ：</label>
+					<input type="text" name="qq" id="personnel_qq" value="" size="15" >
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="personnel_wx" class="control-label x90 required">微信：</label>
+					<input type="text" name="wx" id="personnel_wx" value="" size="15" data-rule="required">
+				</td>
+				<td>
+					<label for="personnel_education" class="control-label x90 required">最高学历：</label>
+					<select name="education" id="personnel_education" data-toggle="selectpicker" data-rule="required">
+						<option value="" selected="true"></option>
+						<option value="博士">博士</option>
+						<option value="硕士">硕士</option>
+						<option value="本科">本科</option>
+						<option value="大专">大专</option>
+						<option value="中专">中专</option>
+						<option value="高中">高中</option>
+						<option value="其他">其他</option>
+					</select>
+				</td>
+				<td>
+					<label for="personnel_school" class="control-label x90 required">毕业学校：</label>
+					<input type="text" name="school" id="personnel_school" value="" size="15" data-rule="required">
+				</td>
+
+			</tr>
+			<tr>
+				<td>
+					<label for="personnel_professional" class="control-label x90 required">专业：</label>
+					<input type="text" name="professional" id="personnel_professional" value="" size="15" data-rule="required">
+				</td>
+				<td>
+					<label for="personnel_emer_contact" class="control-label x90 required">紧急联系人：</label>
+					<input type="text" name="emer_contact" id="personnel_emer_contact" value="" size="15" data-rule="required">
+				</td>
+				<td>
+					<label for="personnel_emer_phone" class="control-label x90 required">紧急联系电话：</label>
+					<input type="text" name="emer_phone" id="personnel_emer_phone" value="" size="15" data-rule="required">
+				</td>
+				<!--<td>
+					<label for="personnel_contractnumber" class="control-label x90">劳动合同编号：</label>
+					<input type="text" name="contractnumber" id="personnel_contractnumber" value="" size="15" data-rule="required">
+				</td>-->
+			</tr>
+			<!--<tr>
+				<td>
+					<label for="personnel_agreenumber" class="control-label x90">保密协议编号：</label>
+					<input type="text" name="agreenumber" id="personnel_agreenumber" value="" size="15" data-rule="required">
+				</td>
+			</tr>-->
+			</tbody>
+		</table>
+	</form>
+</div>
+<div class="bjui-pageFooter">
+	<ul>
+		<li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+		<li><button type="submit" class="btn-default" data-icon="save">保存</button></li>
+	</ul>
+</div>

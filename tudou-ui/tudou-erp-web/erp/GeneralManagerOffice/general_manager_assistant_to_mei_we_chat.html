@@ -1,0 +1,103 @@
+<html>
+<head>
+
+	<script type="text/javascript">
+        //新媒体,美客...
+        var dispatch_newmedia_stateids = [1,19];
+
+		$('#assistant_to_mei-we_chat').datagrid({
+			local: 'remote',
+            dataUrl: '/v1/user/'+dispatch_which+'_distribution?statelist='+dispatch_newmedia_stateids,
+			dataType: 'json',
+			sortAll: false,
+			loadType: 'get',
+			filterAll: true,
+			height:'95%',
+			columns: [
+				{name: 'flower_name', width: '150', label: '花名'},
+				{name: 'maxnum', width: '150', label: '在跟进数'},
+				{name: 'depname', width: '150', label: '部门'},
+				{name: 'depcode', width: '150', label: '组织id', hide: true},
+				{name: 'id', width: '80', label: '主键', hide: true}],
+			paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+			columnMenu: true,
+			columnShowhide: true,
+			columnFilter: true,
+			columnLock: false,
+			fullGrid: false,
+			dblOnClick: 'assistant_to_mei_we_chat',
+
+		});
+
+		// 分配 美聊/微聊(newmedia)
+		function assistant_to_mei_we_chat() {
+            var selected = $("#assistant_to_mei-we_chat").data('selectedDatas');
+            if (null == selected || selected.length == 0) {
+                $(this).alertmsg('warn', '请在列表中选择要操作的对象。');
+                return;
+            }
+            var datas={};
+            switch (dispatch_which){
+                case 'mobile': // 美聊
+                    datas={
+                        gid:ass_c_ids,
+                        mobilesalesid:selected[0].id,
+                        mobilesales:selected[0].flower_name,
+                        mobilesalescode:selected[0].depcode,
+                        mobilesalesdepname:selected[0].depname,
+                        // 分配美客则新媒体置为空（美客与新媒体二选一，避免撞车）
+                        //newmediaid:0, 	// customer 使用
+                        //newmediacode:0	//customerside 使用
+                    }
+                    break;
+				case 'newmedia': //取消于2017年5月19日 新增美客三部
+                    datas={
+                        gid:ass_c_ids,
+                        newmediaid:selected[0].id,
+                        newmedia:selected[0].flower_name,
+                        newmediacode:selected[0].depcode,
+                    	newmediadepname:selected[0].depname,
+                        // 分配美客则新媒体置为空（美客与新媒体二选一，避免撞车）
+                        //mobilesalesid:0,	// customer 使用
+						//mobilesalescode:0	//customerside 使用
+                    }
+                    break;
+            }
+
+			$.ajax({
+                url: '/v1/newcustomer/distribution',
+				dataType: 'json',
+				type: 'POST',
+				data: datas,
+				xhrFields: {
+					withCredentials: true
+				},
+				crossDomain: true,
+				success: function (d) {
+                    if (d.state == 200) {
+                        $(this).alertmsg('ok', '操作成功');
+                        BJUI.dialog('closeCurrent', this);
+                        assistant_tab_refresh();
+                        //assistant_follows_refresh();
+                    }else{
+                        $(this).alertmsg('warn', '操作失败');
+                    }
+				}
+			});
+		}
+	</script>
+</head>
+<body>
+<div class="bjui-pageContent">
+	<form>
+		<button type="button" class="btn btn-blue" data-icon="plus" onclick="assistant_to_mei_we_chat()"><i
+				class="fa fa-plus"></i>选择
+		</button>
+		<button type="button" class="btn-close btn" data-icon="close"><i class="fa fa-close"></i> 关闭</button>
+		<table id="assistant_to_mei-we_chat" class="table table-hover" data-width="100%" data-selected-multi="true">
+
+		</table>
+	</form>
+</div>
+</body>
+</html>

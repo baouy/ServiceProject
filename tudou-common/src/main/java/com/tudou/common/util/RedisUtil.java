@@ -106,18 +106,13 @@ public class RedisUtil {
 	 * @param value
 	 */
 	public synchronized static void set(String key, String value) {
-		Jedis jedis = null;
 		try {
 			value = StringUtils.isBlank(value) ? "" : value;
-			jedis = getJedis();
+			Jedis jedis = getJedis();
 			jedis.set(key, value);
-			
+			jedis.close();
 		} catch (Exception e) {
 			_log.error("Set key error : " + e);
-		} finally {
-			if(jedis != null) {
-				jedis.close();
-			}
 		}
 	}
 
@@ -127,17 +122,12 @@ public class RedisUtil {
 	 * @param value
 	 */
 	public synchronized static void set(byte[] key, byte[] value) {
-		Jedis jedis = null;
 		try {
-			jedis = getJedis();
+			Jedis jedis = getJedis();
 			jedis.set(key, value);
-			
+			jedis.close();
 		} catch (Exception e) {
 			_log.error("Set key error : " + e);
-		} finally {
-			if(jedis != null) {
-				jedis.close();
-			}
 		}
 	}
 
@@ -148,18 +138,13 @@ public class RedisUtil {
 	 * @param seconds 以秒为单位
 	 */
 	public synchronized static void set(String key, String value, int seconds) {
-		Jedis jedis = null;
 		try {
 			value = StringUtils.isBlank(value) ? "" : value;
-			jedis = getJedis();
+			Jedis jedis = getJedis();
 			jedis.setex(key, seconds, value);
-			
+			jedis.close();
 		} catch (Exception e) {
 			_log.error("Set keyex error : " + e);
-		} finally {
-			if(jedis != null) {
-				jedis.close();
-			}
 		}
 	}
 
@@ -170,18 +155,13 @@ public class RedisUtil {
 	 * @param seconds 以秒为单位
 	 */
 	public synchronized static void set(byte[] key, byte[] value, int seconds) {
-		Jedis jedis = null;
 		try {
-			jedis = getJedis();
+			Jedis jedis = getJedis();
 			jedis.set(key, value);
 			jedis.expire(key, seconds);
-			
+			jedis.close();
 		} catch (Exception e) {
 			_log.error("Set key error : " + e);
-		} finally {
-			if(jedis != null) {
-				jedis.close();
-			}
 		}
 	}
 
@@ -191,22 +171,12 @@ public class RedisUtil {
 	 * @return value
 	 */
 	public synchronized static String get(String key) {
-		Jedis jedis = null;
-		String value = null;
-		try {
-			jedis = getJedis();
-			if (null == jedis) {
-				return null;
-			}
-			value = jedis.get(key);
-			
-		} catch (Exception e) {
-			_log.error("Get value error : " + e);
-		} finally {
-			if(jedis != null) {
-				jedis.close();
-			}
+		Jedis jedis = getJedis();
+		if (null == jedis) {
+			return null;
 		}
+		String value = jedis.get(key);
+		jedis.close();
 		return value;
 	}
 
@@ -216,24 +186,12 @@ public class RedisUtil {
 	 * @return value
 	 */
 	public synchronized static byte[] get(byte[] key) {
-		Jedis jedis = null;
-		byte[] value = null;
-		
-		try {
-			jedis = getJedis();
-			if (null == jedis) {
-				return null;
-			}
-			value = jedis.get(key);
-			
-		} catch (Exception e) {
-			_log.error("Get byte value error : " + e);
-		} finally {
-			if(jedis != null) {
-				jedis.close();
-			}
+		Jedis jedis = getJedis();
+		if (null == jedis) {
+			return null;
 		}
-		
+		byte[] value = jedis.get(key);
+		jedis.close();
 		return value;
 	}
 
@@ -242,17 +200,12 @@ public class RedisUtil {
 	 * @param key
 	 */
 	public synchronized static void remove(String key) {
-		Jedis jedis = null;
 		try {
-			jedis = getJedis();
+			Jedis jedis = getJedis();
 			jedis.del(key);
-			
+			jedis.close();
 		} catch (Exception e) {
-			_log.error("Remove string key error : " + e);
-		} finally {
-			if(jedis != null) {
-				jedis.close();
-			}
+			_log.error("Remove keyex error : " + e);
 		}
 	}
 
@@ -261,17 +214,12 @@ public class RedisUtil {
 	 * @param key
 	 */
 	public synchronized static void remove(byte[] key) {
-		Jedis jedis = null;
 		try {
-			jedis = getJedis();
+			Jedis jedis = getJedis();
 			jedis.del(key);
-			
+			jedis.close();
 		} catch (Exception e) {
-			_log.error("Remove byte[] key error : " + e);
-		} finally {
-			if(jedis != null) {
-				jedis.close();
-			}
+			_log.error("Remove keyex error : " + e);
 		}
 	}
 
@@ -281,17 +229,12 @@ public class RedisUtil {
 	 * @param key
 	 */
 	public synchronized static void lpush(String key, String... strings) {
-		Jedis jedis = null;
 		try {
-			jedis = RedisUtil.getJedis();
+			Jedis jedis = RedisUtil.getJedis();
 			jedis.lpush(key, strings);
-			
+			jedis.close();
 		} catch (Exception e) {
 			_log.error("lpush error : " + e);
-		} finally {
-			if(jedis != null) {
-				jedis.close();
-			}
 		}
 	}
 
@@ -302,17 +245,12 @@ public class RedisUtil {
 	 * @param value
 	 */
 	public synchronized static void lrem(String key, long count, String value) {
-		Jedis jedis = null;
 		try {
-			jedis = RedisUtil.getJedis();
+			Jedis jedis = RedisUtil.getJedis();
 			jedis.lrem(key, count, value);
-			
+			jedis.close();
 		} catch (Exception e) {
-			_log.error("lrem error : " + e);
-		} finally {
-			if(jedis != null) {
-				jedis.close();
-			}
+			_log.error("lpush error : " + e);
 		}
 	}
 
@@ -323,18 +261,13 @@ public class RedisUtil {
 	 * @param seconds
 	 */
 	public synchronized static void sadd(String key, String value, int seconds) {
-		Jedis jedis = null;
 		try {
-			jedis = RedisUtil.getJedis();
+			Jedis jedis = RedisUtil.getJedis();
 			jedis.sadd(key, value);
 			jedis.expire(key, seconds);
 			jedis.close();
 		} catch (Exception e) {
 			_log.error("sadd error : " + e);
-		} finally {
-			if(jedis != null) {
-				jedis.close();
-			}
 		}
 	}
 

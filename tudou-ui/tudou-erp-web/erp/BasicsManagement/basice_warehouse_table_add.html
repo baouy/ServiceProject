@@ -1,0 +1,59 @@
+<script type="text/javascript">
+
+	$('#warehouse_add_list').datagrid({
+		local: 'remote',
+		dataUrl: '/v1/warehouse/add_list',
+		dataType: 'json',
+		sortAll: true,
+		loadType: 'get',
+		filterAll: true,
+		height: '95%',
+		columns: [
+			{name: 'warehousename', width: '150', label: '仓库名称'},
+			{name: 'orgname', width: '150', label: '所属组织'},
+		],
+		showLinenumber: true,
+		paging: {pageSize: 20, selectPageSize: '50,80', pageCurrent: 1},
+		hiddenFields: ['id', 'orgcode', 'org_fk', 'warehousecode'],
+		fullGrid: true,
+      	dblOnClick:'db_onclick',
+	});
+
+	function db_onclick() {
+		$('#choose_warehouse').click()
+	}
+
+	function itemSupplier_select_materials() {
+		var selected = $("#warehouse_add_list").data('selectedDatas');
+		if (selected.length == 0) {
+			$(this).alertmsg('error', '请在列表中选择要操作的对象。');
+		} else if (selected.length > 1) {
+			$(this).alertmsg('error', '请选择唯一的操作对象。');
+		} else {
+			var warehousename = selected[0].warehousename;//料号
+			var orgname = selected[0].orgname;//品名
+			var id = selected[0].id;
+			var orgcode = selected[0].orgcode;
+			var org_fk = selected[0].org_fk;
+			var warehousecode = selected[0].warehousecode;
+
+			var data = '{warehouseid:' + id + ',warehousecode:\"' + warehousecode + '\",warehousename:\"' + warehousename + '\",orgname:\"' + orgname + '\",orgcode:\"' + orgcode + '\",orgFk:\"' + org_fk + '\"}';
+
+			$('#choose_warehouse').attr("data-args", data);
+
+			BJUI.dialog("closeCurrent", this);
+		}
+	}
+
+</script>
+
+<div class="bjui-pageContent">
+	<div style="margin-bottom:10px;">
+		<a href="javascript:;" data-toggle="lookupback" onclick="itemSupplier_select_materials()" class="btn btn-blue"
+		   data-args="" title="选择本项" data-icon="check" id="choose_warehouse"><i class="fa fa-check"></i> 选择</a>
+		<button type="button" class="btn-close btn" data-icon="close"><i class="fa fa-close"></i> 关闭</button>
+	</div>
+	<table id="warehouse_add_list">
+
+	</table>
+</div>

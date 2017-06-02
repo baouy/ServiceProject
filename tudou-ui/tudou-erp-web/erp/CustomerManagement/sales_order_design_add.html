@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+        /***
+         * 销售订单添加页面（设计师）
+         * */
+        var thisid = 0;
+        /***
+         * 添加销售订单（设计师）
+         * */
+        function sales_order_design_save() {
+
+            if ($("#businessdate").val() !== "" && $("#custusername").val() !== ""&& $("#classification").val() !== "") {
+                var tsodetailValidList = [];
+                var obj = new Object();
+                var tsoValid = new Object();
+                tsoValid = {
+                    stores: $("#stores").val(),
+                    custsales: $("#custsales").val(),
+                    custusername: $("#custusername").val(),
+                    mobile: $("#mobile").val(),
+                    receivedaddress: $("#receivedaddress").val(),
+                    businessdate: $("#businessdate").val(),
+                    paymentaccount: $("#paymentaccount").val(),
+                    salespackage: $("#salespackage").val(),
+                    details: $("#details").val(),
+                    custsalesid: $("#custsalesid").val(),
+                    custid: $("#custid").val(),
+                    salespackageid: $("#salespackageid").val(),
+                    storesid: $("#storesid").val(),
+                    contractid: $("#contractid").val(),
+                    contractdoc: $("#contractdoc").val(),
+                    classification: $("#classification").val(),
+                }
+                if ($("#sales_order_design_add_detail_table tbody tr").length < 1) {
+                    BJUI.alertmsg('error', "至少的有一行明细行记录", {
+                        displayMode: 'fade',
+                        alertTimeout: 1000,
+                        displayPosition: 'middlecenter'
+                    });
+                } else {
+                    var salesordertable = $("#sales_order_design_add_detail_table tbody tr");
+                    for (var i = 0; i < salesordertable.length; i++) {
+                        var isnonstandard = $("input[name='salespackage[" + i + "].isnonstandard']").val();
+
+                        if (isnonstandard == "不是") {
+                            isnonstandard = false;
+                        }
+                        if (isnonstandard == "是") {
+                            isnonstandard = true;
+                        }
+                        obj = {
+//                        linenum: $("input[name='salespackage[" + i + "].linenum']").val(),//ok
+                            linestate: $("input[name='salespackage[" + i + "].linestate']").val(),//ok
+                            worker: $("input[name='salespackage[" + i + "].worker']").val(),//ok
+                            materialdetailed: $("input[name='salespackage[" + i + "].materialdetailed']").val(),
+                            isnonstandard: isnonstandard,
+//                        isnonstandard: $("input[name='salespackage[" + i + "].isnonstandard']").val(),
+                            itemno: $("input[name='salespackage[" + i + "].itemno']").val(),
+                            itemclass: $("input[name='salespackage[" + i + "].itemclass']").val(),
+                            brand: $("input[name='salespackage[" + i + "].brand']").val(),
+                            partname: $("input[name='salespackage[" + i + "].partname']").val(),
+                            partspec: $("input[name='salespackage[" + i + "].partspec']").val(),
+                            colorlevel: $("input[name='salespackage[" + i + "].colorlevel']").val(),
+                            partstyle: $("input[name='salespackage[" + i + "].partstyle']").val(),
+                            material: $("input[name='salespackage[" + i + "].material']").val(),
+                            usingphase: $("input[name='salespackage[" + i + "].usingphase']").val(),
+                            funit: $("input[name='salespackage[" + i + "].funit']").val(),
+                            unitqty: $("input[name='salespackage[" + i + "].unitqty']").val(),
+                            mpq: $("input[name='salespackage[" + i + "].mpq']").val(),
+                            qty: $("input[name='salespackage[" + i + "].qty']").val(),
+                            itemid: $("input[name='salespackage[" + i + "].itemid']").val(),
+                            grossweight: $("input[name='salespackage[" + i + "].grossweight']").val(),
+                            unitweight: $("input[name='salespackage[" + i + "].unitweight']").val()
+                        };
+                        tsodetailValidList.push(obj);
+                    }
+                    objOb = {
+                        tsodetailValidList,
+                        tsoValid
+                    };
+
+                    $("#sales_order_design_save_btn").attr("disabled", "disabled");
+                    $.ajax({
+                        url: '/v1/so/addsaleorders',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        type: 'POST',
+                        data: JSON.stringify(objOb),
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        crossDomain: true,
+                        success: function (d) {
+                            if (d.state == 200) {
+//                            //让明细表变成不可编辑
+//                            $("#sales_order_design_add_detail_table tbody tr").addClass("readonly");
+//                            //刷新销售订单列表
+//                            $('#sales_order_design_list').datagrid("refresh");
+//                            BJUI.alertmsg('info', d.content, {
+//                                displayMode: 'fade',
+//                                alertTimeout: 1000,
+//                                displayPosition: 'middlecenter'
+//                            });
+//                            //回传的值回显
+//                            $("#sodoc").val(d.data.sodoc);
+//                            $("#state").val(d.data.state);
+//                            //改变按钮状态
+//                            $("#sales_order_design_commit_btn").removeAttr("disabled");
+//                            $("#sales_order_design_nocommit_btn").attr("disabled", "disabled");
+//                            $("#sales_order_design_ad_de").removeAttr("disabled");
+////                            $("#purchase_save_btn").attr("disabled","disabled");
+//                            //将销售订单主键id值放到表头中
+//                            $("#sales_order_design_add_table input[name='id']").val(d.data.id);
+//                            //将所有明细表的行状态改成新增
+//                            for (var i = 0; i < $("#sales_order_design_add_detail_table tbody tr").length; i++) {
+//                                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") td:eq(1) input").val("新增")
+//                            }
+                                thisid = d.data.id;
+                                //刷新列表
+                                $('#sales_order_design_list').datagrid("refresh");
+                                //关闭对话
+                                BJUI.dialog("closeCurrent", this);
+                                //提示成功
+                                BJUI.alertmsg('info', d.content, {
+                                    displayMode: 'fade',
+                                    alertTimeout: 1000,
+                                    displayPosition: 'middlecenter'
+                                });
+                                //打开编辑页面
+                                $(this).dialog({
+                                    id: "salesorderOrderEdit",
+                                    title: "销售订单编辑",
+                                    url: "CustomerManagement/sales_order_design_edit.html",
+                                    width: 1052,
+                                    height: 602,
+                                    mask: true
+                                });
+                            } else {
+                                $("#sales_order_design_save_btn").removeAttr("disabled");
+
+                                BJUI.alertmsg('error', d.content, {
+                                    displayMode: 'fade',
+                                    alertTimeout: 1000,
+                                    displayPosition: 'middlecenter'
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+
+        /**
+         *
+         * 提交
+         * **/
+        function sales_order_design_add_commit() {
+            var id = $("#sales_order_design_add_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/so/commitsaleorders',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $("#sales_order_design_commit_btn").attr("disabled", "disabled");
+                        $("#sales_order_design_save_btn").attr("disabled", "disabled");
+                        $("#sales_order_design_nocommit_btn").removeAttr("disabled");
+                        $("#sales_order_design_ad_de").attr("disabled", "disabled");
+                        $('#sales_order_design_list').datagrid("refresh");
+                        //改变各行审核状态
+                        for (var i = 0; i < $("#sales_order_design_add_detail_table tbody tr").length; i++) {
+                            $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") td:eq(1) input").val("已提交")
+                        }
+                    } else {
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+        /**
+         * 收回
+         * **/
+        function purchase_giveup_add_giveup_commit() {
+            var id = $("#sales_order_design_add_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/so/giveupcommitsaleorders',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        alert(1);
+                        $("#sales_order_design_save_btn").removeAttr("disabled");
+                        $("#sales_order_design_commit_btn").removeAttr("disabled");
+                        $("#sales_order_design_ad_de").removeAttr("disabled");
+                        $("#sales_order_design_nocommit_btn").attr("disabled", "disabled");
+                        $('#sales_order_design_list').datagrid("refresh");
+
+                        for (var i = 0; i < $("#sales_order_design_add_detail_table tbody tr").length; i++) {
+                            $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") td:eq(1) input").val("新增")
+                        }
+                    } else {
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+
+            });
+        }
+        /**
+         * （删除整单前）弹框
+         * **/
+        function sales_order_design_delete() {
+            BJUI.alertmsg('confirm', '确定要删除吗?', {
+                displayMode: 'fade',
+                displayPosition: 'middlecenter',
+                okName: "是",
+                cancelName: "否",
+                okCall: 'delete_order'
+            });
+        }
+        /**
+         * （确认弹框后）删除整单
+         * */
+        function delete_order() {
+            var selected = $("#sales_order_design_add_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/so/deletesaleorders',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: selected
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.dialog("closeCurrent", this);
+                        BJUI.alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $('#sales_order_design_list').datagrid("refresh");
+                    } else {
+                        BJUI.alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+
+
+        //定义全局变量，已做个性包和套餐的区分
+        var typedocument = "套餐";
+        //是否为第一次,判断是否需要追加合计栏
+        var isfirst = 0;
+        countline = 0;
+        function select_sales_package(type) {
+            typedocument = type;
+            //打开编辑界面
+            $(this).dialog({
+                id: "storage_add",
+                title: "选择套餐_add",
+                url: "CustomerManagement/sales_package_select.html",
+
+                width: 1050,
+                height: 600,
+                mask: true
+            });
+        }
+
+
+        /**
+         * 当table中单位用户量unitqty值发生改变时对某些数量进行计算(新增时)
+         * @param theRow
+         */
+        function count_add(theRow) {
+            //根据单位用户量unitqty,和最小包装MPQ mpq计算出所需数量qty
+            //qty=unitqty/mpq 向上取整
+            var unitqty = $(theRow).find(".unitqty").val();//单位用户量
+            var mpq = $(theRow).find(".mpq").val();//最小包装MPQ
+            var qty = Math.ceil(unitqty / mpq);//数量
+            $(theRow).find(".qty").val(qty);//数量
+
+            //重新合计各数量
+            var sumunitqty = 0;
+            var sunmpq = 0;
+            var sumqty = 0;
+
+            for (var i = 0; i < $("#sales_order_design_add_detail_table tbody tr").length; i++) {
+                if ($("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") td:eq(14) input").val() != '') {
+                    sumunitqty += parseInt($("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") td:eq(14) input").val());
+                }
+                if ($("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") td:eq(15) input").val() != '') {
+                    sunmpq += parseInt($("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") td:eq(15) input").val());
+                }
+
+                if ($("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") td:eq(16) input").val() != '') {
+                    sumqty += parseInt($("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") td:eq(16) input").val());
+                }
+                $("#sales_order_count  td:eq(14) input").val(sumunitqty);
+                $("#sales_order_count  td:eq(15) input").val(sunmpq);
+                $("#sales_order_count  td:eq(16) input").val(sumqty);
+            }
+        }
+        /**
+         * 删除明细行
+         * **/
+        function delete_row() {
+
+            if (1 < $("#sales_order_design_add_detail_table tbody tr").length) {
+                re_arr_add_detail_table();
+            }
+        }
+
+        /**
+         * 删除选中行后重排明细行
+         */
+        function re_arr_add_detail_table() {
+            $("#sales_order_design_add_detail_table").find(".selected").remove();
+            for (var i = 0; i < $("#sales_order_design_add_detail_table tbody tr").length; i++) {
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(0)").attr("name", "salespackage[" + i + "].linenum");
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(1)").attr("name", "salespackage[" + i + "].linestate");
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(2)").attr("name", "salespackage[" + i + "].itemno");
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(3)").attr("name", "salespackage[" + i + "].itemclass");
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(4)").attr("name", "salespackage[" + i + "].brand");
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(5)").attr("name", "salespackage[" + i + "].partname");
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(6)").attr("name", "salespackage[" + i + "].partspec");
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(7)").attr("name", "salespackage[" + i + "].partstyle");
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(8)").attr("name", "salespackage[" + i + "].colorlevel");
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(9)").attr("name", "salespackage[" + i + "].material");
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(10)").attr("name", "salespackage[" + i + "].usingphase");
+
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(11)").attr("name", "salespackage[" + i + "].funit");
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(12)").attr("name", "salespackage[" + i + "].grossweight");
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(13)").attr("name", "salespackage[" + i + "].unitweight");
+
+
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(14)").attr("name", "salespackage[" + i + "].unitqty");
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(15)").attr("name", "salespackage[" + i + "].mpq");
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(16)").attr("name", "salespackage[" + i + "].qty");
+                $("#sales_order_design_add_detail_table tbody tr:eq(" + i + ") input:eq(17)").attr("name", "salespackage[" + i + "].itemid");
+
+            }
+            count_add();
+        }
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <form data-toggle="validate" data-toggle="validate">
+        <div style="margin:15px;">
+            <button class="btn btn-blue" data-icon="save" id="sales_order_design_save_btn"
+                    onclick="sales_order_design_save()">保存
+            </button>
+            <button type="button" class="btn btn-green" data-icon="thumbs-up" disabled="disabled"
+                    id="sales_order_design_commit_btn" onclick="sales_order_design_add_commit()">提交
+            </button>
+            <button type="button" class="btn btn-orange" data-icon="thumbs-down" disabled="disabled"
+                    id="sales_order_design_nocommit_btn" onclick="purchase_giveup_add_giveup_commit()">收回
+            </button>
+            <button type="button" class="btn btn-red" data-icon="times" disabled="disabled"
+                    id="sales_order_design_ad_de" onclick="sales_order_design_delete()">删除
+            </button>
+            <button class="btn-close btn" data-icon="close"><i class="fa fa-close"></i>关闭</button>
+        </div>
+        <table class="table table-bordered table-hover table-striped table-top bjui-tabledit"
+               id="sales_order_design_add_table" width="100%">
+
+            <input type="hidden" name="id" value="">
+            <input type="hidden" name="invoice.custid" value="" id="custid">
+            <input type="hidden" name="invoice.custsalesid" value="" id="custsalesid">
+            <input type="hidden" name="invoice.salespackageid" value="" id="salespackageid">
+            <input type="hidden" name="invoice.storesid" value="" id="storesid">
+            <input type="hidden" name="invoice.contractid" value="" id="contractid">
+            <input type="hidden" name="invoice.contractdoc" value="" id="contractdoc">
+
+            <tbody>
+
+            <!--主表第一行-->
+            <tr>
+                <td>
+                    <label for="sodoc" class="control-label x90">单号：</label>
+                    <input type="text" id="sodoc" value="" name="sodoc" size="15" readonly="true">
+                </td>
+                <td>
+                    <label for="state" class="control-label x90">状态：</label>
+                    <input type="text" id="state" value="" name="state" style="width: 150px" readonly="true">
+                </td>
+                <td>
+                    <label for="stores" class="control-label x90">门店：</label>
+                    <input type="text" id="stores" value="" name="invoice.stores" style="width: 150px" readonly="true">
+                </td>
+
+                <td>
+                    <label for="custsales" class="control-label x90">客户经理：</label>
+                    <input type="text" id="custsales" name="invoice.custsales" style="width: 150px" readonly="true">
+                </td>
+            </tr>
+            <!--主表第二行-->
+            <tr>
+                <td>
+                    <label class="control-label x90" for="custusername">客户姓名：</label>
+                    <input type="text" name="invoice.username" id="custusername" data-rule="required"
+                           data-url="CustomerManagement/sales_order_design_invoice.html" data-toggle="lookup"
+                           data-group="invoice" data-id="sales_order_design_invoice" class="doc_lookup"
+                           data-title="收款单选择" style="width: 150px" readonly="true">
+
+                </td>
+                <td>
+                    <label class="control-label x90" for="mobile">手机号：</label>
+                    <input type="text" id="mobile" name="invoice.mobile" style="width: 150px"
+                           readonly="true">
+                </td>
+                <td>
+                    <label for="receivedaddress" class="control-label x90">送货地址：</label>
+                    <input type="text" id="receivedaddress" name="invoice.receivedaddress" class="receivedaddress"
+                           style="width: 150px" readonly="true">
+                </td>
+                <td>
+                    <label for="businessdate" class="control-label x90">业务日期：</label>
+                    <input type="text" id="businessdate" value="" name="businessdate" data-toggle="datepicker"
+                           data-rule="required" style="width: 150px">
+                </td>
+            </tr>
+            <!--主表第三行-->
+            <tr>
+                <td>
+                    <label for="paymentaccount" class="control-label x90">活动政策：</label>
+                    <input type="text" id="paymentaccount" value="" class="paymentaccount"
+                           style="width: 150px">
+                </td>
+                <td>
+                    <label for="salespackage" class="control-label x90">套餐名称：</label>
+                    <input type="text" name="salespackageseleted.salespackagename" id="salespackage"
+                           data-rule="required" data-url="CustomerManagement/sales_package_select.html"
+                           data-toggle="lookup" data-group="salespackageseleted" class="doc_lookup"
+                           data-title="套餐选择_add" style="width: 150px" readonly="true">
+
+                </td>
+                <td>
+                    <label for="classification" class="control-label x90">材料一级分类：</label>
+                    <select name="classification" id="classification" data-toggle="selectpicker" data-rule="required">
+                        <option value="" selected="true">请选择</option>
+                        <option value="主材">主材</option>
+                        <option value="辅材">辅材</option>
+                        <option value="订制品">订制品</option>
+                    </select>
+                </td>
+
+            </tr>
+            <tr>
+                <td colspan="3"><label for="details" class="control-label x90">备注：</label>
+                    <textarea type="text" id="details" value="" name="details" size="15"
+                              style="width:80%;resize: none"></textarea></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div style="margin:50px 0 10px 0;">
+            <button type="button" class="btn btn-green" data-icon="edit" onclick="select_sales_package('个性包')">选择个性包
+            </button>
+            <button class="btn-orange" onclick="delete_row()">删除行</button>
+            <button class="btn-blue" data-toggle="dialog" data-mask="true">查看附件</button>
+        </div>
+
+        <div id="tableContanier">
+            <table class="table table-bordered table-hover table-striped bjui-tabledit"
+                   id="sales_order_design_add_detail_table" data-single-noindex="true">
+                <!--表格的头，先加载-->
+                <thead>
+                <tr>
+                    <th title="">行号</th>
+                    <th title="">行状态</th>
+                    <th title="">料号</th>
+                    <th title="">分类</th>
+                    <th title="">品牌</th>
+                    <th title="">商品名称</th>
+                    <th title="">规格</th>
+                    <th title="">型号</th>
+                    <th title="">颜色</th>
+                    <th title="">材质</th>
+                    <th title="">使用阶段</th>
+                    <th title="">单位</th>
+                    <th title="">毛重</th>
+                    <th title="">重量单位</th>
+                    <th title="">单位用户量</th>
+                    <th title="">最小包装MPQ</th>
+                    <th title="">数量</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+        <div id="sales_order_count"></div>
+    </form>
+</div>
+</body>
+</html>

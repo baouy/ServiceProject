@@ -1,0 +1,247 @@
+<div id="testdiv" style="width: 100%; height: 100%;">
+    <script type="text/javascript">
+        var tprValid = null,tprdetailValidList = null
+
+
+        $('#testform').bind('valid.form', function() {
+
+
+            tprValid = {
+                requireddate: $("#requireddate").val(),
+                details: $("#details").val(),
+                receiveduser: $("#receiveduser").val(),
+                receivedphone: $("#receivedphone").val(),
+                receivedaddress: $("#receivedaddress").val(),
+                contractid: $("#contractid").val()
+            }
+
+            $('#test1').datagrid('saveAll');
+        });
+
+
+        <!--明细行渲染-->
+        $('#test1').datagrid({
+            gridTitle:'采购信息',
+            local: 'remote',
+            data:"{list:[]}",
+            dataType: 'json',
+            addLocation: 'next',
+            filterThead:false,
+            columns: [{name:'linenum', width:'100', label:'行号',attrs:{readonly:'readonly'}},
+                {name:'linestate', width:'100', label:'行状态',attrs:{readonly:'readonly'}},
+                {name:'itemno', width:'100',label:'料号',type:'lookup',attrs: {'readonly':"true",'data-rule':'required','data-url':'PurchaseManagement/purchase_materials.html','data-width':600,'class':'doc_lookup form-control'}},
+                {name:'partname', width:'100',label:'品名'},
+                {name:'partstyle', width:'100',label:'型号'},
+                {name:'partspec', width:'100',label:'规格'},
+                {name:'colorlevel', width:'100',label:'颜色'},
+                {name:'material', width:'100',label:'材质'},
+                {name:'brand', width:'100',label:'品牌'},
+                {name:'prqty', width:'100',label:'数量',calc:'sum'},
+                {name:'funit', width:'100',label:'单位'},
+                {name:'linedetails', width:'100',label:'行备注'},
+                {name:'poqty', width:'100',label:'关联数'},
+                {name:'sourcenum', width:'100',label:'来源单号'},
+                {name:'soucrelinenum', width:'100',label:'来源行号'},
+                {name:'itemid',hide:true},
+            ],
+            paging:false,
+            showToolbar: true,
+            toolbarItem: 'add,cancel',
+            saveAll: false,
+            editUrl:'meiwo',
+            issaveallback:'save_json',
+            showEditbtnscol:true,   //菜单列(是否显示编辑按钮列。)
+            contextMenuB:true,       //在数据行右键点击时出现快捷菜单，菜单选项有(刷新、添加、编辑、取消、删除)。
+            showTfoot:true
+        });
+
+
+        function save_json(json) {
+            if (json.length > 0) {
+                tprdetailValidList = json;
+            }
+
+            var objOb = new Object();
+            objOb.tprValid = tprValid;
+            if (tprdetailValidList != null){
+                objOb.tprdetailValidList = tprdetailValidList;
+            }
+
+
+            $.ajax({
+                url: '/v1/pr/addprocurement',
+                contentType:"application/json",
+                dataType: 'json',
+                type: 'POST',
+                data:JSON.stringify(objOb),
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if(d.state == 200) {
+                        console.log(d)
+                        test_id = d.data.id;
+                        $(this).bjuiajax('doLoad', {url:'PurchaseManagement/purchase_request_edit2.html', target:'#testdiv',loadingmask:true});
+                        $('#purchase_request_list').datagrid('refresh');
+                    }else{
+                        $(this).alertmsg('ok', '保存失败');
+                    }
+                }
+            });
+
+        }
+
+
+
+
+
+
+        function delete_purchase() {
+            var selected = $("#purchase_add_table input[name='id']").val();
+            $.ajax({
+                url: '/v1/pr/deleteprocurement',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id: selected
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (d) {
+                    if (d.state == 200) {
+                        BJUI.dialog("closeCurrent", this);
+                        $("#purchase_add_tips").alertmsg('info', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                        $('#purchase_request_list').datagrid("refresh");
+                    } else {
+                        $("#purchase_add_tips").alertmsg('error', d.content, {
+                            displayMode: 'fade',
+                            alertTimeout: 1000,
+                            displayPosition: 'middlecenter'
+                        });
+                    }
+                }
+            });
+        }
+
+        function purchase_ad_delete() {
+            $("#purchase_add_tips").alertmsg('confirm', '确定要删除吗?', {
+                displayMode: 'fade',
+                displayPosition: 'middlecenter',
+                okName: "是",
+                cancelName: "否",
+                okCall: 'delete_purchase'
+            });
+        }
+
+
+        $("#purchase_add").on('bjui.initUI', function () {
+            $("#purchase_add tbody tr").click(function () {
+                $(this).removeClass("readonly")
+                        .addClass("selected").siblings("tr").removeClass("selected")
+                        .addClass("readonly");
+            })
+        })
+
+        /**
+         * 打开套餐选择界面
+         * */
+        function select_sales_package() {
+
+            //打开编辑界面
+            $(this).dialog({
+                id: "storage_edit",
+                title: "选择套餐_edit",
+                url: "PurchaseManagement/delivery_apply_selecte.html",
+
+                width: 1050,
+                height: 600,
+                mask: true
+            });
+
+            $("#add").attr("disabled", "disabled");
+        }
+    </script>
+<div class="bjui-pageContent">
+    <form data-toggle="validate" id="testform" >
+        <div style="margin:0px 0px 10px 0px;">
+            <button class="btn btn-blue" data-icon="save" onclick="purchaseAddInfo()" id="purchase_save_btn">保存</button>
+            <button type="button" class="btn btn-green" data-icon="thumbs-up" disabled="disabled"
+                    id="purchase_audit_btn" onclick="purchase_add_audit()">审核
+            </button>
+            <button type="button" class="btn btn-orange" data-icon="thumbs-down" disabled="disabled"
+                    id="purchase_noaudit_btn" onclick="purchase_remove_audit()">弃审
+            </button>
+            <button type="button" class="btn btn-red" data-icon="times" disabled="disabled"
+                    onclick="purchase_ad_delete()" id="purchase_ad_de">删除
+            </button>
+            <button class="btn-close btn" data-icon="close"><i class="fa fa-close"></i>关闭</button>
+            <button class="btn btn-green" onclick="purchase_add_create_po()" disabled="disabled"
+                    id="purchase_add_create_po_bt">生成采购单
+            </button>
+            <button type="button" class="btn btn-green" data-icon="edit" onclick="select_sales_package()">选择发货申请</button>
+        </div>
+        <table class="table table-bordered table-hover table-striped table-top bjui-tabledit" id="purchase_add_table"
+               width="100%">
+            <input type="hidden" name="id" value="">
+            <input type="hidden" name="contractid" value="" id="contractid">
+            <tbody>
+            <tr>
+                <td>
+                    <label for="podoc" class="control-label x90">单据号：</label>
+                    <input type="text" id="podoc" value="" name="podoc" size="15" readonly="true">
+                </td>
+                <td>
+                    <label for="businessdate" class="control-label x90">申请日期：</label>
+                    <input type="text" id="businessdate" value="" name="businessdate" style="width: 150px"
+                           readonly="true">
+                </td>
+                <td>
+                    <label for="state" class="control-label x90">状态：</label>
+                    <input type="text" id="state" value="" name="state" style="width: 150px" readonly="true">
+                </td>
+                <td>
+                    <label for="orgname" class="control-label x90">组织：</label>
+                    <input type="text" id="orgname" value="" name="orgname" style="width: 150px" readonly="true">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="receiveduser" class="control-label x90">收货人：</label>
+                    <input type="text" id="receiveduser" value="" name="applyInfo.receiveduser" style="width: 150px"
+                           readonly="true">
+                </td>
+                <td><label for="receivedphone" class="control-label x90">收货人手机：</label>
+                    <input type="text" id="receivedphone" value="" name="applyInfo.receivedphone" style="width: 150px"
+                           readonly="true"></td>
+                <td>
+                    <label for="receivedaddress" class="control-label x90">收货地址：</label>
+                    <input type="text" id="receivedaddress" value="" name="applyInfo.receivedaddress" style="width: 150px"
+                           readonly="true">
+                </td>
+                <td>
+                    <label for="requireddate" class="control-label x90">要求交期：</label>
+                    <input type="text" id="requireddate" value="" name="requireddate" data-toggle="datepicker"
+                           data-rule="required" style="width: 150px">
+                </td>
+
+            </tr>
+            <tr>
+                <td colspan="3"><label for="details" class="control-label x90">备注：</label>
+                    <textarea type="text" id="details" value="" name="details" size="15"
+                              style="width:300px;height:25px;resize: none"></textarea></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!--明细行table-->
+        <table id="test1" class="table table-hover" data-width="100%"></table>
+    </form>
+</div>
+</div>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+        var enter = $(".navtab-tab .active").children("a").attr("title");//判断是哪个菜单列表进入的
+        if(enter == "采购申请"){
+            $('#purchase_materials_list').datagrid({
+                local: 'remote',
+                dataUrl: '/v1/myother/getitem',
+                dataType: 'json',
+                sortAll: true,
+                loadType: 'get',
+                filterAll: true,
+                height:'95%',
+                columns: [
+                    {name:'itemclass', width:'150', label:'分类'},
+                    {name:'itemno', width:'150', label:'料号'},
+                    {name:'partname', width:'150', label:'品名'},
+                    {name:'partspec', width:'150', label:'规格'},
+                    {name:'partstyle', width:'150', label:'型号'},
+                    {name:'funit', width:'150', label:'单位'},
+                    {name:'brand', width:'150', label:'品牌'},
+                    {name: 'id', width: '80', label: '主键',hide: true},
+                    {name:'material', width:'150', label:'材质'},
+                    {name:'colorlevel', width:'150', label:'颜色'},
+                    {name:'grossweight', width:'150', label:'毛重'},
+                    {name:'unitweight', width:'150', label:'重量单位'},
+                ],
+                showLinenumber:true,
+                paging: {pageSize:20, selectPageSize:'50,80', pageCurrent:1},
+                columnMenu: true,
+                columnShowhide: true,
+                columnFilter: true,
+                columnLock: false,
+                fullGrid: false
+            });
+        }else if(enter == "采购订单"){
+            var supplierid;
+            var currentDialogTitle = $.CurrentDialog.find("h1").text();
+            supplierid = $("#supplierid").val();
+            if(supplierid!="") {
+                $('#purchase_materials_list').datagrid({
+                    local: 'remote',
+                    dataUrl: '/v1/myother/getitem?supplierid=' + supplierid,
+                    dataType: 'json',
+                    sortAll: true,
+                    loadType: 'get',
+                    filterAll: true,
+                    columns: [
+                        {name: 'itemclass', width: '150', label: '分类'},
+                        {name: 'itemno', width: '150', label: '料号'},
+                        {name: 'partname', width: '150', label: '品名'},
+                        {name: 'partspec', width: '150', label: '规格'},
+                        {name: 'partstyle', width: '150', label: '型号'},
+                        {name: 'funit', width: '150', label: '单位'},
+                        {name: 'brand', width: '150', label: '品牌'},
+                        {name: 'procost', width: '150', label: '采购单价'},
+                        {name: 'taxrate', width: '150', label: '税率'},
+                        {name: 'id', width: '80', label: '主键', hide: true},
+                        {name: 'material', width: '150', label: '材质'},
+                        {name: 'colorlevel', width: '150', label: '颜色'},
+                        {name: 'grossweight', width: '150', label: '毛重'},
+                        {name: 'unitweight', width: '150', label: '重量单位'},
+                    ],
+                    showLinenumber: true,
+                    paging: {pageSize: 20, selectPageSize: '50,80', pageCurrent: 1},
+                    columnMenu: true,
+                    columnShowhide: true,
+                    columnFilter: true,
+                    columnLock: false,
+                    fullGrid: false
+                });
+            }else{
+                //提示先选择供应商
+                BJUI.alertmsg('info', "请先选择供应商",{displayMode:'fade',alertTimeout:1000,displayPosition:'middlecenter'});
+                BJUI.dialog("closeCurrent",this);
+            }
+        }
+
+
+        function purchase_select_materials(){
+            var currentDialogTitle = $.CurrentDialog.find("h1").text();
+            if(enter == "采购订单"){
+                if(currentDialogTitle == " 料品选择") {//采购订单修改
+                    var itemclass = $("#purchase_materials_list .datagrid-selected-tr>td:eq(1)").text();//分类
+                    var itemno =  $("#purchase_materials_list .datagrid-selected-tr>td:eq(2)").text();//料号
+                    var partname = $("#purchase_materials_list .datagrid-selected-tr>td:eq(3)").text();//品名
+                    var partspec = $("#purchase_materials_list .datagrid-selected-tr>td:eq(4)").text();//规格
+                    var partstyle = $("#purchase_materials_list .datagrid-selected-tr>td:eq(5)").text();//型号
+                    var funit = $("#purchase_materials_list .datagrid-selected-tr>td:eq(6)").text();//单位
+                    var brand = $("#purchase_materials_list .datagrid-selected-tr>td:eq(7)").text();
+                    var procost = $("#purchase_materials_list .datagrid-selected-tr>td:eq(8)").text();
+                    var taxrate = $("#purchase_materials_list .datagrid-selected-tr>td:eq(9)").text();
+                    var itemid = $("#purchase_materials_list .datagrid-selected-tr>td:eq(10)").text();
+                    var material = $("#purchase_materials_list .datagrid-selected-tr>td:eq(11)").text();
+                    var colorlevel = $("#purchase_materials_list .datagrid-selected-tr>td:eq(12)").text();
+                    var grossweight = $("#purchase_materials_list .datagrid-selected-tr>td:eq(13)").text();
+                    var unitweight = $("#purchase_materials_list .datagrid-selected-tr>td:eq(14)").text();
+
+                    var id = localStorage.getItem("purchase_selected_material");
+                    $("#purchase_order_table tbody tr:eq("+id+") .itemclass").val(itemclass);
+                    $("#purchase_order_table tbody tr:eq("+id+") .itemno").val(itemno);
+                    $("#purchase_order_table tbody tr:eq("+id+") .partname").val(partname);
+                    $("#purchase_order_table tbody tr:eq("+id+") .partspec").val(partspec);
+                    $("#purchase_order_table tbody tr:eq("+id+") .partstyle").val(partstyle);
+                    $("#purchase_order_table tbody tr:eq("+id+") .funit").val(funit);
+                    $("#purchase_order_table tbody tr:eq("+id+") .brand").val(brand);
+                    $("#purchase_order_table tbody tr:eq("+id+") .itemid").val(itemid);
+                    $("#purchase_order_table tbody tr:eq("+id+") .procost").val(procost);
+                    $("#purchase_order_table tbody tr:eq("+id+") .taxrate").val(taxrate);
+                    $("#purchase_order_table tbody tr:eq("+id+") .material").val(material);
+                    $("#purchase_order_table tbody tr:eq("+id+") .colorlevel").val(colorlevel);
+                    $("#purchase_order_table tbody tr:eq("+id+") .colorlevel").val(grossweight);
+                    $("#purchase_order_table tbody tr:eq("+id+") .colorlevel").val(unitweight);
+
+
+                    $("#selected").attr("data-args","{brand:"+brand+","+"procost:"+procost+","+"taxrate:"+taxrate+","
+                            +"taxunitprice:"+procost+","+"itemid:"+itemid+","+"itemclass:"+itemclass+","
+                            +"itemno:"+itemno+","+"partname:"+partname+","+"partspec:"+partspec+","
+                            +"grossweight:"+grossweight+","+"unitweight:"+unitweight+","
+                            +"partstyle:"+partstyle+","+"funit:"+funit+","+"material:"+material+","+"colorlevel:"+colorlevel+"}");
+                    BJUI.dialog("closeCurrent",this);
+                    localStorage.removeItem("purchase_selected_material");
+                }else{//采购订单新增
+
+                    var itemclass ="'"+ $("#purchase_materials_list .datagrid-selected-tr>td:eq(1)").text()+"'";//分类
+                    var itemno =  "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(2)").text()+"'";//料号
+                    var partname = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(3)").text()+"'";//品名
+                    var partspec = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(4)").text()+"'";//规格
+                    var partstyle = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(5)").text()+"'";//型号
+                    var funit = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(6)").text()+"'";//单位
+                    var brand = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(7)").text()+"'";
+                    var procost = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(8)").text()+"'";
+                    var taxrate = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(9)").text()+"'";
+                    var itemid = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(10)").text()+"'";
+                    var material = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(11)").text()+"'";
+                    var colorlevel = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(12)").text()+"'";
+                    var grossweight = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(13)").text()+"'";
+                    var unitweight = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(14)").text()+"'";
+
+                    $("#selected").attr("data-args","{brand:"+brand+","+"procost:"+procost+","+"taxrate:"+taxrate+","
+                            +"itemid:"+itemid+","+"taxunitprice:"+procost+","+"itemclass:"+itemclass+","
+                            +"itemno:"+itemno+","+"partname:"+partname+","+"partspec:"+partspec+","
+                            +"grossweight:"+grossweight+","+"unitweight:"+unitweight+","
+                            +"partstyle:"+partstyle+","+"funit:"+funit+","+"material:"+material+","+"colorlevel:"+colorlevel+"}");
+                    BJUI.dialog("closeCurrent",this);
+                    localStorage.removeItem("purchase_selected_material");
+                }
+            }else {//采购申请
+                if(currentDialogTitle == " 材料选则") { //采购申请编辑
+                    var itemclass = $("#purchase_materials_list .datagrid-selected-tr>td:eq(1)").text();//分类
+                    var itemno =  $("#purchase_materials_list .datagrid-selected-tr>td:eq(2)").text();//料号
+                    var partname = $("#purchase_materials_list .datagrid-selected-tr>td:eq(3)").text();//品名
+                    var partspec = $("#purchase_materials_list .datagrid-selected-tr>td:eq(4)").text();
+                    var partstyle = $("#purchase_materials_list .datagrid-selected-tr>td:eq(5)").text();//型号
+                    var funit = $("#purchase_materials_list .datagrid-selected-tr>td:eq(6)").text();//单位
+                    var brand = $("#purchase_materials_list .datagrid-selected-tr>td:eq(7)").text();
+                    var itemid = $("#purchase_materials_list .datagrid-selected-tr>td:eq(8)");
+                    var material = $("#purchase_materials_list .datagrid-selected-tr>td:eq(9)").text();
+                    var colorlevel = $("#purchase_materials_list .datagrid-selected-tr>td:eq(10)").text();
+                    var grossweight = $("#purchase_materials_list .datagrid-selected-tr>td:eq(11)").text();
+                    var unitweight = $("#purchase_materials_list .datagrid-selected-tr>td:eq(12)").text();
+
+                    var id = localStorage.getItem("purchase_selected_material");
+                    $("#purchase_re_table tbody tr:eq("+id+") .itemclass").val(itemclass);
+                    $("#purchase_re_table tbody tr:eq("+id+") .itemno").val(itemno);
+                    $("#purchase_re_table tbody tr:eq("+id+") .partname").val(partname);
+                    $("#purchase_re_table tbody tr:eq("+id+") .partspec").val(partspec);
+                    $("#purchase_re_table tbody tr:eq("+id+") .partstyle").val(partstyle);
+                    $("#purchase_re_table tbody tr:eq("+id+") .funit").val(funit);
+                    $("#purchase_re_table tbody tr:eq("+id+") .brand").val(brand);
+                    $("#purchase_re_table tbody tr:eq("+id+") .itemid").val(itemid);
+                    $("#purchase_re_table tbody tr:eq("+id+") .material").val(material);
+                    $("#purchase_re_table tbody tr:eq("+id+") .colorlevel").val(colorlevel);
+                    $("#purchase_order_table tbody tr:eq("+id+") .colorlevel").val(grossweight);
+                    $("#purchase_order_table tbody tr:eq("+id+") .colorlevel").val(unitweight);
+
+                    $("#selected").attr("data-args","{brand:"+brand+","+"itemid:"+id+","+"itemclass:"+itemclass+","
+                            +"itemno:"+itemno+","+"partname:"+partname+","
+                            +"partspec:"+partspec+","+"partstyle:"+partstyle+","
+                            +"grossweight:"+grossweight+","+"unitweight:"+unitweight+","
+
+                            +"funit:"+funit+","+"material:"+material+","+"colorlevel:"+colorlevel+"}");
+                    BJUI.dialog("closeCurrent",this);
+                    localStorage.removeItem("purchase_selected_material");
+
+                } else {//采购申请添加
+                    var itemclass = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(1)").text()+"'";//分类
+                    var itemno =  "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(2)").text()+"'";//料号
+                    var partname = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(3)").text()+"'";//品名
+                    var partspec = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(4)").text()+"'";//规格
+                    var partstyle = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(5)").text()+"'";//型号
+                    var funit ="'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(6)").text()+"'";//单位
+                    var brand ="'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(7)").text()+"'";//品牌
+                    var id ="'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(8)").text()+"'";
+                    var material ="'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(9)").text()+"'";//品牌
+                    var colorlevel ="'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(10)").text()+"'";
+                    var grossweight = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(11)").text()+"'";
+                    var unitweight = "'"+$("#purchase_materials_list .datagrid-selected-tr>td:eq(12)").text()+"'";
+                    $("#selected").attr("data-args","{brand:"+brand+","+"itemid:"+id+","+"itemclass:"+itemclass+","
+                            +"itemno:"+itemno+","+"partname:"+partname+","+"partspec:"
+                            +partspec+","+"partstyle:"+partstyle+","
+                            +"grossweight:"+grossweight+","+"unitweight:"+unitweight+","
+
+                            +"funit:"+funit+","+"material:"+material+","+"colorlevel:"+colorlevel+"}");
+                    BJUI.dialog("closeCurrent",this);
+                    localStorage.removeItem("purchase_selected_material");
+                }
+            }
+
+        };
+
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent" id="materialsTable">
+    <div style="margin-bottom:15px;" id="purchase_materials_btn">
+        <!--<button class="btn-default" data-toggle="lookupback" data-icon="check" data-args="{itemno:'', partstyle:'自由职业'}" class="btn btn-blue" id="selectedBtn">选择</button>-->
+        <a href="javascript:;" data-toggle="lookupback" onclick="purchase_select_materials()" class="btn btn-blue" data-args="" title="选择本项" data-icon="check" id="selected"><i class="fa fa-check"></i> 选择</a>
+        <button type="button" class="btn-close btn" data-icon="close"><i class="fa fa-close"></i> 关闭</button>
+    </div>
+    <table id="purchase_materials_list">
+
+    </table>
+</div>
+</body>
+</html>

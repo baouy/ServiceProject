@@ -1,0 +1,217 @@
+<html>
+<head>
+    <script type="text/javascript">
+        customerfollow_get();
+        //跟进类型
+        function getFollowStype (id) {
+            $("#followtype").empty();
+            $.ajax({
+                url:"/v1/other/getfollowstype?id="+id,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    for (var i = 0; i < data.data.length; i++) {
+                        $("#followtype").append($("<option value=" + data.data[i].id + ">" + data.data[i].labelname + "</option>"));
+                        if(i == 0){
+                            $("input[name='followtypeid']").attr("value",$('#followtype option:eq(0)').val());
+                            $("input[name='followtype']").attr("value",$('#followtype option:eq(0)').text());
+                        }
+                    }
+                }
+            })
+        };
+
+        $("#followstate").change(function(){
+//            $('#followstate option:selected').attr("selected","selected");
+            $("input[name='followstateid']").attr("value",$('#followstate option:selected').val());
+            $("input[name='followstate']").attr("value",$('#followstate option:selected').text());
+
+            getFollowStype($('#followstate option:selected').val());
+
+            if($('#followstate option:selected').text() == "已预约"){
+
+                $("#appdate").removeAttr("novalidate");
+                $("#apptime").removeAttr("novalidate");
+
+                $("#appdate").attr("data-rule","required");
+                $("#apptime").attr("data-rule","required");
+
+                $("#tr_5").removeAttr("class");
+                $("#tr_6").removeAttr("class");
+                $("#tr_7").removeAttr("class");
+                $("#tr_8").removeAttr("class");
+                $("#tr_9").removeAttr("class");
+                $("#tr_10").removeAttr("class");
+
+            }else{
+                $("#appdate").attr("novalidate","");
+                $("#apptime").attr("novalidate","");
+
+                $("#appdate").attr("class","form-control");
+                $("#apptime").attr("class","form-control");
+
+                $(".msg-box").attr("style","display: none;");
+                $(".msg-box").attr("style","display: none;");
+
+                $("#tr_5").attr("class","hide");
+                $("#tr_6").attr("class","hide");
+                $("#tr_7").attr("class","hide");
+                $("#tr_8").attr("class","hide");
+                $("#tr_9").attr("class","hide");
+                $("#tr_10").attr("class","hide");
+
+
+                $("#appdate").val("");
+                $("#apptime").val("");
+                $("#appaddress").selectpicker('val',"");
+                $("#adults").val("");
+                $("#oldman").val("");
+                $("#child").val("");
+            }
+        });
+
+        $("#followtype").change(function(){
+//            $('#followtype option:selected').attr("selected","selected");
+            $("input[name='followtypeid']").attr("value",$('#followtype option:selected').val());
+            $("input[name='followtype']").attr("value",$('#followtype option:selected').text());
+
+        });
+
+
+        function customer_edit_Calback(json) {
+            if(json.state == 200){ //保存成功
+                var a = $('#state').val();
+                $('#customer_state').val(a);
+                $('#customer_notes').datagrid('refresh');
+                BJUI.dialog('closeCurrent',this);
+            }else if(json.state == 10004){
+                $(this).alertmsg('info', json.content);
+                BJUI.dialog('closeCurrent',this);
+            }
+        }
+        
+        function customerfollow_get() {
+            var selected = $("#customer_notes").find('tr.datagrid-selected-tr');
+            if (selected[0].lastChild.innerText > 0) {
+                /**
+                 * 获取客户详细信息
+                 * */
+                $.ajax({
+                    url: '/v1/record/customerfollow_get?fid=' + selected[0].lastChild.innerText,
+                    dataType: 'json',
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        for (var i in d.data) {
+                            $.CurrentDialog.find("#" + i).val(d.data[i]);
+                            if (i == "followstate") {
+                                followstate = d.data["followstate"];
+                                if (followstate == "已预约") {
+                                    $("#tr_5").removeAttr("class");
+                                    $("#tr_6").removeAttr("class");
+                                    $("#tr_7").removeAttr("class");
+                                    $("#tr_8").removeAttr("class");
+                                    $("#tr_9").removeAttr("class");
+                                    $("#tr_10").removeAttr("class");
+                                }
+                            } else if (i == "followtype") {
+                                followtype = d.data["followtype"];
+                            } else if (i == "id") {
+                                $.CurrentDialog.find("input[name='id']").attr("value", d.data["id"]);
+                            }else if(i == "appaddress"){
+                                $.CurrentDialog.find("#appaddress").selectpicker('val',d.data[i]);
+                            }else if(i == "followstate"){
+                                if (d.data(i) == "已预约"){
+                                    $("#tr_5").removeAttr("class");
+                                    $("#tr_6").removeAttr("class");
+                                    $("#tr_7").removeAttr("class");
+                                    $("#tr_8").removeAttr("class");
+                                    $("#tr_9").removeAttr("class");
+                                    $("#tr_10").removeAttr("class");
+                                }
+                            }
+                        }
+                        customer_getFollowState();//获取跟踪状态
+                    }
+                });
+            }
+        }
+        
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent"  style="padding: 0;">
+    <form action="/v1/record/customerfollow_reset"  data-toggle="validate" data-callback="customer_edit_Calback" id="customer_follow_record">
+        <table class="table table-condensed table-hover" width="100%">
+            <input value="" name="followstateid" type="hidden">
+            <input value="" name="followtypeid" type="hidden">
+            <input value="" name="followstate" type="hidden" id="state">
+            <input value="" name="followtype" type="hidden">
+            <input value="" name="id" type="hidden">
+            <input value="" name="tcustomerid_fk" type="hidden" id="tcustomerid_fk">
+            <tbody>
+            <tr>
+                <td><label class="control-label x80" for="followstate" >跟进状态：</label></td>
+                <td><select type="text" id="followstate" name="" style="width: 150px;" data-rule="required" class="form-control" ></select></td>
+            </tr>
+            <tr>
+                <td><label class="control-label x80" for="followtype" >跟进类型：</label></td>
+                <td><select type="text" id="followtype" class="form-control" style="width: 150px;"></select></td>
+            </tr>
+            <tr>
+                <td><label class="control-label x80" for="followdetails" >跟进内容：</label></td>
+                <td><input type="text" name="followdetails" id="followdetails" size="30" class="form-control" style="width: 150px;"/></td>
+            </tr>
+            <tr>
+                <td><label class="control-label x80" for="followdate">跟进日期：</label></td>
+                <td><input type="text" name="followdate" data-toggle="datepicker" data-pattern="yyyy-MM-dd" id="followdate" size="30" class="form-control"/></td>
+            </tr>
+            <tr>
+                <td><label class="control-label x80" for="duration" >沟通时长：</label></td>
+                <td><input type="text" name="duration" id="duration" size="30" class="form-control" style="width: 150px;"/></td>
+            </tr>
+            <tr id="tr_5" class="hide">
+                <td><label class="control-label x80" for="appdate">预约日期：</label></td>
+                <td><input type="text" name="appdate" data-toggle="datepicker" data-pattern="yyyy-MM-dd" id="appdate" size="30" class="form-control"/></td>
+            </tr>
+            <tr id="tr_6" class="hide">
+                <td><label class="control-label x80" for="apptime">预约时间段：</label></td>
+                <td><input type="text" name="apptime" id="apptime" size="30" class="form-control" style="width: 150px;"/></td>
+            </tr>
+
+            <tr id="tr_7" class="hide">
+                <td><label class="control-label x80" for="appaddress">预约地点：</label></td>
+                <td><select name="appaddress" data-toggle="selectpicker" id="appaddress" >
+                    <option value="" selected="true">请选择</option>
+                    <option value="活动现场">活动现场</option>
+                    <option value="公司">公司</option>
+                </select></td>
+            </tr>
+            <tr id="tr_8" class="hide">
+                <td><label class="control-label x80" for="adults">成年人数：</label></td>
+                <td><input type="text" name="adults" id="adults" size="30" class="form-control" data-rule="digits" style="width: 150px;"/></td>
+            </tr>
+            <tr id="tr_9" class="hide">
+                <td><label class="control-label x80" for="oldman">老人数：</label></td>
+                <td><input type="text" name="oldman" id="oldman" size="30" class="form-control" data-rule="digits" style="width: 150px;"/></td>
+            </tr>
+            <tr id="tr_10" class="hide">
+                <td><label class="control-label x80" for="child">小孩子数：</label></td>
+                <td><input type="text" name="child" id="child" size="30" class="form-control" data-rule="digits" style="width: 150px;"/></td>
+            </tr>
+            </tbody>
+            </tbody>
+        </table>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="submit" class="btn-default" data-icon="save">保存</button></li>
+    </ul>
+</div>
+</body>
+</html>

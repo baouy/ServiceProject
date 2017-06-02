@@ -1,0 +1,73 @@
+﻿<script type="text/javascript">
+function wtf(json){
+    if(json.state==200){
+        BJUI.dialog('closeCurrent',this);
+        var treeObj = $.fn.zTree.getZTreeObj("menu-all-ztree");
+        treeObj.reAsyncChildNodes(null,'refresh');
+    }
+}
+
+</script>
+<div class="bjui-pageContent">
+    <form action="/v1/roledata/menu_edit" data-toggle="validate" data-callback="wtf">
+        <input type="hidden" id="rolemenu_id" value=""  name="id" size="15" >
+        <input type="hidden" id="rolemenu_parentid" value=""  name="parentid" size="15" >
+        <table class="table table-condensed table-hover" width="100%">
+            <tbody>
+            <tr>
+                <td>
+                    <label for="rolemenu_rightname" class="control-label x90">菜单名称：</label>
+                    <input type="text" id="rolemenu_rightname" value="" data-rule="required" name="rightname" size="15" >
+                </td>
+
+                <td>
+                    <label for="rolemenu_orderno" class="control-label x90">排序：</label>
+                    <input type="text" id="rolemenu_orderno" value="" data-rule="required" name="orderno" size="15" >
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="rolemenu_righttype" class="control-label x90">菜单类型：</label>
+                    <select name="righttype" id="rolemenu_righttype" data-toggle="selectpicker">
+                        <option value="1" selected="true">菜单</option>
+                        <option value="2">按钮</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="rolemenu_systemid" class="control-label x90">所属系统：</label>
+                    <select name="systemid" id="rolemenu_systemid" data-toggle="selectpicker">
+                        <option value="2" selected="true">ERP</option>
+                        <option value="1">APP</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="rolemenu_picture" class="control-label x90">菜单图标：</label>
+                    <input type="text" id="rolemenu_picture" value=""  name="picture" size="15" >
+                </td>
+                <td>
+                    <label for="rolemenu_menupath" class="control-label x90">菜单路径：</label>
+                    <input type="text" id="rolemenu_menupath" value=""  name="menupath" size="20" >
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="rolemenu_menutype" class="control-label x90">菜单位置：</label>
+                    <input type="text" id="rolemenu_menutype" value=""   name="menutype" size="15" >
+                </td>
+                <td >
+                    <label for="rolemenu_description" class="control-label x90">描述：</label>
+                    <textarea name="description" id="rolemenu_description" data-toggle="autoheight" cols="30" rows="3"></textarea>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="submit" class="btn-default" data-icon="save">保存</button></li>
+    </ul>
+</div>

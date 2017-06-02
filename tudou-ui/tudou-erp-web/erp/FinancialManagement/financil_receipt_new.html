@@ -1,0 +1,276 @@
+<html>
+<head>
+    <script type="text/javascript">
+
+        $("#financial_vr_paymenttype").change(function() {
+           var select = $('#financial_vr_paymenttype option:selected').text();
+            if (select == "定金"){
+                $("#financial_vr_agreementdoc").removeAttr("novalidate");
+                $("#financial_vr_agreementdoc").attr("data-rule","required");
+            }else{
+                $("#financial_vr_agreementdoc").attr("novalidate","");
+                $("#financial_vr_agreementdoc").attr("class","form-control");
+                $("#financial_vr_agreementdoc_td").find(".msg-box").attr("style","display: none;");
+            }
+        });
+
+        $("#financial_vr_paymentmethods").change(function() {
+            var select = $('#financial_vr_paymentmethods option:selected').text();
+            if (select != "现金"){
+                $("#financial_vr_chequesaccount").removeAttr("novalidate");
+                $("#financial_vr_chequesaccount").attr("data-rule","required");
+            }else{
+                $("#financial_vr_chequesaccount").attr("novalidate","");
+                $("#financial_vr_chequesaccount").attr("class","form-control");
+                $("#financial_vr_chequesaccount_td").find(".msg-box").attr("style","display: none;");
+            }
+        });
+    </script>
+</head>
+<body>
+<div class="bjui-pageContent">
+    <form action="/v1/financial/voucher_add" data-toggle="validate" id="financial_vr_info" data-callback="financial_vr_back">
+
+        <input type="hidden" value="" name="contractid" id="financial_vr_contractid">
+        <input type="hidden" value="" name="custsalesid" id="financial_vr_custsalesid">
+        <input type="hidden" value="" name="beautychatid" id="financial_vr_beautychatid">
+        <input type="hidden" value="" name="custid_fk" id="financial_vr_custid_fk">
+
+		<div style="margin:15px;">
+            <button type="submit" type="button" class="btn btn-blue" data-icon="save">保存</button>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+            <button class="btn-default" data-icon="user" data-url="FinancialManagement/financil_customer_table.html" data-width="1050" data-height="400"
+                    data-toggle="dialog" data-id="financil_c" data-mask="true">收定金客户</button>
+            <button class="btn-default" data-icon="user" data-url="FinancialManagement/financil_customer_contract_table.html" data-width="1050" data-height="400"
+                    data-toggle="dialog" data-id="financil_cc" data-mask="true">收合同客户</button>
+        </div>
+        <table class="table table-condensed table-hover" width="100%">
+            <tr>
+                <td>
+                    <label for="first_title" class="control-label" style="font-size:18px;">收款单</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="financial_vr_invoicedoc" class="control-label x80">收款单号：</label>
+                    <input type="text" id="financial_vr_invoicedoc" value="" size="15" readonly="true" name="invoicedoc">
+                </td>
+                <td>
+                    <label for="financial_vr_orgname" class="control-label x80">组织：</label>
+                    <input type="text" id="financial_vr_orgname" value="" size="15" readonly="true" name="orgname">
+                </td>
+                <td>
+                    <label for="financial_vr_custsales" class="control-label x80">客户经理：</label>
+                    <input type="text" id="financial_vr_custsales" value="" size="15" name="custsales" data-rule="required">
+                </td>
+                <td>
+                    <label for="financial_vr_beautychat" class="control-label x80">渠道员：</label>
+                    <input type="text" id="financial_vr_beautychat" value="" size="15" readonly="true" name="beautychat">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="financial_vr_sodoc" class="control-label x80">合同号：</label>
+                    <input type="text" id="financial_vr_sodoc" value="" readonly="true" size="15"  name="sodoc">
+                </td>
+                <td>
+                    <label for="financial_vr_businessdate" class="control-label x80">收款日期：</label>
+                    <input type="text" id="financial_vr_businessdate" value="" size="15" name="businessdate" data-toggle="datepicker"  data-rule="required">
+
+                </td>
+
+                <td>
+                    <label for="financial_vr_source" class="control-label x80">来源：</label>
+                    <input type="text" id="financial_vr_source" name="source" value="" size="15" readonly="true" >
+                </td>
+
+                <td>
+                    <label for="financial_vr_state" class="control-label x80">状态：</label>
+                    <input type="text" id="financial_vr_state" value="" size="15" readonly="true" >
+                </td>
+            </tr>
+            <tr>
+
+                <td>
+                    <label for="financial_vr_username" class="control-label x80">姓名：</label>
+                    <input type="text" id="financial_vr_username" value="" size="15" name="username" data-rule="required">
+                </td>
+
+                <td>
+                    <label for="financial_vr_mobile" class="control-label x80">手机号：</label>
+                    <input type="text" id="financial_vr_mobile" value="" size="15" readonly="true" name="mobile" data-rule="required">
+                </td>
+
+                <td>
+                    <label for="financial_vr_paymenttype" class="control-label x80">收款类型：</label>
+                    <select name="paymenttype" data-toggle="selectpicker" id="financial_vr_paymenttype" data-rule="required">
+                        <option value="">请选择</option>
+                        <option value="定金">定金</option>
+                        <option value="定金补款">定金补款</option>
+                        <option value="无定金收款">无定金收款</option>
+                        <option value="首款">首款</option>
+                        <option value="合同补款">合同补款</option>
+                        <option value="优惠金额">优惠金额</option>
+                        <option value="尾款">尾款</option>
+                        <option value="退订">退订</option>
+                        <option value="退合同">退合同</option>
+                    </select>
+                </td>
+
+                <td id="financial_vr_agreementdoc_td">
+                    <label for="financial_vr_agreementdoc" class="control-label x80">定金协议号：</label>
+                    <input type="text" id="financial_vr_agreementdoc" value="" size="15" name="agreementdoc" class="form-control">
+                </td>
+            </tr>
+
+            <tr>
+
+                <td>
+                    <label for="financial_vr_paymentmethods" class="control-label x80">收款方式：</label>
+                    <select data-toggle="selectpicker" id="financial_vr_paymentmethods" name="paymentmethods" data-rule="required">
+                        <option value="">请选择</option>
+                        <option value="现金">现金</option>
+                        <option value="刷卡">刷卡</option>
+                        <option value="转账">转账</option>
+                        <option value="支付宝">支付宝</option>
+                        <option value="微信">微信</option>
+                        <option value="减免">减免</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="financial_vr_paymentamount" class="control-label x80">收款金额：</label>
+                    <input type="text" id="financial_vr_paymentamount" name="paymentamount" value="" size="15" data-rule="required">
+                </td>
+                <td>
+                    <label for="financial_vr_paymentaccount" class="control-label x80">收据号：</label>
+                    <input type="text" id="financial_vr_paymentaccount" value="" size="15" data-rule="required" name="paymentaccount">
+                </td>
+                <td id="financial_vr_chequesaccount_td">
+                    <label for="financial_vr_chequesaccount" class="control-label x80">客户付款账号：</label>
+                    <input type="text" id="financial_vr_chequesaccount" value="" placeholder="刷卡输入卡号后4位" size="15" name="chequesaccount" class="form-control" data-rule="required">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="financial_vr_provincename" class="control-label x80">省：</label>
+                    <select name="provincename" id="financial_vr_provincename" data-toggle="selectpicker" data-rule="required">
+                        <option value="">请选择</option>
+                        <option value="浙江省" selected="true">浙江省</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="financial_vr_cityname" class="control-label x80">市：</label>
+                    <select name="cityname" id="financial_vr_cityname" data-toggle="selectpicker" data-rule="required">
+                        <option value="">请选择</option>
+                        <option value="杭州市" selected="true">杭州市</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="financial_vr_districtname" class="control-label x80">区：</label>
+                    <select name="districtname" id="financial_vr_districtname" data-toggle="selectpicker" data-rule="required">
+                        <option value="" selected="true">请选择</option>
+                        <option value="上城区">上城区</option>
+                        <option value="下城区" >下城区</option>
+                        <option value="江干区" >江干区</option>
+                        <option value="拱墅区" >拱墅区</option>
+                        <option value="西湖区" >西湖区</option>
+                        <option value="滨江区" >滨江区</option>
+                        <option value="萧山区" >萧山区</option>
+                        <option value="余杭区" >余杭区</option>
+                        <option value="桐庐县" >桐庐县</option>
+                        <option value="淳安县" >淳安县</option>
+                        <option value="建德市" >建德市</option>
+                        <option value="富阳市" >富阳市</option>
+                        <option value="临安市" >临安市</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="financial_vr_road" class="control-label x80">街道：</label>
+                    <input type="text" name="road" id="financial_vr_road" value=""  size="15" data-rule="required">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="financial_vr_community" class="control-label x80">小区名称：</label>
+                    <input type="text" name="community" id="financial_vr_community" value=""  size="15" data-rule="required">
+                </td>
+                <td>
+                    <label for="financial_vr_building" class="control-label x80">栋数：</label>
+                    <input type="text" name="building" id="financial_vr_building" value=""  size="15">
+                </td>
+                <td>
+                    <label for="financial_vr_unit" class="control-label x80">单元：</label>
+                    <input type="text" name="unit" id="financial_vr_unit" value=""  size="15">
+                </td>
+                <td>
+                    <label for="financial_vr_room" class="control-label x80">房号：</label>
+                    <input type="text" name="room" id="financial_vr_room" value=""  size="15" >
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="financial_vr_rooms" class="control-label x80">室：</label>
+                    <input type="text" name="rooms" id="financial_vr_rooms" value=""  size="15">
+                </td>
+                <td>
+                    <label for="financial_vr_hall" class="control-label x80">厅：</label>
+                    <input type="text" name="hall" id="financial_vr_hall" value=""  size="15">
+                </td>
+                <td>
+                    <label for="financial_vr_kitchen" class="control-label x80">厨：</label>
+                    <input type="text" name="kitchen" id="financial_vr_kitchen" value=""  size="15" >
+                </td>
+                <td>
+                    <label for="financial_vr_toilet" class="control-label x80">卫：</label>
+                    <input type="text" name="toilet" id="financial_vr_toilet" value=""  size="15">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="financial_vr_balcony" class="control-label x80">阳台：</label>
+                    <input type="text" name="balcony" id="financial_vr_balcony" value="" size="15" >
+                </td>
+                <td>
+                    <label for="financial_vr_platform" class="control-label x80">发起平台：</label>
+                    <select data-toggle="selectpicker" id="financial_vr_platform" name="platform" data-rule="required">
+                        <option value="">请选择</option>
+                        <option value="默拍">默拍</option>
+                        <option value="公司">公司</option>
+                        <option value="活动现场">活动现场</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="financial_vr_scaledate" class="control-label x80">量房日期：</label>
+                    <input type="text" name="scaledate" id="financial_vr_scaledate" data-toggle="datepicker" value=""  size="15">
+                </td>
+                <td>
+                    <label for="financial_vr_scaletime" class="control-label x80">量房时间：</label>
+                    <input type="text" name="scaletime" id="financial_vr_scaletime" value=""  size="15" >
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="financial_vr_statetype" class="control-label x80">收款状态：</label>
+                    <select data-toggle="selectpicker" id="financial_vr_statetype" name="statetype">
+                        <option value="">请选择</option>
+                        <option value="银锁">银锁</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="financial_vr_details" class="control-label x80">备注：</label>
+                    <input type="text" id="financial_vr_details" value="" size="15" name="details">
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+        
+        </table>
+    </form>
+</div>
+
+</body>
+</html>

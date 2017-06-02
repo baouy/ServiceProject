@@ -1,0 +1,74 @@
+<html>
+<head>
+	<script type="text/javascript">
+		$('#table_design').datagrid({
+			local: 'remote',
+            dataUrl: '/v1/user/designer_distribution?stateid=24', // TODO ?stateid=24 已付定金
+			dataType: 'json',
+			sortAll: false,
+			loadType: 'get',
+			filterAll: true,
+			height:'95%',
+            columns:
+                [
+                    {name: 'flower_name', width: '150', label: '员工姓名'},
+                    {name: 'maxnum', width: '100', label: '当前客户数'},
+                    {name: 'depname', width: '100', label: '部门'},
+                ],
+            hiddenFields: ['id','depid','depcode'],
+			paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+			columnMenu: true,
+			columnShowhide: true,
+			columnFilter: true,
+			columnLock: false,
+			fullGrid: false,
+            dblOnClick:'assignToDesigner'
+		});
+
+        function assignToDesigner() {
+            var selected = $("#table_design").data('selectedDatas');
+            if (null == selected || selected.length == 0) {
+                $(this).alertmsg('warn', '请在列表中选择要操作的对象。');
+            } else {
+                $.ajax({
+                    url: '/v1/newcustomer/distribution',
+                    dataType: 'json',
+                    type: 'POST',
+                    data:{
+                        gid:s_c_ids,
+                        designerid:selected[0].id,
+                        designer:selected[0].flower_name,
+                        designercode:selected[0].depcode
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: function (d) {
+                        if (d.state == 200) {
+                            $(this).alertmsg('ok', '操作成功');
+                            BJUI.dialog('closeCurrent', this);
+                            sales_tab_refresh();
+                        }else{
+                            $(this).alertmsg('warn', '操作失败');
+                        }
+                    }
+                });
+            }
+		}
+	</script>
+</head>
+<body>
+<div class="bjui-pageContent">
+	<form>
+		<button type="button" class="btn btn-blue" data-icon="plus" onclick="assignToDesigner()"><i
+				class="fa fa-plus"></i>选择
+		</button>
+		<button type="button" class="btn-close btn" data-icon="close"><i class="fa fa-close"></i> 关闭</button>
+		<table id="table_design" class="table table-hover" data-width="100%" data-selected-multi="true">
+
+		</table>
+	</form>
+</div>
+</body>
+</html>

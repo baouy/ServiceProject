@@ -1,0 +1,125 @@
+<html>
+
+<head>
+	<script type="text/javascript">
+
+		$('#financial_vr_customer_datagrid').datagrid({
+			local: 'remote',
+			dataUrl: '/v1/financial/customer_list',
+			dataType: 'json',
+			sortAll: false,
+			loadType: 'get',
+			filterAll: true,
+			height:'95%',
+			columns: [{name:'customercode', width:'150', label:'编码'},
+				{name:'cusname', width:'150', label:'姓名'},
+				{name:'mobile', width:'150', label:'手机号'},
+				{name:'state', width:'150', label:'跟进状态'},
+				{name:'orgname', width:'150', label:'组织'},
+				{name:'stores', width:'150', label:'门店名称', hide:true},
+				{name:'custsales', width:'150', label:'销售人员'},
+				{name:'custsalesid', width:'80', label:'销售人员ID', hide:true},
+				{name:'id', width:'80', label:'主键', hide:true},
+				{name:'mobilesales', width:'80', label:'渠道', hide:true},
+				{name:'mobilesalesid', width:'80', label:'渠道ID', hide:true},
+				{name:'source', width:'80', label:'来源', hide:true},
+				{name:'provincename', width:'80', label:'省', hide:true},
+				{name:'cityname', width:'80', label:'市', hide:true},
+				{name:'districtname', width:'80', label:'区', hide:true},
+				{name:'road', width:'80', label:'街道', hide:true},
+				{name:'community', width:'80', label:'小区名称', hide:true},
+				{name:'building', width:'80', label:'栋数', hide:true},
+				{name:'room', width:'80', label:'房号', hide:true},
+				{name:'rooms', width:'80', label:'室', hide:true},
+				{name:'hall', width:'80', label:'厅', hide:true},
+				{name:'toilet', width:'80', label:'卫', hide:true},
+				{name:'balcony', width:'80', label:'阳台', hide:true},
+				{name:'unit', width:'80', label:'单元',hide:true}
+			],
+			paging: {pageSize:20, selectPageSize:'50,100,200', pageCurrent:1},
+			columnMenu: true,
+			columnShowhide: true,
+			columnFilter: true,
+			columnLock: false,
+			fullGrid: false,
+			dblOnClick: 'selectfclItems',
+		});
+
+		function selectfclItems(){
+			var selected=$("#financial_vr_customer_datagrid").find('tr.datagrid-selected-tr');
+			if(selected.length == 0){
+				$(this).alertmsg('error', '请在列表中选择要操作的对象。');
+			}else if(selected.length > 1){
+				$(this).alertmsg('error', '请选择唯一的操作对象。');
+			}else{
+
+				var cusname = selected[0].cells[2].innerText;
+				var mobile = selected[0].cells[3].innerText;
+
+				var custsales = selected[0].cells[7].innerText;
+				var custsalesid = selected[0].cells[8].innerText;
+				var custid_fk = selected[0].cells[9].innerText;
+
+				var mobilesales = selected[0].cells[10].innerText;
+				var mobilesalesid = selected[0].cells[11].innerText;
+				var source = selected[0].cells[12].innerText;
+				var provincename = selected[0].cells[13].innerText;
+
+				var cityname = selected[0].cells[14].innerText;
+				var districtname = selected[0].cells[15].innerText;
+				var road = selected[0].cells[16].innerText;
+				var community = selected[0].cells[17].innerText;
+				var building = selected[0].cells[18].innerText;
+
+				var room = selected[0].cells[19].innerText;
+				var rooms = selected[0].cells[20].innerText;
+				var hall = selected[0].cells[21].innerText;
+				var toilet = selected[0].cells[22].innerText;
+				var balcony = selected[0].cells[23].innerText;
+				var unit = selected[0].cells[24].innerText;
+
+
+				$("input[id='financial_vr_sodoc']").val('');
+				$("input[id='financial_vr_custsales']").val(custsales);
+				$("input[id='financial_vr_custsalesid']").val(custsalesid);
+				$("input[id='financial_vr_username']").val(cusname);
+				$("input[id='financial_vr_mobile']").val(mobile);
+				$("input[id='financial_vr_custid_fk']").val(custid_fk);
+
+				$("input[id='financial_vr_contractid']").val(0);
+
+				$("input[id='financial_vr_beautychat']").val(mobilesales);
+				$("input[id='financial_vr_beautychatid']").val(mobilesalesid);
+				$("input[id='financial_vr_source']").val(source);
+				$("#financial_vr_provincename").selectpicker('val', provincename);
+				$("#financial_vr_cityname").selectpicker('val', cityname);
+				$("#financial_vr_districtname").selectpicker('val', districtname);
+				$("input[id='financial_vr_road']").val(road);
+				$("input[id='financial_vr_community']").val(community);
+				$("input[id='financial_vr_building']").val(building);
+				$("input[id='financial_vr_room']").val(room);
+				$("input[id='financial_vr_rooms']").val(rooms);
+				$("input[id='financial_vr_hall']").val(hall);
+				$("input[id='financial_vr_toilet']").val(toilet);
+				$("input[id='financial_vr_balcony']").val(balcony);
+				$("input[id='financial_vr_unit']").val(unit);
+
+				BJUI.dialog('closeCurrent',this);
+			}
+		}
+
+
+	</script>
+</head>
+
+<body>
+<div class="bjui-pageContent">
+	<div style="margin:15px;">
+		<button class="btn-default" onclick="selectfclItems()" data-width="1050" data-height="400">选择</button>
+		<button class="btn-close" data-width="1050" data-height="400">关闭</button>
+	</div>
+	<table id="financial_vr_customer_datagrid" class="table table-hover" data-width="100%"> </table>
+</div>
+</body>
+
+</html>

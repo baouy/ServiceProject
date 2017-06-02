@@ -1,0 +1,115 @@
+<html>
+
+<head>
+	<script type="text/javascript">
+
+		$('#financial_contract_customer_datagrid').datagrid({
+			local: 'remote',
+			dataUrl: '/v1/contract/customer_list',
+			dataType: 'json',
+			sortAll: false,
+			loadType: 'get',
+			filterAll: true,
+			height:'95%',
+			columns: [{name:'customercode', width:'150', label:'编码'},
+				{name:'cusname', width:'150', label:'姓名'},
+				{name:'mobile', width:'150', label:'手机号'},
+				{name:'village', width:'150', label:'小区名称'},
+				{name:'cityname', width:'150', label:'城市'},
+				{name:'state', width:'150', label:'跟进状态'},
+				{name:'doormodel', width:'1', label:'户型', hide:true},
+				{name:'area', width:'150', label:'面积', hide:true},
+				{name:'idnumber', width:'150', label:'身份证', hide:true},
+				{name:'provincename', width:'80', label:'省', hide:true},
+				{name:'districtname', width:'80', label:'区', hide:true},
+				{name:'road', width:'80', label:'街道', hide:true},
+				{name:'building', width:'80', label:'栋数', hide:true},
+				{name:'room', width:'80', label:'单元房号', hide:true},
+				{name:'cityname', width:'80', label:'城市', hide:true},
+				{name:'custsales', width:'80', label:'客户经理', hide:true},
+				{name:'custsalesid', width:'80', label:'客户经理ID', hide:true},
+				{name:'designer', width:'80', label:'设计师', hide:true},
+				{name:'designerid', width:'80', label:'设计师ID', hide:true},
+				{name:'id', width:'80', label:'客户ID', hide:true},
+			],
+			paging: {pageSize:20, selectPageSize:'50,100,200', pageCurrent:1},
+			columnMenu: true,
+			columnShowhide: true,
+			columnFilter: true,
+			columnLock: false,
+			fullGrid: false,
+			dblOnClick: 'selectfclItems',
+		});
+
+		function selectfclItems(){
+			var selected=$("#financial_contract_customer_datagrid").find('tr.datagrid-selected-tr');
+			if(selected.length == 0){
+				$(this).alertmsg('error', '请在列表中选择要操作的对象。');
+			}else if(selected.length > 1){
+				$(this).alertmsg('error', '请选择唯一的操作对象。');
+			}else{
+				var custcode = selected[0].cells[1].innerText;
+				var cusname = selected[0].cells[2].innerText;
+				var designer = selected[0].cells[18].innerText;
+				var designerid = selected[0].cells[19].innerText;
+				var custsales = selected[0].cells[16].innerText;
+				var custsalesid = selected[0].cells[17].innerText;
+
+				var mobile = selected[0].cells[3].innerText;
+				var idnumber = selected[0].cells[9].innerText;
+
+				var doormodel = selected[0].cells[7].innerText;
+				var area = selected[0].cells[8].innerText;
+				var provincename = selected[0].cells[10].innerText;
+				var cityname = selected[0].cells[5].innerText;
+				var districtname = selected[0].cells[11].innerText;
+
+				var road = selected[0].cells[12].innerText;
+				var village = selected[0].cells[4].innerText;
+				var building = selected[0].cells[13].innerText;
+				var room = selected[0].cells[14].innerText;
+
+				var id = selected[0].cells[20].innerText;
+
+				$("input[id='contract_custcode']").val(custcode);
+				$("input[id='contract_custname']").val(cusname);
+				$("input[id='contract_designer']").val(designer);
+				$("input[id='contract_designerid']").val(designerid);
+				$("input[id='contract_custsales']").val(custsales);
+				$("input[id='contract_custsalesid']").val(custsalesid);
+
+				$("input[id='contract_mobile']").val(mobile);
+				$("input[id='contract_idnumber']").val(idnumber);
+
+				$('#contract_doormodel').selectpicker('val',doormodel);
+
+				$("input[id='contract_area']").val(area);
+
+				$('#contract_provincename').selectpicker('val',provincename);
+				$('#contract_cityname').selectpicker('val',cityname);
+				$('#contract_districtname').selectpicker('val',districtname);
+
+				$("input[id='contract_road']").val(road);
+				$("input[id='contract_community']").val(village);
+				$("input[id='contract_building']").val(building);
+				$("input[id='contract_room']").val(room);
+
+				$("input[id='contract_custid_fk']").val(id);
+
+				BJUI.dialog('closeCurrent',this);
+			}
+		}
+	</script>
+</head>
+
+<body>
+<div class="bjui-pageContent">
+	<div style="margin:0px 0px 10px 0px;">
+		<button class="btn-default" onclick="selectfclItems()" data-width="1050" data-height="400">选择</button>
+		<button class="btn-close btn" data-icon="close" data-width="1050" data-height="400">关闭</button>
+	</div>
+	<table id="financial_contract_customer_datagrid" class="table table-hover" data-width="100%"> </table>
+</div>
+</body>
+
+</html>

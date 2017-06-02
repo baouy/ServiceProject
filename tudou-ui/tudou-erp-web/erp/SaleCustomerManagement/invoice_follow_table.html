@@ -1,0 +1,31 @@
+<script>
+    /**
+     * 获取跟进收款单列表
+     */
+    $('#invoice_follow_table_follow').datagrid({
+        local: 'remote',
+        dataUrl: '/v1/newfinancial/customer_voucherlist?custid_fk='+s_c_id+'&ispay='+true+'&stateid='+51,
+        dataType: 'json',
+        sortAll: false,
+        loadType: 'get',
+        filterAll: true,
+        height: '95%',
+        columns: [
+            {name: 'businessdate', width: '100', label: '收款日期',type: 'date', pattern: "yyyy-MM-dd"},
+            {name: 'invoicedoc', width: '120', label: '收款单号'},
+            {name: 'paymentmethods', width: '80', label: '收款方式'},
+            {name: 'paymentamount', width: '100', label: '收款金额'},
+            {name: 'paymenttype', width: '80', label: '收款类型'},
+            {name: 'agreementdoc', width: '120', label: '定金协议号'},
+            {name: 'state', width: '80', label: '单据状态'},
+            {name: 'createuser', width: '70', label: '创建人'},
+        ],
+        paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+        hiddenFields: ['id','details'],
+        columnMenu: true,
+        columnShowhide: true,
+        columnFilter: true,
+        columnLock: false
+    });
+</script>
+<table id="invoice_follow_table_follow" class="table table-hover" data-width="100%" data-height="100%"></table>
