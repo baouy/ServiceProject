@@ -21,7 +21,7 @@
     <style type="text/css">
         * {font-family: "Verdana", "Tahoma", "Lucida Grande", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;}
         body {
-            background: url(images/loginbg.jpg) no-repeat center center fixed;
+            background: url(BJUI/images/loginbg.jpg) no-repeat center center fixed;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
@@ -72,25 +72,21 @@
                 }
 
                 $.ajax({
-                    url: '/v1/user/login',
+                    url: '/sso/login',
                     dataType: 'json',
                     type: 'POST',
                     data:{
-                        loginName:$("#j_username").val(),
-                        userpassword:$("#j_password").val()
+                        username:$("#j_username").val(),
+                        password:$("#j_password").val()
                     },
                     success: function(data){
-                        if(data.state == 200) {
-                            $.cookie(COOKIE_NAME, $("#j_username").val(), { path: '/', expires: 15 });
-                            $.cookie('flowerName', data.data[0].flowerName, { path: '/', expires: 15 });
-                            $.cookie('roleid', data.data[0].tuserside.roleid, { path: '/', expires: 15 });
-                            $.cookie('id', data.data[0].id, { path: '/', expires: 15 });
-                            $.cookie('refresh', '0', { path: '/', expires: 15 });
+                        if(data.code == 1) {
 
                             var bjui_theme = $.cookie("bjui_theme");
                             if (bjui_theme == null){
                                 $.cookie('bjui_theme','green', { path: '/', expires: 15 });
                             }
+
                             window.location.href = 'index.html';
                         }else{
 
@@ -116,7 +112,7 @@
     </script>
 </head>
 
-<body style="background-image: url(images/loginbg.jpg);">
+<body style="background-image: url(BJUI/images/loginbg.jpg);">
 <!--[if lte IE 7]>
 <style type="text/css">
     #errorie {position: fixed; top: 0; z-index: 100000; height: 30px; background: #FCF8E3;}
@@ -129,7 +125,7 @@
 <div class="main_box">
     <div class="login_box">
         <div class="login_logo">
-            <img src="images/logo.png">
+            <!--<img src="images/logo.png">-->
         </div>
         <div class="login_form">
             <p id="login_tip" class="text-center" style="color: green;"></p>

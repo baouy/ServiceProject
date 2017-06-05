@@ -17,7 +17,6 @@
 
 +function ($) {
     'use strict';
-    
     var BJUI = {
         JSPATH     : 'BJUI/',
         PLUGINPATH : 'BJUI/plugins/',

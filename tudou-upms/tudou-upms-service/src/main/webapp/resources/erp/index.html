@@ -37,9 +37,6 @@
 	<script src="BJUI/js/bjui-all.js"></script>
 	<!-- 以下是B-JUI的分模块未压缩版，建议开发调试阶段使用下面的版本 -->
 	<script src="http://cdn.staticfile.org/Plupload/2.1.1/moxie.min.js"></script>
-	<script type="text/javascript" src="js/qiniu.js"></script>
-	<script src="js/plupload.min.js"></script>
-	<script type="text/javascript" src="js/ui.js"></script>
 	<!-- plugins -->
 	<!-- swfupload for uploadify && kindeditor -->
 	<script src="BJUI/plugins/swfupload/swfupload.js"></script>
@@ -72,32 +69,30 @@
 	<link href="BJUI/plugins/uploadify/css/uploadify.css" rel="stylesheet">
 	<script src="BJUI/plugins/uploadify/scripts/jquery.uploadify.min.js"></script>
 	<script src="BJUI/plugins/download/jquery.fileDownload.js"></script>
-	<link rel="stylesheet" type="text/css" href="css/erp.css">
 	<!--DavidWang加入code -->
 	<script src="BJUI/plugins/qrcode/jquery.qrcode.min.js"></script>
-
 
 
 	<script>
 		$(function () {
 			$.ajaxSetup({
-				contentType:"application/x-www-form-urlencoded;charset=utf-8",
-				complete:function(XMLHttpRequest,textStatus){
+				contentType: "application/x-www-form-urlencoded;charset=utf-8",
+				complete: function (XMLHttpRequest, textStatus) {
 					//通过XMLHttpRequest取得响应结果
 					var res = XMLHttpRequest.responseText;
-					try{
+					try {
 						var jsonData = JSON.parse(res);
-						if (jsonData.state == 10001){
+						if (jsonData.state == 10001) {
 							$(this).alertmsg('error', '账号以失效请重新登录!');
-							setTimeout(function(){
+							setTimeout(function () {
 								$.cookie("sys__username", null, {path: '/'});
 								$.cookie("roleid", null, {path: '/'});
 								$.cookie("id", null, {path: '/'});
 								$.cookie("flowerName", null, {path: '/'});
 								window.location.href = 'login.html';
-							},2000);
+							}, 2000);
 						}
-					}catch(e){
+					} catch (e) {
 					}
 				}
 			});
@@ -133,7 +128,7 @@
 			$('#bjui-date').html(today.formatDate('yyyy/MM/dd'));
 			setInterval(function () {
 				today = new Date(today.setSeconds(today.getSeconds() + 1));
-				$('#bjui-clock').html('   '+today.formatDate('HH:mm:ss'));
+				$('#bjui-clock').html('   ' + today.formatDate('HH:mm:ss'));
 			}, 1000);
 			var intDiff = parseInt(1500);//倒计时总秒数量 25分钟
 			function customer_timer(intDiff) {
@@ -145,20 +140,7 @@
 						minute = Math.floor(intDiff / 60) - (day * 24 * 60) - (hour * 60);
 						second = Math.floor(intDiff) - (day * 24 * 60 * 60) - (hour * 60 * 60) - (minute * 60);
 						if (minute == 0 && second == 0) {
-							$.ajax({
-								url: '/v1/user/login_refresh',
-								dataType: 'json',
-								type: 'POST',
-								xhrFields: {
-									withCredentials: true
-								},
-								crossDomain: true,
-								success: function (data) {
-									if (data.state == 200) {
-										customer_timer(1500);
-									}
-								}
-							});
+							//30分钟后继续更新token
 						} else {
 							$('#day_show').html(day + "天");
 							$('#hour_show').html('<s id="h"></s>' + hour + '时');
@@ -170,6 +152,7 @@
 					}
 				}, 1000);
 			}
+
 			var timeStorage = localStorage.getItem("timeNmu");
 			if (timeStorage != null) { //刷新时
 				customer_timer(timeStorage);
@@ -192,26 +175,53 @@
 			initrole();
 			function initrole() {
 				$.ajax({
-					url:'/v1/roledata/getUserRight',
-					type:'get',
-					success:function(d){
-						var $menuBar =$("#bjui-hnav-navbar");
-						for (var data of d.data){
-							if(data.parentid==0){
-								$menuBar.append('<li class="" id ="top_menu_'+data.id+'"><a href="javascript:;" data-toggle="slidebar">'+data.rightname+'</a>');
-							}else {
-								if(data.righttype==1){
-									var $menuDiv = $("#menu_"+data.parentid).html();
-									var _thisMenu = '<li><a href="'+data.menupath+'" data-toggle="navtab" data-options="{id:\'form-input_'+data.id+'\', faicon:\'th-large\'}">'+data.rightname+'</a></li>';
-									if($menuDiv){
-										$("#menu_"+data.parentid).append(_thisMenu);
-									}else{
-										$("#top_menu_"+data.parentid).append('<div class="items hide" data-noinit="true"> <ul class="menu-items" data-faicon="hand-o-up" id="menu_'+data.parentid+'">'+_thisMenu+'</ul></div>') ;
-									}
+					url: '/manage/menu',
+					type: 'get',
+					success: function (d) {
+						console.log(d);
+						var $menuBar = $("#bjui-hnav-navbar");
+						if (d.code == 1) {
+
+//						<ul id="bjui-doc-tree-base" class="ztree ztree_main" data-toggle="ztree" data-on-click="MainMenuClick" data-expand-all="true" data-faicon="star-o" data-tit="框架介绍">
+//									<li data-id="99" data-pid="0" data-faicon="folder-open-o" data-faicon-close="folder-o">文件列表</li>
+//									<li data-id="100" data-pid="99" data-url="doc/base/filelist.html" data-tabid="doc-file" data-faicon="caret-right">文件详解</li>
+//									<li data-id="1" data-pid="0" data-faicon="folder-open-o" data-faicon-close="folder-o" data-faicon="caret-right">框架介绍</li>
+//									<li data-id="10" data-pid="1" data-url="doc/base/structure.html" data-tabid="doc-base" data-faicon="caret-right">页面结构</li>
+//									<li data-id="11" data-pid="1" data-url="doc/base/init.html" data-tabid="doc-base" data-faicon="caret-right">框架初始化</li>
+//									<li data-id="12" data-pid="1" data-url="doc/base/hnav.html" data-tabid="doc-base" data-faicon="caret-right">横向导航菜单</li>
+//									<li data-id="13" data-pid="1" data-url="doc/base/navtab.html" data-tabid="doc-base" data-faicon="caret-right">标签工作区(navtab)</li>
+//									<li data-id="14" data-pid="1" data-url="doc/base/dialog.html" data-tabid="doc-base" data-faicon="caret-right">弹窗工作区(dialog)</li>
+//									<li data-id="15" data-pid="1" data-url="doc/base/idname.html" data-tabid="doc-base" data-faicon="caret-right">元素ID命名规范</li>
+//									<li data-id="16" data-pid="1" data-url="doc/base/data.html" data-tabid="doc-base" data-faicon="caret-right">data属性</li>
+//									<li data-id="17" data-pid="1" data-url="doc/base/api.html" data-tabid="doc-base" data-faicon="caret-right">jQuery API调用</li>
+//							<li data-id="18" data-pid="1" data-url="doc/base/event.html" data-tabid="doc-base" data-faicon="caret-right">事件</li>
+//									<li data-id="19" data-pid="1" data-url="doc/base/url.html" data-tabid="doc-base" data-update="true" data-faicon="caret-right">URL动态赋值</li>
+//									<li data-id="9" data-pid="0" data-faicon="folder-open-o" data-faicon-close="folder-o" data-faicon="caret-right">框架皮肤</li>
+//									<li data-id="90" data-pid="9" data-url="doc/theme/color.html" data-tabid="doc-theme" data-faicon="caret-right">颜色值</li>
+//									</ul>
+
+							//系统菜单
+							for (var data of d.data.upmsSystems){
+								$menuBar.append('<li class="" id ="top_menu_'+data.systemId+'"><a href="javascript:;" data-toggle="slidebar">'+data.title+'</a>');
+							}
+
+							//菜单
+							for (var data of d.data.upmsPermissions){
+								if (data.pid == 0){
+									$("#top_menu_"+data.systemId).append('<div class="items hide"><ul id="menu_'+ data.permissionId +'"class="menu-items" data-faicon="hand-o-up"data-faicon="'+"star-o"+'" data-tit="'+data.name+'"></ul></div>')
 								}
 							}
+
+							for (var data of d.data.upmsPermissions){
+								if (data.pid != 0){
+									var _thisMenu = '<li><a href="'+data.uri+'" data-toggle="navtab" data-options="{id:\'form-input_'+data.permissionId+'\', faicon:\'th-large\'}">'+data.name+'</a></li>';
+									$("#menu_"+data.pid).append(_thisMenu);
+								}
+							}
+
 						}
-						$menuBar.find('li :eq(1)').click();
+
+//						$menuBar.find('li :eq(1)').click();
 					}
 				});
 			}
@@ -225,6 +235,8 @@
 		<p style="font-size: 20px; color: white; padding: 7px 0px 0px 5px;">
 			美窝科技ERP
 		</p>
+
+
 	</div>
 	<!-- 快捷菜单(消息、用户信息、切换皮肤) -->
 	<nav id="bjui-navbar-collapse" class="">
@@ -234,21 +246,27 @@
 					<span id="bjui-date"></span><span id="bjui-clock"></span>
 				</div>
 			</li>
-			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">我的账户 <span class="caret"></span></a>
+			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">我的账户 <span
+					class="caret"></span></a>
 				<ul class="dropdown-menu" role="menu">
-					<li id="edit_del_back"><a href="CustomerManagement/customer_changepwd.html" data-toggle="dialog" data-id="changepwd_page" data-mask="true" data-width="400" data-height="260">&nbsp;<span class="glyphicon glyphicon-lock"></span> 修改密码&nbsp;</a></li>
+					<li id="edit_del_back"><a href="CustomerManagement/customer_changepwd.html" data-toggle="dialog"
+											  data-id="changepwd_page" data-mask="true" data-width="400"
+											  data-height="260">&nbsp;<span class="glyphicon glyphicon-lock"></span>
+						修改密码&nbsp;</a></li>
 					<li class="divider"></li>
 					<li><a id="customer_timeout" class="red">&nbsp;<span class="glyphicon glyphicon-off"></span>
 						注销登陆
 					</a></li>
 				</ul>
 			</li>
-			<li class="dropdown"><a href="#" class="dropdown-toggle theme orange" data-toggle="dropdown" title="切换皮肤"><i class="fa fa-tree"></i></a>
+			<li class="dropdown"><a href="#" class="dropdown-toggle theme orange" data-toggle="dropdown" title="切换皮肤"><i
+					class="fa fa-tree"></i></a>
 				<ul class="dropdown-menu" role="menu" id="bjui-themes">
 					<li class=""><a href="javascript:;" class="theme_default" data-toggle="theme" data-theme="default">
 						&nbsp;
 						<i class="fa fa-tree"></i> 黑白分明&nbsp;&nbsp;</a></li>
-					<li class="active"><a href="javascript:;" class="theme_orange" data-toggle="theme" data-theme="orange">&nbsp;<i class="fa fa-tree"></i> 橘子红了</a></li>
+					<li class="active"><a href="javascript:;" class="theme_orange" data-toggle="theme"
+										  data-theme="orange">&nbsp;<i class="fa fa-tree"></i> 橘子红了</a></li>
 					<li class=""><a href="javascript:;" class="theme_purple" data-toggle="theme" data-theme="purple">
 						&nbsp;
 						<i class="fa fa-tree"></i> 紫罗兰</a></li>
@@ -267,6 +285,42 @@
 		<!-- 横向菜单 -->
 		<ul id="bjui-hnav-navbar">
 			<li style="width:204px;"><a id="customer_fllowName"></a></li>
+
+			<!--<li class="active">-->
+			<!--<a href="javascript:;" data-toggle="slidebar">系统管理</a>-->
+			<!--<div class="items hide" data-noinit="true">-->
+			<!--<ul class="menu-items" data-faicon="hand-o-up" data-faicon="star-o" data-tit="系统组织管理">-->
+			<!--<li><a href="SystemManagement/personnel_main.html" data-toggle="navtab" data-options="{id:'form-input', faicon:'th-large'}">组织档案</a></li>-->
+			<!--<li><a href="test_table.html" data-toggle="navtab" data-options="{id:'form-input', faicon:'th-large'}">权限档案</a></li>-->
+			<!--</ul>-->
+			<!--</div>-->
+			<!--<div class="items" >-->
+			<!--<ul class="menu-items" data-faicon="hand-o-up">-->
+			<!--<li><a href="SystemManagement/personnel_main.html" data-toggle="navtab" data-options="{id:'form-input', faicon:'th-large'}">组织档案</a></li>-->
+			<!--<li><a href="test_table.html" data-toggle="navtab" data-options="{id:'form-input', faicon:'th-large'}">权限档案</a></li>-->
+			<!--</ul>-->
+			<!--</div>-->
+			<!--</li>-->
+
+			<!--<li class="" id="top_menu_1"><a href="javascript:;" data-toggle="slidebar">权限管理系统</a>-->
+				<!--<div class="items hide" data-noinit="true">-->
+				<!--<ul id="menu_1" class="ztree ztree_main" data-toggle="ztree" data-on-click="MainMenuClick"-->
+					<!--data-expand-all="true" data-faicon="star-o" data-tit="系统组织管理">-->
+					<!--<li><a href="/manage/system/index" data-toggle="navtab"-->
+						   <!--data-options="{id:'form-input_2', faicon:'th-large'}">系统管理</a></li>-->
+					<!--<li><a href="/manage/organization/index" data-toggle="navtab"-->
+						   <!--data-options="{id:'form-input_3', faicon:'th-large'}">组织管理</a></li>-->
+				<!--</ul>-->
+				<!--<ul id="menu_4" class="ztree ztree_main" data-toggle="ztree" data-on-click="MainMenuClick"-->
+					<!--data-expand-all="true" data-faicon="star-o" data-tit="其他数据管理">-->
+					<!--<li><a href="null" data-toggle="navtab"-->
+						   <!--data-options="{id:'form-input_5', faicon:'th-large'}">会话管理</a></li>-->
+					<!--<li><a href="null" data-toggle="navtab"-->
+						   <!--data-options="{id:'form-input_6', faicon:'th-large'}">日志记录</a></li>-->
+				<!--</ul>-->
+					<!--</div>-->
+			<!--</li>-->
+
 		</ul>
 	</div>
 </header>
@@ -322,109 +376,11 @@
 			<div class="navtabPage unitBox">
 				<!-- 主页内容 -->
 				<div class="bjui-pageHeader" style="background:#FFF;">
-					<div style="padding: 0 15px;">
-						<h4 style="margin-bottom:20px;">
-							美窝ERP　
-							<small>轻松办公，专注您的业务，从美窝ERP开始！</small>
-						</h4>
-						<div style="float:left; width:157px;">
-							<div class="alert alert-info" role="alert" style="margin:0 0 5px; padding:10px;">
-								<img src="images/android.png" width="135">
-							</div>
-						</div>
-						<div style="float:left; width:157px; margin-left: 5px;">
-							<div class="alert alert-info" role="alert" style="margin:0 0 5px; padding:10px;">
-								<img src="images/ios.png" width="135">
-							</div>
-						</div>
-						<div class="row" style="margin-left:190px; margin-top:10px;">
-							<div class="col-md-6" style="padding:0px 5px 0px 5px;">
-								<div class="alert alert-success" role="alert" style="margin:0 0 5px; padding:5px 15px; height: 196px;">
-									<strong>美窝ERP欢迎你!</strong>
-									<br>
-									<span class="label label-default">官方网站：</span><a href="https://www.meiwo.cn/index.html" target="_blank">https://www.meiwo.cn</a>
-									<br>
-									<span class="label label-default">ERP网站：</span><a href="http://erp.meiwo.cn/index.html" target="_blank">http://erp.meiwo.cn</a>
-									<br>
-								</div>
-							</div>
-						</div>
-					</div>
+
 				</div>
 				<div class="bjui-pageContent">
-						<div style="margin-top:5px; overflow:hidden;">
-							<div class="row" style="padding: 0 8px;">
-								<div class="col-md-12">
-									<div class="panel panel-default">
-										<div class="panel-heading">
-											<h3 class="panel-title">当前版本：<code>V1.0.6.1</code>　最近更新日志(2017-05-28)：</h3>
-										</div>
-										<div class="panel-body bjui-doc" style="padding:5px;">
-											<ul>
 
-												<li style="color: red">[修复]客户管理(美客)跟进时间,加入创建新增时间</li>
-												<li style="color: red">[新增]客户管理(美客)</li>
-												<li style="color: red">[新增]客户管理(新媒体)</li>
-												<li style="color: red">[新增]客户管理(回收池)</li>
-												<li >[新增]加入渠道推广导入功能</li>
-												<li >[新增]加入新客户档案(没课)</li>
-												<li >[新增]权限管理模块配置表单</li>
-												<li >[修复]名称表单长度问题</li>
-												<li >[新增]SEM模块加入</li>
-												<li >[新增]仓库模块</li>
-												<li >[新增]退货模块</li>
-												<li >[新增]加入SEM的标记</li>
-												<li >[修复]修改渠道数据筛选和字段缺失</li>
-												<li>[修复]加入美客主管角色权限和功能菜单</li>
-												<li>[修复]加入SEM角色权限和功能菜单</li>
-												<li>[修复]修改采购管理细节BUG</li>
-												<li>[修复]修改仓库管理细节BUG</li>
-												<li>[修复]料品管理中各种细节BUG</li>
-												<li>[重要通知]发货申请,细节调整</li>
-												<li>[重要通知]人员管理只能人事操作</li>
-												<li>[修复]人员档案新增修改</li>
-												<li>[重要通知]仓库料品上线</li>
-												<li>[新增]加入组织管理档案</li>
-												<li>[修复]修改仓库信息以及采购</li>
-												<li>[修复]料品档案修改,以及BUG修复</li>
-												<li>[重要更新]修改料品编辑细节,更加便捷方便</li>
-												<li>[重要更新]完成料品采购模块</li>
-												<li>[重要更新]合并仓库模块</li>
-												<li>[新增]收款类型增加补款</li>
-												<li>[新增]合同日期、设计师、客户经理手工录入</li>
-												<li>[新增]首款金额自动计算</li>
-												<li>[新增]合同录入后更新收款单的合同号</li>
-												<li>[新增]合同编辑界面显示收款单</li>
-												<li>[新增]合同开工日期非必填</li>
-												<li>[新增]登陆界面提醒文字修改</li>
-												<li>[新增]增加角色31</li>
-												<li>[重要更新]合并采购仓库管理模块</li>
-												<li>[重要更新]料品仓库管理档案</li>
-												<li>[重要更新]修改细节BUG!</li>
-												<li>[重要更新]表单固定表头,查阅更加信息的明了!</li>
-												<li>[新增]基础档案中加入料品分类(列表,表单,新增,编辑)!</li>
-												<li>[修复]收款单导入,以及网站预约未付款用户不再显示在收款单内</li>
-												<li>[修复]分配表单编辑后,列表消失问题!</li>
-												<li>[修复]编辑客户已存在手机号,应该提示已存在!</li>
-												<li>[重要更新]新员工第二次编辑,会更新上一次编辑记录哦(*^__^*) 嘻嘻……!!!</li>
-												<li>[重要更新]更新人员档案列表以及编辑和更新,加入HR确认,新员工编辑,导出功能!</li>
-												<li>[修复]修复客户档案来源无法选择问题!</li>
-												<li>[重要更新]加入成交记录,分配角色查看权限,以及数据权限</li>
-												<li>[修复]更新分配表更新内容</li>
-												<li>[修复]修改细节字段!</li>
-												<li>[重要更新]各大菜单编辑内容有时无法显示问题!!</li>
-												<li>[重要更新]所有带编辑的表单,可以双击进入编辑界面</li>
-												<li>[修复]数据内容格式问题</li>
-												<li>[修复]客户经理(主管转销售转设计)过滤无效人员</li>
-												<li>[修复]客户列表以预约时间倒序</li>
-												<li>[新增]美小蜜通知功能</li>
-											</ul>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+				</div>
 			</div>
 			<!-- 各页片内容区域 -->
 		</div>
