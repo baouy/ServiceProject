@@ -15,4 +15,7 @@
     <!-- 日志记录AOP实现 -->
     <bean class="com.tudou.common.aspect.RpcLogAspect"/>
 
+    <!-- 错误参数拦截 -->
+    <bean class="com.tudou.upms.client.interceptor.RpcValidAspect"/>
+
 </beans>

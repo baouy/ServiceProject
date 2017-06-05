@@ -26,9 +26,9 @@ public class UpmsInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 过滤ajax
-        if (null != request.getHeader("X-Requested-With") && request.getHeader("X-Requested-With").equalsIgnoreCase("XMLHttpRequest")) {
-            return true;
-        }
+//        if (null != request.getHeader("X-Requested-With") && request.getHeader("X-Requested-With").equalsIgnoreCase("XMLHttpRequest")) {
+//            return true;
+//        }
         // 登录信息
         Subject subject = SecurityUtils.getSubject();
         String username = (String) subject.getPrincipal();

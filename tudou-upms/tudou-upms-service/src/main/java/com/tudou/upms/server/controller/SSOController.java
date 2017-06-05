@@ -4,6 +4,7 @@ import com.tudou.upms.client.shiro.session.UpmsSession;
 import com.tudou.upms.client.shiro.session.UpmsSessionDao;
 import com.tudou.upms.common.constant.UpmsResult;
 import com.tudou.upms.common.constant.UpmsResultConstant;
+import com.tudou.upms.server.modelvalid.SsoLoginValid;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.BooleanUtils;
@@ -20,12 +21,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -51,16 +56,7 @@ public class SSOController {
 	@ApiOperation(value = "登录")
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
-	public Object login(HttpServletRequest request, HttpServletResponse response, ModelMap modelMap) {
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-		String rememberMe = request.getParameter("rememberMe");
-		if (StringUtils.isBlank(username)) {
-			return new UpmsResult(UpmsResultConstant.EMPTY_USERNAME, "帐号不能为空！");
-		}
-		if (StringUtils.isBlank(password)) {
-			return new UpmsResult(UpmsResultConstant.EMPTY_PASSWORD, "密码不能为空！");
-		}
+	public Object login(@ModelAttribute @Valid SsoLoginValid ssoLoginValid, BindingResult bindingResult) {
 		Subject subject = SecurityUtils.getSubject();
 		Session session = subject.getSession();
 		String sessionId = session.getId().toString();
@@ -69,13 +65,9 @@ public class SSOController {
 		// code校验值
 		if (StringUtils.isBlank(hasCode)) {
 			// 使用shiro认证
-			UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(username, password);
+			UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(ssoLoginValid.getUsername(), ssoLoginValid.getPassword());
 			try {
-				if (BooleanUtils.toBoolean(rememberMe)) {
-					usernamePasswordToken.setRememberMe(true);
-				} else {
-					usernamePasswordToken.setRememberMe(false);
-				}
+				usernamePasswordToken.setRememberMe(ssoLoginValid.getRememberMe());
 				subject.login(usernamePasswordToken);
 			} catch (UnknownAccountException e) {
 				return new UpmsResult(UpmsResultConstant.INVALID_USERNAME, "帐号不存在！");

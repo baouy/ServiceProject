@@ -23,7 +23,7 @@
         <property name="filterChainDefinitions">
             <value>
                 /druid/** = user
-                /swagger-ui.html = user
+                <!--/swagger-ui.html = user-->
                 /** = anon
             </value>
         </property>
