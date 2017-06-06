@@ -1,0 +1,31 @@
+<script type="text/javascript">
+
+	$('#manage_system_table').datagrid({
+		local: 'remote',
+		dataUrl: '/v1/tbrand/list',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height:'100%',
+		columns: [{name:'icon', width:'150', label:'图标'},
+			{name:'title', width:'150', label:'系统标题',rule: 'required'},
+			{name:'name', width:'150', label:'系统名称',rule: 'required'},
+			{name:'description', width:'150', label:'描述',rule: 'required'},
+			{name:'basepath', width:'150', label:'根目录',rule: 'required'},
+			{name:'status', width:'150', label:'状态',rule: 'required'},
+		],
+		paging: {pageSize:50, selectPageSize:'50,100,200', pageCurrent:1},
+		hiddenFields: ['id'],
+		showToolbar: true,
+		toolbarItem: 'add,save,cancel',
+		saveAll: true,
+		editUrl:'/v1/tbrand/tbrand_add_reset',
+		editdblOnclick: true,
+	});
+
+</script>
+
+<div class="bjui-pageContent" >
+	<table id="manage_system_table" class="table table-hover" data-width="100%"> </table>
+</div>

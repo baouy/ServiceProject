@@ -73,6 +73,7 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
         // server需要登录
         String upmsType = PropertiesFileUtil.getInstance("tudou-upms-client").get("upms.type");
         if ("server".equals(upmsType)) {
+            //强制跳转登录页面
             WebUtils.toHttp(response).sendRedirect(sso_server_url.append("/sso/login").toString());
             return false;
         }

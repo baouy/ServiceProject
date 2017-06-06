@@ -5,7 +5,9 @@ import com.tudou.upms.common.constant.UpmsResult;
 import com.tudou.upms.common.constant.UpmsResultConstant;
 import com.tudou.upms.dao.model.UpmsLog;
 import com.tudou.upms.dao.model.UpmsLogExample;
+import com.tudou.upms.dao.model.UpmsPermissionExample;
 import com.tudou.upms.rpc.api.UpmsLogService;
+import com.tudou.upms.server.modelvalid.ManageLogListValid;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
@@ -37,24 +39,45 @@ public class UpmsLogController  extends BaseController {
 	@RequiresPermissions("upms:log:read")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
-	public Object list(
-			@RequestParam(required = false, defaultValue = "0", value = "offset") int offset,
-			@RequestParam(required = false, defaultValue = "50", value = "limit") int limit,
-			@RequestParam(required = false, defaultValue = "", value = "search") String search,
-			@RequestParam(required = false, value = "sort") String sort,
-			@RequestParam(required = false, value = "order") String order) {
+	public Object list(@ModelAttribute ManageLogListValid manageLogListValid) {
 		UpmsLogExample upmsLogExample = new UpmsLogExample();
-		if (!StringUtils.isBlank(sort) && !StringUtils.isBlank(order)) {
-			upmsLogExample.setOrderByClause(sort + " " + order);
+		upmsLogExample.setOrderByClause("log_id desc");
+		UpmsLogExample.Criteria criteria = upmsLogExample.createCriteria();
+
+		if (!StringUtils.isBlank(manageLogListValid.getDescription())){
+			criteria.andDescriptionLike("%" + manageLogListValid.getDescription() + "%");
 		}
-		if (StringUtils.isNotBlank(search)) {
-			upmsLogExample.or()
-					.andDescriptionLike("%" + search + "%");
+		if (!StringUtils.isBlank(manageLogListValid.getUsername())){
+			criteria.andUserAgentLike("%" + manageLogListValid.getUsername() + "%");
 		}
-		List<UpmsLog> rows = upmsLogService.selectByExampleForOffsetPage(upmsLogExample, offset, limit);
+		if (manageLogListValid.getStartTime() != null){
+			//包含了 min 和 max 边界值 >= 0 <= time
+			criteria.andStartTimeBetween(0L,manageLogListValid.getStartTime());
+		}
+		if (manageLogListValid.getSpendTime() != null){
+			criteria.andSpendTimeBetween(0,manageLogListValid.getSpendTime());
+		}
+		if (!StringUtils.isBlank(manageLogListValid.getUrl())){
+			criteria.andUrlLike("%" + manageLogListValid.getUrl() + "%");
+		}
+		if (!StringUtils.isBlank(manageLogListValid.getMethod())){
+			criteria.andMethodLike("%" + manageLogListValid.getMethod() + "%");
+		}
+		if (!StringUtils.isBlank(manageLogListValid.getUserAgent())){
+			criteria.andUserAgentLike("%" + manageLogListValid.getUserAgent() + "%");
+		}
+		if (!StringUtils.isBlank(manageLogListValid.getIp())){
+			criteria.andIpLike("%" + manageLogListValid.getIp() + "%");
+		}
+		if (!StringUtils.isBlank(manageLogListValid.getPermissions())){
+			criteria.andPermissionsLike("%" + manageLogListValid.getPermissions() + "%");
+		}
+
+
+		List<UpmsLog> rows = upmsLogService.selectByExampleForOffsetPage(upmsLogExample, (manageLogListValid.getPageCurrent() - 1) *manageLogListValid.getPageSize(), manageLogListValid.getPageSize());
 		long total = upmsLogService.countByExample(upmsLogExample);
 		Map<String, Object> result = new HashMap<>();
-		result.put("rows", rows);
+		result.put("data", rows);
 		result.put("total", total);
 		return result;
 	}

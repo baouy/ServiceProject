@@ -82,13 +82,9 @@
 					var res = XMLHttpRequest.responseText;
 					try {
 						var jsonData = JSON.parse(res);
-						if (jsonData.state == 10001) {
+						if (jsonData.code == 10000) {
 							$(this).alertmsg('error', '账号以失效请重新登录!');
 							setTimeout(function () {
-								$.cookie("sys__username", null, {path: '/'});
-								$.cookie("roleid", null, {path: '/'});
-								$.cookie("id", null, {path: '/'});
-								$.cookie("flowerName", null, {path: '/'});
 								window.location.href = 'login.html';
 							}, 2000);
 						}
@@ -112,7 +108,7 @@
 					orderDirection: 'orderDirection'
 				}, //[可选]分页参数
 				alertMsg: {displayPosition: 'topcenter', displayMode: 'slide', alertTimeout: 3000}, //[可选]信息提示的显示位置，显隐方式，及[info/correct]方式时自动关闭延时(毫秒)
-				keys: {statusCode: 'state', message: 'content'}, //[可选]
+				keys: {statusCode: 'code', message: 'error'}, //[可选]
 				ui: {
 					windowWidth: 0, //框架显示宽度，0=100%宽，> 600为则居中显示
 					showSlidebar: true, //[可选]左侧导航栏锁定/隐藏
@@ -162,13 +158,20 @@
 
 			$("#customer_timeout").click(function () {
 				//退出登录
-				window.location.href = 'login.html';
-				localStorage.removeItem("timeNmu");
-				$.cookie("sys__username", null, {path: '/'});  //删除cookie
-				$.cookie("roleid", null, {path: '/'});
-				$.cookie("id", null, {path: '/'});
-				$.cookie("flowerName", null, {path: '/'});
-			})
+				$.ajax({
+					url: '/sso/logout',
+					type: 'get',
+					success: function (d) {
+						if (d.code == 1) {
+							window.location.href = 'login.html';
+							localStorage.removeItem("timeNmu");
+						} else {
+							$(this).alertmsg('warn', "退出失败");
+						}
+					}
+				});
+			});
+
 
 			$("#customer_fllowName").text("欢迎您，" + $.cookie("flowerName") + "!");
 
@@ -178,54 +181,34 @@
 					url: '/manage/menu',
 					type: 'get',
 					success: function (d) {
-						console.log(d);
 						var $menuBar = $("#bjui-hnav-navbar");
 						if (d.code == 1) {
-
-//						<ul id="bjui-doc-tree-base" class="ztree ztree_main" data-toggle="ztree" data-on-click="MainMenuClick" data-expand-all="true" data-faicon="star-o" data-tit="框架介绍">
-//									<li data-id="99" data-pid="0" data-faicon="folder-open-o" data-faicon-close="folder-o">文件列表</li>
-//									<li data-id="100" data-pid="99" data-url="doc/base/filelist.html" data-tabid="doc-file" data-faicon="caret-right">文件详解</li>
-//									<li data-id="1" data-pid="0" data-faicon="folder-open-o" data-faicon-close="folder-o" data-faicon="caret-right">框架介绍</li>
-//									<li data-id="10" data-pid="1" data-url="doc/base/structure.html" data-tabid="doc-base" data-faicon="caret-right">页面结构</li>
-//									<li data-id="11" data-pid="1" data-url="doc/base/init.html" data-tabid="doc-base" data-faicon="caret-right">框架初始化</li>
-//									<li data-id="12" data-pid="1" data-url="doc/base/hnav.html" data-tabid="doc-base" data-faicon="caret-right">横向导航菜单</li>
-//									<li data-id="13" data-pid="1" data-url="doc/base/navtab.html" data-tabid="doc-base" data-faicon="caret-right">标签工作区(navtab)</li>
-//									<li data-id="14" data-pid="1" data-url="doc/base/dialog.html" data-tabid="doc-base" data-faicon="caret-right">弹窗工作区(dialog)</li>
-//									<li data-id="15" data-pid="1" data-url="doc/base/idname.html" data-tabid="doc-base" data-faicon="caret-right">元素ID命名规范</li>
-//									<li data-id="16" data-pid="1" data-url="doc/base/data.html" data-tabid="doc-base" data-faicon="caret-right">data属性</li>
-//									<li data-id="17" data-pid="1" data-url="doc/base/api.html" data-tabid="doc-base" data-faicon="caret-right">jQuery API调用</li>
-//							<li data-id="18" data-pid="1" data-url="doc/base/event.html" data-tabid="doc-base" data-faicon="caret-right">事件</li>
-//									<li data-id="19" data-pid="1" data-url="doc/base/url.html" data-tabid="doc-base" data-update="true" data-faicon="caret-right">URL动态赋值</li>
-//									<li data-id="9" data-pid="0" data-faicon="folder-open-o" data-faicon-close="folder-o" data-faicon="caret-right">框架皮肤</li>
-//									<li data-id="90" data-pid="9" data-url="doc/theme/color.html" data-tabid="doc-theme" data-faicon="caret-right">颜色值</li>
-//									</ul>
-
 							//系统菜单
-							for (var data of d.data.upmsSystems){
-								$menuBar.append('<li class="" id ="top_menu_'+data.systemId+'"><a href="javascript:;" data-toggle="slidebar">'+data.title+'</a>');
+							for (var data of d.data.upmsSystems) {
+								$menuBar.append('<li class="" id ="top_menu_' + data.systemId + '"><a href="javascript:;" data-toggle="slidebar">' + data.title + '</a>');
 							}
 
 							//菜单
-							for (var data of d.data.upmsPermissions){
-								if (data.pid == 0){
-									$("#top_menu_"+data.systemId).append('<div class="items hide"><ul id="menu_'+ data.permissionId +'"class="menu-items" data-faicon="hand-o-up"data-faicon="'+"star-o"+'" data-tit="'+data.name+'"></ul></div>')
+							for (var data of d.data.upmsPermissions) {
+								if (data.pid == 0) {
+									$("#top_menu_" + data.systemId).append('<div class="items hide"><ul id="menu_' + data.permissionId + '"class="menu-items" data-faicon="hand-o-up"data-faicon="' + "star-o" + '" data-tit="' + data.name + '"></ul></div>')
 								}
 							}
 
-							for (var data of d.data.upmsPermissions){
-								if (data.pid != 0){
-									var _thisMenu = '<li><a href="'+data.uri+'" data-toggle="navtab" data-options="{id:\'form-input_'+data.permissionId+'\', faicon:\'th-large\'}">'+data.name+'</a></li>';
-									$("#menu_"+data.pid).append(_thisMenu);
+							for (var data of d.data.upmsPermissions) {
+								if (data.pid != 0) {
+									var _thisMenu = '<li><a href="' + data.uri + '" data-toggle="navtab" data-options="{id:\'form-input_' + data.permissionId + '\', faicon:\'th-large\'}">' + data.name + '</a></li>';
+									$("#menu_" + data.pid).append(_thisMenu);
 								}
 							}
 
+							$menuBar.find('li :eq(1)').click();
 						}
 
-//						$menuBar.find('li :eq(1)').click();
 					}
 				});
 			}
-		});
+		})
 
 	</script>
 </head>
@@ -303,22 +286,22 @@
 			<!--</li>-->
 
 			<!--<li class="" id="top_menu_1"><a href="javascript:;" data-toggle="slidebar">权限管理系统</a>-->
-				<!--<div class="items hide" data-noinit="true">-->
-				<!--<ul id="menu_1" class="ztree ztree_main" data-toggle="ztree" data-on-click="MainMenuClick"-->
-					<!--data-expand-all="true" data-faicon="star-o" data-tit="系统组织管理">-->
-					<!--<li><a href="/manage/system/index" data-toggle="navtab"-->
-						   <!--data-options="{id:'form-input_2', faicon:'th-large'}">系统管理</a></li>-->
-					<!--<li><a href="/manage/organization/index" data-toggle="navtab"-->
-						   <!--data-options="{id:'form-input_3', faicon:'th-large'}">组织管理</a></li>-->
-				<!--</ul>-->
-				<!--<ul id="menu_4" class="ztree ztree_main" data-toggle="ztree" data-on-click="MainMenuClick"-->
-					<!--data-expand-all="true" data-faicon="star-o" data-tit="其他数据管理">-->
-					<!--<li><a href="null" data-toggle="navtab"-->
-						   <!--data-options="{id:'form-input_5', faicon:'th-large'}">会话管理</a></li>-->
-					<!--<li><a href="null" data-toggle="navtab"-->
-						   <!--data-options="{id:'form-input_6', faicon:'th-large'}">日志记录</a></li>-->
-				<!--</ul>-->
-					<!--</div>-->
+			<!--<div class="items hide" data-noinit="true">-->
+			<!--<ul id="menu_1" class="ztree ztree_main" data-toggle="ztree" data-on-click="MainMenuClick"-->
+			<!--data-expand-all="true" data-faicon="star-o" data-tit="系统组织管理">-->
+			<!--<li><a href="/manage/system/index" data-toggle="navtab"-->
+			<!--data-options="{id:'form-input_2', faicon:'th-large'}">系统管理</a></li>-->
+			<!--<li><a href="/manage/organization/index" data-toggle="navtab"-->
+			<!--data-options="{id:'form-input_3', faicon:'th-large'}">组织管理</a></li>-->
+			<!--</ul>-->
+			<!--<ul id="menu_4" class="ztree ztree_main" data-toggle="ztree" data-on-click="MainMenuClick"-->
+			<!--data-expand-all="true" data-faicon="star-o" data-tit="其他数据管理">-->
+			<!--<li><a href="null" data-toggle="navtab"-->
+			<!--data-options="{id:'form-input_5', faicon:'th-large'}">会话管理</a></li>-->
+			<!--<li><a href="null" data-toggle="navtab"-->
+			<!--data-options="{id:'form-input_6', faicon:'th-large'}">日志记录</a></li>-->
+			<!--</ul>-->
+			<!--</div>-->
 			<!--</li>-->
 
 		</ul>

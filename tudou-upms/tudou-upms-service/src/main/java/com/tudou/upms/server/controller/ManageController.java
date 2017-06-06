@@ -62,4 +62,11 @@ public class ManageController {
 		return new UpmsResult(UpmsResultConstant.SUCCESS,modelMap);
 	}
 
+	@ApiOperation(value = "后台管理菜单")
+	@RequestMapping(value = "/403", method = RequestMethod.GET)
+	@ResponseBody
+	public Object permissions_403() {
+		return new UpmsResult(UpmsResultConstant.PERMISSIONS_403,"无权限操作");
+	}
+
 }

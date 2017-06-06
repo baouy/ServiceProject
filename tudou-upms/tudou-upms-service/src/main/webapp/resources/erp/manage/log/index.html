@@ -1,0 +1,31 @@
+<script type="text/javascript">
+
+	$('#manage_log_table').datagrid({
+		local: 'remote',
+		dataUrl: '/manage/log/list',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height:'100%',
+		columns: [{name:'description', width:'150', label:'操作'},
+			{name:'username', width:'150', label:'操作用户'},
+			{name:'startTime', width:'150', label:'操作时间'},
+			{name:'spendTime', width:'150', label:'耗时'},
+			{name:'url', width:'150', label:'请求路径'},
+			{name:'method', width:'150', label:'请求类型'},
+			{name:'parameter', width:'150', label:'请求参数'},
+			{name:'userAgent', width:'150', label:'用户标识'},
+			{name:'ip', width:'150', label:'IP地址'},
+			{name:'permissions', width:'150', label:'权限值'},
+		],
+		paging: {pageSize:50, selectPageSize:'50,100,200', pageCurrent:1},
+		hiddenFields: ['id'],
+		fullGrid: true,
+	});
+
+</script>
+
+<div class="bjui-pageContent" >
+	<table id="manage_log_table" class="table table-hover" data-width="100%"> </table>
+</div>

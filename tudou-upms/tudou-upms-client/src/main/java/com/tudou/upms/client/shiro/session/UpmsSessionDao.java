@@ -129,7 +129,7 @@ public class UpmsSessionDao extends CachingSessionDAO {
         }
         jedis.close();
         sessions.put("total", total);
-        sessions.put("rows", rows);
+        sessions.put("data", rows);
         return sessions;
     }
 

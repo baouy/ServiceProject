@@ -53,6 +53,36 @@ public class SSOController {
 	@Autowired
 	UpmsSessionDao upmsSessionDao;
 
+	@ApiOperation(value = "授权失败登录")
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	public String login(HttpServletRequest request){
+		Subject subject = SecurityUtils.getSubject();
+		Session session = subject.getSession();
+		String serverSessionId = session.getId().toString();
+		// 判断是否已登录，如果已登录，则回跳
+		String code = RedisUtil.get(TUDOU_UPMS_SERVER_SESSION_ID + "_" + serverSessionId);
+		// code校验值
+		if (StringUtils.isNotBlank(code)) {
+			// 回跳
+			String backurl = request.getParameter("backurl");
+			String username = (String) subject.getPrincipal();
+			if (StringUtils.isBlank(backurl)) {
+				backurl = "/";
+			} else {
+				if (backurl.contains("?")) {
+					backurl += "&upms_code=" + code + "&upms_username=" + username;
+				} else {
+					backurl += "?upms_code=" + code + "&upms_username=" + username;
+				}
+			}
+			_log.debug("认证中心帐号通过，带code回跳：{}", backurl);
+			return "redirect:" + backurl;
+		}
+
+		return "redirect:" +"/sso/failure";
+	}
+
+
 	@ApiOperation(value = "登录")
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
@@ -103,10 +133,17 @@ public class SSOController {
 		return new UpmsResult(UpmsResultConstant.SUCCESS, code);
 	}
 
+	@ApiOperation(value = "校验失败退出")
+	@RequestMapping(value = "/failure", method = RequestMethod.GET)
+	@ResponseBody
+	public Object failure(HttpServletRequest request) {
+		return new UpmsResult(UpmsResultConstant.VERIFY_FAILURE, "验证失效");
+	}
+
 	@ApiOperation(value = "退出登录")
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	@ResponseBody
-	public Object logout(HttpServletRequest request) {
+	public Object logout() {
 		// shiro退出登录
 		SecurityUtils.getSubject().logout();
 
