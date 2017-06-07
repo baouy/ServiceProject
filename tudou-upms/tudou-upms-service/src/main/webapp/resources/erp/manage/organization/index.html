@@ -1,0 +1,55 @@
+<script type="text/javascript">
+
+	$('#manage_organization_table').datagrid({
+		local: 'remote',
+		dataUrl: '/manage/organization/list',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height:'100%',
+		columns: [{name:'organizationId', width:'150', label:'编号'},
+			{name:'name', width:'150', label:'组织名称',rule: 'required'},
+			{name:'description', width:'150', label:'组织描述',rule: 'required'},
+		],
+		paging: {pageSize:50, selectPageSize:'50,100,200', pageCurrent:1},
+		showToolbar: true,
+		toolbarItem: 'add,save,del,cancel',
+		inlineEditMult: false,
+		ifvalue:'organizationId',
+		addUrl:'/manage/organization/create',
+		editUrl:'/manage/organization/update',
+		editdblOnclick: true,
+		editCallback:'manage_back_organization_edit',
+		delConfirm:true,
+		delPK:'organizationId',
+		delType:'POST',
+		delUrl:'/manage/organization/delete',
+		delCallback:'del_organization_back',
+	});
+
+	function manage_back_organization_edit(d) {
+		if (d.code == 1){
+			$(this).alertmsg('ok',d.data);
+		}else{
+			$(this).alertmsg('warn',d.data);
+		}
+		$('#manage_organization_table').datagrid('refresh_part');
+	}
+
+	function del_organization_back(d) {
+		if (d.code == 1){
+			$(this).alertmsg('ok',d.data);
+		}else{
+			$(this).alertmsg('warn',d.data);
+		}
+//		$('#manage_organization_table').datagrid('refresh_part');
+	}
+
+
+
+</script>
+
+<div class="bjui-pageContent" >
+	<table id="manage_organization_table" class="table table-hover" data-width="100%"> </table>
+</div>

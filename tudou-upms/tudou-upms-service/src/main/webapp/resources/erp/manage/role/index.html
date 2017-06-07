@@ -1,0 +1,46 @@
+<script type="text/javascript">
+
+	$('#manage_user_table').datagrid({
+		local: 'remote',
+		dataUrl: '/manage/system/list',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height:'100%',
+		columns: [
+			{name:'userId', width:'150', label:'编号'},
+			{name:'username', width:'150', label:'账号'},
+			{name:'realname', width:'150', label:'姓名',rule: 'required'},
+			{name:'avatar', width:'150', label:'头像',rule: 'required'},
+			{name:'phone', width:'150', label:'电话',rule: 'required'},
+			{name:'email', width:'150', label:'邮箱',rule: 'required'},
+			{name:'sex', width:'150', label:'性别',rule: 'required',type: 'select', items: [{'1': '男'},{'0':'女'},{'未选择':''}]},
+			{name:'sex', width:'150', label:'性别',rule: 'required',type: 'select', items: [{'1': '锁定'},{'0':'正常'},{'未选择':''}]},
+		],
+		paging: {pageSize:50, selectPageSize:'50,100,200', pageCurrent:1},
+		hiddenFields: ['system_id'],
+		showToolbar: true,
+		toolbarItem: 'add,save,cancel',
+		inlineEditMult: false,
+		ifvalue:'systemId',
+		addUrl:'/manage/system/create',
+		editUrl:'/manage/system/update',
+		editdblOnclick: true,
+		editCallback:'manage_user_back_edit',
+	});
+
+	function manage_user_back_edit(d) {
+		if (d.code == 1){
+			$(this).alertmsg('ok',d.data);
+		}else{
+			$(this).alertmsg('warn',d.data);
+		}
+		$('#manage_user_table').datagrid('refresh_part');
+	}
+
+</script>
+
+<div class="bjui-pageContent" >
+	<table id="manage_user_table" class="table table-hover" data-width="100%"> </table>
+</div>

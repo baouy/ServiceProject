@@ -7,7 +7,7 @@
 		sortAll: false,
 		loadType: 'get',
 		filterThead: false,
-		height:'100%',
+		height:'95%',
 		columns: [{name:'id', width:'150', label:'编号'},
 			{name:'startTimestamp', width:'150', label:'创建时间'},
 			{name:'lastAccessTime', width:'150', label:'最后访问时间'},
@@ -36,7 +36,7 @@
 			ids.push(selected[i].id);
 		}
 		$.ajax({
-			url: '/manage/session/forceout/'+ids,
+			url: '/manage/session/forceout/'+ids.join(','),
 			dataType: 'json',
 			type: 'get',
 			success: function(d){

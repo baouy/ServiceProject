@@ -11,10 +11,7 @@ public enum UpmsResultConstant {
     PERMISSIONS_403(403,"Permissions 403"),
     VERIFY_FAILURE(10000,"Verify failure"),
 
-
     INVALID_LENGTH(10001, "Invalid length"),
-
-
 
     EMPTY_USERNAME(10101, "Username cannot be empty"),
     EMPTY_PASSWORD(10102, "Password cannot be empty"),

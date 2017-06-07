@@ -190,13 +190,13 @@
 
 							//菜单
 							for (var data of d.data.upmsPermissions) {
-								if (data.pid == 0) {
+								if (data.type == 1) {
 									$("#top_menu_" + data.systemId).append('<div class="items hide"><ul id="menu_' + data.permissionId + '"class="menu-items" data-faicon="hand-o-up"data-faicon="' + "star-o" + '" data-tit="' + data.name + '"></ul></div>')
 								}
 							}
 
 							for (var data of d.data.upmsPermissions) {
-								if (data.pid != 0) {
+								if (data.type == 2) {
 									var _thisMenu = '<li><a href="' + data.uri + '" data-toggle="navtab" data-options="{id:\'form-input_' + data.permissionId + '\', faicon:\'th-large\'}">' + data.name + '</a></li>';
 									$("#menu_" + data.pid).append(_thisMenu);
 								}
@@ -218,8 +218,6 @@
 		<p style="font-size: 20px; color: white; padding: 7px 0px 0px 5px;">
 			美窝科技ERP
 		</p>
-
-
 	</div>
 	<!-- 快捷菜单(消息、用户信息、切换皮肤) -->
 	<nav id="bjui-navbar-collapse" class="">

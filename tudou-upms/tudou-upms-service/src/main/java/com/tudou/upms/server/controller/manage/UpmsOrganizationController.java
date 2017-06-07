@@ -7,9 +7,11 @@ import com.tudou.common.base.BaseController;
 import com.tudou.common.validator.LengthValidator;
 import com.tudou.upms.common.constant.UpmsResult;
 import com.tudou.upms.common.constant.UpmsResultConstant;
+import com.tudou.upms.dao.model.UpmsLogExample;
 import com.tudou.upms.dao.model.UpmsOrganization;
 import com.tudou.upms.dao.model.UpmsOrganizationExample;
 import com.tudou.upms.rpc.api.UpmsOrganizationService;
+import com.tudou.upms.server.modelvalid.OrganizationValid;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
@@ -42,24 +44,23 @@ public class UpmsOrganizationController extends BaseController {
 	@RequiresPermissions("upms:organization:read")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
-	public Object list(
-			@RequestParam(required = false, defaultValue = "0", value = "offset") int offset,
-			@RequestParam(required = false, defaultValue = "10", value = "limit") int limit,
-			@RequestParam(required = false, defaultValue = "", value = "search") String search,
-			@RequestParam(required = false, value = "sort") String sort,
-			@RequestParam(required = false, value = "order") String order) {
+	public Object list(@ModelAttribute OrganizationValid organizationValid) {
 		UpmsOrganizationExample upmsOrganizationExample = new UpmsOrganizationExample();
-		if (!StringUtils.isBlank(sort) && !StringUtils.isBlank(order)) {
-			upmsOrganizationExample.setOrderByClause(sort + " " + order);
+		UpmsOrganizationExample.Criteria criteria = upmsOrganizationExample.createCriteria();
+		if (organizationValid.getOrganizationId() != null){
+			criteria.andOrganizationIdEqualTo(organizationValid.getOrganizationId());
 		}
-		if (StringUtils.isNotBlank(search)) {
-			upmsOrganizationExample.or()
-					.andNameLike("%" + search + "%");
+		if (!StringUtils.isBlank(organizationValid.getName())){
+			criteria.andNameLike("%"+ organizationValid.getName() +"%");
 		}
-		List<UpmsOrganization> rows = upmsOrganizationService.selectByExampleForOffsetPage(upmsOrganizationExample, offset, limit);
+		if (!StringUtils.isBlank(organizationValid.getDescription())){
+			criteria.andDescriptionLike("%"+ organizationValid.getDescription() +"%");
+		}
+
+		List<UpmsOrganization> rows = upmsOrganizationService.selectByExample(upmsOrganizationExample);
 		long total = upmsOrganizationService.countByExample(upmsOrganizationExample);
 		Map<String, Object> result = new HashMap<>();
-		result.put("rows", rows);
+		result.put("data", rows);
 		result.put("total", total);
 		return result;
 	}
@@ -84,18 +85,18 @@ public class UpmsOrganizationController extends BaseController {
 
 	@ApiOperation(value = "删除组织")
 	@RequiresPermissions("upms:organization:delete")
-	@RequestMapping(value = "/delete/{ids}",method = RequestMethod.GET)
+	@RequestMapping(value = "/delete",method = RequestMethod.POST)
 	@ResponseBody
-	public Object delete(@PathVariable("ids") String ids) {
-		int count = upmsOrganizationService.deleteByPrimaryKeys(ids);
+	public Object delete(@RequestParam String organizationId) {
+		int count = upmsOrganizationService.deleteByPrimaryKeys(organizationId);
 		return new UpmsResult(UpmsResultConstant.SUCCESS, count);
 	}
 
 	@ApiOperation(value = "修改组织")
 	@RequiresPermissions("upms:organization:update")
-	@RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	@ResponseBody
-	public Object update(@PathVariable("id") int id, UpmsOrganization upmsOrganization) {
+	public Object update(UpmsOrganization upmsOrganization) {
 		ComplexResult result = FluentValidator.checkAll()
 				.on(upmsOrganization.getName(), new LengthValidator(1, 20, "名称"))
 				.doValidate()
@@ -103,7 +104,7 @@ public class UpmsOrganizationController extends BaseController {
 		if (!result.isSuccess()) {
 			return new UpmsResult(UpmsResultConstant.INVALID_LENGTH, result.getErrors());
 		}
-		upmsOrganization.setOrganizationId(id);
+		upmsOrganization.setOrganizationId(upmsOrganization.getOrganizationId());
 		int count = upmsOrganizationService.updateByPrimaryKeySelective(upmsOrganization);
 		return new UpmsResult(UpmsResultConstant.SUCCESS, count);
 	}

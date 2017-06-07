@@ -7055,6 +7055,8 @@
             childUpdate   : false   // This options only for childOptions, when the child grid data changes, update the parent row(!! The parent grid neeed option 'updateRowUrl' !!), Optional (Boolean: true | false, true = 'all') OR (String: 'all, add, edit, del')
         },
         editUrl         : null,     // An action URL, for processing (update / save), return results (json)
+        addUrl          : null,
+        ifvalue         : null,
         editCallback    : null,     // Callback for save
         editMode        : 'inline', // Editing mode, Optional 'false' | 'inline' | 'dialog', (Optional 'false' is a boolean)
         editDialogOp    : null,     // For dialog edit, the dialog init options
@@ -12250,7 +12252,6 @@
                     back(postData);
                 }else{
                     if (that.tools.beforeSave($trs, datas)) {
-
                         var type = options.editType, opts = {url:options.editUrl, data:JSON.stringify(postData), type:'POST', okCallback:callback}
 
                         if (type && type === 'raw') {
@@ -12342,8 +12343,22 @@
                     datas.push(data)
                     if (that.tools.beforeSave($tr, datas)) {
                         postData.push(tempData)
-                        
-                        var type = options.editType, opts = {url:options.editUrl, data:JSON.stringify(postData), type:'POST', okCallback:callback}
+
+                        //davidwang-加入add和edit判断
+                        var c_url;
+                        var ifvalue = options.ifvalue;
+                        for (var i = 0 ; i < postData.length ; i++){
+                            var obj = postData[i];
+                            if (obj.hasOwnProperty(ifvalue)){
+                                console.log('存在');
+                                c_url = options.editUrl
+                            }else{
+                                c_url = options.addUrl
+                                console.log('不存在');
+                            }
+                        }
+
+                        var type = options.editType, opts = {url:c_url, data:JSON.stringify(postData), type:'POST', okCallback:callback}
                         
                         if (type && type === 'raw') {
                             opts.contentType = 'application/json'
