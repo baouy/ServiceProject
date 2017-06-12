@@ -54,34 +54,31 @@ public class UpmsPermissionController extends BaseController {
 	@RequiresPermissions("upms:permission:read")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
-	public Object list(
-			@RequestParam(required = false, defaultValue = "0", value = "offset") int offset,
-			@RequestParam(required = false, defaultValue = "10", value = "limit") int limit,
-			@RequestParam(required = false, defaultValue = "", value = "search") String search,
-			@RequestParam(required = false, defaultValue = "0", value = "type") int type,
-			@RequestParam(required = false, defaultValue = "0", value = "systemId") int systemId,
-			@RequestParam(required = false, value = "sort") String sort,
-			@RequestParam(required = false, value = "order") String order) {
+	public Object list() {
+
+		UpmsSystemExample upmsSystemExample = new UpmsSystemExample();
+//		UpmsSystemExample.Criteria criteria = upmsSystemExample.createCriteria();
+		List<UpmsSystem> systems = upmsSystemService.selectByExample(upmsSystemExample);
+
 		UpmsPermissionExample upmsPermissionExample = new UpmsPermissionExample();
-		UpmsPermissionExample.Criteria criteria = upmsPermissionExample.createCriteria();
-		if (0 != type) {
-			criteria.andTypeEqualTo((byte) type);
-		}
-		if (0 != systemId) {
-			criteria.andSystemIdEqualTo(systemId);
-		}
-		if (!StringUtils.isBlank(sort) && !StringUtils.isBlank(order)) {
-			upmsPermissionExample.setOrderByClause(sort + " " + order);
-		}
-		if (StringUtils.isNotBlank(search)) {
-			upmsPermissionExample.or()
-					.andNameLike("%" + search + "%");
-		}
-		List<UpmsPermission> rows = upmsPermissionService.selectByExampleForOffsetPage(upmsPermissionExample, offset, limit);
-		long total = upmsPermissionService.countByExample(upmsPermissionExample);
+//		UpmsPermissionExample.Criteria criteria = upmsPermissionExample.createCriteria();
+//		if (0 != type) {
+//			criteria.andTypeEqualTo((byte) type);
+//		}
+//		if (0 != systemId) {
+//			criteria.andSystemIdEqualTo(systemId);
+//		}
+//		if (!StringUtils.isBlank(sort) && !StringUtils.isBlank(order)) {
+//			upmsPermissionExample.setOrderByClause(sort + " " + order);
+//		}
+//		if (StringUtils.isNotBlank(search)) {
+//			upmsPermissionExample.or()
+//					.andNameLike("%" + search + "%");
+//		}
+		List<UpmsPermission> permissions = upmsPermissionService.selectByExample(upmsPermissionExample);
 		Map<String, Object> result = new HashMap<>();
-		result.put("rows", rows);
-		result.put("total", total);
+		result.put("UpmsSystem",systems);
+		result.put("UpmsPermission",permissions);
 		return result;
 	}
 
@@ -115,9 +112,13 @@ public class UpmsPermissionController extends BaseController {
 		}
 		long time = System.currentTimeMillis();
 		upmsPermission.setCtime(time);
-		upmsPermission.setOrders(time);
-		int count = upmsPermissionService.insertSelective(upmsPermission);
-		return new UpmsResult(UpmsResultConstant.SUCCESS, count);
+
+		if (upmsPermission.getOrders() == null){
+			upmsPermission.setOrders(time);
+		}
+
+		upmsPermissionService.insertSelective(upmsPermission);
+		return new UpmsResult(UpmsResultConstant.SUCCESS, upmsPermission.getPermissionId());
 	}
 
 	@ApiOperation(value = "删除权限")
@@ -131,9 +132,9 @@ public class UpmsPermissionController extends BaseController {
 
 	@ApiOperation(value = "修改权限")
 	@RequiresPermissions("upms:permission:update")
-	@RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	@ResponseBody
-	public Object update(@PathVariable("id") int id, UpmsPermission upmsPermission) {
+	public Object update(UpmsPermission upmsPermission) {
 		ComplexResult result = FluentValidator.checkAll()
 				.on(upmsPermission.getName(), new LengthValidator(1, 20, "名称"))
 				.doValidate()
@@ -141,7 +142,7 @@ public class UpmsPermissionController extends BaseController {
 		if (!result.isSuccess()) {
 			return new UpmsResult(UpmsResultConstant.INVALID_LENGTH, result.getErrors());
 		}
-		upmsPermission.setPermissionId(id);
+		upmsPermission.setPermissionId(upmsPermission.getPermissionId());
 		int count = upmsPermissionService.updateByPrimaryKeySelective(upmsPermission);
 		return new UpmsResult(UpmsResultConstant.SUCCESS, count);
 	}

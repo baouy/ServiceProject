@@ -14,7 +14,6 @@ import com.tudou.upms.server.modelvalid.UpmsSystemValid;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +63,7 @@ public class UpmsSystemController extends BaseController{
 			criteria.andStatusEqualTo(upmsSystemValid.getStatus());
 		}
 
-		List<UpmsSystem> rows = upmsSystemService.selectByExampleForOffsetPage(upmsSystemExample, (upmsSystemValid.getPageCurrent() - 1) * upmsSystemValid.getPageSize(), upmsSystemValid.getPageSize());
+		List<UpmsSystem> rows = upmsSystemService.selectByExampleForOffsetPage(upmsSystemExample, upmsSystemValid.getPageCurrent(), upmsSystemValid.getPageSize());
 		long total = upmsSystemService.countByExample(upmsSystemExample);
 		Map<String, Object> result = new HashMap<>();
 		result.put("data", rows);

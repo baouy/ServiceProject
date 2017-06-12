@@ -1,0 +1,105 @@
+<script type="text/javascript">
+
+	$('#manage_user_organization_table').datagrid({
+		local: 'remote',
+		dataUrl: '/manage/user/organization_list',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height: '100%',
+		columns: [{name: 'organizationId', align: 'center', width: '150', label: '编号', attrs: {'readonly': "true"}},
+			{name: 'name', width: '150', align: 'center', label: '组织名称', rule: 'required'},
+			{name: 'description', align: 'center', width: '150', label: '组织描述', rule: 'required'},
+		],
+		paging: false,
+		fullGrid: true,
+		showLinenumber: false,
+		showCheckboxcol: true,
+		inlineEditMult: true,
+		selectMult: true,
+		headSureBack: 'user_organization_init',
+	});
+
+	function user_organization_init() {
+		var datas = $("#manage_user_organization_table").data('datas')
+		$.ajax({
+					url: '/manage/user/organization/' + user_select_id,
+					dataType: 'json',
+					type: 'GET',
+					success: function (d) {
+						if (d.code == 1) {
+							for (var i = 0 ; i < datas.length; i++){
+								for (var j = 0 ;j < d.data.length; j ++){
+									var table_id = datas[i].organizationId
+									var select_id = d.data[j].organizationId
+									if (table_id == select_id){
+										$('#manage_user_organization_table').datagrid('selectedRows', i, true)
+									}
+								}
+							}
+						}
+					}
+				}
+		);
+	}
+
+	function user_organization_save() {
+		var organizationId = new Array();
+		var selected = $("#manage_user_organization_table").data('selectedDatas');
+		if (null == selected || selected.length == 0) {
+			post_user_organization(organizationId);
+			return;
+		}
+		for (var i = 0; i < selected.length; i++) {
+			organizationId.push(selected[i].organizationId);
+		}
+		post_user_organization(organizationId);
+	}
+
+	function post_user_organization(organizationId) {
+		console.log(organizationId);
+		$('#manage_user_organization_table').trigger('bjui.ajaxStart')
+		$.ajax({
+					url: '/manage/user/organization/' + user_select_id,
+					dataType: 'json',
+					type: 'POST',
+					data: {
+						organizationId: organizationId
+					},
+					success: function (d) {
+						$('#manage_user_organization_table').trigger('bjui.ajaxStop')
+						if (d.code == 1) {
+							BJUI.dialog('closeCurrent',this);
+							$(this).alertmsg('ok',"保存成功");
+						} else {
+							$(this).alertmsg('warn',"保存失败");
+						}
+					},
+					error: function () {
+						$('#manage_user_organization_table').trigger('bjui.ajaxStop')
+						$(this).alertmsg('warn',"保存失败");
+					}
+				}
+		);
+	}
+
+
+</script>
+
+<div class="bjui-pageContent">
+	<table id="manage_user_organization_table" class="table table-hover" data-width="100%"></table>
+</div>
+
+<div class="bjui-pageFooter">
+	<ul>
+		<li>
+			<button type="button" class="btn-close" data-icon="close">取消</button>
+		</li>
+		<li>
+			<button type="button" class="btn-default" data-icon="save" onclick="user_organization_save()"
+					id="save_guest_btn">保存
+			</button>
+		</li>
+	</ul>
+</div>

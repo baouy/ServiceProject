@@ -10,6 +10,7 @@ public class BaseModelValid {
 	private int pageSize = 50;
 
 	public int getPageCurrent() {
+		pageCurrent = (pageCurrent - 1) * pageSize;
 		return pageCurrent;
 	}
 

@@ -24,25 +24,25 @@
 
 	function user_role_init() {
 		var datas = $("#manage_user_role_table").data('datas')
-//		$.ajax({
-//					url: '/manage/user/role/' + user_select_id,
-//					dataType: 'json',
-//					type: 'GET',
-//					success: function (d) {
-//						if (d.code == 1) {
-//							for (var i = 0 ; i < datas.length; i++){
-//								for (var j = 0 ;j < d.data.length; j ++){
-//									var table_id = datas[i].roleId
-//									var select_id = d.data[j].roleId
-//									if (table_id == select_id){
-//										$('#manage_user_role_table').datagrid('selectedRows', i, true)
-//									}
-//								}
-//							}
-//						}
-//					}
-//				}
-//		);
+		$.ajax({
+					url: '/manage/user/role/' + user_select_id,
+					dataType: 'json',
+					type: 'GET',
+					success: function (d) {
+						if (d.code == 1) {
+							for (var i = 0 ; i < datas.length; i++){
+								for (var j = 0 ;j < d.data.length; j ++){
+									var table_id = datas[i].roleId
+									var select_id = d.data[j].roleId
+									if (table_id == select_id){
+										$('#manage_user_role_table').datagrid('selectedRows', i, true)
+									}
+								}
+							}
+						}
+					}
+				}
+		);
 	}
 
 	function user_role_save() {
@@ -59,32 +59,30 @@
 	}
 
 	function post_user_role(roleId) {
-		console.log(roleId);
 		$('#manage_user_role_table').trigger('bjui.ajaxStart')
-//		$.ajax({
-//					url: '/manage/user/role/' + user_select_id,
-//					dataType: 'json',
-//					type: 'POST',
-//					data: {
-//						roleId: roleId
-//					},
-//					success: function (d) {
-//						$('#manage_user_role_table').trigger('bjui.ajaxStop')
-//						if (d.code == 1) {
-//							BJUI.dialog('closeCurrent',this);
-//							$(this).alertmsg('ok',"保存成功");
-//						} else {
-//							$(this).alertmsg('warn',"保存失败");
-//						}
-//					},
-//					error: function () {
-//						$('#manage_user_role_table').trigger('bjui.ajaxStop')
-//						$(this).alertmsg('warn',"保存失败");
-//					}
-//				}
-//		);
+		$.ajax({
+					url: '/manage/user/role/' + user_select_id,
+					dataType: 'json',
+					type: 'POST',
+					data: {
+						roleIds: roleId
+					},
+					success: function (d) {
+						$('#manage_user_role_table').trigger('bjui.ajaxStop')
+						if (d.code == 1) {
+							BJUI.dialog('closeCurrent',this);
+							$(this).alertmsg('ok',"保存成功");
+						} else {
+							$(this).alertmsg('warn',"保存失败");
+						}
+					},
+					error: function () {
+						$('#manage_user_role_table').trigger('bjui.ajaxStop')
+						$(this).alertmsg('warn',"保存失败");
+					}
+				}
+		);
 	}
-
 
 </script>
 

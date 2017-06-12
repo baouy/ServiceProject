@@ -13,7 +13,7 @@
 			{name:'name', width:'150', label:'系统名称',rule: 'required'},
 			{name:'description', width:'150', label:'描述',rule: 'required'},
 			{name:'basepath', width:'150', label:'根目录',rule: 'required'},
-			{name:'status', width:'150', label:'状态',rule: 'required',type: 'select', items: [{'1': '正常'},{'0':'禁止'},{'未选择':''}]},
+			{name:'status', width:'150', label:'状态',rule: 'required',type: 'select', items: [{'':'未选择'},{'1': '正常'},{'0':'禁止'}]},
 		],
 		paging: {pageSize:50, selectPageSize:'50,100,200', pageCurrent:1},
 		hiddenFields: ['system_id'],

@@ -74,7 +74,7 @@ public class UpmsLogController  extends BaseController {
 		}
 
 
-		List<UpmsLog> rows = upmsLogService.selectByExampleForOffsetPage(upmsLogExample, (manageLogListValid.getPageCurrent() - 1) *manageLogListValid.getPageSize(), manageLogListValid.getPageSize());
+		List<UpmsLog> rows = upmsLogService.selectByExampleForOffsetPage(upmsLogExample, manageLogListValid.getPageCurrent(), manageLogListValid.getPageSize());
 		long total = upmsLogService.countByExample(upmsLogExample);
 		Map<String, Object> result = new HashMap<>();
 		result.put("data", rows);

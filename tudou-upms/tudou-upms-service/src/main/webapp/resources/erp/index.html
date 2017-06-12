@@ -74,6 +74,7 @@
 
 
 	<script>
+		var user_data;
 		$(function () {
 			$.ajaxSetup({
 				contentType: "application/x-www-form-urlencoded;charset=utf-8",
@@ -177,6 +178,7 @@
 
 			initrole();
 			function initrole() {
+				user_data = new Array();
 				$.ajax({
 					url: '/manage/menu',
 					type: 'get',
@@ -192,6 +194,9 @@
 							for (var data of d.data.upmsPermissions) {
 								if (data.type == 1) {
 									$("#top_menu_" + data.systemId).append('<div class="items hide"><ul id="menu_' + data.permissionId + '"class="menu-items" data-faicon="hand-o-up"data-faicon="' + "star-o" + '" data-tit="' + data.name + '"></ul></div>')
+								}
+								if (data.type == 3){
+									user_data.push(data)
 								}
 							}
 

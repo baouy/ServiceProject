@@ -57,7 +57,7 @@ public class UpmsOrganizationController extends BaseController {
 			criteria.andDescriptionLike("%"+ organizationValid.getDescription() +"%");
 		}
 
-		List<UpmsOrganization> rows = upmsOrganizationService.selectByExample(upmsOrganizationExample);
+		List<UpmsOrganization> rows = upmsOrganizationService.selectByExampleForOffsetPage(upmsOrganizationExample,organizationValid.getPageCurrent(),organizationValid.getPageSize());
 		long total = upmsOrganizationService.countByExample(upmsOrganizationExample);
 		Map<String, Object> result = new HashMap<>();
 		result.put("data", rows);

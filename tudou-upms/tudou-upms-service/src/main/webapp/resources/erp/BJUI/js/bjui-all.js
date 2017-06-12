@@ -7407,7 +7407,10 @@
                     tools.createTrs(newData, refreshFlag)
                     
                     that.data = newData
-                    
+
+                    //davidwang-加入datas获取table列表内容
+                    that.$element.data('datas', newData)
+
                     that.$element.trigger('afterLoad.bjui.datagrid', {datas:newData})
                     if (that.init_tfoot) that.initTfoot()
                 }
@@ -12350,8 +12353,11 @@
                         for (var i = 0 ; i < postData.length ; i++){
                             var obj = postData[i];
                             if (obj.hasOwnProperty(ifvalue)){
-                                console.log('存在');
-                                c_url = options.editUrl
+                                if (obj[ifvalue].length >0){
+                                    c_url = options.editUrl
+                                }else{
+                                    c_url = options.addUrl
+                                }
                             }else{
                                 c_url = options.addUrl
                                 console.log('不存在');

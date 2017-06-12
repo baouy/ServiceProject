@@ -8,7 +8,7 @@
 		loadType: 'get',
 		filterAll: true,
 		height:'100%',
-		columns: [{name:'organizationId', width:'150', label:'编号'},
+		columns: [{name:'organizationId', width:'150', label:'编号',attrs:{'readonly':"true"}},
 			{name:'name', width:'150', label:'组织名称',rule: 'required'},
 			{name:'description', width:'150', label:'组织描述',rule: 'required'},
 		],
@@ -40,13 +40,12 @@
 	function del_organization_back(d) {
 		if (d.code == 1){
 			$(this).alertmsg('ok',d.data);
+			$('#manage_organization_table').datagrid('refresh_part');
 		}else{
 			$(this).alertmsg('warn',d.data);
 		}
-//		$('#manage_organization_table').datagrid('refresh_part');
+
 	}
-
-
 
 </script>
 
