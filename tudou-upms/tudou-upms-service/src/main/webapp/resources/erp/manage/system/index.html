@@ -1,5 +1,25 @@
 <script type="text/javascript">
 
+	var system_btn = ''
+	for (var data of user_data) {
+		var value = data.permissionValue;
+		switch (value){
+			case 'upms:system:create':
+				system_btn += 'add,'
+				break;
+			case 'upms:system:update':
+				system_btn += 'edit,'
+				break;
+			case 'upms:system:delete':
+				system_btn += 'del,'
+				break;
+		}
+	}
+
+	if (system_btn.indexOf('add') != -1 || system_btn.indexOf('edit') != -1){
+		system_btn += 'save,cancel'
+	}
+
 	$('#manage_system_table').datagrid({
 		local: 'remote',
 		dataUrl: '/manage/system/list',
@@ -18,22 +38,42 @@
 		paging: {pageSize:50, selectPageSize:'50,100,200', pageCurrent:1},
 		hiddenFields: ['system_id'],
 		showToolbar: true,
-		toolbarItem: 'add,save,cancel',
+		toolbarItem: system_btn,
 		inlineEditMult: false,
 		ifvalue:'systemId',
 		addUrl:'/manage/system/create',
 		editUrl:'/manage/system/update',
 		editdblOnclick: true,
 		editCallback:'manage_back_edit',
+		delConfirm:true,
+		delPK:'systemId',
+		delType:'POST',
+		delUrl:'/manage/system/delete',
+		delCallback:'del_system_back',
 	});
 
 	function manage_back_edit(d) {
 		if (d.code == 1){
-			$(this).alertmsg('ok',d.data);
+			$(this).alertmsg('ok',"操作成功");
+		}else{
+			if (d.data instanceof Array) {
+				$.each(d.data, function(index, value) {
+					$(this).alertmsg('warn',value.errorMsg)
+				});
+			} else {
+				$(this).alertmsg('warn',d.data)
+			}
+		}
+		$('#manage_system_table').datagrid('refresh_part');
+	}
+
+	function del_system_back(d) {
+		if (d.code == 1){
+			$(this).alertmsg('ok',"删除成功");
+			$('#manage_system_table').datagrid('refresh_part');
 		}else{
 			$(this).alertmsg('warn',d.data);
 		}
-		$('#manage_system_table').datagrid('refresh_part');
 	}
 
 </script>

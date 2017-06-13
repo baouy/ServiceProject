@@ -115,11 +115,6 @@ public abstract class BaseServiceMock<Mapper, Record, Example> implements BaseSe
 	}
 
 	@Override
-	public int deleteByPrimaryNKeys(String ids) {
-		return -1;
-	}
-
-	@Override
 	public void initMapper() {}
 
 }

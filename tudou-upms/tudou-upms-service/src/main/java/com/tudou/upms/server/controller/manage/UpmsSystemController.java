@@ -116,4 +116,13 @@ public class UpmsSystemController extends BaseController{
 		return new UpmsResult(UpmsResultConstant.SUCCESS, count);
 	}
 
+	@ApiOperation(value = "删除系统")
+	@RequiresPermissions("upms:system:delete")
+	@RequestMapping(value = "/delete",method = RequestMethod.POST)
+	@ResponseBody
+	public Object delete(@RequestParam String systemId) {
+		int count = upmsSystemService.deleteByPrimaryKeys(systemId);
+		return new UpmsResult(UpmsResultConstant.SUCCESS, count);
+	}
+
 }

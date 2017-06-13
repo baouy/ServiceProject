@@ -276,7 +276,13 @@
 							zTree.cancelSelectedNode();
 							$('#permission_right').fadeOut();
 						} else {
-							$(this).alertmsg('warn', d.data)
+							if (d.data instanceof Array) {
+								$.each(d.data, function(index, value) {
+									$(this).alertmsg('warn',value.errorMsg)
+								});
+							} else {
+								$(this).alertmsg('warn',d.data)
+							}
 						}
 						$('#permission_pagecontent').trigger('bjui.ajaxStop')
 					},
@@ -341,7 +347,13 @@
 							zTree.cancelSelectedNode();
 							$('#permission_right').fadeOut();
 						} else {
-							$(this).alertmsg('warn', d.data)
+							if (d.data instanceof Array) {
+								$.each(d.data, function(index, value) {
+									$(this).alertmsg('warn',value.errorMsg)
+								});
+							} else {
+								$(this).alertmsg('warn',d.data)
+							}
 						}
 						$('#permission_pagecontent').trigger('bjui.ajaxStop')
 					}, error: function () {

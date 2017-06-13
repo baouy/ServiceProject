@@ -313,32 +313,6 @@ public abstract class BaseServiceImpl<Mapper, Record, Example> implements BaseSe
 				return 0;
 			}
 			DynamicDataSource.setDataSource(DataSourceEnum.MASTER.getName());
-			String[] idArray = ids.split("-");
-			int count = 0;
-			for (String idStr : idArray) {
-				if (StringUtils.isBlank(idStr)) {
-					continue;
-				}
-				Integer id = Integer.parseInt(idStr);
-				Method deleteByPrimaryKey = mapper.getClass().getDeclaredMethod("deleteByPrimaryKey", id.getClass());
-				Object result = deleteByPrimaryKey.invoke(mapper, id);
-				count += Integer.parseInt(String.valueOf(result));
-			}
-			return count;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		DynamicDataSource.clearDataSource();
-		return 0;
-	}
-
-	@Override
-	public int deleteByPrimaryNKeys(String ids) {
-		try {
-			if (StringUtils.isBlank(ids)) {
-				return 0;
-			}
-			DynamicDataSource.setDataSource(DataSourceEnum.MASTER.getName());
 			String[] idArray = ids.split(",");
 			int count = 0;
 			for (String idStr : idArray) {

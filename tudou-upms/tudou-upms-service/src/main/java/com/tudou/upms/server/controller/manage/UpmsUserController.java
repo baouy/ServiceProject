@@ -231,7 +231,7 @@ public class UpmsUserController extends BaseController {
 	@RequestMapping(value = "/delete",method = RequestMethod.POST)
 	@ResponseBody
 	public Object delete(@RequestParam String userId) {
-		int count = upmsUserService.deleteByPrimaryNKeys(userId);
+		int count = upmsUserService.deleteByPrimaryKeys(userId);
 		return new UpmsResult(UpmsResultConstant.SUCCESS, count);
 	}
 
