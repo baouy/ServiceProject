@@ -1,7 +1,4 @@
 <script>
-
-
-
 	var changeDatas1 = [];
 	var setting1 = {
 		check: {
@@ -11,7 +8,7 @@
 		},
 		async: {
 			enable: true,
-			url: '/manage/permission/user/' + user_select_id + '?type=1'
+			url: $.cookie("tudou-upms-server")+'/manage/permission/user/' + user_select_id + '?type=1'
 		},
 		data: {
 			simpleData: {
@@ -42,7 +39,7 @@
 		},
 		async: {
 			enable: true,
-			url: '/manage/permission/user/' + user_select_id + '?type=-1'
+			url: $.cookie("tudou-upms-server")+'/manage/permission/user/' + user_select_id + '?type=-1'
 		},
 		data: {
 			simpleData: {
@@ -75,7 +72,7 @@
 		var changeDatas = changeDatas1.concat(changeDatas2);
 		$.ajax({
 			type: 'post',
-			url: '/manage/user/permission/' + user_select_id,
+			url: $.cookie("tudou-upms-server")+'/manage/user/permission/' + user_select_id,
 			data: {datas: JSON.stringify(changeDatas), permissionUserId: user_select_id},
 			success: function(result) {
 				if (result.code != 1) {

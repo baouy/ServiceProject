@@ -187,6 +187,8 @@
 						if (d.code == 1) {
 							//系统菜单
 							for (var data of d.data.upmsSystems) {
+								console.log(data.name+"-"+data.basepath);
+								$.cookie(data.name, data.basepath, {path: '/'});
 								$menuBar.append('<li class="" id ="top_menu_' + data.systemId + '"><a href="javascript:;" data-toggle="slidebar">' + data.title + '</a>');
 							}
 
@@ -282,7 +284,8 @@
 			<!--</ul>-->
 			<!--</div>-->
 			<!--<div class="items" >-->
-			<!--<ul class="menu-items" data-faicon="hand-o-up">-->
+			<!--<ul class="menu-
+			items" data-faicon="hand-o-up">-->
 			<!--<li><a href="SystemManagement/personnel_main.html" data-toggle="navtab" data-options="{id:'form-input', faicon:'th-large'}">组织档案</a></li>-->
 			<!--<li><a href="test_table.html" data-toggle="navtab" data-options="{id:'form-input', faicon:'th-large'}">权限档案</a></li>-->
 			<!--</ul>-->

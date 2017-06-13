@@ -27,7 +27,7 @@
 
 	$('#manage_role_table').datagrid({
 		local: 'remote',
-		dataUrl: '/manage/role/list',
+		dataUrl: $.cookie("tudou-upms-server")+'/manage/role/list',
 		dataType: 'json',
 		sortAll: false,
 		loadType: 'get',

@@ -22,7 +22,7 @@
 
 	$('#manage_system_table').datagrid({
 		local: 'remote',
-		dataUrl: '/manage/system/list',
+		dataUrl: $.cookie("tudou-upms-server")+'/manage/system/list',
 		dataType: 'json',
 		sortAll: false,
 		loadType: 'get',

@@ -69,4 +69,11 @@ public class ManageController {
 		return new UpmsResult(UpmsResultConstant.PERMISSIONS_403,"无权限操作");
 	}
 
+	@ApiOperation(value = "服务器异常")
+	@RequestMapping(value = "/error", method = RequestMethod.GET)
+	@ResponseBody
+	public Object permissions_error() {
+		return new UpmsResult(UpmsResultConstant.SERVICE_ERROR,"服务器异常,请联系开发人员");
+	}
+
 }

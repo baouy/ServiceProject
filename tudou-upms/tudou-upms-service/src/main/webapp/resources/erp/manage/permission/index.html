@@ -136,7 +136,7 @@
 	function ajaxDataFilter() {
 		var datas = new Array();
 		$.ajax({
-			url: '/manage/permission/list',
+			url: $.cookie("tudou-upms-server")+'/manage/permission/list',
 			type: 'get',
 			async: false,
 			success: function (responseData) {
@@ -197,7 +197,7 @@
 		var zTree = $.fn.zTree.getZTreeObj("menu-ztree")
 		$('#permission_pagecontent').trigger('bjui.ajaxStart')
 		$.ajax({
-					url: '/manage/permission/delete/' + permission_del_treeNode.id,
+					url: $.cookie("tudou-upms-server")+'/manage/permission/delete/' + permission_del_treeNode.id,
 					type: 'GET',
 					success: function (d) {
 						if (d.code == 1) {
@@ -243,7 +243,7 @@
 		$('#permission_pagecontent').trigger('bjui.ajaxStart')
 
 		$.ajax({
-					url: '/manage/permission/update',
+					url: $.cookie("tudou-upms-server")+'/manage/permission/update',
 					dataType: 'json',
 					type: 'POST',
 					data: {
@@ -315,7 +315,7 @@
 		console.log(systemId);
 
 		$.ajax({
-					url: '/manage/permission/create',
+					url: $.cookie("tudou-upms-server")+'/manage/permission/create',
 					dataType: 'json',
 					type: 'POST',
 					data: {

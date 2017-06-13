@@ -38,7 +38,7 @@ public abstract class BaseController {
 		if (exception instanceof InvalidSessionException) {
 			return "redirect:"+"/sso/failure";
 		}
-		return "/error.jsp";
+		return "redirect:"+"/manage/error";
 	}
 
 	/**

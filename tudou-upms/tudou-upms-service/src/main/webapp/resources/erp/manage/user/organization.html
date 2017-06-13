@@ -2,7 +2,7 @@
 
 	$('#manage_user_organization_table').datagrid({
 		local: 'remote',
-		dataUrl: '/manage/user/organization_list',
+		dataUrl: $.cookie("tudou-upms-server")+'/manage/user/organization_list',
 		dataType: 'json',
 		sortAll: false,
 		loadType: 'get',
@@ -24,7 +24,7 @@
 	function user_organization_init() {
 		var datas = $("#manage_user_organization_table").data('datas')
 		$.ajax({
-					url: '/manage/user/organization/' + user_select_id,
+					url: $.cookie("tudou-upms-server")+'/manage/user/organization/' + user_select_id,
 					dataType: 'json',
 					type: 'GET',
 					success: function (d) {
@@ -61,7 +61,7 @@
 		console.log(organizationId);
 		$('#manage_user_organization_table').trigger('bjui.ajaxStart')
 		$.ajax({
-					url: '/manage/user/organization/' + user_select_id,
+					url: $.cookie("tudou-upms-server")+'/manage/user/organization/' + user_select_id,
 					dataType: 'json',
 					type: 'POST',
 					data: {

@@ -11,7 +11,7 @@
 
 	$('#manage_log_table').datagrid({
 		local: 'remote',
-		dataUrl: '/manage/log/list',
+		dataUrl: $.cookie("tudou-upms-server")+'/manage/log/list',
 		dataType: 'json',
 		sortAll: false,
 		loadType: 'get',
@@ -49,7 +49,7 @@
 			ids.push(selected[i].logId);
 		}
 		$.ajax({
-			url: '/manage/log/delete/'+ids.join(','),
+			url: $.cookie("tudou-upms-server")+'/manage/log/delete/'+ids.join(','),
 			dataType: 'json',
 			type: 'get',
 			success: function(d){

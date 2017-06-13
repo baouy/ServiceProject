@@ -27,7 +27,7 @@
 
 	$('#manage_user_table').datagrid({
 		local: 'remote',
-		dataUrl: '/manage/user/list',
+		dataUrl: $.cookie("tudou-upms-server")+'/manage/user/list',
 		dataType: 'json',
 		sortAll: false,
 		loadType: 'get',

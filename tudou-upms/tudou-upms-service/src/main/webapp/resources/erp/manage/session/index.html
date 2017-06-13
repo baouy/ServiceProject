@@ -12,7 +12,7 @@
 
 	$('#manage_session_table').datagrid({
 		local: 'remote',
-		dataUrl: '/manage/session/list',
+		dataUrl: $.cookie("tudou-upms-server")+'/manage/session/list',
 		dataType: 'json',
 		sortAll: false,
 		loadType: 'get',
@@ -46,7 +46,7 @@
 			ids.push(selected[i].id);
 		}
 		$.ajax({
-			url: '/manage/session/forceout/'+ids.join(','),
+			url: $.cookie("tudou-upms-server")+'/manage/session/forceout/'+ids.join(','),
 			dataType: 'json',
 			type: 'get',
 			success: function(d){

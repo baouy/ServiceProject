@@ -9,6 +9,7 @@ public enum UpmsResultConstant {
     SUCCESS(1, "success"),
 
     PERMISSIONS_403(403,"Permissions 403"),
+    SERVICE_ERROR(500,"Service Exception"),
     VERIFY_FAILURE(10000,"Verify failure"),
 
     INVALID_LENGTH(10001, "Invalid length"),
