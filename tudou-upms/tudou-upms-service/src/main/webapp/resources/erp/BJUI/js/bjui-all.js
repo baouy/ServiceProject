@@ -12353,7 +12353,8 @@
                         for (var i = 0 ; i < postData.length ; i++){
                             var obj = postData[i];
                             if (obj.hasOwnProperty(ifvalue)){
-                                if (obj[ifvalue].length >0){
+                                var ifv = obj[ifvalue]
+                                if (ifv > 0 || ifv.length >0){
                                     c_url = options.editUrl
                                 }else{
                                     c_url = options.addUrl

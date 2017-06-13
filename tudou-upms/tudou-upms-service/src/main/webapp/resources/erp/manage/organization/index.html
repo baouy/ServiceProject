@@ -1,5 +1,28 @@
 <script type="text/javascript">
 
+	var organization_btn = ''
+	for (var data of user_data) {
+		var value = data.permissionValue;
+		switch (value){
+			case 'upms:organization:create':
+				organization_btn += 'add,'
+				break;
+			case 'upms:organization:update':
+				organization_btn += 'edit,'
+				break;
+			case 'upms:organization:delete':
+				organization_btn += 'del,'
+				break;
+		}
+	}
+
+	console.log(organization_btn.indexOf('add'));
+	console.log(organization_btn.indexOf('edit'));
+
+	if (organization_btn.indexOf('add') != -1 || organization_btn.indexOf('edit') != -1){
+		organization_btn += 'save,cancel'
+	}
+
 	$('#manage_organization_table').datagrid({
 		local: 'remote',
 		dataUrl: '/manage/organization/list',
@@ -14,7 +37,7 @@
 		],
 		paging: {pageSize:50, selectPageSize:'50,100,200', pageCurrent:1},
 		showToolbar: true,
-		toolbarItem: 'add,save,del,cancel',
+		toolbarItem: organization_btn,
 		inlineEditMult: false,
 		ifvalue:'organizationId',
 		addUrl:'/manage/organization/create',
@@ -32,7 +55,13 @@
 		if (d.code == 1){
 			$(this).alertmsg('ok',d.data);
 		}else{
-			$(this).alertmsg('warn',d.data);
+			if (d.data instanceof Array) {
+				$.each(d.data, function(index, value) {
+					$(this).alertmsg('warn',value.errorMsg)
+				});
+			} else {
+				$(this).alertmsg('warn',d.data)
+			}
 		}
 		$('#manage_organization_table').datagrid('refresh_part');
 	}

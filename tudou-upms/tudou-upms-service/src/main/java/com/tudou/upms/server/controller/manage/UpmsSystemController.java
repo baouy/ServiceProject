@@ -1,5 +1,6 @@
 package com.tudou.upms.server.controller.manage;
 
+import com.alibaba.fastjson.JSON;
 import com.baidu.unbiz.fluentvalidator.ComplexResult;
 import com.baidu.unbiz.fluentvalidator.FluentValidator;
 import com.baidu.unbiz.fluentvalidator.ResultCollectors;
@@ -7,6 +8,7 @@ import com.tudou.common.base.BaseController;
 import com.tudou.common.validator.LengthValidator;
 import com.tudou.upms.common.constant.UpmsResult;
 import com.tudou.upms.common.constant.UpmsResultConstant;
+import com.tudou.upms.dao.model.UpmsRole;
 import com.tudou.upms.dao.model.UpmsSystem;
 import com.tudou.upms.dao.model.UpmsSystemExample;
 import com.tudou.upms.rpc.api.UpmsSystemService;
@@ -76,7 +78,9 @@ public class UpmsSystemController extends BaseController{
 	@RequiresPermissions("upms:system:create")
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@ResponseBody
-	public Object create(@ModelAttribute UpmsSystem upmsSystem) {
+	public Object create(@RequestParam String json) {
+		List<UpmsSystem> upmsSystems = JSON.parseArray(json, UpmsSystem.class);
+		UpmsSystem upmsSystem = upmsSystems.get(0);
 		ComplexResult result = FluentValidator.checkAll()
 				.on(upmsSystem.getTitle(), new LengthValidator(1, 20, "标题"))
 				.on(upmsSystem.getName(), new LengthValidator(1, 20, "名称"))
@@ -96,7 +100,9 @@ public class UpmsSystemController extends BaseController{
 	@RequiresPermissions("upms:system:update")
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	@ResponseBody
-	public Object update(@ModelAttribute UpmsSystem upmsSystem) {
+	public Object update(@RequestParam String json) {
+		List<UpmsSystem> upmsSystems = JSON.parseArray(json, UpmsSystem.class);
+		UpmsSystem upmsSystem = upmsSystems.get(0);
 		ComplexResult result = FluentValidator.checkAll()
 				.on(upmsSystem.getTitle(), new LengthValidator(1, 20, "标题"))
 				.on(upmsSystem.getName(), new LengthValidator(1, 20, "名称"))

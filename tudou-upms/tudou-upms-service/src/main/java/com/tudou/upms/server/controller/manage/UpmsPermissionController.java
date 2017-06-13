@@ -1,5 +1,6 @@
 package com.tudou.upms.server.controller.manage;
 
+import com.alibaba.fastjson.JSON;
 import com.baidu.unbiz.fluentvalidator.ComplexResult;
 import com.baidu.unbiz.fluentvalidator.FluentValidator;
 import com.baidu.unbiz.fluentvalidator.ResultCollectors;
@@ -7,10 +8,7 @@ import com.tudou.common.base.BaseController;
 import com.tudou.common.validator.LengthValidator;
 import com.tudou.upms.common.constant.UpmsResult;
 import com.tudou.upms.common.constant.UpmsResultConstant;
-import com.tudou.upms.dao.model.UpmsPermission;
-import com.tudou.upms.dao.model.UpmsPermissionExample;
-import com.tudou.upms.dao.model.UpmsSystem;
-import com.tudou.upms.dao.model.UpmsSystemExample;
+import com.tudou.upms.dao.model.*;
 import com.tudou.upms.rpc.api.UpmsApiService;
 import com.tudou.upms.rpc.api.UpmsPermissionService;
 import com.tudou.upms.rpc.api.UpmsSystemService;
@@ -102,7 +100,7 @@ public class UpmsPermissionController extends BaseController {
 	@RequiresPermissions("upms:permission:create")
 	@ResponseBody
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public Object create(UpmsPermission upmsPermission) {
+	public Object create(@ModelAttribute UpmsPermission upmsPermission) {
 		ComplexResult result = FluentValidator.checkAll()
 				.on(upmsPermission.getName(), new LengthValidator(1, 20, "名称"))
 				.doValidate()
@@ -134,7 +132,7 @@ public class UpmsPermissionController extends BaseController {
 	@RequiresPermissions("upms:permission:update")
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	@ResponseBody
-	public Object update(UpmsPermission upmsPermission) {
+	public Object update(@ModelAttribute UpmsPermission upmsPermission) {
 		ComplexResult result = FluentValidator.checkAll()
 				.on(upmsPermission.getName(), new LengthValidator(1, 20, "名称"))
 				.doValidate()

@@ -107,21 +107,24 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.tudou.upms.dao.model.UpmsPermission">
-    insert into upms_permission (permission_id, system_id, pid, 
-      name, type, permission_value, 
-      uri, icon, status, 
-      ctime, orders)
-    values (#{permissionId,jdbcType=INTEGER}, #{systemId,jdbcType=INTEGER}, #{pid,jdbcType=INTEGER}, 
-      #{name,jdbcType=VARCHAR}, #{type,jdbcType=TINYINT}, #{permissionValue,jdbcType=VARCHAR}, 
-      #{uri,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
-      #{ctime,jdbcType=BIGINT}, #{orders,jdbcType=BIGINT})
+    <selectKey keyProperty="permissionId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into upms_permission (system_id, pid, name, 
+      type, permission_value, uri, 
+      icon, status, ctime, 
+      orders)
+    values (#{systemId,jdbcType=INTEGER}, #{pid,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{type,jdbcType=TINYINT}, #{permissionValue,jdbcType=VARCHAR}, #{uri,jdbcType=VARCHAR}, 
+      #{icon,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{ctime,jdbcType=BIGINT}, 
+      #{orders,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.tudou.upms.dao.model.UpmsPermission">
+    <selectKey keyProperty="permissionId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into upms_permission
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="permissionId != null">
-        permission_id,
-      </if>
       <if test="systemId != null">
         system_id,
       </if>
@@ -154,9 +157,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="permissionId != null">
-        #{permissionId,jdbcType=INTEGER},
-      </if>
       <if test="systemId != null">
         #{systemId,jdbcType=INTEGER},
       </if>

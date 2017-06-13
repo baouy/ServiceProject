@@ -1,5 +1,6 @@
 package com.tudou.upms.server.controller.manage;
 
+import com.alibaba.fastjson.JSON;
 import com.baidu.unbiz.fluentvalidator.ComplexResult;
 import com.baidu.unbiz.fluentvalidator.FluentValidator;
 import com.baidu.unbiz.fluentvalidator.ResultCollectors;
@@ -10,6 +11,7 @@ import com.tudou.upms.common.constant.UpmsResultConstant;
 import com.tudou.upms.dao.model.UpmsLogExample;
 import com.tudou.upms.dao.model.UpmsOrganization;
 import com.tudou.upms.dao.model.UpmsOrganizationExample;
+import com.tudou.upms.dao.model.UpmsPermission;
 import com.tudou.upms.rpc.api.UpmsOrganizationService;
 import com.tudou.upms.server.modelvalid.OrganizationValid;
 import io.swagger.annotations.Api;
@@ -69,7 +71,9 @@ public class UpmsOrganizationController extends BaseController {
 	@RequiresPermissions("upms:organization:create")
 	@ResponseBody
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public Object create(UpmsOrganization upmsOrganization) {
+	public Object create(@RequestParam String json) {
+		List<UpmsOrganization> upmsOrganizations = JSON.parseArray(json, UpmsOrganization.class);
+		UpmsOrganization upmsOrganization = upmsOrganizations.get(0);
 		ComplexResult result = FluentValidator.checkAll()
 				.on(upmsOrganization.getName(), new LengthValidator(1, 20, "名称"))
 				.doValidate()
@@ -96,7 +100,9 @@ public class UpmsOrganizationController extends BaseController {
 	@RequiresPermissions("upms:organization:update")
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	@ResponseBody
-	public Object update(UpmsOrganization upmsOrganization) {
+	public Object update(@RequestParam String json) {
+		List<UpmsOrganization> upmsOrganizations = JSON.parseArray(json, UpmsOrganization.class);
+		UpmsOrganization upmsOrganization = upmsOrganizations.get(0);
 		ComplexResult result = FluentValidator.checkAll()
 				.on(upmsOrganization.getName(), new LengthValidator(1, 20, "名称"))
 				.doValidate()

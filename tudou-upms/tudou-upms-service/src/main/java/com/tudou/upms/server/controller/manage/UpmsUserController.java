@@ -1,5 +1,6 @@
 package com.tudou.upms.server.controller.manage;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.baidu.unbiz.fluentvalidator.ComplexResult;
 import com.baidu.unbiz.fluentvalidator.FluentValidator;
@@ -202,10 +203,10 @@ public class UpmsUserController extends BaseController {
 	@RequiresPermissions("upms:user:create")
 	@ResponseBody
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public Object create(UpmsUser upmsUser) {
+	public Object create(@RequestParam String json) {
+		UpmsUser upmsUser = JSON.parseArray(json,UpmsUser.class).get(0);
 		ComplexResult result = FluentValidator.checkAll()
 				.on(upmsUser.getUsername(), new LengthValidator(1, 20, "帐号"))
-				.on(upmsUser.getPassword(), new LengthValidator(5, 32, "密码"))
 				.on(upmsUser.getRealname(), new NotNullValidator("姓名"))
 				.doValidate()
 				.result(ResultCollectors.toComplex());
@@ -215,7 +216,7 @@ public class UpmsUserController extends BaseController {
 		long time = System.currentTimeMillis();
 		String salt = UUID.randomUUID().toString().replaceAll("-", "");
 		upmsUser.setSalt(salt);
-		upmsUser.setPassword(MD5Util.MD5(upmsUser.getPassword() + upmsUser.getSalt()));
+		upmsUser.setPassword(MD5Util.MD5("123456" + upmsUser.getSalt()));
 		upmsUser.setCtime(time);
 		upmsUser = upmsUserService.createUser(upmsUser);
 		if (null == upmsUser) {
@@ -227,10 +228,10 @@ public class UpmsUserController extends BaseController {
 
 	@ApiOperation(value = "删除用户")
 	@RequiresPermissions("upms:user:delete")
-	@RequestMapping(value = "/delete",method = RequestMethod.GET)
+	@RequestMapping(value = "/delete",method = RequestMethod.POST)
 	@ResponseBody
 	public Object delete(@RequestParam String userId) {
-		int count = upmsUserService.deleteByPrimaryKeys(userId);
+		int count = upmsUserService.deleteByPrimaryNKeys(userId);
 		return new UpmsResult(UpmsResultConstant.SUCCESS, count);
 	}
 
@@ -238,7 +239,8 @@ public class UpmsUserController extends BaseController {
 	@RequiresPermissions("upms:user:update")
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	@ResponseBody
-	public Object update(UpmsUser upmsUser) {
+	public Object update(@RequestParam String json) {
+		UpmsUser upmsUser = JSON.parseArray(json,UpmsUser.class).get(0);
 		ComplexResult result = FluentValidator.checkAll()
 				.on(upmsUser.getUsername(), new LengthValidator(1, 20, "帐号"))
 				.on(upmsUser.getRealname(), new NotNullValidator("姓名"))
