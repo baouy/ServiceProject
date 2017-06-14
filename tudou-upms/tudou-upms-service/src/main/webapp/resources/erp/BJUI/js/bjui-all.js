@@ -12350,19 +12350,22 @@
                         //davidwang-加入add和edit判断
                         var c_url;
                         var ifvalue = options.ifvalue;
-                        for (var i = 0 ; i < postData.length ; i++){
-                            var obj = postData[i];
-                            if (obj.hasOwnProperty(ifvalue)){
-                                var ifv = obj[ifvalue]
-                                if (ifv > 0 || ifv.length >0){
-                                    c_url = options.editUrl
+                        if (ifvalue != null){
+                            for (var i = 0 ; i < postData.length ; i++){
+                                var obj = postData[i];
+                                if (obj.hasOwnProperty(ifvalue)){
+                                    var ifv = obj[ifvalue]
+                                    if (ifv > 0 || ifv.length >0){
+                                        c_url = options.editUrl
+                                    }else{
+                                        c_url = options.addUrl
+                                    }
                                 }else{
                                     c_url = options.addUrl
                                 }
-                            }else{
-                                c_url = options.addUrl
-                                console.log('不存在');
                             }
+                        }else{
+                            c_url = options.editUrl
                         }
 
                         var type = options.editType, opts = {url:c_url, data:JSON.stringify(postData), type:'POST', okCallback:callback}

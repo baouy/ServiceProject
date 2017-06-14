@@ -36,10 +36,7 @@
 	<!-- BJUI.all 分模块压缩版 -->
 	<script src="BJUI/js/bjui-all.js"></script>
 	<!-- 以下是B-JUI的分模块未压缩版，建议开发调试阶段使用下面的版本 -->
-	<script src="http://cdn.staticfile.org/Plupload/2.1.1/moxie.min.js"></script>
-	<script type="text/javascript" src="js/qiniu.js"></script>
-	<script src="js/plupload.min.js"></script>
-	<script type="text/javascript" src="js/ui.js"></script>
+	<script src="BJUI/js/moxie.min.js"></script>
 	<!-- plugins -->
 	<!-- swfupload for uploadify && kindeditor -->
 	<script src="BJUI/plugins/swfupload/swfupload.js"></script>
@@ -72,32 +69,27 @@
 	<link href="BJUI/plugins/uploadify/css/uploadify.css" rel="stylesheet">
 	<script src="BJUI/plugins/uploadify/scripts/jquery.uploadify.min.js"></script>
 	<script src="BJUI/plugins/download/jquery.fileDownload.js"></script>
-	<link rel="stylesheet" type="text/css" href="css/erp.css">
 	<!--DavidWang加入code -->
 	<script src="BJUI/plugins/qrcode/jquery.qrcode.min.js"></script>
 
 
-
 	<script>
+		var user_data;
 		$(function () {
 			$.ajaxSetup({
-				contentType:"application/x-www-form-urlencoded;charset=utf-8",
-				complete:function(XMLHttpRequest,textStatus){
+				contentType: "application/x-www-form-urlencoded;charset=utf-8",
+				complete: function (XMLHttpRequest, textStatus) {
 					//通过XMLHttpRequest取得响应结果
 					var res = XMLHttpRequest.responseText;
-					try{
+					try {
 						var jsonData = JSON.parse(res);
-						if (jsonData.state == 10001){
+						if (jsonData.code == 10000) {
 							$(this).alertmsg('error', '账号以失效请重新登录!');
-							setTimeout(function(){
-								$.cookie("sys__username", null, {path: '/'});
-								$.cookie("roleid", null, {path: '/'});
-								$.cookie("id", null, {path: '/'});
-								$.cookie("flowerName", null, {path: '/'});
+							setTimeout(function () {
 								window.location.href = 'login.html';
-							},2000);
+							}, 2000);
 						}
-					}catch(e){
+					} catch (e) {
 					}
 				}
 			});
@@ -117,7 +109,7 @@
 					orderDirection: 'orderDirection'
 				}, //[可选]分页参数
 				alertMsg: {displayPosition: 'topcenter', displayMode: 'slide', alertTimeout: 3000}, //[可选]信息提示的显示位置，显隐方式，及[info/correct]方式时自动关闭延时(毫秒)
-				keys: {statusCode: 'state', message: 'content'}, //[可选]
+				keys: {statusCode: 'code', message: 'error'}, //[可选]
 				ui: {
 					windowWidth: 0, //框架显示宽度，0=100%宽，> 600为则居中显示
 					showSlidebar: true, //[可选]左侧导航栏锁定/隐藏
@@ -133,7 +125,7 @@
 			$('#bjui-date').html(today.formatDate('yyyy/MM/dd'));
 			setInterval(function () {
 				today = new Date(today.setSeconds(today.getSeconds() + 1));
-				$('#bjui-clock').html('   '+today.formatDate('HH:mm:ss'));
+				$('#bjui-clock').html('   ' + today.formatDate('HH:mm:ss'));
 			}, 1000);
 			var intDiff = parseInt(1500);//倒计时总秒数量 25分钟
 			function customer_timer(intDiff) {
@@ -145,7 +137,7 @@
 						minute = Math.floor(intDiff / 60) - (day * 24 * 60) - (hour * 60);
 						second = Math.floor(intDiff) - (day * 24 * 60 * 60) - (hour * 60 * 60) - (minute * 60);
 						if (minute == 0 && second == 0) {
-
+							//30分钟后继续更新token
 						} else {
 							$('#day_show').html(day + "天");
 							$('#hour_show').html('<s id="h"></s>' + hour + '时');
@@ -157,6 +149,7 @@
 					}
 				}, 1000);
 			}
+
 			var timeStorage = localStorage.getItem("timeNmu");
 			if (timeStorage != null) { //刷新时
 				customer_timer(timeStorage);
@@ -166,43 +159,62 @@
 
 			$("#customer_timeout").click(function () {
 				//退出登录
-				window.location.href = 'login.html';
-				localStorage.removeItem("timeNmu");
-				$.cookie("sys__username", null, {path: '/'});  //删除cookie
-				$.cookie("roleid", null, {path: '/'});
-				$.cookie("id", null, {path: '/'});
-				$.cookie("flowerName", null, {path: '/'});
-			})
+				$.ajax({
+					url: '/sso/logout',
+					type: 'get',
+					success: function (d) {
+						if (d.code == 1) {
+							window.location.href = 'login.html';
+							localStorage.removeItem("timeNmu");
+						} else {
+							$(this).alertmsg('warn', "退出失败");
+						}
+					}
+				});
+			});
+
 
 			$("#customer_fllowName").text("欢迎您，" + $.cookie("flowerName") + "!");
 
 			initrole();
 			function initrole() {
+				user_data = new Array();
 				$.ajax({
-					url:'/v1/roledata/getUserRight',
-					type:'get',
-					success:function(d){
-						var $menuBar =$("#bjui-hnav-navbar");
-						for (var data of d.data){
-							if(data.parentid==0){
-								$menuBar.append('<li class="" id ="top_menu_'+data.id+'"><a href="javascript:;" data-toggle="slidebar">'+data.rightname+'</a>');
-							}else {
-								if(data.righttype==1){
-									var $menuDiv = $("#menu_"+data.parentid).html();
-									var _thisMenu = '<li><a href="'+data.menupath+'" data-toggle="navtab" data-options="{id:\'form-input_'+data.id+'\', faicon:\'th-large\'}">'+data.rightname+'</a></li>';
-									if($menuDiv){
-										$("#menu_"+data.parentid).append(_thisMenu);
-									}else{
-										$("#top_menu_"+data.parentid).append('<div class="items hide" data-noinit="true"> <ul class="menu-items" data-faicon="hand-o-up" id="menu_'+data.parentid+'">'+_thisMenu+'</ul></div>') ;
-									}
+					url: '/manage/menu',
+					type: 'get',
+					success: function (d) {
+						var $menuBar = $("#bjui-hnav-navbar");
+						if (d.code == 1) {
+							//系统菜单
+							for (var data of d.data.upmsSystems) {
+								$.cookie(data.name, data.basepath, {path: '/'});
+								$menuBar.append('<li class="" id ="top_menu_' + data.systemId + '"><a href="javascript:;" data-toggle="slidebar">' + data.title + '</a>');
+							}
+
+							//菜单
+							for (var data of d.data.upmsPermissions) {
+								if (data.type == 1) {
+									$("#top_menu_" + data.systemId).append('<div class="items hide"><ul id="menu_' + data.permissionId + '"class="menu-items" data-faicon="hand-o-up"data-faicon="' + "star-o" + '" data-tit="' + data.name + '"></ul></div>')
+								}
+								if (data.type == 3){
+									user_data.push(data)
 								}
 							}
+
+							for (var data of d.data.upmsPermissions) {
+								if (data.type == 2) {
+									var _thisMenu = '<li><a href="' + data.uri + '" data-toggle="navtab" data-options="{id:\'form-input_' + data.permissionId + '\', faicon:\'th-large\'}">' + data.name + '</a></li>';
+									$("#menu_" + data.pid).append(_thisMenu);
+								}
+							}
+
+							$menuBar.find('li :eq(1)').click();
 						}
-						$menuBar.find('li :eq(1)').click();
+
 					}
 				});
 			}
-		});
+		})
 
 	</script>
 </head>
@@ -221,21 +233,27 @@
 					<span id="bjui-date"></span><span id="bjui-clock"></span>
 				</div>
 			</li>
-			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">我的账户 <span class="caret"></span></a>
+			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">我的账户 <span
+					class="caret"></span></a>
 				<ul class="dropdown-menu" role="menu">
-					<li id="edit_del_back"><a href="CustomerManagement/customer_changepwd.html" data-toggle="dialog" data-id="changepwd_page" data-mask="true" data-width="400" data-height="260">&nbsp;<span class="glyphicon glyphicon-lock"></span> 修改密码&nbsp;</a></li>
+					<li id="edit_del_back"><a href="CustomerManagement/customer_changepwd.html" data-toggle="dialog"
+											  data-id="changepwd_page" data-mask="true" data-width="400"
+											  data-height="260">&nbsp;<span class="glyphicon glyphicon-lock"></span>
+						修改密码&nbsp;</a></li>
 					<li class="divider"></li>
 					<li><a id="customer_timeout" class="red">&nbsp;<span class="glyphicon glyphicon-off"></span>
 						注销登陆
 					</a></li>
 				</ul>
 			</li>
-			<li class="dropdown"><a href="#" class="dropdown-toggle theme orange" data-toggle="dropdown" title="切换皮肤"><i class="fa fa-tree"></i></a>
+			<li class="dropdown"><a href="#" class="dropdown-toggle theme orange" data-toggle="dropdown" title="切换皮肤"><i
+					class="fa fa-tree"></i></a>
 				<ul class="dropdown-menu" role="menu" id="bjui-themes">
 					<li class=""><a href="javascript:;" class="theme_default" data-toggle="theme" data-theme="default">
 						&nbsp;
 						<i class="fa fa-tree"></i> 黑白分明&nbsp;&nbsp;</a></li>
-					<li class="active"><a href="javascript:;" class="theme_orange" data-toggle="theme" data-theme="orange">&nbsp;<i class="fa fa-tree"></i> 橘子红了</a></li>
+					<li class="active"><a href="javascript:;" class="theme_orange" data-toggle="theme"
+										  data-theme="orange">&nbsp;<i class="fa fa-tree"></i> 橘子红了</a></li>
 					<li class=""><a href="javascript:;" class="theme_purple" data-toggle="theme" data-theme="purple">
 						&nbsp;
 						<i class="fa fa-tree"></i> 紫罗兰</a></li>
@@ -254,6 +272,43 @@
 		<!-- 横向菜单 -->
 		<ul id="bjui-hnav-navbar">
 			<li style="width:204px;"><a id="customer_fllowName"></a></li>
+
+			<!--<li class="active">-->
+			<!--<a href="javascript:;" data-toggle="slidebar">系统管理</a>-->
+			<!--<div class="items hide" data-noinit="true">-->
+			<!--<ul class="menu-items" data-faicon="hand-o-up" data-faicon="star-o" data-tit="系统组织管理">-->
+			<!--<li><a href="SystemManagement/personnel_main.html" data-toggle="navtab" data-options="{id:'form-input', faicon:'th-large'}">组织档案</a></li>-->
+			<!--<li><a href="test_table.html" data-toggle="navtab" data-options="{id:'form-input', faicon:'th-large'}">权限档案</a></li>-->
+			<!--</ul>-->
+			<!--</div>-->
+			<!--<div class="items" >-->
+			<!--<ul class="menu-
+			items" data-faicon="hand-o-up">-->
+			<!--<li><a href="SystemManagement/personnel_main.html" data-toggle="navtab" data-options="{id:'form-input', faicon:'th-large'}">组织档案</a></li>-->
+			<!--<li><a href="test_table.html" data-toggle="navtab" data-options="{id:'form-input', faicon:'th-large'}">权限档案</a></li>-->
+			<!--</ul>-->
+			<!--</div>-->
+			<!--</li>-->
+
+			<!--<li class="" id="top_menu_1"><a href="javascript:;" data-toggle="slidebar">权限管理系统</a>-->
+			<!--<div class="items hide" data-noinit="true">-->
+			<!--<ul id="menu_1" class="ztree ztree_main" data-toggle="ztree" data-on-click="MainMenuClick"-->
+			<!--data-expand-all="true" data-faicon="star-o" data-tit="系统组织管理">-->
+			<!--<li><a href="/manage/system/index" data-toggle="navtab"-->
+			<!--data-options="{id:'form-input_2', faicon:'th-large'}">系统管理</a></li>-->
+			<!--<li><a href="/manage/organization/index" data-toggle="navtab"-->
+			<!--data-options="{id:'form-input_3', faicon:'th-large'}">组织管理</a></li>-->
+			<!--</ul>-->
+			<!--<ul id="menu_4" class="ztree ztree_main" data-toggle="ztree" data-on-click="MainMenuClick"-->
+			<!--data-expand-all="true" data-faicon="star-o" data-tit="其他数据管理">-->
+			<!--<li><a href="null" data-toggle="navtab"-->
+			<!--data-options="{id:'form-input_5', faicon:'th-large'}">会话管理</a></li>-->
+			<!--<li><a href="null" data-toggle="navtab"-->
+			<!--data-options="{id:'form-input_6', faicon:'th-large'}">日志记录</a></li>-->
+			<!--</ul>-->
+			<!--</div>-->
+			<!--</li>-->
+
 		</ul>
 	</div>
 </header>
@@ -313,7 +368,7 @@
 				</div>
 				<div class="bjui-pageContent">
 
-					</div>
+				</div>
 			</div>
 			<!-- 各页片内容区域 -->
 		</div>

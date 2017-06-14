@@ -1,5 +1,6 @@
 package com.tudou.upms.server.interceptor;
 
+import com.tudou.common.util.PropertiesFileUtil;
 import com.tudou.upms.dao.model.UpmsUser;
 import com.tudou.upms.rpc.api.UpmsApiService;
 import org.apache.shiro.SecurityUtils;

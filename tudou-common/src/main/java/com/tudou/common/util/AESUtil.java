@@ -105,9 +105,9 @@ public class AESUtil {
             /*
              * 解密
              */
-//            byte[] byte_decode = cipher.doFinal(byte_content);
-//            String AES_decode = new String(byte_decode, "utf-8");
-            return content;
+            byte[] byte_decode = cipher.doFinal(byte_content);
+            String AES_decode = new String(byte_decode, "utf-8");
+            return AES_decode;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (NoSuchPaddingException e) {
@@ -115,6 +115,10 @@ public class AESUtil {
         } catch (InvalidKeyException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
             e.printStackTrace();
         }
 //        catch (IllegalBlockSizeException e) {

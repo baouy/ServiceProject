@@ -7055,6 +7055,8 @@
             childUpdate   : false   // This options only for childOptions, when the child grid data changes, update the parent row(!! The parent grid neeed option 'updateRowUrl' !!), Optional (Boolean: true | false, true = 'all') OR (String: 'all, add, edit, del')
         },
         editUrl         : null,     // An action URL, for processing (update / save), return results (json)
+        addUrl          : null,
+        ifvalue         : null,
         editCallback    : null,     // Callback for save
         editMode        : 'inline', // Editing mode, Optional 'false' | 'inline' | 'dialog', (Optional 'false' is a boolean)
         editDialogOp    : null,     // For dialog edit, the dialog init options
@@ -7405,7 +7407,10 @@
                     tools.createTrs(newData, refreshFlag)
                     
                     that.data = newData
-                    
+
+                    //davidwang-加入datas获取table列表内容
+                    that.$element.data('datas', newData)
+
                     that.$element.trigger('afterLoad.bjui.datagrid', {datas:newData})
                     if (that.init_tfoot) that.initTfoot()
                 }
@@ -12250,7 +12255,6 @@
                     back(postData);
                 }else{
                     if (that.tools.beforeSave($trs, datas)) {
-
                         var type = options.editType, opts = {url:options.editUrl, data:JSON.stringify(postData), type:'POST', okCallback:callback}
 
                         if (type && type === 'raw') {
@@ -12342,8 +12346,29 @@
                     datas.push(data)
                     if (that.tools.beforeSave($tr, datas)) {
                         postData.push(tempData)
-                        
-                        var type = options.editType, opts = {url:options.editUrl, data:JSON.stringify(postData), type:'POST', okCallback:callback}
+
+                        //davidwang-加入add和edit判断
+                        var c_url;
+                        var ifvalue = options.ifvalue;
+                        if (ifvalue != null){
+                            for (var i = 0 ; i < postData.length ; i++){
+                                var obj = postData[i];
+                                if (obj.hasOwnProperty(ifvalue)){
+                                    var ifv = obj[ifvalue]
+                                    if (ifv > 0 || ifv.length >0){
+                                        c_url = options.editUrl
+                                    }else{
+                                        c_url = options.addUrl
+                                    }
+                                }else{
+                                    c_url = options.addUrl
+                                }
+                            }
+                        }else{
+                            c_url = options.editUrl
+                        }
+
+                        var type = options.editType, opts = {url:c_url, data:JSON.stringify(postData), type:'POST', okCallback:callback}
                         
                         if (type && type === 'raw') {
                             opts.contentType = 'application/json'
