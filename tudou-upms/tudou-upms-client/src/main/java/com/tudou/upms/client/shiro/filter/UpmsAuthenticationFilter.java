@@ -56,7 +56,7 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
         Subject subject = getSubject(request, response);
         Session session = subject.getSession();
         // 判断请求类型
-        String upmsType = PropertiesFileUtil.getInstance("tudou-upms-client").get("upms.type");
+        String upmsType = PropertiesFileUtil.getInstance("tudou-upms-client").get("tudou.upms.type");
         session.setAttribute(UpmsConstant.UPMS_TYPE, upmsType);
         if ("client".equals(upmsType)) {
             return validateClient(request, response);
@@ -77,6 +77,7 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
             WebUtils.toHttp(response).sendRedirect(sso_server_url.append("/sso/login").toString());
             return false;
         }
+
         sso_server_url.append("/sso/index").append("?").append("appid").append("=").append(PropertiesFileUtil.getInstance("tudou-upms-client").get("appID"));
         // 回跳地址
         HttpServletRequest httpServletRequest = WebUtils.toHttp(request);
@@ -127,7 +128,7 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
         if (StringUtils.isNotBlank(code)) {
             // HttpPost去校验code
             try {
-                StringBuffer sso_server_url = new StringBuffer(PropertiesFileUtil.getInstance("tudou-upms-client").get("sso.server.url"));
+                StringBuffer sso_server_url = new StringBuffer(PropertiesFileUtil.getInstance("tudou-upms-client").get("tudou.sso.server.url"));
                 HttpClient httpclient = new DefaultHttpClient();
                 HttpPost httpPost = new HttpPost(sso_server_url.toString() + "/sso/code");
 

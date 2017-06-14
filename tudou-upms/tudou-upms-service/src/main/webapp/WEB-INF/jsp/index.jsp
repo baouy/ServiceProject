@@ -9,7 +9,7 @@
 <html>
 <body>
 <script>
-    window.location.href = 'http://192.168.20.189/index.html'
+    window.location.href = 'http://192.168.20.189/resources/erp/login.html'
 </script>
 </body>
 </html>
