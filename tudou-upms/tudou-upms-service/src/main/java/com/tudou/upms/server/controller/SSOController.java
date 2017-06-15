@@ -1,9 +1,14 @@
 package com.tudou.upms.server.controller;
+import com.tudou.common.util.MD5Util;
 import com.tudou.common.util.RedisUtil;
 import com.tudou.upms.client.shiro.session.UpmsSession;
 import com.tudou.upms.client.shiro.session.UpmsSessionDao;
 import com.tudou.upms.common.constant.UpmsResult;
 import com.tudou.upms.common.constant.UpmsResultConstant;
+import com.tudou.upms.dao.model.UpmsUser;
+import com.tudou.upms.rpc.api.UpmsApiService;
+import com.tudou.upms.rpc.api.UpmsUserService;
+import com.tudou.upms.server.modelvalid.SetPasswordValid;
 import com.tudou.upms.server.modelvalid.SsoLoginValid;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -52,6 +58,12 @@ public class SSOController {
 
 	@Autowired
 	UpmsSessionDao upmsSessionDao;
+
+	@Resource
+	UpmsApiService upmsApiService;
+
+	@Resource
+	UpmsUserService upmsUserService;
 
 	@ApiOperation(value = "授权失败登录")
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -120,6 +132,23 @@ public class SSOController {
 
 		return new UpmsResult(UpmsResultConstant.SUCCESS, null);
 	}
+
+	@ApiOperation(value = "修改密码")
+	@RequestMapping(value = "/set_password", method = RequestMethod.POST)
+	@ResponseBody
+	public Object set_password(@ModelAttribute @Valid SetPasswordValid setPasswordValid) {
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		UpmsUser upmsUser = upmsApiService.selectUpmsUserByUsername(username);
+		String md5 = MD5Util.MD5(setPasswordValid.getPassword() + upmsUser.getSalt());
+		if (!upmsUser.getPassword().equals(md5)) {
+			return new UpmsResult(UpmsResultConstant.INVALID_PASSWORD, "密码错误");
+		}
+		upmsUser.setPassword(MD5Util.MD5(setPasswordValid.getNpassword() + upmsUser.getSalt()));
+		upmsUserService.updateByPrimaryKey(upmsUser);
+		return new UpmsResult(UpmsResultConstant.SUCCESS, null);
+	}
+
 
 	@ApiOperation(value = "校验code")
 	@RequestMapping(value = "/code", method = RequestMethod.POST)

@@ -24,6 +24,7 @@
             <value>
                 /manage/** = upmsSessionForceLogout,authc
                 /druid/** = user
+                /sso/set_password = user
                 <!--/swagger-ui.html = user-->
                 /** = anon
             </value>
