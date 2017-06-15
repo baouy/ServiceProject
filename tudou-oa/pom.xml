@@ -10,6 +10,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tudou-oa</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>tudou-oa-common</module>
+        <module>tudou-oa-dao</module>
+        <module>tudou-oa-rpc-api</module>
+        <module>tudou-oa-rpc-service</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

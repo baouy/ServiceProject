@@ -7,6 +7,10 @@
       <module fileurl="file://$PROJECT_DIR$/tudou-common/tudou-common.iml" filepath="$PROJECT_DIR$/tudou-common/tudou-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-mweb/tudou-mweb.iml" filepath="$PROJECT_DIR$/tudou-mweb/tudou-mweb.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-oa/tudou-oa.iml" filepath="$PROJECT_DIR$/tudou-oa/tudou-oa.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-oa/tudou-oa-common/tudou-oa-common.iml" filepath="$PROJECT_DIR$/tudou-oa/tudou-oa-common/tudou-oa-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-oa/tudou-oa-dao/tudou-oa-dao.iml" filepath="$PROJECT_DIR$/tudou-oa/tudou-oa-dao/tudou-oa-dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-oa/tudou-oa-rpc-api/tudou-oa-rpc-api.iml" filepath="$PROJECT_DIR$/tudou-oa/tudou-oa-rpc-api/tudou-oa-rpc-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-oa/tudou-oa-rpc-service/tudou-oa-rpc-service.iml" filepath="$PROJECT_DIR$/tudou-oa/tudou-oa-rpc-service/tudou-oa-rpc-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-oss/tudou-oss.iml" filepath="$PROJECT_DIR$/tudou-oss/tudou-oss.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-pay/tudou-pay.iml" filepath="$PROJECT_DIR$/tudou-pay/tudou-pay.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb.iml" filepath="$PROJECT_DIR$/tudou-pcweb/tudou-pcweb.iml" />
