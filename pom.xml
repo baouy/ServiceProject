@@ -30,6 +30,7 @@
         <module>tudou-mweb</module>
         <module>tudou-ap</module>
         <module>tudou-ucenter</module>
+        <module>tudou-crm</module>
     </modules>
 
 
