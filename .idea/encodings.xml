@@ -9,6 +9,12 @@
     <file url="file://$PROJECT_DIR$/tudou-oss" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-pay" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-pcweb" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-ucenter" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-dao" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-rpc-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-rpc-service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-web" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-upms" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-upms/tudou-upms-client" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-upms/tudou-upms-common" charset="UTF-8" />

@@ -10,6 +10,12 @@
       <module fileurl="file://$PROJECT_DIR$/tudou-oss/tudou-oss.iml" filepath="$PROJECT_DIR$/tudou-oss/tudou-oss.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-pay/tudou-pay.iml" filepath="$PROJECT_DIR$/tudou-pay/tudou-pay.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb.iml" filepath="$PROJECT_DIR$/tudou-pcweb/tudou-pcweb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-common/tudou-ucenter-common.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-common/tudou-ucenter-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-dao/tudou-ucenter-dao.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-dao/tudou-ucenter-dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-rpc-api/tudou-ucenter-rpc-api.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-rpc-api/tudou-ucenter-rpc-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-rpc-service/tudou-ucenter-rpc-service.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-rpc-service/tudou-ucenter-rpc-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-web/tudou-ucenter-web.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-web/tudou-ucenter-web.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-upms/tudou-upms.iml" filepath="$PROJECT_DIR$/tudou-upms/tudou-upms.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-upms/tudou-upms-client/tudou-upms-client.iml" filepath="$PROJECT_DIR$/tudou-upms/tudou-upms-client/tudou-upms-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-upms/tudou-upms-common/tudou-upms-common.iml" filepath="$PROJECT_DIR$/tudou-upms/tudou-upms-common/tudou-upms-common.iml" />

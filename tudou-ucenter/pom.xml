@@ -2,34 +2,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>tudou</artifactId>
+        <groupId>com.tudou</groupId>
+        <version>1.0.0</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.tudou</groupId>
-    <artifactId>tudou</artifactId>
+    <artifactId>tudou-ucenter</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0</version>
-
-    <name>tudou</name>
-    <url>http://</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <maven.compiler.compilerVersion>1.7</maven.compiler.compilerVersion>
     </properties>
 
     <modules>
-        <module>tudou-oss</module>
-        <module>tudou-upms</module>
-        <module>tudou-common</module>
-        <module>tudou-wms</module>
-        <module>tudou-pay</module>
-        <module>tudou-oa</module>
-        <module>tudou-pcweb</module>
-        <module>tudou-mweb</module>
-        <module>tudou-ap</module>
-        <module>tudou-ucenter</module>
+        <module>tudou-ucenter-common</module>
+        <module>tudou-ucenter-dao</module>
+        <module>tudou-ucenter-rpc-api</module>
+        <module>tudou-ucenter-rpc-service</module>
+        <module>tudou-ucenter-web</module>
     </modules>
 
 
