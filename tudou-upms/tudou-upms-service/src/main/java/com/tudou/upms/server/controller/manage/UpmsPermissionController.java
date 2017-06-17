@@ -115,7 +115,7 @@ public class UpmsPermissionController extends BaseController {
 			upmsPermission.setOrders(time);
 		}
 
-		upmsPermissionService.insertSelective(upmsPermission);
+		upmsPermission = upmsPermissionService.createUpmsPermission(upmsPermission);
 		return new UpmsResult(UpmsResultConstant.SUCCESS, upmsPermission.getPermissionId());
 	}
 

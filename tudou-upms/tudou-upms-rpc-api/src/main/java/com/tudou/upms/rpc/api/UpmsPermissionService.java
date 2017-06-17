@@ -15,4 +15,6 @@ public interface UpmsPermissionService extends BaseService<UpmsPermission, UpmsP
 
 	JSONArray getTreeByUserId(Integer usereId, Byte type);
 
+	UpmsPermission createUpmsPermission(UpmsPermission upmsPermission);
+
 }

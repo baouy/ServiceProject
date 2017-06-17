@@ -10,4 +10,7 @@ import com.tudou.upms.dao.model.UpmsOrganizationExample;
 */
 public interface UpmsOrganizationService extends BaseService<UpmsOrganization, UpmsOrganizationExample> {
 
+
+	UpmsOrganization createUpmsOrganization(UpmsOrganization upmsOrganization);
+
 }

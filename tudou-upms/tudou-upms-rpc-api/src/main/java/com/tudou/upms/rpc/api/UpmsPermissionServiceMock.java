@@ -28,4 +28,8 @@ public class UpmsPermissionServiceMock extends BaseServiceMock<UpmsPermissionMap
 		return null;
 	}
 
+	@Override
+	public UpmsPermission createUpmsPermission(UpmsPermission upmsPermission) {
+		return null;
+	}
 }

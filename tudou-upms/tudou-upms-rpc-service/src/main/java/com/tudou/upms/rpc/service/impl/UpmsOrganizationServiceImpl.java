@@ -26,4 +26,12 @@ public class UpmsOrganizationServiceImpl extends BaseServiceImpl<UpmsOrganizatio
     @Autowired
     UpmsOrganizationMapper upmsOrganizationMapper;
 
+    @Override
+    public UpmsOrganization createUpmsOrganization(UpmsOrganization upmsOrganization) {
+
+        _log.debug("upmsOrganization-",upmsOrganization.toString());
+        upmsOrganizationMapper.insertSelective(upmsOrganization);
+
+        return upmsOrganization;
+    }
 }

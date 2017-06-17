@@ -11,4 +11,8 @@ import com.tudou.upms.dao.model.UpmsOrganizationExample;
 */
 public class UpmsOrganizationServiceMock extends BaseServiceMock<UpmsOrganizationMapper, UpmsOrganization, UpmsOrganizationExample> implements UpmsOrganizationService {
 
+	@Override
+	public UpmsOrganization createUpmsOrganization(UpmsOrganization upmsOrganization) {
+		return null;
+	}
 }

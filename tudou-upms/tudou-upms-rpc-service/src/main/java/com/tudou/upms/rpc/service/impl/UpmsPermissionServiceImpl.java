@@ -235,4 +235,11 @@ public class UpmsPermissionServiceImpl extends BaseServiceImpl<UpmsPermissionMap
         return systems;
     }
 
+    @Override
+    public UpmsPermission createUpmsPermission(UpmsPermission upmsPermission) {
+
+        upmsPermissionMapper.insertSelective(upmsPermission);
+
+        return upmsPermission;
+    }
 }

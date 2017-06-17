@@ -177,7 +177,52 @@
 
 
 	function organization_update() {
+		var name,description,pid,organizationId
 
+		organizationId = organization_treeNode.organizationId
+		pid = organization_treeNode.pId
+		name = $('#itemclass_name').val()
+		description = $('#itemclass_description').val()
+
+		$('#permission_pagecontent').trigger('bjui.ajaxStart')
+
+		$.ajax({
+					url: $.cookie("tudou-upms-server")+'/manage/organization/update',
+					dataType: 'json',
+					type: 'POST',
+					data: {
+						organizationId:organizationId,
+						pid: pid,
+						name:name,
+						description:description
+					},
+					success: function (d) {
+						var zTree = $.fn.zTree.getZTreeObj("o-menu-ztree")
+						var upNode = zTree.getSelectedNodes()[0];
+						if (d.code == 1) {
+							upNode.id = d.data
+							upNode.permissionId = d.data
+							upNode.pid = pid
+							upNode.name = name
+							zTree.updateNode(upNode)
+							zTree.cancelSelectedNode();
+							$('#organization_right').fadeOut();
+						} else {
+							if (d.data instanceof Array) {
+								$.each(d.data, function(index, value) {
+									$(this).alertmsg('warn',value.errorMsg)
+								});
+							} else {
+								$(this).alertmsg('warn',d.data)
+							}
+						}
+						$('#organization_pagecontent').trigger('bjui.ajaxStop')
+					},
+					error: function () {
+						$('#organization_pagecontent').trigger('bjui.ajaxStop')
+					}
+				}
+		);
 	}
 
 	function o_ztree_onDrop(treeId, treeNodes, targetNode, moveType, isCopy) {
