@@ -1,92 +1,318 @@
 <script type="text/javascript">
 
-	var organization_btn = ''
+	var organization_del_treeNode
+	var organization_data = new Array()
+	var organization_object = new Object()
+	var organization_treeNode;
+
+
+	organization_object.nodes = 'o_ajaxDataFilter'
+	organization_object.maxAddLevel = 6
+	organization_object.removeHoverDom = 'edit'
+	organization_object.editEnable = 'true'
+
 	for (var data of user_data) {
-		var value = data.permissionValue;
+		var value = data.permissionValue
+		organization_data[value] = value
 		switch (value) {
 			case 'upms:organization:create':
-				organization_btn += 'add,'
+				organization_object.addHoverDom = 'edit'
+				organization_object.onClick = 'O_NodeCheck'
 				break;
 			case 'upms:organization:update':
-				organization_btn += 'edit,'
+				organization_object.editEnable = 'true'
+				organization_object.onDrop = 'o_ztree_onDrop'
+				organization_object.onClick = 'O_NodeCheck'
 				break;
 			case 'upms:organization:delete':
-				organization_btn += 'del,'
+				organization_object.showRemoveBtn = 'true'
+				organization_object.beforeRemove = 'o_ztree_onRemove'
 				break;
 		}
 	}
 
-	if (organization_btn.indexOf('add') != -1 || organization_btn.indexOf('edit') != -1) {
-		organization_btn += 'save,cancel'
+	console.log(organization_object);
+
+	$('#organization_ztree').append('<ul id="o-menu-ztree" class="ztree" data-toggle="ztree" data-radio-type="all" data-expand-all="true" data-options=' + JSON.stringify(organization_object) + '></ul>')
+
+
+	$('#organization_from').bind('valid.form', function () {
+
+		var id = organization_treeNode.id
+
+		var pid = organization_treeNode.pId
+
+		//新增
+		if (id == undefined && pid != null) {
+			organization_create()
+		}
+
+		//编辑
+		if (id != undefined && pid != null) {
+			organization_update()
+		}
+
+	});
+
+	function organization_check(check) {
+		return check in organization_data
 	}
 
-	var organization_datagrid_data = {
-		local: 'remote',
-		dataUrl: $.cookie("tudou-upms-server") + '/manage/organization/list',
-		dataType: 'json',
-		sortAll: false,
-		loadType: 'get',
-		filterAll: true,
-		height: '100%',
-		columns: [{name: 'organizationId', width: '150', label: '编号',align : 'center', attrs: {'readonly': "true"}},
-			{name: 'name', width: '150', label: '组织名称',align : 'center', rule: 'required'},
-			{name: 'description', width: '150', label: '组织描述',align : 'center', rule: 'required'},
-		],
-		paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
-		showToolbar: true,
-		toolbarItem: organization_btn,
-		inlineEditMult: false,
+	function O_NodeCheck(event, treeId, treeNode, clickFlag) {
+
+		var id = treeNode.id
+
+		var pid = treeNode.pId
+
+		//新增菜单
+		if (id == undefined && pid != null) {
+			console.log('新增');
+			if (organization_check('upms:organization:create'))
+				$('#organization_right').fadeIn();
+			$('#organization_save').html('<i class="fa fa-floppy-o"></i>&nbsp; 保存')
+			organization_treeNode = treeNode
+			$('#itemclass_name').val('');
+			$('#itemclass_description').val('')
+		}
+
+		//系统层级
+		if (id != undefined && pid == null) {
+			console.log('系统层');
+			$('#organization_right').fadeOut();
+		}
+		//编辑
+		if (id != undefined && pid != null) {
+			console.log('编辑');
+			if (organization_check('upms:organization:update'))
+				$('#organization_right').fadeIn();
+			$('#organization_save').html('<i class="fa fa-floppy-o"></i>&nbsp; 更新')
+			organization_treeNode = treeNode
+			$('#itemclass_name').val(treeNode.name);
+			$('#itemclass_description').val(treeNode.description)
+
+		}
+
+		if (id == undefined && pid == undefined) {
+			console.log('提示错误');
+			$('#organization_right').fadeOut();
+		}
+
 	}
 
-	if (organization_btn.indexOf('add') != -1) {
-		organization_datagrid_data.editUrl = 'edit'
-		organization_datagrid_data.addUrl = $.cookie("tudou-upms-server") + '/manage/organization/create'
-		organization_datagrid_data.ifvalue = 'organizationId'
-		organization_datagrid_data.editCallback = 'manage_back_organization_edit'
-	}
+	function o_ajaxDataFilter() {
+		var datas = new Array()
+		datas[0] = new Object()
+		datas[0].id = 0
+		datas[0].pId = null
+		datas[0].name = '集团'
+		$.ajax({
+			url: $.cookie("tudou-upms-server") + '/manage/organization/list',
+			type: 'get',
+			async: false,
+			success: function (responseData) {
+				if (responseData) {
+					var organization = responseData.data;
+					for (var i = 0; i < organization.length; i++) {
+						datas[i + 1] = organization[i]
+						datas[i + 1].id = organization[i].organizationId;
+						datas[i + 1].pId = organization[i].pid;
+					}
 
-	if (organization_btn.indexOf('edit') != -1) {
-		organization_datagrid_data.editUrl = $.cookie("tudou-upms-server") + '/manage/organization/update'
-		organization_datagrid_data.editdblOnclick = true
-		organization_datagrid_data.editCallback = 'manage_back_organization_edit'
-	}
+					return datas;
+				}
 
-	if (organization_btn.indexOf('del') != -1) {
-		organization_datagrid_data.delConfirm = true
-		organization_datagrid_data.delPK = 'organizationId'
-		organization_datagrid_data.delType = 'POST'
-		organization_datagrid_data.delUrl = $.cookie("tudou-upms-server") + '/manage/organization/delete'
-		organization_datagrid_data.delCallback = 'del_organization_back'
-	}
-
-	$('#manage_organization_table').datagrid(organization_datagrid_data);
-
-	function manage_back_organization_edit(d) {
-		if (d.code == 1) {
-			$(this).alertmsg('ok', "操作成功");
-		} else {
-			if (d.data instanceof Array) {
-				$.each(d.data, function (index, value) {
-					$(this).alertmsg('warn', value.errorMsg)
-				});
-			} else {
-				$(this).alertmsg('warn', d.data)
 			}
-		}
-		$('#manage_organization_table').datagrid('refresh_part');
+		});
+		return datas;
 	}
 
-	function del_organization_back(d) {
-		if (d.code == 1) {
-			$(this).alertmsg('ok', "删除成功");
-			$('#manage_organization_table').datagrid('refresh_part');
-		} else {
-			$(this).alertmsg('warn', d.data);
+	function organization_create() {
+
+		var name,description,pid
+
+		pid = organization_treeNode.pId
+		name = $('#itemclass_name').val()
+		description = $('#itemclass_description').val()
+
+		$('#permission_pagecontent').trigger('bjui.ajaxStart')
+
+		$.ajax({
+					url: $.cookie("tudou-upms-server")+'/manage/organization/create',
+					dataType: 'json',
+					type: 'POST',
+					data: {
+						pid: pid,
+						name:name,
+						description:description
+					},
+					success: function (d) {
+						var zTree = $.fn.zTree.getZTreeObj("o-menu-ztree")
+						var upNode = zTree.getSelectedNodes()[0];
+						if (d.code == 1) {
+							upNode.id = d.data
+							upNode.permissionId = d.data
+							upNode.pid = pid
+							upNode.name = name
+							upNode.description = description
+							zTree.updateNode(upNode)
+							zTree.cancelSelectedNode();
+							$('#organization_right').fadeOut();
+						} else {
+							if (d.data instanceof Array) {
+								$.each(d.data, function(index, value) {
+									$(this).alertmsg('warn',value.errorMsg)
+								});
+							} else {
+								$(this).alertmsg('warn',d.data)
+							}
+						}
+						$('#organization_pagecontent').trigger('bjui.ajaxStop')
+					},
+					error: function () {
+						$('#organization_pagecontent').trigger('bjui.ajaxStop')
+					}
+				}
+		);
+
+	}
+
+
+	function organization_update() {
+		var name,description,pid,organizationId
+
+		organizationId = organization_treeNode.organizationId
+		pid = organization_treeNode.pId
+		name = $('#itemclass_name').val()
+		description = $('#itemclass_description').val()
+
+		$('#permission_pagecontent').trigger('bjui.ajaxStart')
+
+		$.ajax({
+					url: $.cookie("tudou-upms-server")+'/manage/organization/update',
+					dataType: 'json',
+					type: 'POST',
+					data: {
+						organizationId:organizationId,
+						pid: pid,
+						name:name,
+						description:description
+					},
+					success: function (d) {
+						var zTree = $.fn.zTree.getZTreeObj("o-menu-ztree")
+						var upNode = zTree.getSelectedNodes()[0];
+						if (d.code == 1) {
+							upNode.id = d.data
+							upNode.permissionId = d.data
+							upNode.pid = pid
+							upNode.name = name
+							upNode.description = description
+							zTree.updateNode(upNode)
+							zTree.cancelSelectedNode();
+							$('#organization_right').fadeOut();
+						} else {
+							if (d.data instanceof Array) {
+								$.each(d.data, function(index, value) {
+									$(this).alertmsg('warn',value.errorMsg)
+								});
+							} else {
+								$(this).alertmsg('warn',d.data)
+							}
+						}
+						$('#organization_pagecontent').trigger('bjui.ajaxStop')
+					},
+					error: function () {
+						$('#organization_pagecontent').trigger('bjui.ajaxStop')
+					}
+				}
+		);
+	}
+
+	function o_ztree_onDrop(treeId, treeNodes, targetNode, moveType, isCopy) {
+		var pid = targetNode[0].pId
+		if (pid == null) {
+			$('#organization_right').fadeOut();
+			$(this).alertmsg('warn', '拖拽错误,无法成为父级')
+			return
 		}
+	}
+
+	function o_ztree_onRemove(treeId, treeNode) {
+
+		if (treeNode.level == 0) {
+			return false
+		}
+
+		if (treeNode.id == undefined) {
+			return true
+		}
+
+		organization_del_treeNode = treeNode
+		$(this).alertmsg('confirm', '是否确定吗?', {okCall: 'o_show_remove'});
+
+		return false;
+	}
+
+	function o_show_remove() {
+		var zTree = $.fn.zTree.getZTreeObj("o-menu-ztree")
+		$('#organization_pagecontent').trigger('bjui.ajaxStart')
+		$.ajax({
+					url: $.cookie("tudou-upms-server") + '/manage/organization/delete',
+					data: {organizationId:organization_del_treeNode.id},
+					type: 'POST',
+					success: function (d) {
+						if (d.code == 1) {
+							zTree.removeNode(organization_del_treeNode);
+							$('#organization_right').fadeOut();
+						} else {
+							$(this).alertmsg('warn', d.data);
+						}
+						$('#organization_pagecontent').trigger('bjui.ajaxStop')
+					},
+					error: function () {
+						$('#organization_pagecontent').trigger('bjui.ajaxStop')
+					}
+				}
+		);
+
 	}
 
 </script>
 
-<div class="bjui-pageContent">
-	<table id="manage_organization_table" class="table table-hover" data-width="100%"></table>
+<div class="bjui-pageContent" id="organization_pagecontent">
+	<div class="roleLeft"
+		 style="border: 0px solid green;width: 250px !important;position: relative;height: 100%;float: left;">
+		<div id="organization_ztree" class="bjui-pageContent">
+		</div>
+
+	</div>
+	<div id="organization_right" class="roleRight"
+		 style="width: 55% !important;position: relative;height: 100%;float: left;margin: 0px 10px;display:none">
+		<div class="bjui-pageContent">
+			<div class="bs-example" data-content="详细信息">
+
+				<form id="organization_from" data-toggle="validate" data-toggle="validate">
+					<fieldset>
+						<legend>详细信息</legend>
+						<div class="form-group">
+							<label for="itemclass_name" class="control-label x85">名称：</label>
+							<input type="text" size="23" class="form-control" name="name" id="itemclass_name" size="15"
+								   placeholder=""
+								   style="width: 150px;">
+						</div>
+						<div class="form-group">
+							<label for="itemclass_description" class="control-label x85">描述：</label>
+							<input type="text" size="23" class="form-control" name="description"
+								   id="itemclass_description"
+								   size="15" style="width: 150px;">
+						</div>
+
+						<div class="form-group" style="padding-top:8px; border-top:1px #DDD solid;">
+							<label class="control-label x85"></label>
+							<button class="btn btn-green" id="organization_save"></button>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
 </div>

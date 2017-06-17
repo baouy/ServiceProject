@@ -1,8 +1,19 @@
 <script type="text/javascript">
 
+	var r_datas
+	$.ajax({
+				url: $.cookie("tudou-upms-server") + '/manage/user/role/' + user_select_id,
+				dataType: 'json',
+				type: 'GET',
+				success: function (d) {
+					r_datas = d
+				}
+			}
+	);
+
 	$('#manage_user_role_table').datagrid({
 		local: 'remote',
-		dataUrl: $.cookie("tudou-upms-server")+'/manage/user/role_list',
+		dataUrl: $.cookie("tudou-upms-server") + '/manage/user/role_list',
 		dataType: 'json',
 		sortAll: false,
 		loadType: 'get',
@@ -19,30 +30,22 @@
 		showCheckboxcol: true,
 		inlineEditMult: true,
 		selectMult: true,
-		headSureBack: 'user_role_init',
+		bodyBack: 'user_role_init',
 	});
 
 	function user_role_init() {
 		var datas = $("#manage_user_role_table").data('datas')
-		$.ajax({
-					url: $.cookie("tudou-upms-server")+'/manage/user/role/' + user_select_id,
-					dataType: 'json',
-					type: 'GET',
-					success: function (d) {
-						if (d.code == 1) {
-							for (var i = 0 ; i < datas.length; i++){
-								for (var j = 0 ;j < d.data.length; j ++){
-									var table_id = datas[i].roleId
-									var select_id = d.data[j].roleId
-									if (table_id == select_id){
-										$('#manage_user_role_table').datagrid('selectedRows', i, true)
-									}
-								}
-							}
-						}
+		if (r_datas.code == 1) {
+			for (var i = 0; i < datas.length; i++) {
+				for (var j = 0; j < r_datas.data.length; j++) {
+					var table_id = datas[i].roleId
+					var select_id = r_datas.data[j].roleId
+					if (table_id == select_id) {
+						$('#manage_user_role_table').datagrid('selectedRows', i, true)
 					}
 				}
-		);
+			}
+		}
 	}
 
 	function user_role_save() {
@@ -61,7 +64,7 @@
 	function post_user_role(roleId) {
 		$('#manage_user_role_table').trigger('bjui.ajaxStart')
 		$.ajax({
-					url: $.cookie("tudou-upms-server")+'/manage/user/role/' + user_select_id,
+					url: $.cookie("tudou-upms-server") + '/manage/user/role/' + user_select_id,
 					dataType: 'json',
 					type: 'POST',
 					data: {
@@ -70,15 +73,15 @@
 					success: function (d) {
 						$('#manage_user_role_table').trigger('bjui.ajaxStop')
 						if (d.code == 1) {
-							BJUI.dialog('closeCurrent',this);
-							$(this).alertmsg('ok',"保存成功");
+							BJUI.dialog('closeCurrent', this);
+							$(this).alertmsg('ok', "保存成功");
 						} else {
-							$(this).alertmsg('warn',"保存失败");
+							$(this).alertmsg('warn', "保存失败");
 						}
 					},
 					error: function () {
 						$('#manage_user_role_table').trigger('bjui.ajaxStop')
-						$(this).alertmsg('warn',"保存失败");
+						$(this).alertmsg('warn', "保存失败");
 					}
 				}
 		);

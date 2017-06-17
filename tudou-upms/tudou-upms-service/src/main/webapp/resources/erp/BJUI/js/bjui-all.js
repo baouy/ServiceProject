@@ -7089,6 +7089,7 @@
         headSureBack    : null,     // Function - after headSureBack method
         notrheight      : false,    // true/false
         selectChange    : null,     //Function - before selectChange
+        bodyBack        : null,     // Function - after bodyBack method
     }
     
     Datagrid.renderItem = function(value, data, items) {
@@ -7333,7 +7334,14 @@
 
                 }
                 
-                if (!that.init_tbody) that.$tbody.appendTo(that.$tableB)
+                if (!that.init_tbody) {
+                    that.$tbody.appendTo(that.$tableB)
+                    var bodyback = options.bodyBack;
+                    if (typeof bodyback === 'string') {
+                        bodyback =  bodyback.toFunc()
+                        bodyback();
+                    }
+                }
 
                 if (!that.init_thead) that.initThead()
             },

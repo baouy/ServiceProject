@@ -5,7 +5,7 @@
 	for (var data of user_data) {
 		var value = data.permissionValue;
 		if (value == 'upms:role:permission') {
-			toolbarCustom_role_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" data-icon="edit" style="margin-left: 5px;" onclick="role_dialog(this)" ><i class="fa fa-edit"></i>' + data.name + ' </button>'
+			toolbarCustom_role_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" data-icon="edit" style="margin-left: 5px;" onclick="role_dialog(this)" ><i class="'+data.icon+'"></i>&nbsp;' + data.name + ' </button>'
 		}
 
 		switch (value) {
