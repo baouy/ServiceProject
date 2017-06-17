@@ -71,9 +71,7 @@ public class UpmsOrganizationController extends BaseController {
 	@RequiresPermissions("upms:organization:create")
 	@ResponseBody
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public Object create(@RequestParam String json) {
-		List<UpmsOrganization> upmsOrganizations = JSON.parseArray(json, UpmsOrganization.class);
-		UpmsOrganization upmsOrganization = upmsOrganizations.get(0);
+	public Object create(@ModelAttribute  UpmsOrganization upmsOrganization) {
 		ComplexResult result = FluentValidator.checkAll()
 				.on(upmsOrganization.getName(), new LengthValidator(1, 20, "名称"))
 				.doValidate()
@@ -83,8 +81,8 @@ public class UpmsOrganizationController extends BaseController {
 		}
 		long time = System.currentTimeMillis();
 		upmsOrganization.setCtime(time);
-		int count = upmsOrganizationService.insertSelective(upmsOrganization);
-		return new UpmsResult(UpmsResultConstant.SUCCESS, count);
+		upmsOrganizationService.insertSelective(upmsOrganization);
+		return new UpmsResult(UpmsResultConstant.SUCCESS, upmsOrganization.getOrganizationId());
 	}
 
 	@ApiOperation(value = "删除组织")

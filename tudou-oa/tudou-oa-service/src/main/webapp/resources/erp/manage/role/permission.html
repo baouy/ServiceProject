@@ -1,0 +1,76 @@
+<script>
+	var changeDatas = [];
+	var setting = {
+		check: {
+			enable: true,
+			// 勾选关联父，取消关联子
+			chkboxType: { "Y" : "p", "N" : "s" }
+		},
+		async: {
+			enable: true,
+			url: $.cookie("tudou-upms-server")+'/manage/permission/role/' + role_select_id
+		},
+		data: {
+			simpleData: {
+				enable: true
+			}
+		},
+		callback: {
+			onCheck: function() {
+				var zTree = $.fn.zTree.getZTreeObj("ztree")
+				var changeNodes = zTree.getChangeCheckedNodes();
+				changeDatas = [];
+				for (var i = 0; i < changeNodes.length; i ++) {
+					var changeData = {};
+					changeData.id = changeNodes[i].id;
+					changeData.checked = changeNodes[i].checked;
+					changeDatas.push(changeData);
+				}
+			}
+		}
+	};
+
+	$('#role_permission_div').trigger('bjui.ajaxStart')
+	$.fn.zTree.init($('#ztree'), setting);
+	$('#role_permission_div').trigger('bjui.ajaxStop')
+
+	function role_permission_save() {
+		$.ajax({
+			type: 'post',
+			url: $.cookie("tudou-upms-server")+'/manage/role/permission/' + role_select_id,
+			data: {datas: JSON.stringify(changeDatas), role_select_id: role_select_id},
+			success: function(result) {
+				if (result.code != 1) {
+					if (result.data instanceof Array) {
+						$.each(result.data, function(index, value) {
+							$(this).alertmsg('warn',value.errorMsg)
+						});
+					} else {
+						$(this).alertmsg('warn',result.data.errorMsg)
+					}
+				} else {
+					$(this).alertmsg('ok','操作成功')
+					BJUI.dialog('closeCurrent',this);
+				}
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				$(this).alertmsg('warn',textStatus)
+			}
+		});
+	}
+</script>
+<div class="bjui-pageContent" id="role_permission_div">
+	<ul id="ztree" class="ztree"></ul>
+</div>
+<div class="bjui-pageFooter">
+	<ul>
+		<li>
+			<button type="button" class="btn-close" data-icon="close">取消</button>
+		</li>
+		<li>
+			<button type="button" class="btn-default" data-icon="save" onclick="role_permission_save()"
+					id="save_guest_btn">保存
+			</button>
+		</li>
+	</ul>
+</div>

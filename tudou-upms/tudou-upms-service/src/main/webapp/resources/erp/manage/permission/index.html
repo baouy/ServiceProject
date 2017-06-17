@@ -10,13 +10,6 @@
 	permission_object.removeHoverDom = 'edit'
 	permission_object.editEnable = 'true'
 
-	//屏蔽
-	permission_object.addHoverDom = 'edit'
-	permission_object.onDrop = 'p_ztree_onDrop'
-	permission_object.showRemoveBtn = 'true'
-	permission_object.beforeRemove = 'p_ztree_onRemove'
-	permission_object.onClick = 'S_NodeCheck'
-
 	for (var data of user_data) {
 		var value = data.permissionValue
 		permission_data[value] = value
@@ -59,8 +52,6 @@
 
 	});
 
-	permission_data['upms:permission:create'] = 'upms:permission:create'
-	permission_data['upms:permission:update'] = 'upms:permission:update'
 	function permission_check(check) {
 		return check in permission_data
 
@@ -182,6 +173,10 @@
 
 
 	function p_ztree_onRemove(treeId, treeNode) {
+
+		if (treeNode.level == 0){
+			return false
+		}
 
 		if (treeNode.id == undefined) {
 			return true

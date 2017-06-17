@@ -16,6 +16,7 @@
         <module>tudou-oa-dao</module>
         <module>tudou-oa-rpc-api</module>
         <module>tudou-oa-rpc-service</module>
+        <module>tudou-oa-service</module>
     </modules>
 
     <properties>

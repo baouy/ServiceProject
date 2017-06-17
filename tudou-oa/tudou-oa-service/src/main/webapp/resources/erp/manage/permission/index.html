@@ -1,0 +1,437 @@
+<script>
+	var p_add_num = 99999;
+	var permission_del_treeNode
+	var permission_data = new Array()
+	var permission_object = new Object()
+	var permission_treeNode;
+
+	permission_object.nodes = 'ajaxDataFilter'
+	permission_object.maxAddLevel = 3
+	permission_object.removeHoverDom = 'edit'
+	permission_object.editEnable = 'true'
+
+	//屏蔽
+	permission_object.addHoverDom = 'edit'
+	permission_object.onDrop = 'p_ztree_onDrop'
+	permission_object.showRemoveBtn = 'true'
+	permission_object.beforeRemove = 'p_ztree_onRemove'
+	permission_object.onClick = 'S_NodeCheck'
+
+	for (var data of user_data) {
+		var value = data.permissionValue
+		permission_data[value] = value
+
+		switch (value) {
+			case 'upms:permission:create':
+				permission_object.addHoverDom = 'edit'
+				permission_object.onClick = 'S_NodeCheck'
+				break;
+			case 'upms:permission:update':
+				permission_object.editEnable = 'true'
+				permission_object.onDrop = 'p_ztree_onDrop'
+				permission_object.onClick = 'S_NodeCheck'
+				break;
+			case 'upms:permission:delete':
+				permission_object.showRemoveBtn = 'true'
+				permission_object.beforeRemove = 'p_ztree_onRemove'
+				break;
+		}
+	}
+
+	$('#permission_ztree').append('<ul id="menu-ztree" class="ztree" data-toggle="ztree" data-radio-type="all" data-expand-all="true" data-options=' + JSON.stringify(permission_object) + '></ul>')
+
+
+	$('#permission_from').bind('valid.form', function () {
+
+		var id = permission_treeNode.id
+
+		var pid = permission_treeNode.pId
+
+		//新增
+		if (id == undefined && pid != null) {
+			premission_create()
+		}
+
+		//编辑
+		if (id != undefined && pid != null) {
+			premission_update()
+		}
+
+	});
+
+	permission_data['upms:permission:create'] = 'upms:permission:create'
+	permission_data['upms:permission:update'] = 'upms:permission:update'
+	function permission_check(check) {
+		return check in permission_data
+
+	}
+
+	function S_NodeCheck(event, treeId, treeNode, clickFlag) {
+
+		var id = treeNode.id
+
+		var pid = treeNode.pId
+
+		var type = treeNode.type
+
+		var status = treeNode.status
+
+		//新增菜单
+		if (id == undefined && pid != null) {
+			console.log('新增');
+			if (permission_check('upms:permission:create'))
+				$('#permission_right').fadeIn();
+			$('#permissin_save').html('<i class="fa fa-floppy-o"></i>&nbsp; 保存')
+			permission_treeNode = treeNode
+			$('#itemclass_name').val('');
+			$('#itemclass_permissionValue').val('')
+			$('#itemclass_uri').val('')
+			$('#itemclass_icon').val('')
+			$('#itemclass_orders').val('')
+			$('#item_type1').iCheck('check');
+			$('#itemclass_status').iCheck('check');
+		}
+		//系统层级
+		if (id != undefined && pid == null) {
+			console.log('系统层');
+			$('#permission_right').fadeOut();
+		}
+		//编辑
+		if (id != undefined && pid != null) {
+			console.log('编辑');
+			if (permission_check('upms:permission:update'))
+				$('#permission_right').fadeIn();
+			$('#permissin_save').html('<i class="fa fa-floppy-o"></i>&nbsp; 更新')
+			permission_treeNode = treeNode
+			$('#itemclass_name').val(treeNode.name);
+			$('#itemclass_permissionValue').val(treeNode.permissionValue)
+			$('#itemclass_uri').val(treeNode.uri)
+			$('#itemclass_icon').val(treeNode.icon)
+			$('#itemclass_orders').val(treeNode.orders)
+			switch (type) {
+				case 1:
+					$('#item_type1').iCheck('check');
+					break;
+				case 2:
+					$('#item_type2').iCheck('check');
+					break;
+				case 3:
+					$('#item_type3').iCheck('check');
+					break;
+			}
+
+			if (status) {
+				$('#itemclass_status').iCheck('check');
+			}
+
+		}
+
+		if (id == undefined && pid == undefined) {
+			console.log('提示错误');
+			$('#permission_right').fadeOut();
+		}
+
+	}
+
+	function ajaxDataFilter() {
+		var datas = new Array();
+		$.ajax({
+			url: $.cookie("tudou-upms-server")+'/manage/permission/list',
+			type: 'get',
+			async: false,
+			success: function (responseData) {
+				if (responseData) {
+
+					var systems = responseData.UpmsSystem;
+					var permissions = responseData.UpmsPermission;
+					var maxnum = systems.length + permissions.length;
+					datas = new Array(maxnum);
+
+					for (var i = 0; i < systems.length; i++) {
+						datas[i] = systems[i]
+						datas[i].id = systems[i].systemId + p_add_num;
+						datas[i].pId = 0;
+						datas[i].name = systems[i].title;
+					}
+
+					for (var i = 0; i < permissions.length; i++) {
+						datas[systems.length + i] = permissions[i]
+						datas[systems.length + i]['id'] = permissions[i].permissionId;
+						if (permissions[i].pid == 0) {
+							datas[systems.length + i]['pId'] = permissions[i].systemId + p_add_num;
+						} else {
+							datas[systems.length + i]['pId'] = permissions[i].pid;
+						}
+					}
+					return datas;
+				}
+
+			}
+		});
+		return datas;
+	}
+
+	function p_ztree_onDrop(treeId, treeNodes, targetNode, moveType, isCopy) {
+		var pid = targetNode[0].pId
+		if (pid == null) {
+			$('#permission_right').fadeOut();
+			$(this).alertmsg('warn', '拖拽错误,无法成为父级')
+			return
+		}
+	}
+
+
+	function p_ztree_onRemove(treeId, treeNode) {
+
+		if (treeNode.id == undefined) {
+			return true
+		}
+
+		permission_del_treeNode = treeNode
+		$(this).alertmsg('confirm', '是否确定吗?', {okCall: 'p_show_remove'});
+
+		return false;
+	}
+
+	function p_show_remove() {
+		var zTree = $.fn.zTree.getZTreeObj("menu-ztree")
+		$('#permission_pagecontent').trigger('bjui.ajaxStart')
+		$.ajax({
+					url: $.cookie("tudou-upms-server")+'/manage/permission/delete/' + permission_del_treeNode.id,
+					type: 'GET',
+					success: function (d) {
+						if (d.code == 1) {
+							zTree.removeNode(permission_del_treeNode);
+							$('#permission_right').fadeOut();
+						} else {
+							$(this).alertmsg('warn', d.data);
+						}
+						$('#permission_pagecontent').trigger('bjui.ajaxStop')
+					},
+					error: function () {
+						$('#permission_pagecontent').trigger('bjui.ajaxStop')
+					}
+				}
+		);
+
+	}
+
+	function premission_update() {
+		var permissionId, systemId, pid, name, type, permissionValue, uri, icon, status, orders
+
+		console.log(permission_treeNode);
+
+		permissionId = permission_treeNode.permissionId
+		systemId = permission_treeNode.pId
+		systemId = systemId > p_add_num ? systemId - p_add_num : permission_treeNode.getParentNode().systemId
+
+		pid = permission_treeNode.pId
+		pid = pid > p_add_num ? pid - p_add_num - systemId : pid
+
+		console.log(permissionId);
+		console.log(systemId);
+		console.log(pid);
+
+
+		name = $('#itemclass_name').val()
+		permissionValue = $('#itemclass_permissionValue').val()
+		uri = $('#itemclass_uri').val()
+		icon = $('#itemclass_icon').val()
+		orders = $('#itemclass_orders').val()
+		type = $('input:radio[name="type"]:checked').val()
+		status = $('#itemclass_status').is(':checked') == true ? 1 : 0
+		$('#permission_pagecontent').trigger('bjui.ajaxStart')
+
+		$.ajax({
+					url: $.cookie("tudou-upms-server")+'/manage/permission/update',
+					dataType: 'json',
+					type: 'POST',
+					data: {
+						permissionId: permissionId,
+						systemId: systemId,
+						pid: pid,
+						name: name,
+						type: type,
+						permissionValue: permissionValue,
+						uri: uri,
+						icon: icon,
+						status: status,
+						orders: orders
+					},
+					success: function (d) {
+						var zTree = $.fn.zTree.getZTreeObj("menu-ztree")
+						var upNode = zTree.getSelectedNodes()[0];
+						if (d.code == 1) {
+							upNode.id = d.data
+							upNode.permissionId = d.data
+							upNode.pid = pid
+							upNode.name = name
+							upNode.type = type;
+							upNode.permissionValue = permissionValue
+							upNode.uri = uri
+							upNode.icon = icon
+							upNode.status = status
+							upNode.orders = orders
+							zTree.updateNode(upNode)
+							zTree.cancelSelectedNode();
+							$('#permission_right').fadeOut();
+						} else {
+							if (d.data instanceof Array) {
+								$.each(d.data, function(index, value) {
+									$(this).alertmsg('warn',value.errorMsg)
+								});
+							} else {
+								$(this).alertmsg('warn',d.data)
+							}
+						}
+						$('#permission_pagecontent').trigger('bjui.ajaxStop')
+					},
+					error: function () {
+						$('#permission_pagecontent').trigger('bjui.ajaxStop')
+					}
+				}
+		);
+	}
+
+	function premission_create() {
+		var permissionId, systemId, pid, name, type, permissionValue, uri, icon, status, orders
+
+		systemId = permission_treeNode.pId
+		systemId = systemId > p_add_num ? systemId - p_add_num : permission_treeNode.getParentNode().systemId
+
+		pid = permission_treeNode.pId
+		pid = pid > p_add_num ? pid - p_add_num - systemId : pid
+
+		name = $('#itemclass_name').val()
+		permissionValue = $('#itemclass_permissionValue').val()
+		uri = $('#itemclass_uri').val()
+		icon = $('#itemclass_icon').val()
+		orders = $('#itemclass_orders').val()
+		type = $('input:radio[name="type"]:checked').val()
+		status = $('#itemclass_status').is(':checked') == true ? 1 : 0
+		$('#permission_pagecontent').trigger('bjui.ajaxStart')
+
+		console.log(pid);
+		console.log(systemId);
+
+		$.ajax({
+					url: $.cookie("tudou-upms-server")+'/manage/permission/create',
+					dataType: 'json',
+					type: 'POST',
+					data: {
+						systemId: systemId,
+						pid: pid,
+						name: name,
+						type: type,
+						permissionValue: permissionValue,
+						uri: uri,
+						icon: icon,
+						status: status,
+						orders: orders
+					},
+					success: function (d) {
+						var zTree = $.fn.zTree.getZTreeObj("menu-ztree")
+						var upNode = zTree.getSelectedNodes()[0];
+						if (d.code == 1) {
+							upNode.id = d.data
+							upNode.permissionId = d.data
+							upNode.pid = pid
+							upNode.name = name
+							upNode.type = type;
+							upNode.permissionValue = permissionValue
+							upNode.uri = uri
+							upNode.icon = icon
+							upNode.status = status
+							upNode.orders = orders
+							zTree.updateNode(upNode)
+							zTree.cancelSelectedNode();
+							$('#permission_right').fadeOut();
+						} else {
+							if (d.data instanceof Array) {
+								$.each(d.data, function(index, value) {
+									$(this).alertmsg('warn',value.errorMsg)
+								});
+							} else {
+								$(this).alertmsg('warn',d.data)
+							}
+						}
+						$('#permission_pagecontent').trigger('bjui.ajaxStop')
+					}, error: function () {
+						$('#permission_pagecontent').trigger('bjui.ajaxStop')
+					}
+				}
+		);
+	}
+
+</script>
+
+
+<div class="bjui-pageContent" id="permission_pagecontent">
+	<div class="roleLeft"
+		 style="border: 0px solid green;width: 250px !important;position: relative;height: 100%;float: left;">
+		<div id="permission_ztree" class="bjui-pageContent">
+		</div>
+
+	</div>
+	<div id="permission_right" class="roleRight"
+		 style="width: 55% !important;position: relative;height: 100%;float: left;margin: 0px 10px;display:none">
+		<div class="bjui-pageContent">
+			<div class="bs-example" data-content="详细信息">
+
+				<form id="permission_from" data-toggle="validate" data-toggle="validate">
+					<fieldset>
+						<legend>详细信息</legend>
+					<div class="form-group">
+						<label for="itemclass_name" class="control-label x85">名称：</label>
+						<input type="text" size="23" class="form-control" name="name" id="itemclass_name" size="15"
+							   placeholder=""
+							   style="width: 150px;">
+					</div>
+					<div class="form-group">
+						<label for="itemclass_permissionValue" class="control-label x85">权限值：</label>
+						<input type="text" size="23" class="form-control" name="permissionValue"
+							   id="itemclass_permissionValue"
+							   size="15" style="width: 150px;">
+					</div>
+					<div class="form-group">
+						<label for="itemclass_uri" class="control-label x85">路径：</label>
+						<input type="text" size="23" class="form-control" name="uri" id="itemclass_uri" size="15"
+							   style="width: 150px;">
+					</div>
+					<div class="form-group">
+						<label for="itemclass_icon" class="control-label x85">图标：</label>
+						<input type="text" size="23" class="form-control" name="icon" id="itemclass_icon" size="15"
+							   style="width: 150px;">
+					</div>
+					<div class="form-group">
+						<label for="itemclass_orders" class="control-label x85">排序：</label>
+						<input type="text" size="23" class="form-control" name="orders" id="itemclass_orders" size="15"
+							   style="width: 150px;">
+					</div>
+					<div class="form-group">
+						<td>
+							<label for="item_type1" class="control-label x90">类型：</label>
+							<input type="radio" name="type" id="item_type1" data-toggle="icheck" value="1"
+								   data-label="目录&nbsp;&nbsp;">
+							<input type="radio" name="type" id="item_type2" data-toggle="icheck" value="2"
+								   data-label="菜单&nbsp;&nbsp;">
+							<input type="radio" name="type" id="item_type3" data-toggle="icheck" value="3"
+								   data-label="按钮" checked>
+						</td>
+					</div>
+					<div class="form-group">
+						<label for="itemclass_status" class="control-label x85">是否生效：</label>
+						<td><input type="checkbox" name="status" id="itemclass_status" value="1" data-toggle="icheck"
+								   data-label="复选框"></td>
+					</div>
+
+					<div class="form-group" style="padding-top:8px; border-top:1px #DDD solid;">
+						<label class="control-label x85"></label>
+						<button class="btn btn-green" id="permissin_save"></button>
+					</div>
+						</fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

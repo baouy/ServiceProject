@@ -1,0 +1,97 @@
+<script type="text/javascript">
+
+	var system_btn = ''
+	for (var data of user_data) {
+		var value = data.permissionValue;
+		switch (value) {
+			case 'upms:system:create':
+				system_btn += 'add,'
+				break;
+			case 'upms:system:update':
+				system_btn += 'edit,'
+				break;
+			case 'upms:system:delete':
+				system_btn += 'del,'
+				break;
+		}
+	}
+
+	if (system_btn.indexOf('add') != -1 || system_btn.indexOf('edit') != -1) {
+		system_btn += 'save,cancel'
+	}
+
+	var system_datagrid_data = {
+		local: 'remote',
+		dataUrl: $.cookie("tudou-upms-server") + '/manage/system/list',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height: '100%',
+		columns: [{name: 'icon', width: '150', align: 'center', label: '图标'},
+			{name: 'title', width: '150',  align: 'center',label: '系统标题', rule: 'required'},
+			{name: 'name', width: '150', align: 'center', label: '系统名称', rule: 'required'},
+			{name: 'description', width: '150', align: 'center', label: '描述', rule: 'required'},
+			{name: 'basepath', width: '150',  align: 'center',label: '根目录', rule: 'required'},
+			{name: 'status', width: '150', label: '状态', align: 'center', rule: 'required', type: 'select', items: [{'': '未选择'}, {'1': '正常'}, {'0': '禁止'}]},
+		],
+		paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+		hiddenFields: ['system_id'],
+		showToolbar: true,
+		toolbarItem: system_btn,
+		inlineEditMult: false,
+	}
+
+	if (system_btn.indexOf('add') != -1) {
+		system_datagrid_data.ifvalue = 'systemId'
+		system_datagrid_data.addUrl = $.cookie("tudou-upms-server") + '/manage/system/create'
+		system_datagrid_data.editUrl = 'edit'
+		system_datagrid_data.editCallback = 'manage_back_edit'
+	}
+
+	if (system_btn.indexOf('edit') != -1) {
+		system_datagrid_data.editUrl = $.cookie("tudou-upms-server") + '/manage/system/update'
+		system_datagrid_data.editdblOnclick = true
+		system_datagrid_data.editCallback = 'manage_back_edit'
+	}
+
+	if (system_btn.indexOf('del') != -1) {
+		system_datagrid_data.delConfirm = true
+		system_datagrid_data.delPK = 'systemId'
+		system_datagrid_data.delType = 'POST'
+		system_datagrid_data.delUrl = $.cookie("tudou-upms-server") + '/manage/system/delete'
+		system_datagrid_data.delCallback = 'del_system_back'
+	}
+
+
+	$('#manage_system_table').datagrid(system_datagrid_data);
+
+	function manage_back_edit(d) {
+		if (d.code == 1) {
+			$(this).alertmsg('ok', "操作成功");
+		} else {
+			if (d.data instanceof Array) {
+				$.each(d.data, function (index, value) {
+					$(this).alertmsg('warn', value.errorMsg)
+				});
+			} else {
+				$(this).alertmsg('warn', d.data)
+			}
+		}
+		$('#manage_system_table').datagrid('refresh_part');
+	}
+
+	function del_system_back(d) {
+		if (d.code == 1) {
+			$(this).alertmsg('ok', "删除成功");
+			$('#manage_system_table').datagrid('refresh_part');
+		} else {
+			$(this).alertmsg('warn', d.data);
+		}
+	}
+
+</script>
+
+<div class="bjui-pageContent">
+	<table id="manage_system_table" class="table table-hover" data-width="100%"></table>
+</div>

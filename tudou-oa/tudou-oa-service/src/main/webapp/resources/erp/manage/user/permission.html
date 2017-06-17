@@ -1,0 +1,124 @@
+<script>
+	var changeDatas1 = [];
+	var setting1 = {
+		check: {
+			enable: true,
+			// 勾选关联父，取消关联子
+			chkboxType: { "Y" : "", "N" : "" }
+		},
+		async: {
+			enable: true,
+			url: $.cookie("tudou-upms-server")+'/manage/permission/user/' + user_select_id + '?type=1'
+		},
+		data: {
+			simpleData: {
+				enable: true
+			}
+		},
+		callback: {
+			onCheck: function() {
+				var zTree = $.fn.zTree.getZTreeObj("ztree1")
+				var changeNodes = zTree.getChangeCheckedNodes();
+				changeDatas1 = [];
+				for (var i = 0; i < changeNodes.length; i ++) {
+					var changeData = {};
+					changeData.id = changeNodes[i].id;
+					changeData.checked = changeNodes[i].checked;
+					changeData.type = 1;
+					changeDatas1.push(changeData);
+				}
+			}
+		}
+	};
+	var changeDatas2 = [];
+	var setting2 = {
+		check: {
+			enable: true,
+			// 勾选关联父，取消关联子
+			chkboxType: { "Y" : "", "N" : "" }
+		},
+		async: {
+			enable: true,
+			url: $.cookie("tudou-upms-server")+'/manage/permission/user/' + user_select_id + '?type=-1'
+		},
+		data: {
+			simpleData: {
+				enable: true
+			}
+		},
+		callback: {
+			onCheck: function() {
+				var zTree = $.fn.zTree.getZTreeObj("ztree2")
+				var changeNodes = zTree.getChangeCheckedNodes();
+				changeDatas2 = [];
+				for (var i = 0; i < changeNodes.length; i ++) {
+					var changeData = {};
+					changeData.id = changeNodes[i].id;
+					changeData.checked = changeNodes[i].checked;
+					changeData.type = -1;
+					changeDatas2.push(changeData);
+				}
+			}
+		}
+	};
+
+	$('#permissionForm').trigger('bjui.ajaxStart')
+	$.fn.zTree.init($('#ztree1'), setting1);
+	$.fn.zTree.init($('#ztree2'), setting2);
+	$('#permissionForm').trigger('bjui.ajaxStop')
+
+	function permissionSubmit() {
+		// 合并提交
+		var changeDatas = changeDatas1.concat(changeDatas2);
+		$.ajax({
+			type: 'post',
+			url: $.cookie("tudou-upms-server")+'/manage/user/permission/' + user_select_id,
+			data: {datas: JSON.stringify(changeDatas), permissionUserId: user_select_id},
+			success: function(result) {
+				if (result.code != 1) {
+					if (result.data instanceof Array) {
+						$.each(result.data, function(index, value) {
+							$(this).alertmsg('warn',value.errorMsg)
+						});
+					} else {
+						$(this).alertmsg('warn',result.data)
+					}
+				} else {
+					$(this).alertmsg('ok','操作成功')
+					BJUI.dialog('closeCurrent',this);
+				}
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				$(this).alertmsg('warn',textStatus)
+			}
+		});
+	}
+</script>
+
+<form id="permissionForm" method="post">
+<div class="bjui-pageContent" >
+	<div class="roleLeft" style="width: 50% !important;position: relative;height: 100%;float: left;">
+		<label>加权限</label>
+		<ul id="ztree1" class="ztree"></ul>
+	</div>
+
+	<div class="roleRight" style="width: 50% !important;position: relative;height: 100%;float: left;">
+		<label>减权限</label>
+		<ul id="ztree2" class="ztree"></ul>
+	</div>
+
+</div>
+</form>
+
+<div class="bjui-pageFooter">
+	<ul>
+		<li>
+			<button type="button" class="btn-close" data-icon="close">取消</button>
+		</li>
+		<li>
+			<button type="button" class="btn-default" data-icon="save" onclick="permissionSubmit()"
+					id="save_guest_btn">保存
+			</button>
+		</li>
+	</ul>
+</div>
