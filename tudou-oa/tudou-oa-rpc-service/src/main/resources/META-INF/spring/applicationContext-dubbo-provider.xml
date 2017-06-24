@@ -13,4 +13,12 @@
 
     <dubbo:protocol name="dubbo" port="20883"/>
 
+    <!--&lt;!&ndash; OA枚举 &ndash;&gt;-->
+    <bean id="oaEnumService" class="com.tudou.oa.rpc.service.impl.OaEnumServiceImpl"/>
+    <dubbo:service interface="com.tudou.oa.rpc.api.OaEnumService" ref="oaEnumService" timeout="10000"/>
+
+    <!--&lt;!&ndash; 用户详情 &ndash;&gt;-->
+    <bean id="oaUserDetailsService" class="com.tudou.oa.rpc.service.impl.OaUserDetailsServiceImpl"/>
+    <dubbo:service interface="com.tudou.oa.rpc.api.OaUserDetailsService" ref="oaUserDetailsService" timeout="10000"/>
+
 </beans>
