@@ -20,8 +20,8 @@ public class OaInterceptor extends HandlerInterceptorAdapter {
 
 	private static Logger _log = LoggerFactory.getLogger(OaInterceptor.class);
 
-//	@Autowired
-//	UpmsApiService upmsApiService;
+	@Autowired
+	UpmsApiService upmsApiService;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

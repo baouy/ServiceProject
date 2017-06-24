@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>com.tudou</groupId>
-            <artifactId>tudou-upms-client</artifactId>
+            <artifactId>tudou-oa-rpc-api</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
@@ -37,6 +37,12 @@
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
             <version>1.2</version>
+        </dependency>
+        <!-- oa-upms-client -->
+        <dependency>
+            <groupId>com.tudou</groupId>
+            <artifactId>tudou-upms-client</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 

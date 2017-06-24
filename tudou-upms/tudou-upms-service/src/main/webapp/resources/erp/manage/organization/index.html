@@ -104,6 +104,7 @@
 		datas[0] = new Object()
 		datas[0].id = 0
 		datas[0].pId = null
+		datas[0].fid = 0
 		datas[0].name = '集团'
 		$.ajax({
 			url: $.cookie("tudou-upms-server") + '/manage/organization/list',
@@ -128,11 +129,12 @@
 
 	function organization_create() {
 
-		var name,description,pid
+		var name,description,pid,fid
 
 		pid = organization_treeNode.pId
 		name = $('#itemclass_name').val()
 		description = $('#itemclass_description').val()
+		fid = organization_treeNode.getParentNode().fid == 0? organization_treeNode.getParentNode().id:organization_treeNode.getParentNode().fid
 
 		$('#permission_pagecontent').trigger('bjui.ajaxStart')
 
@@ -143,6 +145,7 @@
 					data: {
 						pid: pid,
 						name:name,
+						fid: fid,
 						description:description
 					},
 					success: function (d) {
@@ -152,6 +155,7 @@
 							upNode.id = d.data
 							upNode.permissionId = d.data
 							upNode.pid = pid
+							upNode.fid = fid
 							upNode.name = name
 							upNode.description = description
 							zTree.updateNode(upNode)
@@ -178,12 +182,13 @@
 
 
 	function organization_update() {
-		var name,description,pid,organizationId
+		var name,description,pid,organizationId,fid
 
 		organizationId = organization_treeNode.organizationId
 		pid = organization_treeNode.pId
 		name = $('#itemclass_name').val()
 		description = $('#itemclass_description').val()
+		fid = organization_treeNode.getParentNode().fid == 0? organization_treeNode.getParentNode().id:organization_treeNode.getParentNode().fid
 
 		$('#permission_pagecontent').trigger('bjui.ajaxStart')
 
@@ -195,6 +200,7 @@
 						organizationId:organizationId,
 						pid: pid,
 						name:name,
+						fid: fid,
 						description:description
 					},
 					success: function (d) {
@@ -205,6 +211,7 @@
 							upNode.permissionId = d.data
 							upNode.pid = pid
 							upNode.name = name
+							upNode.fid = fid
 							upNode.description = description
 							zTree.updateNode(upNode)
 							zTree.cancelSelectedNode();

@@ -237,6 +237,76 @@ public class OaUserDetailsExample implements Serializable {
             return (Criteria) this;
         }
 
+        public Criteria andFlowerNameIsNull() {
+            addCriterion("flower_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowerNameIsNotNull() {
+            addCriterion("flower_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowerNameEqualTo(String value) {
+            addCriterion("flower_name =", value, "flowerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowerNameNotEqualTo(String value) {
+            addCriterion("flower_name <>", value, "flowerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowerNameGreaterThan(String value) {
+            addCriterion("flower_name >", value, "flowerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowerNameGreaterThanOrEqualTo(String value) {
+            addCriterion("flower_name >=", value, "flowerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowerNameLessThan(String value) {
+            addCriterion("flower_name <", value, "flowerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowerNameLessThanOrEqualTo(String value) {
+            addCriterion("flower_name <=", value, "flowerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowerNameLike(String value) {
+            addCriterion("flower_name like", value, "flowerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowerNameNotLike(String value) {
+            addCriterion("flower_name not like", value, "flowerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowerNameIn(List<String> values) {
+            addCriterion("flower_name in", values, "flowerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowerNameNotIn(List<String> values) {
+            addCriterion("flower_name not in", values, "flowerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowerNameBetween(String value1, String value2) {
+            addCriterion("flower_name between", value1, value2, "flowerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowerNameNotBetween(String value1, String value2) {
+            addCriterion("flower_name not between", value1, value2, "flowerName");
+            return (Criteria) this;
+        }
+
         public Criteria andCompanyMobileIsNull() {
             addCriterion("company_mobile is null");
             return (Criteria) this;
@@ -304,6 +374,76 @@ public class OaUserDetailsExample implements Serializable {
 
         public Criteria andCompanyMobileNotBetween(String value1, String value2) {
             addCriterion("company_mobile not between", value1, value2, "companyMobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyEmailIsNull() {
+            addCriterion("company_email is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyEmailIsNotNull() {
+            addCriterion("company_email is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyEmailEqualTo(String value) {
+            addCriterion("company_email =", value, "companyEmail");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyEmailNotEqualTo(String value) {
+            addCriterion("company_email <>", value, "companyEmail");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyEmailGreaterThan(String value) {
+            addCriterion("company_email >", value, "companyEmail");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyEmailGreaterThanOrEqualTo(String value) {
+            addCriterion("company_email >=", value, "companyEmail");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyEmailLessThan(String value) {
+            addCriterion("company_email <", value, "companyEmail");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyEmailLessThanOrEqualTo(String value) {
+            addCriterion("company_email <=", value, "companyEmail");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyEmailLike(String value) {
+            addCriterion("company_email like", value, "companyEmail");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyEmailNotLike(String value) {
+            addCriterion("company_email not like", value, "companyEmail");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyEmailIn(List<String> values) {
+            addCriterion("company_email in", values, "companyEmail");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyEmailNotIn(List<String> values) {
+            addCriterion("company_email not in", values, "companyEmail");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyEmailBetween(String value1, String value2) {
+            addCriterion("company_email between", value1, value2, "companyEmail");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyEmailNotBetween(String value1, String value2) {
+            addCriterion("company_email not between", value1, value2, "companyEmail");
             return (Criteria) this;
         }
 

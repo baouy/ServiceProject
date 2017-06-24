@@ -18,11 +18,25 @@ public class OaUserDetails implements Serializable {
     private String workNum;
 
     /**
+     * 花名
+     *
+     * @mbg.generated
+     */
+    private String flowerName;
+
+    /**
      * 公司电话
      *
      * @mbg.generated
      */
     private String companyMobile;
+
+    /**
+     * 公司邮箱
+     *
+     * @mbg.generated
+     */
+    private String companyEmail;
 
     /**
      * 招聘渠道枚举
@@ -252,12 +266,28 @@ public class OaUserDetails implements Serializable {
         this.workNum = workNum;
     }
 
+    public String getFlowerName() {
+        return flowerName;
+    }
+
+    public void setFlowerName(String flowerName) {
+        this.flowerName = flowerName;
+    }
+
     public String getCompanyMobile() {
         return companyMobile;
     }
 
     public void setCompanyMobile(String companyMobile) {
         this.companyMobile = companyMobile;
+    }
+
+    public String getCompanyEmail() {
+        return companyEmail;
+    }
+
+    public void setCompanyEmail(String companyEmail) {
+        this.companyEmail = companyEmail;
     }
 
     public Integer getRecruitmentEnumId() {
@@ -508,7 +538,9 @@ public class OaUserDetails implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", userId=").append(userId);
         sb.append(", workNum=").append(workNum);
+        sb.append(", flowerName=").append(flowerName);
         sb.append(", companyMobile=").append(companyMobile);
+        sb.append(", companyEmail=").append(companyEmail);
         sb.append(", recruitmentEnumId=").append(recruitmentEnumId);
         sb.append(", recruitmentEnumOther=").append(recruitmentEnumOther);
         sb.append(", rUserId=").append(rUserId);
@@ -557,7 +589,9 @@ public class OaUserDetails implements Serializable {
         OaUserDetails other = (OaUserDetails) that;
         return (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
             && (this.getWorkNum() == null ? other.getWorkNum() == null : this.getWorkNum().equals(other.getWorkNum()))
+            && (this.getFlowerName() == null ? other.getFlowerName() == null : this.getFlowerName().equals(other.getFlowerName()))
             && (this.getCompanyMobile() == null ? other.getCompanyMobile() == null : this.getCompanyMobile().equals(other.getCompanyMobile()))
+            && (this.getCompanyEmail() == null ? other.getCompanyEmail() == null : this.getCompanyEmail().equals(other.getCompanyEmail()))
             && (this.getRecruitmentEnumId() == null ? other.getRecruitmentEnumId() == null : this.getRecruitmentEnumId().equals(other.getRecruitmentEnumId()))
             && (this.getRecruitmentEnumOther() == null ? other.getRecruitmentEnumOther() == null : this.getRecruitmentEnumOther().equals(other.getRecruitmentEnumOther()))
             && (this.getrUserId() == null ? other.getrUserId() == null : this.getrUserId().equals(other.getrUserId()))
@@ -596,7 +630,9 @@ public class OaUserDetails implements Serializable {
         int result = 1;
         result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
         result = prime * result + ((getWorkNum() == null) ? 0 : getWorkNum().hashCode());
+        result = prime * result + ((getFlowerName() == null) ? 0 : getFlowerName().hashCode());
         result = prime * result + ((getCompanyMobile() == null) ? 0 : getCompanyMobile().hashCode());
+        result = prime * result + ((getCompanyEmail() == null) ? 0 : getCompanyEmail().hashCode());
         result = prime * result + ((getRecruitmentEnumId() == null) ? 0 : getRecruitmentEnumId().hashCode());
         result = prime * result + ((getRecruitmentEnumOther() == null) ? 0 : getRecruitmentEnumOther().hashCode());
         result = prime * result + ((getrUserId() == null) ? 0 : getrUserId().hashCode());

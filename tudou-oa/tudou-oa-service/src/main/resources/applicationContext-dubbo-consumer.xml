@@ -14,6 +14,11 @@
     <!-- 订阅服务 -->
     <dubbo:consumer check="false"/>
 
+    <!-- OA枚举 -->
+    <dubbo:reference id="oaEnumService" interface="com.tudou.oa.rpc.api.OaEnumService" mock="true"/>
+
+    <!-- 用户详情 -->
+    <dubbo:reference id="oaUserDetailsService" interface="com.tudou.oa.rpc.api.OaUserDetailsService" mock="true"/>
 
     <!-- 接口服务 -->
     <dubbo:reference id="upmsApiService" interface="com.tudou.upms.rpc.api.UpmsApiService" mock="true"/>

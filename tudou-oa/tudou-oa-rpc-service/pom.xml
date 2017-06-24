@@ -24,8 +24,20 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
+        <!-- tudou-upms-client -->
+        <dependency>
+            <groupId>com.tudou</groupId>
+            <artifactId>tudou-upms-client</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 

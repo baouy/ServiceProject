@@ -67,7 +67,7 @@ public class UpmsUser implements Serializable {
     private Byte sex;
 
     /**
-     * 状态(0:正常,1:锁定)
+     * 状态(0:正常,1:锁定,2:待入职)
      *
      * @mbg.generated
      */

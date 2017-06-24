@@ -4,7 +4,9 @@
   <resultMap id="BaseResultMap" type="com.tudou.oa.dao.model.OaUserDetails">
     <id column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="work_num" jdbcType="VARCHAR" property="workNum" />
+    <result column="flower_name" jdbcType="VARCHAR" property="flowerName" />
     <result column="company_mobile" jdbcType="VARCHAR" property="companyMobile" />
+    <result column="company_email" jdbcType="VARCHAR" property="companyEmail" />
     <result column="recruitment_enum_id" jdbcType="INTEGER" property="recruitmentEnumId" />
     <result column="recruitment_enum_other" jdbcType="VARCHAR" property="recruitmentEnumOther" />
     <result column="r_user_id" jdbcType="INTEGER" property="rUserId" />
@@ -95,11 +97,11 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    user_id, work_num, company_mobile, recruitment_enum_id, recruitment_enum_other, r_user_id, 
-    itime, probation, ptime, contractage, contracttype_enum_id, contracttimes, id_number, 
-    id_address, hr_enum_id, cardnumber, bank_enum_id, ismarry, fertility, nation, nativeplace, 
-    qq, wx, e_enum_id, school, professional, emer_contact, emer_mobile, leavetime, leavingreason, 
-    securitystart, securityendtime, fundtime
+    user_id, work_num, flower_name, company_mobile, company_email, recruitment_enum_id, 
+    recruitment_enum_other, r_user_id, itime, probation, ptime, contractage, contracttype_enum_id, 
+    contracttimes, id_number, id_address, hr_enum_id, cardnumber, bank_enum_id, ismarry, 
+    fertility, nation, nativeplace, qq, wx, e_enum_id, school, professional, emer_contact, 
+    emer_mobile, leavetime, leavingreason, securitystart, securityendtime, fundtime
   </sql>
   <select id="selectByExample" parameterType="com.tudou.oa.dao.model.OaUserDetailsExample" resultMap="BaseResultMap">
     select
@@ -132,30 +134,30 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.tudou.oa.dao.model.OaUserDetails">
-    insert into oa_user_details (user_id, work_num, company_mobile, 
-      recruitment_enum_id, recruitment_enum_other, 
-      r_user_id, itime, probation, 
-      ptime, contractage, contracttype_enum_id, 
-      contracttimes, id_number, id_address, 
-      hr_enum_id, cardnumber, bank_enum_id, 
-      ismarry, fertility, nation, 
-      nativeplace, qq, wx, 
-      e_enum_id, school, professional, 
-      emer_contact, emer_mobile, leavetime, 
-      leavingreason, securitystart, securityendtime, 
-      fundtime)
-    values (#{userId,jdbcType=INTEGER}, #{workNum,jdbcType=VARCHAR}, #{companyMobile,jdbcType=VARCHAR}, 
-      #{recruitmentEnumId,jdbcType=INTEGER}, #{recruitmentEnumOther,jdbcType=VARCHAR}, 
-      #{rUserId,jdbcType=INTEGER}, #{itime,jdbcType=BIGINT}, #{probation,jdbcType=INTEGER}, 
-      #{ptime,jdbcType=BIGINT}, #{contractage,jdbcType=INTEGER}, #{contracttypeEnumId,jdbcType=INTEGER}, 
-      #{contracttimes,jdbcType=INTEGER}, #{idNumber,jdbcType=VARCHAR}, #{idAddress,jdbcType=VARCHAR}, 
-      #{hrEnumId,jdbcType=INTEGER}, #{cardnumber,jdbcType=VARCHAR}, #{bankEnumId,jdbcType=INTEGER}, 
-      #{ismarry,jdbcType=BIT}, #{fertility,jdbcType=BIT}, #{nation,jdbcType=VARCHAR}, 
-      #{nativeplace,jdbcType=VARCHAR}, #{qq,jdbcType=VARCHAR}, #{wx,jdbcType=VARCHAR}, 
-      #{eEnumId,jdbcType=INTEGER}, #{school,jdbcType=VARCHAR}, #{professional,jdbcType=VARCHAR}, 
-      #{emerContact,jdbcType=VARCHAR}, #{emerMobile,jdbcType=VARCHAR}, #{leavetime,jdbcType=BIGINT}, 
-      #{leavingreason,jdbcType=VARCHAR}, #{securitystart,jdbcType=BIGINT}, #{securityendtime,jdbcType=BIGINT}, 
-      #{fundtime,jdbcType=BIGINT})
+    insert into oa_user_details (user_id, work_num, flower_name, 
+      company_mobile, company_email, recruitment_enum_id, 
+      recruitment_enum_other, r_user_id, itime, 
+      probation, ptime, contractage, 
+      contracttype_enum_id, contracttimes, id_number, 
+      id_address, hr_enum_id, cardnumber, 
+      bank_enum_id, ismarry, fertility, 
+      nation, nativeplace, qq, 
+      wx, e_enum_id, school, 
+      professional, emer_contact, emer_mobile, 
+      leavetime, leavingreason, securitystart, 
+      securityendtime, fundtime)
+    values (#{userId,jdbcType=INTEGER}, #{workNum,jdbcType=VARCHAR}, #{flowerName,jdbcType=VARCHAR}, 
+      #{companyMobile,jdbcType=VARCHAR}, #{companyEmail,jdbcType=VARCHAR}, #{recruitmentEnumId,jdbcType=INTEGER}, 
+      #{recruitmentEnumOther,jdbcType=VARCHAR}, #{rUserId,jdbcType=INTEGER}, #{itime,jdbcType=BIGINT}, 
+      #{probation,jdbcType=INTEGER}, #{ptime,jdbcType=BIGINT}, #{contractage,jdbcType=INTEGER}, 
+      #{contracttypeEnumId,jdbcType=INTEGER}, #{contracttimes,jdbcType=INTEGER}, #{idNumber,jdbcType=VARCHAR}, 
+      #{idAddress,jdbcType=VARCHAR}, #{hrEnumId,jdbcType=INTEGER}, #{cardnumber,jdbcType=VARCHAR}, 
+      #{bankEnumId,jdbcType=INTEGER}, #{ismarry,jdbcType=BIT}, #{fertility,jdbcType=BIT}, 
+      #{nation,jdbcType=VARCHAR}, #{nativeplace,jdbcType=VARCHAR}, #{qq,jdbcType=VARCHAR}, 
+      #{wx,jdbcType=VARCHAR}, #{eEnumId,jdbcType=INTEGER}, #{school,jdbcType=VARCHAR}, 
+      #{professional,jdbcType=VARCHAR}, #{emerContact,jdbcType=VARCHAR}, #{emerMobile,jdbcType=VARCHAR}, 
+      #{leavetime,jdbcType=BIGINT}, #{leavingreason,jdbcType=VARCHAR}, #{securitystart,jdbcType=BIGINT}, 
+      #{securityendtime,jdbcType=BIGINT}, #{fundtime,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.tudou.oa.dao.model.OaUserDetails">
     insert into oa_user_details
@@ -166,8 +168,14 @@
       <if test="workNum != null">
         work_num,
       </if>
+      <if test="flowerName != null">
+        flower_name,
+      </if>
       <if test="companyMobile != null">
         company_mobile,
+      </if>
+      <if test="companyEmail != null">
+        company_email,
       </if>
       <if test="recruitmentEnumId != null">
         recruitment_enum_id,
@@ -267,8 +275,14 @@
       <if test="workNum != null">
         #{workNum,jdbcType=VARCHAR},
       </if>
+      <if test="flowerName != null">
+        #{flowerName,jdbcType=VARCHAR},
+      </if>
       <if test="companyMobile != null">
         #{companyMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="companyEmail != null">
+        #{companyEmail,jdbcType=VARCHAR},
       </if>
       <if test="recruitmentEnumId != null">
         #{recruitmentEnumId,jdbcType=INTEGER},
@@ -377,8 +391,14 @@
       <if test="record.workNum != null">
         work_num = #{record.workNum,jdbcType=VARCHAR},
       </if>
+      <if test="record.flowerName != null">
+        flower_name = #{record.flowerName,jdbcType=VARCHAR},
+      </if>
       <if test="record.companyMobile != null">
         company_mobile = #{record.companyMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="record.companyEmail != null">
+        company_email = #{record.companyEmail,jdbcType=VARCHAR},
       </if>
       <if test="record.recruitmentEnumId != null">
         recruitment_enum_id = #{record.recruitmentEnumId,jdbcType=INTEGER},
@@ -479,7 +499,9 @@
     update oa_user_details
     set user_id = #{record.userId,jdbcType=INTEGER},
       work_num = #{record.workNum,jdbcType=VARCHAR},
+      flower_name = #{record.flowerName,jdbcType=VARCHAR},
       company_mobile = #{record.companyMobile,jdbcType=VARCHAR},
+      company_email = #{record.companyEmail,jdbcType=VARCHAR},
       recruitment_enum_id = #{record.recruitmentEnumId,jdbcType=INTEGER},
       recruitment_enum_other = #{record.recruitmentEnumOther,jdbcType=VARCHAR},
       r_user_id = #{record.rUserId,jdbcType=INTEGER},
@@ -520,8 +542,14 @@
       <if test="workNum != null">
         work_num = #{workNum,jdbcType=VARCHAR},
       </if>
+      <if test="flowerName != null">
+        flower_name = #{flowerName,jdbcType=VARCHAR},
+      </if>
       <if test="companyMobile != null">
         company_mobile = #{companyMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="companyEmail != null">
+        company_email = #{companyEmail,jdbcType=VARCHAR},
       </if>
       <if test="recruitmentEnumId != null">
         recruitment_enum_id = #{recruitmentEnumId,jdbcType=INTEGER},
@@ -619,7 +647,9 @@
   <update id="updateByPrimaryKey" parameterType="com.tudou.oa.dao.model.OaUserDetails">
     update oa_user_details
     set work_num = #{workNum,jdbcType=VARCHAR},
+      flower_name = #{flowerName,jdbcType=VARCHAR},
       company_mobile = #{companyMobile,jdbcType=VARCHAR},
+      company_email = #{companyEmail,jdbcType=VARCHAR},
       recruitment_enum_id = #{recruitmentEnumId,jdbcType=INTEGER},
       recruitment_enum_other = #{recruitmentEnumOther,jdbcType=VARCHAR},
       r_user_id = #{rUserId,jdbcType=INTEGER},
