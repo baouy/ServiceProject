@@ -1,6 +1,6 @@
-package com.meiwo.oa.service.controller.manage;
+package com.tudou.oa.service.controller.manage;
 
-import com.meiwo.oa.service.modelvalid.OaEnumValid;
+import com.tudou.oa.service.modelvalid.OaEnumValid;
 import com.tudou.common.base.BaseController;
 import com.tudou.oa.dao.model.OaEnum;
 import com.tudou.oa.dao.model.OaEnumExample;

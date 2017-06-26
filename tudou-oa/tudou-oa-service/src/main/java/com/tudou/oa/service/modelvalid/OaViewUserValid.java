@@ -1,25 +1,30 @@
-package com.tudou.oa.dao.othermodel;
+package com.tudou.oa.service.modelvalid;
 
-import com.tudou.oa.dao.model.OaUserDetails;
+import com.tudou.common.base.BaseModelValid;
 
 /**
- * Created by DavidWang on 2017/6/24.
+ * Created by DavidWang on 2017/6/26.
  */
-public class OaUser {
-
+public class OaViewUserValid extends BaseModelValid{
 
 	/**
-	 * 用户ID
+	 * 编号
+	 *
+	 * @mbg.generated
 	 */
 	private Integer userId;
 
 	/**
-	 * 用户账号
+	 * 帐号
+	 *
+	 * @mbg.generated
 	 */
 	private String username;
 
 	/**
-	 * 用户姓名
+	 * 姓名
+	 *
+	 * @mbg.generated
 	 */
 	private String realname;
 
@@ -31,7 +36,7 @@ public class OaUser {
 	private Byte sex;
 
 	/**
-	 * 状态(0:正常,1:锁定,2:待入职)
+	 * 状态(0:正常,1:锁定)
 	 *
 	 * @mbg.generated
 	 */
@@ -39,59 +44,82 @@ public class OaUser {
 
 	/**
 	 * 创建时间
+	 *
+	 * @mbg.generated
 	 */
 	private Long ctime;
 
 	/**
 	 * 公司电话
+	 *
+	 * @mbg.generated
 	 */
 	private String companyMobile;
 
 	/**
 	 * 公司邮箱
+	 *
+	 * @mbg.generated
 	 */
 	private String companyEmail;
 
 	/**
 	 * 花名
+	 *
+	 * @mbg.generated
 	 */
 	private String flowerName;
 
 	/**
 	 * 工号
+	 *
+	 * @mbg.generated
 	 */
 	private String workNum;
 
-	/**
-	 * 组织
-	 */
 	private String organization;
 
 	/**
-	 * 部门
+	 * 组织名称
+	 *
+	 * @mbg.generated
 	 */
 	private String department;
 
 	/**
-	 * 角色
+	 * 角色名称
+	 *
+	 * @mbg.generated
 	 */
 	private String role;
 
 	/**
-	 * 身份证
+	 * 身份证号
+	 *
+	 * @mbg.generated
 	 */
 	private String idNumber;
 
 	/**
 	 * 身份证地址
+	 *
+	 * @mbg.generated
 	 */
 	private String idAddress;
 
 	/**
 	 * 邮箱
+	 *
+	 * @mbg.generated
 	 */
 	private String email;
 
+	/**
+	 * 电话
+	 *
+	 * @mbg.generated
+	 */
+	private String phone;
 
 	public Integer getUserId() {
 		return userId;
@@ -219,5 +247,13 @@ public class OaUser {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 }

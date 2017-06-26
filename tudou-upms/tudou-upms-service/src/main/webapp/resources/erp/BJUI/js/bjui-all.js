@@ -7703,9 +7703,9 @@
                     cache     : options.cache || false,
                     dataType  : dataType,
 //meiwo-erp ticket-0003 ajax跨域提交cookie-----已执行改动
-//                     xhrFields: {
-//                         withCredentials: true
-//                     },
+                    xhrFields: {
+                        withCredentials: true
+                    },
 //                     headers: {'Cookie' : document.cookie },
 //                     crossDomain: true,
 //-------------------------------------------------------

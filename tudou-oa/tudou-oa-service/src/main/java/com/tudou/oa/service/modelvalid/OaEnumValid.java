@@ -1,4 +1,4 @@
-package com.meiwo.oa.service.modelvalid;
+package com.tudou.oa.service.modelvalid;
 
 import com.tudou.common.base.BaseModelValid;
 

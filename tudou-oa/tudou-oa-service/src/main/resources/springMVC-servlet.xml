@@ -10,14 +10,22 @@
     <!-- 根目录'/'对应页面 -->
     <mvc:view-controller path="/" view-name="/index.jsp"/>
 
-    <bean class="com.tudou.upms.server.swagger.SwaggerConfig"></bean>
+    <bean class="com.tudou.oa.service.swagger.SwaggerConfig"></bean>
+
+    <mvc:cors>
+        <mvc:mapping path="/**" />
+    </mvc:cors>
 
     <!-- 拦截器 -->
     <mvc:interceptors>
         <!-- 获取登录信息 -->
         <mvc:interceptor>
+            <!-- 拦截路径 -->
             <mvc:mapping path="/manage/**"/>
-            <bean class="com.tudou.upms.server.interceptor.UpmsInterceptor"></bean>
+            <!-- 非拦截路径 -->
+            <!--<mvc:exclude-mapping path="/manage/login"/>-->
+            <!-- 拦截器对象 -->
+            <bean class="com.tudou.oa.service.interceptor.OaInterceptor"></bean>
         </mvc:interceptor>
     </mvc:interceptors>
 

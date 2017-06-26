@@ -7,7 +7,7 @@
         http://code.alibabatech.com/schema/dubbo
         http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-    <dubbo:application name="tudou-upms-rpc-service"/>
+    <dubbo:application name="tudou-oa-rpc-service"/>
 
     <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
 
@@ -20,5 +20,9 @@
     <!--&lt;!&ndash; 用户详情 &ndash;&gt;-->
     <bean id="oaUserDetailsService" class="com.tudou.oa.rpc.service.impl.OaUserDetailsServiceImpl"/>
     <dubbo:service interface="com.tudou.oa.rpc.api.OaUserDetailsService" ref="oaUserDetailsService" timeout="10000"/>
+
+    <!--&lt;!&ndash; 用户视图 &ndash;&gt;-->
+    <bean id="oaViewUserService" class="com.tudou.oa.rpc.service.impl.OaViewUserServiceImpl"/>
+    <dubbo:service interface="com.tudou.oa.rpc.api.OaViewUserService" ref="oaViewUserService" timeout="10000"/>
 
 </beans>

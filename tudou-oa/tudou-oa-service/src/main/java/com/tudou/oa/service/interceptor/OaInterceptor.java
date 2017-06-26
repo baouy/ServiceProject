@@ -1,9 +1,6 @@
-package com.meiwo.oa.service.interceptor;
+package com.tudou.oa.service.interceptor;
 
-import com.tudou.upms.dao.model.UpmsUser;
 import com.tudou.upms.rpc.api.UpmsApiService;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

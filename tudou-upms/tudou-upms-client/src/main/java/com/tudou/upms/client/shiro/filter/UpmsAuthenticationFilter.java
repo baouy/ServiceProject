@@ -78,7 +78,7 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
             return false;
         }
 
-        sso_server_url.append("/sso/index").append("?").append("appid").append("=").append(PropertiesFileUtil.getInstance("tudou-upms-client").get("appID"));
+        sso_server_url.append("/sso/index").append("?").append("appid").append("=").append(PropertiesFileUtil.getInstance("tudou-upms-client").get("tudou.upms.appID"));
         // 回跳地址
         HttpServletRequest httpServletRequest = WebUtils.toHttp(request);
         StringBuffer backurl = httpServletRequest.getRequestURL();
@@ -153,8 +153,7 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
                             // client无密认证
                             String username = request.getParameter("upms_username");
                             subject.login(new UsernamePasswordToken(username, ""));
-                            HttpServletResponse httpServletResponse = WebUtils.toHttp(response);
-                            httpServletResponse.sendRedirect(backUrl.toString());
+                            WebUtils.toHttp(response).sendRedirect(backUrl.toString());
                             return true;
                         } catch (IOException e) {
                             _log.error("已拿到code，移除code参数跳转出错：", e);

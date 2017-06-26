@@ -1,0 +1,51 @@
+<script>
+
+	var oa_user_btn = ''
+	var oa_toolbarCustom_btn = ''
+	for (var data of user_data) {
+		var value = data.permissionValue;
+
+	}
+
+	var oa_user_datagrid_data = {
+		local: 'remote',
+		height:'95%',
+		dataUrl: $.cookie("tudou-oa-server")+'/manage/oauserdetail/list',
+		dataType: 'json',
+		loadType: 'get',
+		sortAll: false,
+		filterAll: true,
+		height:'100%',
+		columns: [
+			{name: 'worknum', width: '90', label: '工号'},
+			{name: 'realname', width: '80', label: '姓名'},
+			{name: 'flowerName', width: '90', label: '花名'},
+			{name: 'username', width: '120', label: '登录名'},
+			{name: 'organization', width: '120', label: '组织'},
+			{name: 'department', width: '120', label: '部门'},
+			{name: 'role', width: '120', label: '岗位'},
+			{name: 'phone', width: '120', label: '手机号'},
+			{name: 'sex', width: '80', label: '性别'},
+			{name: 'companyMobile', width: '120', label: '公司电话'},
+			{name: 'companyEmail', width: '100', label: '公司邮箱'},
+			{name: 'idNumber', width: '150', label: '身份证号码'},
+			{name: 'idAddress', width: '150', label: '身份证地址'},
+			{name: 'locaked', type: 'select', items: [{'0': '在职'}, {'1': '离职'},{'2':'待入职'}], width: '80', label: '人员状态'},
+			{name: 'email', width: '100', label: '个人邮箱'}
+
+		],
+		paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+		fullGrid: true,
+		toolbarItem: oa_user_btn,
+		inlineEditMult: false,
+		toolbarCustom: oa_toolbarCustom_btn,
+	}
+
+	$('#manage_oa_user_table').datagrid(oa_user_datagrid_data);
+
+</script>
+<div class="bjui-pageContent">
+
+	<table id="manage_oa_user_table" class="table table-bordered" data-width="100%"></table>
+
+</div>

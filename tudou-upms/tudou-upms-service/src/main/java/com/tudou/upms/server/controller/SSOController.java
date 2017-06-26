@@ -5,8 +5,10 @@ import com.tudou.upms.client.shiro.session.UpmsSession;
 import com.tudou.upms.client.shiro.session.UpmsSessionDao;
 import com.tudou.upms.common.constant.UpmsResult;
 import com.tudou.upms.common.constant.UpmsResultConstant;
+import com.tudou.upms.dao.model.UpmsSystemExample;
 import com.tudou.upms.dao.model.UpmsUser;
 import com.tudou.upms.rpc.api.UpmsApiService;
+import com.tudou.upms.rpc.api.UpmsSystemService;
 import com.tudou.upms.rpc.api.UpmsUserService;
 import com.tudou.upms.server.modelvalid.SetPasswordValid;
 import com.tudou.upms.server.modelvalid.SsoLoginValid;
@@ -36,6 +38,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,6 +67,28 @@ public class SSOController {
 
 	@Resource
 	UpmsUserService upmsUserService;
+
+	@Autowired
+	UpmsSystemService upmsSystemService;
+
+	@ApiOperation(value = "认证中心首页")
+	@RequestMapping(value = "/index", method = RequestMethod.GET)
+	public String index(HttpServletRequest request) throws Exception {
+		String appid = request.getParameter("appid");
+		String backurl = request.getParameter("backurl");
+		if (StringUtils.isBlank(appid)) {
+			throw new RuntimeException("无效访问！");
+		}
+		// 判断请求认证系统是否注册
+		UpmsSystemExample upmsSystemExample = new UpmsSystemExample();
+		upmsSystemExample.createCriteria()
+				.andNameEqualTo(appid);
+		int count = upmsSystemService.countByExample(upmsSystemExample);
+		if (0 == count) {
+			throw new RuntimeException(String.format("未注册的系统:%s", appid));
+		}
+		return "redirect:/sso/login?backurl=" + URLEncoder.encode(backurl, "utf-8");
+	}
 
 	@ApiOperation(value = "授权失败登录")
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
