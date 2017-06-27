@@ -14,7 +14,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -77,7 +77,6 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
             WebUtils.toHttp(response).sendRedirect(sso_server_url.append("/sso/login").toString());
             return false;
         }
-
         sso_server_url.append("/sso/index").append("?").append("appid").append("=").append(PropertiesFileUtil.getInstance("tudou-upms-client").get("tudou.upms.appID"));
         // 回跳地址
         HttpServletRequest httpServletRequest = WebUtils.toHttp(request);
@@ -129,7 +128,7 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
             // HttpPost去校验code
             try {
                 StringBuffer sso_server_url = new StringBuffer(PropertiesFileUtil.getInstance("tudou-upms-client").get("tudou.sso.server.url"));
-                HttpClient httpclient = new DefaultHttpClient();
+                HttpClient httpclient = HttpClients.createDefault();
                 HttpPost httpPost = new HttpPost(sso_server_url.toString() + "/sso/code");
 
                 List<NameValuePair> nameValuePairs = new ArrayList<>();

@@ -7707,7 +7707,7 @@
                         withCredentials: true
                     },
 //                     headers: {'Cookie' : document.cookie },
-//                     crossDomain: true,
+                    crossDomain: true,
 //-------------------------------------------------------
                     okCallback: function(response) {
                         if (dataType === 'json') {

@@ -12,10 +12,6 @@
 
     <bean class="com.tudou.oa.service.swagger.SwaggerConfig"></bean>
 
-    <mvc:cors>
-        <mvc:mapping path="/**" />
-    </mvc:cors>
-
     <!-- 拦截器 -->
     <mvc:interceptors>
         <!-- 获取登录信息 -->
@@ -23,7 +19,7 @@
             <!-- 拦截路径 -->
             <mvc:mapping path="/manage/**"/>
             <!-- 非拦截路径 -->
-            <!--<mvc:exclude-mapping path="/manage/login"/>-->
+            <mvc:exclude-mapping path="/manage/login"/>
             <!-- 拦截器对象 -->
             <bean class="com.tudou.oa.service.interceptor.OaInterceptor"></bean>
         </mvc:interceptor>
