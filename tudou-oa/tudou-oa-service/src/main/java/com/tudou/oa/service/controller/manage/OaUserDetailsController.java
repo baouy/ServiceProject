@@ -1,10 +1,20 @@
 package com.tudou.oa.service.controller.manage;
 
+import com.baidu.unbiz.fluentvalidator.ComplexResult;
+import com.baidu.unbiz.fluentvalidator.FluentValidator;
+import com.baidu.unbiz.fluentvalidator.ResultCollectors;
+import com.tudou.common.validator.LengthValidator;
+import com.tudou.oa.common.constant.OaResult;
+import com.tudou.oa.common.constant.OaResultConstant;
+import com.tudou.oa.dao.model.OaUserDetails;
+import com.tudou.oa.rpc.api.OaUserDetailsService;
 import com.tudou.oa.service.modelvalid.OaViewUserValid;
 import com.tudou.common.base.BaseController;
 import com.tudou.oa.dao.model.OaViewUser;
 import com.tudou.oa.dao.model.OaViewUserExample;
 import com.tudou.oa.rpc.api.OaViewUserService;
+import com.tudou.upms.dao.model.UpmsUser;
+import com.tudou.upms.rpc.api.UpmsUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
@@ -15,10 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by DavidWang on 2017/6/24.
@@ -33,11 +40,17 @@ public class OaUserDetailsController extends BaseController {
 	@Autowired
 	private OaViewUserService oaViewUserService;
 
+	@Autowired
+	private UpmsUserService upmsUserService;
+
+	@Autowired
+	private OaUserDetailsService oaUserDetailsService;
+
 	@ApiOperation(value = "用户列表")
-	@RequiresPermissions("upms:oa_userdetail:read")
+	@RequiresPermissions("oa:userdetail:read")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
-	public Object list(HttpServletResponse responce, @ModelAttribute OaViewUserValid oaViewUserValid) {
+	public Object list(@ModelAttribute OaViewUserValid oaViewUserValid) {
 		OaViewUserExample oaViewUserExample = new OaViewUserExample();
 		OaViewUserExample.Criteria criteria = oaViewUserExample.createCriteria();
 
@@ -86,12 +99,32 @@ public class OaUserDetailsController extends BaseController {
 
 		List<OaViewUser> rows = oaViewUserService.selectByExampleForOffsetPage(oaViewUserExample, oaViewUserValid.getPageSize(), oaViewUserValid.getPageCurrent());
 
-		long total = oaViewUserService.countByExample(oaViewUserExample);
+		int total = oaViewUserService.countByExample(oaViewUserExample);
 
-		Map<String, Object> result = new HashMap<>();
-		result.put("data", rows);
-		result.put("total", total);
-		return result;
+		return new OaResult(OaResultConstant.SUCCESS,rows,oaViewUserValid.getPageSize(),oaViewUserValid.getPageCurrent(),total);
+	}
+
+	@ApiOperation(value = "新增权限")
+	@RequiresPermissions("oa:userdetail:create")
+	@ResponseBody
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public Object create(@ModelAttribute UpmsUser upmsUser, @ModelAttribute OaUserDetails oaUserDetails) {
+		ComplexResult result = FluentValidator.checkAll()
+				.on(upmsUser.getUsername(), new LengthValidator(1, 20, "名称"))
+				.doValidate()
+				.result(ResultCollectors.toComplex());
+		if (!result.isSuccess()) {
+			return new OaResult(OaResultConstant.INVALID_LENGTH, result.getErrors());
+		}
+//		long time = System.currentTimeMillis();
+//		upmsPermission.setCtime(time);
+//
+//		if (upmsPermission.getOrders() == null){
+//			upmsPermission.setOrders(time);
+//		}
+//
+//		upmsPermission = upmsPermissionService.createUpmsPermission(upmsPermission);
+		return new OaResult(OaResultConstant.SUCCESS, null);
 	}
 
 

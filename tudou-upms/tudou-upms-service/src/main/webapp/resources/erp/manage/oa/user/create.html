@@ -1,0 +1,267 @@
+<style type="text/css">
+	.required{color: red}
+	.titleLabel{height: 40px;}
+	.titleLabel td label{font-size:18px;color: #adadad}
+</style>
+
+<script>
+
+	var oa_user_recruitmentEnumId = $('#oa_user_recruitmentEnumId')
+	oa_user_select_back(oa_user_recruitmentEnumId,1)
+
+	var oa_user_contracttypeEnumId = $('#oa_user_contracttypeEnumId')
+	oa_user_select_back(oa_user_contracttypeEnumId,2)
+
+	var oa_user_hrEnumId = $('#oa_user_hrEnumId')
+	oa_user_select_back(oa_user_hrEnumId,3)
+
+	var oa_user_bankEnumId = $('#oa_user_bankEnumId')
+	oa_user_select_back(oa_user_bankEnumId,4)
+
+	var oa_user_eEnumId = $('#oa_user_eEnumId')
+	oa_user_select_back(oa_user_eEnumId,5)
+
+	$("#oa_user_form").attr("action",$.cookie("tudou-oa-server")+ "/manage/oauserdetail/create");
+
+</script>
+
+
+<div class="bjui-pageContent">
+	<form data-toggle="validate" data-callback="wtf" id="oa_user_form">
+
+		<input type="hidden" value="" name="householdcode" id="oa_user_householdcode">
+
+		<table class="table table-condensed table-hover" width="100%">
+			<tbody>
+			<tr class="titleLabel">
+				<td><label class="control-label" >基本信息</label></td>
+			</tr>
+
+			<tr>
+				<td>
+					<label for="oa_user_realname" class="control-label x90 required">姓名：</label>
+					<input type="text" name="realname" id="oa_user_realname" value="" data-rule="required" size="15">
+				</td>
+				<td>
+					<label for="oa_user_companyEmail" class="control-label x90 required">公司邮箱：</label>
+					<input type="text" name="companyEmail" id="oa_user_companyEmail" value="" size="15" data-rule="required">
+				</td>
+				<td>
+					<label for="oa_user_phone" class="control-label x90 required">手机号码：</label>
+					<input type="text" name="phone" id="oa_user_phone" value="" data-rule="required;mobile" size="15">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="oa_user_flowerName" class="control-label x90 required">花名：</label>
+					<input type="text" name="flowerName" id="oa_user_flowerName" value="" data-rule="required" size="15">
+				</td>
+				<td>
+					<label for="oa_user_workNum" class="control-label x90 required">工号：</label>
+					<input type="text" name="workNum" id="oa_user_workNum" value="" data-rule="required" size="15">
+				</td>
+				<td>
+					<label for="oa_user_companyMobile" class="control-label x90">公司电话：</label>
+					<input type="text" name="companyMobile" id="oa_user_companyMobile" value=""  size="15" data-rule="mobile">
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<label for="oa_user_sex" class="control-label x90 required">性别：</label>
+					<select name="sex" id="oa_user_sex" data-toggle="selectpicker" data-rule="required">
+						<option value="" selected="true"></option>
+						<option value="1">男</option>
+						<option value="0">女</option>
+					</select>
+				</td>
+				<td>
+					<label for="oa_user_username" class="control-label x90 required">登录帐号：</label>
+					<input type="text" name="username" id="oa_user_username" value="" data-rule="required" size="15">
+				</td>
+			</tr>
+			<tr class="titleLabel">
+				<td><label class="control-label" style="font-size:18px;">招聘相关</label></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<label for="oa_user_recruitmentEnumId" class="control-label x90 required">招聘渠道：</label>
+					<select name="recruitmentEnumId" id="oa_user_recruitmentEnumId" data-toggle="selectpicker" data-rule="required" onchange="">
+						<option value="" selected="true"></option>
+					</select>
+					<i class = 'hide' id ="recruitmentEnumOther_i"> <input type="text" name="recruitmentEnumOther" id="oa_user_recruitmentEnumOther" value="" size="15"  ></i>
+				</td>
+				<td>
+					<label for="oa_user_rUserId" class="control-label x90">推荐人：</label>
+					<input type="text" name="rUserId" id="oa_user_rUserId"  value="" size="15"  >
+				</td>
+			</tr>
+
+			<tr class="titleLabel">
+				<td><label class="control-label" >劳务信息</label></td>
+			</tr>
+			<tr>
+				<td>
+					<label for="oa_user_itime" class="control-label x90 required">入职时间：</label>
+					<input type="text" name="itime" id="oa_user_itime" data-toggle="datepicker" value="" data-rule="required" size="15" readonly="true">
+				</td>
+				<td>
+					<label for="oa_user_probation" class="control-label x90 required">试用期：</label>
+					<select name="probation" id="oa_user_probation" data-toggle="selectpicker" data-rule="required">
+						<option value="" selected="true"></option>
+						<option value="1">1</option><option value="2">2</option><option value="3">3</option>
+						<option value="4">4</option><option value="5">5</option><option value="6">6</option>
+					</select>个月
+				</td>
+				<td>
+					<label for="oa_user_ptime" class="control-label x90 required">转正时间：</label>
+					<input type="text" name="ptime" id="oa_user_ptime" data-toggle="datepicker" value="" data-rule="required" size="15" readonly="true">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="oa_user_contractage" class="control-label x90 required">合同年限：</label>
+					<select name="contractage" id="oa_user_contractage" data-toggle="selectpicker" data-rule="required">
+						<option value="" selected="true"></option>
+						<option value="1">1</option><option value="2">2</option><option value="3">3</option>
+						<option value="4">4</option><option value="5">5</option><option value="6">6</option>
+					</select>年
+				</td>
+
+				<td>
+					<label for="oa_user_contracttypeEnumId" class="control-label x90 required">合同类型：</label>
+					<select name="contracttypeEnumId" id="oa_user_contracttypeEnumId" data-toggle="selectpicker" data-rule="required">
+						<option value="" selected="true"></option>
+					</select>
+				</td>
+				<td>
+					<label for="oa_user_contracttimes" class="control-label x90 required">合同签订次数：</label>
+					<select name="contracttimes" id="oa_user_contracttimes" data-toggle="selectpicker" data-rule="required">
+						<option value="" selected="true"></option>
+						<option value="1">1</option><option value="2">2</option><option value="3">3</option>
+						<option value="4">4</option><option value="5">5</option><option value="6">6</option>
+					</select>
+				</td>
+			</tr>
+			<tr class="titleLabel">
+				<td><label class="control-label" >社保公积金相关</label></td>
+			</tr>
+
+			<tr>
+				<td>
+					<label for="oa_user_idNumber" class="control-label x90 required">身份证号：</label>
+					<input type="text" name="idNumber" id="oa_user_idNumber" value="" size="18" data-rule="required">
+				</td>
+				<td>
+					<label for="oa_user_idAddress" class="control-label x90 required">身份证地址：</label>
+					<input type="text" name="idAddress" id="oa_user_idAddress" value="" size="15" data-rule="required">
+				</td>
+				<td>
+					<label for="oa_user_hrEnumId" class="control-label x90 required">户籍类型：</label>
+					<select name="householdname" id="oa_user_hrEnumId" data-toggle="selectpicker" data-rule="required">
+						<option value="" selected="true"></option>
+					</select>
+				</td>
+				<td>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="oa_user_securitystart" class="control-label x90 required">社保缴纳起始月份：</label>
+					<input type="text" name="securitystart" id="oa_user_securitystart" value="" size="18" data-rule="required" data-toggle="datepicker" readonly="readonly">
+				</td>
+			</tr>
+			<tr class="titleLabel">
+				<td><label class="control-label">薪酬福利</label></td>
+			</tr>
+			<tr>
+				<td>
+					<label for="oa_user_cardnumber" class="control-label x90 required">工资卡卡号：</label>
+					<input type="text" name="cardnumber" id="oa_user_cardnumber" value="" size="18" data-rule="required">
+				</td>
+				<td>
+					<label for="oa_user_bankEnumId" class="control-label x90">开户银行：</label>
+					<select name="bank" id="oa_user_bankEnumId" data-toggle="selectpicker" data-rule="required">
+
+					</select>
+				</td>
+				<td></td>
+			</tr>
+			<tr class="titleLabel">
+				<td><label class="control-label">其他信息</label></td>
+			</tr>
+			<tr>
+				<td>
+					<label for="oa_user_ismarry" class="control-label x90">婚否：</label>
+					<select name="ismarry" id="oa_user_ismarry" data-toggle="selectpicker" >
+						<option value="" selected="true"></option>
+						<option value="0">否</option><option value="1">是</option>
+					</select>
+				</td>
+				<td>
+					<label for="oa_user_fertility" class="control-label x90">育否：</label>
+					<select name="fertility" id="oa_user_fertility" data-toggle="selectpicker">
+						<option value="" selected="true"></option>
+						<option value="0">否</option><option value="1">是</option>
+					</select>
+				</td>
+				<td>
+					<label for="oa_user_nation" class="control-label x90">民族：</label>
+					<input type="text" name="nation" id="oa_user_nation" value="" size="15" >
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="oa_user_nativeplace" class="control-label x90">籍贯：</label>
+					<input type="text" name="nativeplace" id="oa_user_nativeplace" value="" size="15" >
+				</td>
+				<td>
+					<label for="oa_user_email" class="control-label x90">个人邮箱：</label>
+					<input type="text" name="email" id="oa_user_email" value="" size="15" >
+				</td>
+				<td>
+					<label for="oa_user_qq" class="control-label x90">QQ：</label>
+					<input type="text" name="qq" id="oa_user_qq" value="" size="15" >
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="oa_user_wx" class="control-label x90 required">微信：</label>
+					<input type="text" name="wx" id="oa_user_wx" value="" size="15" data-rule="required">
+				</td>
+				<td>
+					<label for="oa_user_eEnumId" class="control-label x90 required">最高学历：</label>
+					<select name="eEnumId" id="oa_user_eEnumId" data-toggle="selectpicker" data-rule="required">
+						<option value="" selected="true"></option>
+					</select>
+				</td>
+				<td>
+					<label for="oa_user_school" class="control-label x90 required">毕业学校：</label>
+					<input type="text" name="school" id="oa_user_school" value="" size="15" data-rule="required">
+				</td>
+
+			</tr>
+			<tr>
+				<td>
+					<label for="oa_user_professional" class="control-label x90 required">专业：</label>
+					<input type="text" name="professional" id="oa_user_professional" value="" size="15" data-rule="required">
+				</td>
+				<td>
+					<label for="oa_user_emerContact" class="control-label x90 required">紧急联系人：</label>
+					<input type="text" name="emerContact" id="oa_user_emerContact" value="" size="15" data-rule="required">
+				</td>
+				<td>
+					<label for="oa_user_emerPhone" class="control-label x90 required">紧急联系电话：</label>
+					<input type="text" name="emerPhone" id="oa_user_emerPhone" value="" size="15" data-rule="required">
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+<div class="bjui-pageFooter">
+	<ul>
+		<li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+		<li><button type="submit" class="btn-default" data-icon="save">保存</button></li>
+	</ul>
+</div>

@@ -4,7 +4,12 @@
 	var oa_toolbarCustom_btn = ''
 	for (var data of user_data) {
 		var value = data.permissionValue;
-
+		switch (value){
+			case 'oa:userdetail:create':
+				oa_toolbarCustom_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" data-icon="edit" style="margin-left: 5px;" onclick="oa_user_add_dialog(this)" >' +
+						'<i class="'+data.icon+'"></i>&nbsp;' + data.name + ' </button>'
+				break;
+		}
 	}
 
 	var oa_user_datagrid_data = {
@@ -30,18 +35,54 @@
 			{name: 'companyEmail', width: '100', label: '公司邮箱'},
 			{name: 'idNumber', width: '150', label: '身份证号码'},
 			{name: 'idAddress', width: '150', label: '身份证地址'},
-			{name: 'locaked', type: 'select', items: [{'0': '在职'}, {'1': '离职'},{'2':'待入职'}], width: '80', label: '人员状态'},
+			{name: 'locked', type: 'select', items: [{'0': '在职'}, {'1': '离职'},{'2':'待入职'}], width: '80', label: '人员状态'},
 			{name: 'email', width: '100', label: '个人邮箱'}
 
 		],
 		paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
 		fullGrid: true,
+		showToolbar: true,
 		toolbarItem: oa_user_btn,
 		inlineEditMult: false,
 		toolbarCustom: oa_toolbarCustom_btn,
 	}
 
 	$('#manage_oa_user_table').datagrid(oa_user_datagrid_data);
+
+	function oa_user_add_dialog(n) {
+
+		var url = n.attributes["url"].value;
+		var name = n.attributes["name"].value;
+
+		$(this).dialog({
+			title: name,
+			url: url,
+			width: 1200,
+			height: 750,
+			mask: true
+		});
+	}
+
+
+	function oa_user_select_back(selectpicker,type) {
+		$.ajax({
+			url: $.cookie("tudou-oa-server")+'/manage/oaenum/list',
+			dataType: 'json',
+			type: 'GET',
+			data:{
+				type:type,
+			},
+			success: function (d) {
+				if (d.core != 1){
+					return;
+				}
+					$.each(d.data, function (i) {
+						selectpicker.append($("<option value=" + d.data[i].type + ">" + d.data[i].name + "</option>"));
+					});
+					selectpicker.selectpicker('refresh');
+			}
+		});
+	}
 
 </script>
 <div class="bjui-pageContent">

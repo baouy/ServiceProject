@@ -132,7 +132,9 @@
 			async: false,
 			success: function (responseData) {
 				if (responseData) {
-
+					if (responseData.core != 1){
+						return datas;
+					}
 					var systems = responseData.UpmsSystem;
 					var permissions = responseData.UpmsPermission;
 					var maxnum = systems.length + permissions.length;

@@ -75,6 +75,7 @@ public class UpmsPermissionController extends BaseController {
 //		}
 		List<UpmsPermission> permissions = upmsPermissionService.selectByExample(upmsPermissionExample);
 		Map<String, Object> result = new HashMap<>();
+		result.put("code",1);
 		result.put("UpmsSystem",systems);
 		result.put("UpmsPermission",permissions);
 		return result;

@@ -75,11 +75,11 @@ public class UpmsLogController  extends BaseController {
 
 
 		List<UpmsLog> rows = upmsLogService.selectByExampleForOffsetPage(upmsLogExample, manageLogListValid.getPageCurrent(), manageLogListValid.getPageSize());
-		long total = upmsLogService.countByExample(upmsLogExample);
+		int total = upmsLogService.countByExample(upmsLogExample);
 		Map<String, Object> result = new HashMap<>();
 		result.put("data", rows);
 		result.put("total", total);
-		return result;
+		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,manageLogListValid.getPageSize(),manageLogListValid.getPageCurrent(),total);
 	}
 
 	@ApiOperation(value = "删除日志")

@@ -79,11 +79,13 @@
         },
         init: function(options) {
             var op = $.extend({}, options)
-            
+
+            //davidwang-修改
             $.extend(BJUI.statusCode, op.statusCode)
             $.extend(BJUI.pageInfo, op.pageInfo)
             $.extend(BJUI.alertMsg, op.alertMsg)
             $.extend(BJUI.loginInfo, op.loginInfo)
+            $.extend(BJUI.keys, op.keys)
             $.extend(BJUI.ui, op.ui)
             
             if (op.JSPATH) this.JSPATH = op.JSPATH
@@ -4098,7 +4100,8 @@
             BJUI.alertmsg('info', (json[BJUI.keys.message] || BJUI.regional.sessiontimeout))
             BJUI.loadLogin()
         } else {
-            if (json[BJUI.keys.message]) BJUI.alertmsg('correct', json[BJUI.keys.message])
+            //davidwang-修改
+            // if (json[BJUI.keys.message]) BJUI.alertmsg('correct', json[BJUI.keys.message])
         }
     }
     
@@ -7702,13 +7705,6 @@
                     type      : options.loadType,
                     cache     : options.cache || false,
                     dataType  : dataType,
-//meiwo-erp ticket-0003 ajax跨域提交cookie-----已执行改动
-                    xhrFields: {
-                        withCredentials: true
-                    },
-//                     headers: {'Cookie' : document.cookie },
-                    crossDomain: true,
-//-------------------------------------------------------
                     okCallback: function(response) {
                         if (dataType === 'json') {
                             tools.createTrsByData(response, refreshFlag)

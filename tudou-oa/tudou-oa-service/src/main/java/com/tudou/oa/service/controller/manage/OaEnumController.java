@@ -1,5 +1,7 @@
 package com.tudou.oa.service.controller.manage;
 
+import com.tudou.oa.common.constant.OaResult;
+import com.tudou.oa.common.constant.OaResultConstant;
 import com.tudou.oa.service.modelvalid.OaEnumValid;
 import com.tudou.common.base.BaseController;
 import com.tudou.oa.dao.model.OaEnum;
@@ -50,11 +52,8 @@ public class OaEnumController extends BaseController{
 		}
 
 		List<OaEnum> rows = oaEnumService.selectByExampleForOffsetPage(oaEnumExample, oaEnumValid.getPageCurrent(), oaEnumValid.getPageSize());
-		long total = oaEnumService.countByExample(oaEnumExample);
-		Map<String, Object> result = new HashMap<>();
-		result.put("data", rows);
-		result.put("total", total);
-		return result;
+//		long total = oaEnumService.countByExample(oaEnumExample);
+		return new OaResult(OaResultConstant.SUCCESS,rows);
 	}
 
 }

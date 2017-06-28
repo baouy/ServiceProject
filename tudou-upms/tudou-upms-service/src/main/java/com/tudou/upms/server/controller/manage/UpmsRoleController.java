@@ -77,11 +77,8 @@ public class UpmsRoleController extends BaseController {
 		}
 
 		List<UpmsRole> rows = upmsRoleService.selectByExampleForOffsetPage(upmsRoleExample, upmsRoleValid.getPageCurrent(), upmsRoleValid.getPageSize());
-		long total = upmsRoleService.countByExample(upmsRoleExample);
-		Map<String, Object> result = new HashMap<>();
-		result.put("data", rows);
-		result.put("total", total);
-		return result;
+		int total = upmsRoleService.countByExample(upmsRoleExample);
+		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,upmsRoleValid.getPageSize(),upmsRoleValid.getPageCurrent(),total);
 	}
 
 	@ApiOperation(value = "新增角色")

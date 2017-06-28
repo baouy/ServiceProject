@@ -80,9 +80,7 @@ public class UpmsUserController extends BaseController {
 		}
 
 		List<UpmsOrganization> rows = upmsOrganizationService.selectByExample(upmsOrganizationExample);
-		Map<String, Object> result = new HashMap<>();
-		result.put("data", rows);
-		return result;
+		return new UpmsResult(UpmsResultConstant.SUCCESS,rows);
 	}
 
 	@ApiOperation(value = "用户组织")
@@ -126,9 +124,7 @@ public class UpmsUserController extends BaseController {
 	public Object role_list() {
 		// 所有角色
 		List<UpmsRole> upmsRoles = upmsRoleService.selectByExample(new UpmsRoleExample());
-		Map<String, Object> result = new HashMap<>();
-		result.put("data", upmsRoles);
-		return result;
+		return new UpmsResult(UpmsResultConstant.SUCCESS, upmsRoles);
 	}
 
 	@ApiOperation(value = "用户角色")
@@ -192,11 +188,8 @@ public class UpmsUserController extends BaseController {
 		}
 
 		List<UpmsUser> rows = upmsUserService.selectByExampleForOffsetPage(upmsUserExample, userValid.getPageCurrent(), userValid.getPageSize());
-		long total = upmsUserService.countByExample(upmsUserExample);
-		Map<String, Object> result = new HashMap<>();
-		result.put("data", rows);
-		result.put("total", total);
-		return result;
+		int total = upmsUserService.countByExample(upmsUserExample);
+		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,userValid.getPageSize(),userValid.getPageCurrent(),total);
 	}
 
 	@ApiOperation(value = "新增用户")

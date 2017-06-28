@@ -30,15 +30,16 @@ public abstract class BaseController {
 		if (null != request.getHeader("X-Requested-With") && request.getHeader("X-Requested-With").equalsIgnoreCase("XMLHttpRequest")) {
 			request.setAttribute("requestHeader", "ajax");
 		}
+		StringBuffer sso_server_url = new StringBuffer(PropertiesFileUtil.getInstance("tudou-upms-client").get("tudou.sso.server.url"));
 		// shiro没有权限异常
 		if (exception instanceof UnauthorizedException) {
-			return "redirect:"+"/manage/403";
+			return "redirect:"+sso_server_url+"/manage/403";
 		}
 		// shiro会话已过期异常
 		if (exception instanceof InvalidSessionException) {
-			return "redirect:"+"/sso/failure";
+			return "redirect:"+sso_server_url+"/sso/failure";
 		}
-		return "redirect:"+"/manage/error";
+		return "redirect:"+sso_server_url+"/manage/error";
 	}
 
 	/**
