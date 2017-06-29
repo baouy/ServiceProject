@@ -76,9 +76,8 @@
                         username:$("#j_username").val(),
                         password:$("#j_password").val()
                     },
-                    success: function(data){
-                        if(data.code == 1) {
-
+                    success: function(d){
+                        if(d.code == 1) {
                             var bjui_theme = $.cookie("bjui_theme");
                             if (bjui_theme == null){
                                 $.cookie('bjui_theme','green', { path: '/', expires: 15 });
@@ -86,8 +85,7 @@
                             $.cookie("flowerName",$("#j_username").val())
                             window.location.href = 'index.html';
                         }else{
-
-                            $("#login_tip").text(data.content);
+                            $("#login_tip").text(d.data);
                             setTimeout(function(){
                                 $("#login_tip").text("");
                             },4000);

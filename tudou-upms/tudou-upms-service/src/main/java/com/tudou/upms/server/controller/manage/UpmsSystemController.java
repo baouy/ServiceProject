@@ -65,9 +65,11 @@ public class UpmsSystemController extends BaseController{
 			criteria.andStatusEqualTo(upmsSystemValid.getStatus());
 		}
 
-		List<UpmsSystem> rows = upmsSystemService.selectByExampleForOffsetPage(upmsSystemExample, upmsSystemValid.getPageCurrent(), upmsSystemValid.getPageSize());
+		int pagec = upmsSystemValid.getPageCurrent();
+		int pages = upmsSystemValid.getPageSize();
+		List<UpmsSystem> rows = upmsSystemService.selectByExampleForOffsetPage(upmsSystemExample,pagec, pages);
 		int total = upmsSystemService.countByExample(upmsSystemExample);
-		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,upmsSystemValid.getPageSize(),upmsSystemValid.getPageCurrent(),total);
+		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,pages,pagec,total);
 	}
 
 	@ApiOperation(value = "新增系统")

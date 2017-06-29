@@ -73,13 +73,15 @@ public class UpmsLogController  extends BaseController {
 			criteria.andPermissionsLike("%" + manageLogListValid.getPermissions() + "%");
 		}
 
+		int pagec = manageLogListValid.getPageCurrent();
+		int pages = manageLogListValid.getPageSize();
 
-		List<UpmsLog> rows = upmsLogService.selectByExampleForOffsetPage(upmsLogExample, manageLogListValid.getPageCurrent(), manageLogListValid.getPageSize());
+		List<UpmsLog> rows = upmsLogService.selectByExampleForOffsetPage(upmsLogExample, pagec, pages);
 		int total = upmsLogService.countByExample(upmsLogExample);
 		Map<String, Object> result = new HashMap<>();
 		result.put("data", rows);
 		result.put("total", total);
-		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,manageLogListValid.getPageSize(),manageLogListValid.getPageCurrent(),total);
+		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,pages,pagec,total);
 	}
 
 	@ApiOperation(value = "删除日志")

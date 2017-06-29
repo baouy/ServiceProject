@@ -76,9 +76,11 @@ public class UpmsRoleController extends BaseController {
 			criteria.andDescriptionLike("%"+ upmsRoleValid.getDescription() + "%");
 		}
 
-		List<UpmsRole> rows = upmsRoleService.selectByExampleForOffsetPage(upmsRoleExample, upmsRoleValid.getPageCurrent(), upmsRoleValid.getPageSize());
+		int pagec = upmsRoleValid.getPageCurrent();
+		int pages = upmsRoleValid.getPageSize();
+		List<UpmsRole> rows = upmsRoleService.selectByExampleForOffsetPage(upmsRoleExample, pagec, pages);
 		int total = upmsRoleService.countByExample(upmsRoleExample);
-		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,upmsRoleValid.getPageSize(),upmsRoleValid.getPageCurrent(),total);
+		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,pages,pagec,total);
 	}
 
 	@ApiOperation(value = "新增角色")

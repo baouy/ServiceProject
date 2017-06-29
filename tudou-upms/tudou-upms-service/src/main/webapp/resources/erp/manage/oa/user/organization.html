@@ -1,0 +1,38 @@
+<script>
+	function u_o_ajaxDataFilter() {
+		var datas = new Array()
+		datas[0] = new Object()
+		datas[0].id = 0
+		datas[0].pId = null
+		datas[0].fid = 0
+		datas[0].name = '集团'
+		$.ajax({
+			url: $.cookie("tudou-upms-server") + '/manage/organization/list',
+			type: 'get',
+			async: false,
+			success: function (responseData) {
+				if (responseData) {
+					var organization = responseData.data;
+					for (var i = 0; i < organization.length; i++) {
+						datas[i + 1] = organization[i]
+						datas[i + 1].id = organization[i].organizationId;
+						datas[i + 1].pId = organization[i].pid;
+					}
+
+					return datas;
+				}
+
+			}
+		});
+		return datas;
+	}
+</script>
+
+<ul id="oa_user_oz_ztree"
+	data-radio-type="all"
+	data-chk-style="radio"
+	data-check-enable="true"
+	data-expand-all="true"
+	data-toggle="ztree"
+	data-options= "{nodes = 'u_o_ajaxDataFilter'}"
+></ul>

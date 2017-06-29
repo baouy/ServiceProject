@@ -187,9 +187,11 @@ public class UpmsUserController extends BaseController {
 			criteria.andLockedEqualTo(userValid.getLocked());
 		}
 
-		List<UpmsUser> rows = upmsUserService.selectByExampleForOffsetPage(upmsUserExample, userValid.getPageCurrent(), userValid.getPageSize());
+		int pagec = userValid.getPageCurrent();
+		int pages = userValid.getPageSize();
+		List<UpmsUser> rows = upmsUserService.selectByExampleForOffsetPage(upmsUserExample, pagec, pages);
 		int total = upmsUserService.countByExample(upmsUserExample);
-		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,userValid.getPageSize(),userValid.getPageCurrent(),total);
+		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,pages,pagec,total);
 	}
 
 	@ApiOperation(value = "新增用户")

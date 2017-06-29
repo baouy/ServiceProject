@@ -61,4 +61,27 @@ public class BaseResult {
         this.data = data;
     }
 
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public Integer getPageCurrent() {
+        return pageCurrent;
+    }
+
+    public void setPageCurrent(Integer pageCurrent) {
+        this.pageCurrent = pageCurrent;
+    }
+
+    public Integer getTotal() {
+        return total;
+    }
+
+    public void setTotal(Integer total) {
+        this.total = total;
+    }
 }

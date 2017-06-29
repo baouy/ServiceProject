@@ -5,6 +5,7 @@
 				url: $.cookie("tudou-upms-server") + '/manage/user/role/' + user_select_id,
 				dataType: 'json',
 				type: 'GET',
+				async: false,
 				success: function (d) {
 					r_datas = d
 				}

@@ -59,9 +59,11 @@ public class UpmsOrganizationController extends BaseController {
 			criteria.andDescriptionLike("%"+ organizationValid.getDescription() +"%");
 		}
 
-		List<UpmsOrganization> rows = upmsOrganizationService.selectByExampleForOffsetPage(upmsOrganizationExample,organizationValid.getPageCurrent(),organizationValid.getPageSize());
+		int pagec = organizationValid.getPageCurrent();
+		int pages = organizationValid.getPageSize();
+		List<UpmsOrganization> rows = upmsOrganizationService.selectByExampleForOffsetPage(upmsOrganizationExample,pagec,pages);
 		int total = upmsOrganizationService.countByExample(upmsOrganizationExample);
-		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,organizationValid.getPageSize(),organizationValid.getPageCurrent(),total);
+		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,pages,pagec,total);
 	}
 
 	@ApiOperation(value = "新增组织")

@@ -4097,7 +4097,7 @@
         if (json[BJUI.keys.statusCode] == BJUI.statusCode.error) {
             if (json[BJUI.keys.message]) BJUI.alertmsg('error', json[BJUI.keys.message])
         } else if (json[BJUI.keys.statusCode] == BJUI.statusCode.timeout) {
-            BJUI.alertmsg('info', (json[BJUI.keys.message] || BJUI.regional.sessiontimeout))
+            // BJUI.alertmsg('info', (json[BJUI.keys.message] || BJUI.regional.sessiontimeout))
             BJUI.loadLogin()
         } else {
             //davidwang-修改

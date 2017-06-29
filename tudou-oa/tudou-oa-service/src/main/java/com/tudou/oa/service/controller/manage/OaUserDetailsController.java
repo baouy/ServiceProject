@@ -3,10 +3,12 @@ package com.tudou.oa.service.controller.manage;
 import com.baidu.unbiz.fluentvalidator.ComplexResult;
 import com.baidu.unbiz.fluentvalidator.FluentValidator;
 import com.baidu.unbiz.fluentvalidator.ResultCollectors;
+import com.tudou.common.util.MD5Util;
 import com.tudou.common.validator.LengthValidator;
 import com.tudou.oa.common.constant.OaResult;
 import com.tudou.oa.common.constant.OaResultConstant;
 import com.tudou.oa.dao.model.OaUserDetails;
+import com.tudou.oa.dao.model.OaUserDetailsExample;
 import com.tudou.oa.rpc.api.OaUserDetailsService;
 import com.tudou.oa.service.modelvalid.OaViewUserValid;
 import com.tudou.common.base.BaseController;
@@ -14,10 +16,13 @@ import com.tudou.oa.dao.model.OaViewUser;
 import com.tudou.oa.dao.model.OaViewUserExample;
 import com.tudou.oa.rpc.api.OaViewUserService;
 import com.tudou.upms.dao.model.UpmsUser;
+import com.tudou.upms.dao.model.UpmsUserExample;
 import com.tudou.upms.rpc.api.UpmsUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +30,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by DavidWang on 2017/6/24.
@@ -97,14 +105,14 @@ public class OaUserDetailsController extends BaseController {
 			criteria.andEmailLike("%" + oaViewUserValid.getEmail() + "%");
 		}
 
-		List<OaViewUser> rows = oaViewUserService.selectByExampleForOffsetPage(oaViewUserExample, oaViewUserValid.getPageSize(), oaViewUserValid.getPageCurrent());
-
+		int pagec = oaViewUserValid.getPageCurrent();
+		int pages = oaViewUserValid.getPageSize();
+		List<OaViewUser> rows = oaViewUserService.selectByExampleForOffsetPage(oaViewUserExample, pagec,pages);
 		int total = oaViewUserService.countByExample(oaViewUserExample);
-
-		return new OaResult(OaResultConstant.SUCCESS,rows,oaViewUserValid.getPageSize(),oaViewUserValid.getPageCurrent(),total);
+		return new OaResult(OaResultConstant.SUCCESS,rows,pages,pagec,total);
 	}
 
-	@ApiOperation(value = "新增权限")
+	@ApiOperation(value = "新增用户权限")
 	@RequiresPermissions("oa:userdetail:create")
 	@ResponseBody
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -116,14 +124,102 @@ public class OaUserDetailsController extends BaseController {
 		if (!result.isSuccess()) {
 			return new OaResult(OaResultConstant.INVALID_LENGTH, result.getErrors());
 		}
-//		long time = System.currentTimeMillis();
-//		upmsPermission.setCtime(time);
-//
-//		if (upmsPermission.getOrders() == null){
-//			upmsPermission.setOrders(time);
-//		}
-//
-//		upmsPermission = upmsPermissionService.createUpmsPermission(upmsPermission);
+
+		OaUserDetailsExample oaUserDetailsExample = new OaUserDetailsExample();
+		oaUserDetailsExample.createCriteria().andFlowerNameEqualTo(oaUserDetails.getFlowerName());
+
+		int num = oaUserDetailsService.countByExample(oaUserDetailsExample);
+		if (num > 0){
+			return new OaResult(OaResultConstant.FAILED, "花名已经存在！");
+		}
+
+		if (!StringUtils.isBlank(upmsUser.getUsername())){
+			upmsUser.setLocked((byte) 0);
+			String salt = UUID.randomUUID().toString().replaceAll("-", "");
+			upmsUser.setSalt(salt);
+			upmsUser.setPassword(MD5Util.MD5("123456" + upmsUser.getSalt()));
+		}
+
+		long time = System.currentTimeMillis();
+		upmsUser.setCtime(time);
+		upmsUser = upmsUserService.createUser(upmsUser);
+		if (null == upmsUser) {
+			return new OaResult(OaResultConstant.FAILED, "帐号名已存在！");
+		}
+
+		oaUserDetails.setUserId(upmsUser.getUserId());
+		oaUserDetailsService.insertSelective(oaUserDetails);
+
+		return new OaResult(OaResultConstant.SUCCESS, null);
+	}
+
+	@ApiOperation(value = "新增用户")
+	@RequiresPermissions(value = {"oa:userdetail:leave","oa:userdetail:update"}, logical = Logical.OR)
+	@ResponseBody
+	@RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
+	public Object detail(@PathVariable("id") int id) {
+		UpmsUser upmsUser = upmsUserService.selectByPrimaryKey(id);
+		OaUserDetails oaUserDetails = oaUserDetailsService.selectByPrimaryKey(id);
+		Map<String,Object> map = new HashMap();
+		map.put("upmsUser",upmsUser);
+		map.put("oaUserDetails",oaUserDetails);
+		return new OaResult(OaResultConstant.SUCCESS, map);
+	}
+
+	@ApiOperation(value = "更新用户")
+	@RequiresPermissions("oa:userdetail:update")
+	@ResponseBody
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	public Object update(@ModelAttribute UpmsUser upmsUser, @ModelAttribute OaUserDetails oaUserDetails) {
+		ComplexResult result = FluentValidator.checkAll()
+				.on(upmsUser.getUsername(), new LengthValidator(1, 20, "名称"))
+				.doValidate()
+				.result(ResultCollectors.toComplex());
+		if (!result.isSuccess()) {
+			return new OaResult(OaResultConstant.INVALID_LENGTH, result.getErrors());
+		}
+
+		UpmsUserExample upmsUserExample = new UpmsUserExample();
+		UpmsUserExample.Criteria u_criteria = upmsUserExample.createCriteria();
+		u_criteria.andUserIdNotEqualTo(upmsUser.getUserId());
+		u_criteria.andUsernameEqualTo(upmsUser.getUsername());
+		int u_num = upmsUserService.countByExample(upmsUserExample);
+		if (u_num > 0){
+			return new OaResult(OaResultConstant.FAILED, "登录账号已经存在！");
+		}
+
+		OaUserDetailsExample oaUserDetailsExample = new OaUserDetailsExample();
+		OaUserDetailsExample.Criteria criteria = oaUserDetailsExample.createCriteria();
+		criteria.andFlowerNameEqualTo(oaUserDetails.getFlowerName());
+		criteria.andUserIdNotEqualTo(upmsUser.getUserId());
+		int num = oaUserDetailsService.countByExample(oaUserDetailsExample);
+		if (num > 0){
+			return new OaResult(OaResultConstant.FAILED, "花名已经存在！");
+		}
+
+		if (!StringUtils.isBlank(upmsUser.getUsername())){
+			upmsUser.setLocked((byte) 0);
+			String salt = UUID.randomUUID().toString().replaceAll("-", "");
+			upmsUser.setSalt(salt);
+			upmsUser.setPassword(MD5Util.MD5("123456" + upmsUser.getSalt()));
+		}
+
+		upmsUserService.updateByPrimaryKeySelective(upmsUser);
+		oaUserDetailsService.updateByPrimaryKeySelective(oaUserDetails);
+
+		return new OaResult(OaResultConstant.SUCCESS, null);
+	}
+
+	@ApiOperation(value = "员工离职")
+	@RequiresPermissions("oa:userdetail:leave")
+	@ResponseBody
+	@RequestMapping(value = "/leave", method = RequestMethod.POST)
+	public Object leave(@ModelAttribute UpmsUser upmsUser,@ModelAttribute OaUserDetails oaUserDetails) {
+
+		upmsUser.setLocked((byte) 1);
+		upmsUserService.updateByPrimaryKeySelective(upmsUser);
+		oaUserDetailsService.updateByPrimaryKeySelective(oaUserDetails);
+
 		return new OaResult(OaResultConstant.SUCCESS, null);
 	}
 

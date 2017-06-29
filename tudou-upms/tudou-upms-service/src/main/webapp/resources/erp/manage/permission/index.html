@@ -132,7 +132,7 @@
 			async: false,
 			success: function (responseData) {
 				if (responseData) {
-					if (responseData.core != 1){
+					if (responseData.code != 1){
 						return datas;
 					}
 					var systems = responseData.UpmsSystem;
