@@ -41,6 +41,9 @@ public class UpmsApiServiceImpl implements UpmsApiService {
     UpmsOrganizationMapper upmsOrganizationMapper;
 
     @Autowired
+    UpmsUserOrganizationMapper upmsUserOrganizationMapper;
+
+    @Autowired
     UpmsLogMapper upmsLogMapper;
 
     /**
@@ -145,6 +148,16 @@ public class UpmsApiServiceImpl implements UpmsApiService {
     @Override
     public List<UpmsOrganization> selectUpmsOrganizationByExample(UpmsOrganizationExample upmsOrganizationExample) {
         return upmsOrganizationMapper.selectByExample(upmsOrganizationExample);
+    }
+
+    /**
+     * 根据条件获取用户组织数据
+     * @param upmsUserOrganizationExample
+     * @return
+     */
+    @Override
+    public List<UpmsUserOrganization> selectUpmsUserOrganizationByExample(UpmsUserOrganizationExample upmsUserOrganizationExample) {
+        return upmsUserOrganizationMapper.selectByExample(upmsUserOrganizationExample);
     }
 
     /**

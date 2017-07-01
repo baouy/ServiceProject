@@ -67,6 +67,13 @@ public interface UpmsApiService {
     List<UpmsOrganization> selectUpmsOrganizationByExample(UpmsOrganizationExample upmsOrganizationExample);
 
     /**
+     * 根据条件获取用户组织数据
+     * @param upmsUserOrganizationExample
+     * @return
+     */
+    List<UpmsUserOrganization> selectUpmsUserOrganizationByExample(UpmsUserOrganizationExample upmsUserOrganizationExample);
+
+    /**
      * 根据username获取UpmsUser
      * @param username
      * @return

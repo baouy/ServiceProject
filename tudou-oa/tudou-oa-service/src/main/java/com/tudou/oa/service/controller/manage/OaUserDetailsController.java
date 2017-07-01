@@ -20,7 +20,6 @@ import com.tudou.upms.dao.model.UpmsUserExample;
 import com.tudou.upms.rpc.api.UpmsUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -30,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +58,10 @@ public class OaUserDetailsController extends BaseController {
 	@RequiresPermissions("oa:userdetail:read")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
-	public Object list(@ModelAttribute OaViewUserValid oaViewUserValid) {
+	public Object list(@ModelAttribute OaViewUserValid oaViewUserValid, HttpServletRequest request) {
+
+		UpmsUser upmsUser = (UpmsUser)request.getSession().getAttribute("upmsUser");
+
 		OaViewUserExample oaViewUserExample = new OaViewUserExample();
 		OaViewUserExample.Criteria criteria = oaViewUserExample.createCriteria();
 
@@ -133,12 +136,7 @@ public class OaUserDetailsController extends BaseController {
 			return new OaResult(OaResultConstant.FAILED, "花名已经存在！");
 		}
 
-		if (!StringUtils.isBlank(upmsUser.getUsername())){
-			upmsUser.setLocked((byte) 0);
-			String salt = UUID.randomUUID().toString().replaceAll("-", "");
-			upmsUser.setSalt(salt);
-			upmsUser.setPassword(MD5Util.MD5("123456" + upmsUser.getSalt()));
-		}
+		check_username(upmsUser);
 
 		long time = System.currentTimeMillis();
 		upmsUser.setCtime(time);
@@ -197,18 +195,27 @@ public class OaUserDetailsController extends BaseController {
 			return new OaResult(OaResultConstant.FAILED, "花名已经存在！");
 		}
 
+		check_username(upmsUser);
+		upmsUserService.updateByPrimaryKeySelective(upmsUser);
+		oaUserDetailsService.updateByPrimaryKeySelective(oaUserDetails);
+
+		return new OaResult(OaResultConstant.SUCCESS, null);
+	}
+
+
+	/**
+	 * 判断是否有登录名称
+	 * @param upmsUser
+	 */
+	private void check_username(UpmsUser upmsUser){
 		if (!StringUtils.isBlank(upmsUser.getUsername())){
 			upmsUser.setLocked((byte) 0);
 			String salt = UUID.randomUUID().toString().replaceAll("-", "");
 			upmsUser.setSalt(salt);
 			upmsUser.setPassword(MD5Util.MD5("123456" + upmsUser.getSalt()));
 		}
-
-		upmsUserService.updateByPrimaryKeySelective(upmsUser);
-		oaUserDetailsService.updateByPrimaryKeySelective(oaUserDetails);
-
-		return new OaResult(OaResultConstant.SUCCESS, null);
 	}
+
 
 	@ApiOperation(value = "员工离职")
 	@RequiresPermissions("oa:userdetail:leave")

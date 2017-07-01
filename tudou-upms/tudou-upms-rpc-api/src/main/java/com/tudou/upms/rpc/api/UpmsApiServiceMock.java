@@ -63,6 +63,12 @@ public class UpmsApiServiceMock implements UpmsApiService {
     }
 
     @Override
+    public List<UpmsUserOrganization> selectUpmsUserOrganizationByExample(UpmsUserOrganizationExample upmsUserOrganizationExample) {
+        _log.info("UpmsApiServiceMock => selectUpmsUserOrganizationByExample");
+        return null;
+    }
+
+    @Override
     public UpmsUser selectUpmsUserByUsername(String username) {
         _log.info("UpmsApiServiceMock => selectUpmsUserByUsername");
         return null;

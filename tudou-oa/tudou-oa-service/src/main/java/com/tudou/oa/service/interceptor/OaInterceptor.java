@@ -1,6 +1,9 @@
 package com.tudou.oa.service.interceptor;
 
+import com.tudou.upms.dao.model.*;
 import com.tudou.upms.rpc.api.UpmsApiService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,9 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by DavidWang on 2017/6/16.
@@ -20,6 +26,7 @@ public class OaInterceptor extends HandlerInterceptorAdapter {
 	@Autowired
 	UpmsApiService upmsApiService;
 
+
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		// 过滤ajax
@@ -27,10 +34,15 @@ public class OaInterceptor extends HandlerInterceptorAdapter {
 //            return true;
 //        }
 		// 登录信息
-//		Subject subject = SecurityUtils.getSubject();
-//		String username = (String) subject.getPrincipal();
-//		UpmsUser upmsUser = upmsApiService.selectUpmsUserByUsername(username);
-//		request.setAttribute("upmsUser", upmsUser);
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		UpmsUser upmsUser = upmsApiService.selectUpmsUserByUsername(username);
+		UpmsUserOrganizationExample upmsUserOrganizationExample = new UpmsUserOrganizationExample();
+		UpmsUserOrganizationExample.Criteria criteria = upmsUserOrganizationExample.createCriteria();
+		criteria.andUserIdEqualTo(upmsUser.getUserId());
+//		List<UpmsUserOrganization> upmsOrganizations = upmsApiService.selectUpmsUserOrganizationByExample(upmsUserOrganizationExample);
+//		map.put("upmsOrganizations",upmsOrganizations);
+		request.getSession().setAttribute("upmsUser", upmsUser);
 		return true;
 	}
 

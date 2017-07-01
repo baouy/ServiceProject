@@ -96,7 +96,7 @@
 			BJUI.init({
 				JSPATH: 'BJUI/',         //[可选]框架路径
 				PLUGINPATH: 'BJUI/plugins/', //[可选]插件路径
-				loginInfo: {url: 'logind.html', title: '账号以失效请重新登录', width: 400, height: 200}, // 会话超时后弹出登录对话框
+				loginInfo: {url: 'logind.html', title: '账号失效请重新登录', width: 400, height: 200}, // 会话超时后弹出登录对话框
 				statusCode: {ok: 1, error: 300, timeout: 10000}, //[可选]
 				ajaxTimeout: 100000, //[可选]全局Ajax请求超时时间(毫秒)
 				pageInfo: {
@@ -171,7 +171,6 @@
 				});
 			});
 
-
 			$("#customer_fllowName").text("欢迎您，" + $.cookie("flowerName") + "!");
 
 			initrole();
@@ -192,7 +191,7 @@
 							//菜单
 							for (var data of d.data.upmsPermissions) {
 								if (data.type == 1) {
-									$("#top_menu_" + data.systemId).append('<div class="items hide"><ul id="menu_' + data.permissionId + '"class="menu-items" data-faicon="hand-o-up"data-faicon="' + "star-o" + '" data-tit="' + data.name + '"></ul></div>')
+									$("#top_menu_" + data.systemId).append('<div class="items hide"><ul id="menu_' + data.permissionId + '"class="menu-items" data-faicon="fa fa-align-justify" data-faicon="' + "star-o" + '" data-tit="' + data.name + '"></ul></div>')
 								}
 								if (data.type == 3){
 									user_data.push(data)
