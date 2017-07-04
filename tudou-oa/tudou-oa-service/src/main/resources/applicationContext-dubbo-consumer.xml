@@ -26,6 +26,12 @@
     <!-- 用户 -->
     <dubbo:reference id="upmsUserService" interface="com.tudou.upms.rpc.api.UpmsUserService" mock="true"/>
 
+    <!-- 组织 -->
+    <dubbo:reference id="upmsOrganizationService" interface="com.tudou.upms.rpc.api.UpmsOrganizationService" mock="true"/>
+
+    <!-- 用户组织 -->
+    <dubbo:reference id="upmsUserOrganizationService" interface="com.tudou.upms.rpc.api.UpmsUserOrganizationService" mock="true"/>
+
     <!-- 操作日志 -->
     <dubbo:reference id="upmsLogService" interface="com.tudou.upms.rpc.api.UpmsLogService" mock="true"/>
 

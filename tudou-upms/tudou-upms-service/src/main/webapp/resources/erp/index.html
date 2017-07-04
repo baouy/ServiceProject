@@ -198,10 +198,18 @@
 								}
 							}
 
+							//子项
 							for (var data of d.data.upmsPermissions) {
 								if (data.type == 2) {
 									var _thisMenu = '<li><a href="' + data.uri + '" data-toggle="navtab" data-options="{id:\'form-input_' + data.permissionId + '\', faicon:\'th-large\'}">' + data.name + '</a></li>';
 									$("#menu_" + data.pid).append(_thisMenu);
+								}
+							}
+
+							//删除
+							for (var data of d.data.upmsSystems) {
+								if ($('#top_menu_'+data.systemId).find('div').length == 0){
+									$('#top_menu_'+data.systemId).remove()
 								}
 							}
 

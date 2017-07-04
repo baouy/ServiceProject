@@ -18,9 +18,11 @@ import com.tudou.common.base.BaseController;
 import com.tudou.oa.dao.model.OaViewUser;
 import com.tudou.oa.dao.model.OaViewUserExample;
 import com.tudou.oa.rpc.api.OaViewUserService;
-import com.tudou.upms.dao.model.UpmsUser;
-import com.tudou.upms.dao.model.UpmsUserExample;
-import com.tudou.upms.dao.model.UpmsUserOrganization;
+import com.tudou.upms.common.constant.UpmsResult;
+import com.tudou.upms.common.constant.UpmsResultConstant;
+import com.tudou.upms.dao.model.*;
+import com.tudou.upms.rpc.api.UpmsOrganizationService;
+import com.tudou.upms.rpc.api.UpmsUserOrganizationService;
 import com.tudou.upms.rpc.api.UpmsUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -56,6 +58,12 @@ public class OaUserDetailsController extends BaseController {
 
 	@Autowired
 	private OaUserDetailsService oaUserDetailsService;
+
+	@Autowired
+	private UpmsOrganizationService upmsOrganizationService;
+
+	@Autowired
+	private UpmsUserOrganizationService upmsUserOrganizationService;
 
 	@ApiOperation(value = "用户列表")
 	@RequiresPermissions("oa:userdetail:read")
@@ -113,11 +121,17 @@ public class OaUserDetailsController extends BaseController {
 			criteria.andEmailLike("%" + oaViewUserValid.getEmail() + "%");
 		}
 		if (!StringUtils.isBlank(oaViewUser.getOrganizationId())){
-			List<Integer> list = new ArrayList<Integer>();
-			for (String a : StringUtil.stringList(oaViewUser.getOrganizationId())){
-				list.add(Integer.valueOf(a));
+			List<String> stringList = StringUtil.stringList(oaViewUser.getOrganizationId());
+			if(stringList.size() > 1){
+				List<Integer> list = new ArrayList<Integer>();
+				for (String a : stringList){
+					list.add(Integer.valueOf(a));
+				}
+				criteria.andOrganizationIdIn(list);
+			}else{
+				criteria.andOrganizationIdEqualTo(stringList.get(0));
 			}
-			criteria.andOrganizationIdIn(list);
+
 		}
 		int pagec = oaViewUserValid.getPageCurrent();
 		int pages = oaViewUserValid.getPageSize();
@@ -132,7 +146,7 @@ public class OaUserDetailsController extends BaseController {
 	@RequiresPermissions("oa:userdetail:create")
 	@ResponseBody
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public Object create(@ModelAttribute UpmsUser upmsUser, @ModelAttribute OaUserDetails oaUserDetails) {
+	public Object create(@ModelAttribute UpmsUser upmsUser, @ModelAttribute OaUserDetails oaUserDetails,@ModelAttribute UpmsUserOrganization upmsUserOrganization) {
 		ComplexResult result = FluentValidator.checkAll()
 				.on(upmsUser.getUsername(), new LengthValidator(1, 20, "名称"))
 				.doValidate()
@@ -160,6 +174,8 @@ public class OaUserDetailsController extends BaseController {
 
 		oaUserDetails.setUserId(upmsUser.getUserId());
 		oaUserDetailsService.insertSelective(oaUserDetails);
+		upmsUserOrganization.setUserId(upmsUser.getUserId());
+		upmsUserOrganizationService.insertSelective(upmsUserOrganization);
 
 		return new OaResult(OaResultConstant.SUCCESS, null);
 	}
@@ -215,7 +231,6 @@ public class OaUserDetailsController extends BaseController {
 		return new OaResult(OaResultConstant.SUCCESS, null);
 	}
 
-
 	/**
 	 * 判断是否有登录名称
 	 * @param upmsUser
@@ -228,7 +243,6 @@ public class OaUserDetailsController extends BaseController {
 			upmsUser.setPassword(MD5Util.MD5("123456" + upmsUser.getSalt()));
 		}
 	}
-
 
 	@ApiOperation(value = "员工离职")
 	@RequiresPermissions("oa:userdetail:leave")
@@ -243,5 +257,72 @@ public class OaUserDetailsController extends BaseController {
 		return new OaResult(OaResultConstant.SUCCESS, null);
 	}
 
+	@ApiOperation(value = "用户所在组织列表")
+	@RequiresPermissions(value = {"oa:userdetail:create"}, logical = Logical.OR)
+	@RequestMapping(value = "/organization/list", method = RequestMethod.GET)
+	@ResponseBody
+	public Object organization_list() {
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		OaViewUser oaViewUser = (OaViewUser)SerializeUtil.deserialize(RedisUtil.get(username.getBytes()));
+		List<String> stringList = StringUtil.stringList(oaViewUser.getOrganizationId());
+		List<Integer> list = new ArrayList<Integer>();
+		for (String a : stringList){
+			list.add(Integer.valueOf(a));
+		}
+
+		UpmsOrganizationExample upmsOrganizationExample = new UpmsOrganizationExample();
+		UpmsOrganizationExample.Criteria criteria = upmsOrganizationExample.createCriteria();
+		criteria.andOrganizationIdIn(list);
+
+		UpmsOrganizationExample.Criteria criteria1 = upmsOrganizationExample.createCriteria();
+		upmsOrganizationExample.or(criteria1);
+		criteria1.andFidIn(list);
+
+		List<UpmsOrganization> upmsOrganizations = upmsOrganizationService.selectByExample(upmsOrganizationExample);
+
+		return new OaResult(OaResultConstant.SUCCESS,upmsOrganizations);
+	}
+
+	@ApiOperation(value = "用户组织")
+	@RequiresPermissions("oa:userdetail:organization")
+	@RequestMapping(value = "/organization/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public Object organization(@PathVariable("id") int id) {
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		OaViewUser oaViewUser = (OaViewUser)SerializeUtil.deserialize(RedisUtil.get(username.getBytes()));
+		List<String> stringList = StringUtil.stringList(oaViewUser.getOrganizationId());
+		List<Integer> list = new ArrayList<Integer>();
+		for (String a : stringList){
+			list.add(Integer.valueOf(a));
+		}
+		UpmsOrganizationExample upmsOrganizationExample = new UpmsOrganizationExample();
+		UpmsOrganizationExample.Criteria criteria = upmsOrganizationExample.createCriteria();
+		criteria.andOrganizationIdIn(list);
+
+		UpmsOrganizationExample.Criteria criteria1 = upmsOrganizationExample.createCriteria();
+		upmsOrganizationExample.or(criteria1);
+		criteria1.andFidIn(list);
+
+		List<UpmsOrganization> upmsOrganizations = upmsOrganizationService.selectByExample(upmsOrganizationExample);
+		UpmsUserOrganizationExample upmsUserOrganizationExample = new UpmsUserOrganizationExample();
+		upmsUserOrganizationExample.createCriteria()
+				.andUserIdEqualTo(id);
+		List<UpmsUserOrganization> upmsUserOrganizations = upmsUserOrganizationService.selectByExample(upmsUserOrganizationExample);
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("upmsOrganizations",upmsOrganizations);
+		map.put("upmsUserOrganizations",upmsUserOrganizations);
+		return new UpmsResult(UpmsResultConstant.SUCCESS, map);
+	}
+
+	@ApiOperation(value = "用户组织")
+	@RequiresPermissions("oa:userdetail:organization")
+	@RequestMapping(value = "/organization/{id}", method = RequestMethod.POST)
+	@ResponseBody
+	public Object organization(@PathVariable("id") int id,@RequestParam(value = "organizationId[]") String [] organizationId) {
+		upmsUserOrganizationService.organization(organizationId, id);
+		return new UpmsResult(UpmsResultConstant.SUCCESS, "");
+	}
 
 }

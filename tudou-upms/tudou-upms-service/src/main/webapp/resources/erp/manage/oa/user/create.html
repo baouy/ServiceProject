@@ -6,6 +6,46 @@
 
 <script>
 
+	var oa_user_organization_object = new Object()
+	oa_user_organization_object.nodes = 'oa_user_ajaxDataFilter'
+	oa_user_organization_object.onCheck = 'oa_user_NodeCheck'
+
+	$('#oa_user_organization_ztree').append('<ul style="height:300px;width:800px" id="job-ztree" class="ztree hide" data-radio-type="all" data-chk-style="radio" data-check-enable="true" data-expand-all="true" data-toggle="ztree" data-options=' + JSON.stringify(oa_user_organization_object) + '></ul>')
+
+	function oa_user_NodeCheck(event, treeId, treeNode, clickFlag) {
+		var id = treeNode.id
+		var pid = treeNode.pId
+		var name = treeNode.name
+
+		$('#oa_user_organizationId').val(id)
+		$('#oa_user_organizationname').val(name)
+	}
+
+	function oa_user_ajaxDataFilter() {
+
+		var datas = new Array()
+		$.ajax({
+			url: $.cookie("tudou-oa-server") + '/manage/oauserdetail/organization/list',
+			type: 'get',
+			async: false,
+			success: function (responseData) {
+				if (responseData.code == 1) {
+					console.log(responseData);
+					var organization = responseData.data;
+					for (var i = 0; i < organization.length; i++) {
+						datas[i] = organization[i]
+						datas[i].id = organization[i].organizationId;
+						datas[i].pId = organization[i].pid;
+					}
+					return datas;
+				}
+
+			}
+		});
+		return datas;
+
+	}
+
 	function oa_user_create_save() {
 		var itime = $('#oa_user_citime').val() + ' 00:00:00'
 		console.log(itime);
@@ -127,6 +167,11 @@
 				<td>
 					<label for="oa_user_username" class="control-label x90 required">登录帐号：</label>
 					<input type="text" name="username" id="oa_user_username" value="" data-rule="required" size="15">
+				</td>
+				<td id="oa_user_organization_ztree">
+					<label for="oa_user_organizationname" class="control-label x90 required">组织部门：</label>
+					<input type="text" id="oa_user_organizationname" value="" size="15" data-toggle="selectztree" data-tree="#job-ztree" data-rule="required" readonly="true">
+					<input class="hide" type="text" name="organizationId" id="oa_user_organizationId" value="" size="15">
 				</td>
 			</tr>
 			<tr class="titleLabel">

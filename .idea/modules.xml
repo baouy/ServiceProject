@@ -16,6 +16,11 @@
       <module fileurl="file://$PROJECT_DIR$/tudou-oss/tudou-oss.iml" filepath="$PROJECT_DIR$/tudou-oss/tudou-oss.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-pay/tudou-pay.iml" filepath="$PROJECT_DIR$/tudou-pay/tudou-pay.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb.iml" filepath="$PROJECT_DIR$/tudou-pcweb/tudou-pcweb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-common/tudou-pcweb-common.iml" filepath="$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-common/tudou-pcweb-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-dao/tudou-pcweb-dao.iml" filepath="$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-dao/tudou-pcweb-dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-rpc-api/tudou-pcweb-rpc-api.iml" filepath="$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-rpc-api/tudou-pcweb-rpc-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-rpc-service/tudou-pcweb-rpc-service.iml" filepath="$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-rpc-service/tudou-pcweb-rpc-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-web/tudou-pcweb-web.iml" filepath="$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-web/tudou-pcweb-web.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-common/tudou-ucenter-common.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-common/tudou-ucenter-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-dao/tudou-ucenter-dao.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-dao/tudou-ucenter-dao.iml" />
