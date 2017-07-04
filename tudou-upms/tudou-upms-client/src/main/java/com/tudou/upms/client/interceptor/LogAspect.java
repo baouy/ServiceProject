@@ -1,5 +1,6 @@
 package com.tudou.upms.client.interceptor;
 
+import com.alibaba.fastjson.JSON;
 import com.tudou.common.util.RequestUtil;
 import com.tudou.upms.dao.model.UpmsLog;
 import com.tudou.upms.rpc.api.UpmsLogService;
@@ -89,7 +90,7 @@ public class LogAspect {
 		} else {
 			upmsLog.setParameter(ObjectUtils.toString(request.getParameterMap()));
 		}
-		upmsLog.setResult(ObjectUtils.toString(result));
+		upmsLog.setResult(JSON.toJSONString(result));
 		upmsLog.setSpendTime((int) (endTime - startTime));
 		upmsLog.setStartTime(startTime);
 		upmsLog.setUri(request.getRequestURI());

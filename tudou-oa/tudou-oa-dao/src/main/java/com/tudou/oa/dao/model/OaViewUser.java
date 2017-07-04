@@ -75,12 +75,11 @@ public class OaViewUser implements Serializable {
 
     private String organization;
 
-    /**
-     * 组织名称
-     *
-     * @mbg.generated
-     */
+    private String organizationId;
+
     private String department;
+
+    private String departmentId;
 
     /**
      * 角色名称
@@ -88,6 +87,8 @@ public class OaViewUser implements Serializable {
      * @mbg.generated
      */
     private String role;
+
+    private String roleId;
 
     /**
      * 身份证号
@@ -207,6 +208,14 @@ public class OaViewUser implements Serializable {
         this.organization = organization;
     }
 
+    public String getOrganizationId() {
+        return organizationId;
+    }
+
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
+    }
+
     public String getDepartment() {
         return department;
     }
@@ -215,12 +224,28 @@ public class OaViewUser implements Serializable {
         this.department = department;
     }
 
+    public String getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(String departmentId) {
+        this.departmentId = departmentId;
+    }
+
     public String getRole() {
         return role;
     }
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
     }
 
     public String getIdNumber() {
@@ -272,8 +297,11 @@ public class OaViewUser implements Serializable {
         sb.append(", flowerName=").append(flowerName);
         sb.append(", workNum=").append(workNum);
         sb.append(", organization=").append(organization);
+        sb.append(", organizationId=").append(organizationId);
         sb.append(", department=").append(department);
+        sb.append(", departmentId=").append(departmentId);
         sb.append(", role=").append(role);
+        sb.append(", roleId=").append(roleId);
         sb.append(", idNumber=").append(idNumber);
         sb.append(", idAddress=").append(idAddress);
         sb.append(", email=").append(email);
@@ -305,8 +333,11 @@ public class OaViewUser implements Serializable {
             && (this.getFlowerName() == null ? other.getFlowerName() == null : this.getFlowerName().equals(other.getFlowerName()))
             && (this.getWorkNum() == null ? other.getWorkNum() == null : this.getWorkNum().equals(other.getWorkNum()))
             && (this.getOrganization() == null ? other.getOrganization() == null : this.getOrganization().equals(other.getOrganization()))
+            && (this.getOrganizationId() == null ? other.getOrganizationId() == null : this.getOrganizationId().equals(other.getOrganizationId()))
             && (this.getDepartment() == null ? other.getDepartment() == null : this.getDepartment().equals(other.getDepartment()))
+            && (this.getDepartmentId() == null ? other.getDepartmentId() == null : this.getDepartmentId().equals(other.getDepartmentId()))
             && (this.getRole() == null ? other.getRole() == null : this.getRole().equals(other.getRole()))
+            && (this.getRoleId() == null ? other.getRoleId() == null : this.getRoleId().equals(other.getRoleId()))
             && (this.getIdNumber() == null ? other.getIdNumber() == null : this.getIdNumber().equals(other.getIdNumber()))
             && (this.getIdAddress() == null ? other.getIdAddress() == null : this.getIdAddress().equals(other.getIdAddress()))
             && (this.getEmail() == null ? other.getEmail() == null : this.getEmail().equals(other.getEmail()))
@@ -328,8 +359,11 @@ public class OaViewUser implements Serializable {
         result = prime * result + ((getFlowerName() == null) ? 0 : getFlowerName().hashCode());
         result = prime * result + ((getWorkNum() == null) ? 0 : getWorkNum().hashCode());
         result = prime * result + ((getOrganization() == null) ? 0 : getOrganization().hashCode());
+        result = prime * result + ((getOrganizationId() == null) ? 0 : getOrganizationId().hashCode());
         result = prime * result + ((getDepartment() == null) ? 0 : getDepartment().hashCode());
+        result = prime * result + ((getDepartmentId() == null) ? 0 : getDepartmentId().hashCode());
         result = prime * result + ((getRole() == null) ? 0 : getRole().hashCode());
+        result = prime * result + ((getRoleId() == null) ? 0 : getRoleId().hashCode());
         result = prime * result + ((getIdNumber() == null) ? 0 : getIdNumber().hashCode());
         result = prime * result + ((getIdAddress() == null) ? 0 : getIdAddress().hashCode());
         result = prime * result + ((getEmail() == null) ? 0 : getEmail().hashCode());

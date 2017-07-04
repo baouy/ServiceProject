@@ -3,6 +3,8 @@ package com.tudou.common.util;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -151,6 +153,22 @@ public class StringUtil {
         } catch (Exception e) {
             return defaultValue;
         }
+    }
+
+    /**
+     * 解析,转化为List
+     * @param id
+     * @return
+     */
+    public static List<String> stringList(String id){
+        String[] idArray = new String[]{};
+        if (StringUtils.contains(id, ",")) {
+            idArray = id.split(",");
+        } else {
+            idArray = new String[]{id};
+        }
+        List<String> list = Arrays.asList(idArray);
+        return list;
     }
 
 }

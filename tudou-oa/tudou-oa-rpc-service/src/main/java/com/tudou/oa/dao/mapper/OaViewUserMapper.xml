@@ -13,8 +13,11 @@
     <result column="flower_name" jdbcType="VARCHAR" property="flowerName" />
     <result column="work_num" jdbcType="VARCHAR" property="workNum" />
     <result column="organization" jdbcType="VARCHAR" property="organization" />
+    <result column="organization_id" jdbcType="VARCHAR" property="organizationId" />
     <result column="department" jdbcType="VARCHAR" property="department" />
+    <result column="department_id" jdbcType="VARCHAR" property="departmentId" />
     <result column="role" jdbcType="VARCHAR" property="role" />
+    <result column="role_id" jdbcType="CHAR" property="roleId" />
     <result column="id_number" jdbcType="VARCHAR" property="idNumber" />
     <result column="id_address" jdbcType="VARCHAR" property="idAddress" />
     <result column="email" jdbcType="VARCHAR" property="email" />
@@ -80,7 +83,8 @@
   </sql>
   <sql id="Base_Column_List">
     user_id, username, realname, sex, locked, ctime, company_mobile, company_email, flower_name, 
-    work_num, organization, department, role, id_number, id_address, email, phone
+    work_num, organization, organization_id, department, department_id, role, role_id, 
+    id_number, id_address, email, phone
   </sql>
   <select id="selectByExample" parameterType="com.tudou.oa.dao.model.OaViewUserExample" resultMap="BaseResultMap">
     select
@@ -106,14 +110,16 @@
     insert into oa_view_user (user_id, username, realname, 
       sex, locked, ctime, 
       company_mobile, company_email, flower_name, 
-      work_num, organization, department, 
-      role, id_number, id_address, 
+      work_num, organization, organization_id, 
+      department, department_id, role, 
+      role_id, id_number, id_address, 
       email, phone)
     values (#{userId,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{realname,jdbcType=VARCHAR}, 
       #{sex,jdbcType=TINYINT}, #{locked,jdbcType=TINYINT}, #{ctime,jdbcType=BIGINT}, 
       #{companyMobile,jdbcType=VARCHAR}, #{companyEmail,jdbcType=VARCHAR}, #{flowerName,jdbcType=VARCHAR}, 
-      #{workNum,jdbcType=VARCHAR}, #{organization,jdbcType=VARCHAR}, #{department,jdbcType=VARCHAR}, 
-      #{role,jdbcType=VARCHAR}, #{idNumber,jdbcType=VARCHAR}, #{idAddress,jdbcType=VARCHAR}, 
+      #{workNum,jdbcType=VARCHAR}, #{organization,jdbcType=VARCHAR}, #{organizationId,jdbcType=VARCHAR}, 
+      #{department,jdbcType=VARCHAR}, #{departmentId,jdbcType=VARCHAR}, #{role,jdbcType=VARCHAR}, 
+      #{roleId,jdbcType=CHAR}, #{idNumber,jdbcType=VARCHAR}, #{idAddress,jdbcType=VARCHAR}, 
       #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.tudou.oa.dao.model.OaViewUser">
@@ -152,11 +158,20 @@
       <if test="organization != null">
         organization,
       </if>
+      <if test="organizationId != null">
+        organization_id,
+      </if>
       <if test="department != null">
         department,
       </if>
+      <if test="departmentId != null">
+        department_id,
+      </if>
       <if test="role != null">
         role,
+      </if>
+      <if test="roleId != null">
+        role_id,
       </if>
       <if test="idNumber != null">
         id_number,
@@ -205,11 +220,20 @@
       <if test="organization != null">
         #{organization,jdbcType=VARCHAR},
       </if>
+      <if test="organizationId != null">
+        #{organizationId,jdbcType=VARCHAR},
+      </if>
       <if test="department != null">
         #{department,jdbcType=VARCHAR},
       </if>
+      <if test="departmentId != null">
+        #{departmentId,jdbcType=VARCHAR},
+      </if>
       <if test="role != null">
         #{role,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null">
+        #{roleId,jdbcType=CHAR},
       </if>
       <if test="idNumber != null">
         #{idNumber,jdbcType=VARCHAR},
@@ -267,11 +291,20 @@
       <if test="record.organization != null">
         organization = #{record.organization,jdbcType=VARCHAR},
       </if>
+      <if test="record.organizationId != null">
+        organization_id = #{record.organizationId,jdbcType=VARCHAR},
+      </if>
       <if test="record.department != null">
         department = #{record.department,jdbcType=VARCHAR},
       </if>
+      <if test="record.departmentId != null">
+        department_id = #{record.departmentId,jdbcType=VARCHAR},
+      </if>
       <if test="record.role != null">
         role = #{record.role,jdbcType=VARCHAR},
+      </if>
+      <if test="record.roleId != null">
+        role_id = #{record.roleId,jdbcType=CHAR},
       </if>
       <if test="record.idNumber != null">
         id_number = #{record.idNumber,jdbcType=VARCHAR},
@@ -303,8 +336,11 @@
       flower_name = #{record.flowerName,jdbcType=VARCHAR},
       work_num = #{record.workNum,jdbcType=VARCHAR},
       organization = #{record.organization,jdbcType=VARCHAR},
+      organization_id = #{record.organizationId,jdbcType=VARCHAR},
       department = #{record.department,jdbcType=VARCHAR},
+      department_id = #{record.departmentId,jdbcType=VARCHAR},
       role = #{record.role,jdbcType=VARCHAR},
+      role_id = #{record.roleId,jdbcType=CHAR},
       id_number = #{record.idNumber,jdbcType=VARCHAR},
       id_address = #{record.idAddress,jdbcType=VARCHAR},
       email = #{record.email,jdbcType=VARCHAR},

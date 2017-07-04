@@ -1,9 +1,15 @@
 package com.tudou.oa.service.interceptor;
 
+import com.tudou.common.util.RedisUtil;
+import com.tudou.common.util.SerializeUtil;
+import com.tudou.oa.dao.model.OaViewUser;
+import com.tudou.oa.dao.model.OaViewUserExample;
+import com.tudou.oa.rpc.api.OaViewUserService;
 import com.tudou.upms.dao.model.*;
 import com.tudou.upms.rpc.api.UpmsApiService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.apache.zookeeper.server.util.SerializeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +31,8 @@ public class OaInterceptor extends HandlerInterceptorAdapter {
 
 	@Autowired
 	UpmsApiService upmsApiService;
+	@Autowired
+	OaViewUserService oaViewUserService;
 
 
 	@Override
@@ -36,13 +44,13 @@ public class OaInterceptor extends HandlerInterceptorAdapter {
 		// 登录信息
 		Subject subject = SecurityUtils.getSubject();
 		String username = (String) subject.getPrincipal();
-		UpmsUser upmsUser = upmsApiService.selectUpmsUserByUsername(username);
-		UpmsUserOrganizationExample upmsUserOrganizationExample = new UpmsUserOrganizationExample();
-		UpmsUserOrganizationExample.Criteria criteria = upmsUserOrganizationExample.createCriteria();
-		criteria.andUserIdEqualTo(upmsUser.getUserId());
-//		List<UpmsUserOrganization> upmsOrganizations = upmsApiService.selectUpmsUserOrganizationByExample(upmsUserOrganizationExample);
-//		map.put("upmsOrganizations",upmsOrganizations);
-		request.getSession().setAttribute("upmsUser", upmsUser);
+		if (RedisUtil.get(username.getBytes()) == null){
+			OaViewUserExample oaViewUserExample = new OaViewUserExample();
+			OaViewUserExample.Criteria  criteria = oaViewUserExample.createCriteria();
+			criteria.andUsernameEqualTo(username);
+			OaViewUser oaViewUser = oaViewUserService.selectByExample(oaViewUserExample).get(0);
+			RedisUtil.set(username.getBytes(), SerializeUtil.serialize(oaViewUser), 1800);
+		}
 		return true;
 	}
 

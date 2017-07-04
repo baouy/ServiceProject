@@ -42,6 +42,10 @@ public abstract class BaseController {
 		return "redirect:"+sso_server_url+"/manage/error";
 	}
 
+	public Object getOaViewUser(HttpServletRequest request){
+		return  request.getSession().getAttribute("oaViewUser");
+	}
+
 	/**
 	 * 返回jsp视图
 	 * @param path

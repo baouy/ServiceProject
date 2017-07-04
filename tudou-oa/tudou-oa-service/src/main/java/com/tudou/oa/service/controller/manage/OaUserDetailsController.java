@@ -4,6 +4,9 @@ import com.baidu.unbiz.fluentvalidator.ComplexResult;
 import com.baidu.unbiz.fluentvalidator.FluentValidator;
 import com.baidu.unbiz.fluentvalidator.ResultCollectors;
 import com.tudou.common.util.MD5Util;
+import com.tudou.common.util.RedisUtil;
+import com.tudou.common.util.SerializeUtil;
+import com.tudou.common.util.StringUtil;
 import com.tudou.common.validator.LengthValidator;
 import com.tudou.oa.common.constant.OaResult;
 import com.tudou.oa.common.constant.OaResultConstant;
@@ -17,12 +20,15 @@ import com.tudou.oa.dao.model.OaViewUserExample;
 import com.tudou.oa.rpc.api.OaViewUserService;
 import com.tudou.upms.dao.model.UpmsUser;
 import com.tudou.upms.dao.model.UpmsUserExample;
+import com.tudou.upms.dao.model.UpmsUserOrganization;
 import com.tudou.upms.rpc.api.UpmsUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +36,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by DavidWang on 2017/6/24.
@@ -60,7 +63,9 @@ public class OaUserDetailsController extends BaseController {
 	@ResponseBody
 	public Object list(@ModelAttribute OaViewUserValid oaViewUserValid, HttpServletRequest request) {
 
-		UpmsUser upmsUser = (UpmsUser)request.getSession().getAttribute("upmsUser");
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		OaViewUser oaViewUser = (OaViewUser)SerializeUtil.deserialize(RedisUtil.get(username.getBytes()));
 
 		OaViewUserExample oaViewUserExample = new OaViewUserExample();
 		OaViewUserExample.Criteria criteria = oaViewUserExample.createCriteria();
@@ -107,11 +112,19 @@ public class OaUserDetailsController extends BaseController {
 		if (!StringUtils.isBlank(oaViewUserValid.getEmail())) {
 			criteria.andEmailLike("%" + oaViewUserValid.getEmail() + "%");
 		}
-
+		if (!StringUtils.isBlank(oaViewUser.getOrganizationId())){
+			List<Integer> list = new ArrayList<Integer>();
+			for (String a : StringUtil.stringList(oaViewUser.getOrganizationId())){
+				list.add(Integer.valueOf(a));
+			}
+			criteria.andOrganizationIdIn(list);
+		}
 		int pagec = oaViewUserValid.getPageCurrent();
 		int pages = oaViewUserValid.getPageSize();
+
 		List<OaViewUser> rows = oaViewUserService.selectByExampleForOffsetPage(oaViewUserExample, pagec,pages);
 		int total = oaViewUserService.countByExample(oaViewUserExample);
+
 		return new OaResult(OaResultConstant.SUCCESS,rows,pages,pagec,total);
 	}
 
