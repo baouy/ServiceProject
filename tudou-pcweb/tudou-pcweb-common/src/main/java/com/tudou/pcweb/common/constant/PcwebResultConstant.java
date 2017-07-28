@@ -24,7 +24,7 @@ public enum PcwebResultConstant {
 
 	public String message;
 
-	UcenterResultConstant(int code, String message) {
+	PcwebResultConstant(int code, String message) {
 		this.code = code;
 		this.message = message;
 	}

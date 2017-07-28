@@ -1,0 +1,83 @@
+<script>
+	var oa_user_organization_object = new Object()
+	var changeDatas
+	oa_user_organization_object.nodes = 'oa_user_ajaxDataFilter'
+	oa_user_organization_object.onCheck = 'oa_user_NodeCheck'
+
+	$('#oa_user_organization_ztree').append('<ul id="job-ztree" class="ztree" data-radio-type="all" data-chk-style="radio" data-check-enable="true" data-expand-all="true" data-toggle="ztree" data-options=' + JSON.stringify(oa_user_organization_object) + '></ul>')
+
+	function oa_user_ajaxDataFilter() {
+		var datas = new Array()
+		$.ajax({
+			url: $.cookie("tudou-oa-server") + '/manage/oauserdetail/organization/'+user_select_id,
+			type: 'get',
+			async: false,
+			success: function (responseData) {
+				if (responseData.code == 1) {
+					var organization = responseData.data.upmsOrganizations
+					var upmsUserOrganizations = responseData.data.upmsUserOrganizations
+					for (var i = 0; i < organization.length; i++) {
+						datas[i] = organization[i]
+						datas[i].id = organization[i].organizationId;
+						datas[i].pId = organization[i].pid;
+						for (var uo of upmsUserOrganizations){
+							if (uo.organizationId == organization[i].organizationId){
+								datas[i].checked = true
+							}
+						}
+					}
+				}
+			}
+		});
+		return datas;
+	}
+
+
+	function oa_user_NodeCheck(event, treeId, treeNode, clickFlag) {
+		$('#oa_userdetail_organization_save').fadeIn();
+		var id = treeNode.id
+		changeDatas = new Array()
+		changeDatas.push(id)
+	}
+	
+	function oa_user_create_save() {
+
+		console.log(changeDatas);
+		$('#oa_user_organization_ztree').trigger('bjui.ajaxStart')
+		$.ajax({
+					url: $.cookie("tudou-oa-server") + '/manage/oauserdetail/organization/' + user_select_id,
+					dataType: 'json',
+					type: 'POST',
+					data: {
+						organizationId: changeDatas
+					},
+					success: function (d) {
+						$('#oa_user_organization_ztree').trigger('bjui.ajaxStop')
+						if (d.code == 1) {
+							BJUI.dialog('closeCurrent', this);
+							$('#manage_oa_user_table').datagrid('refresh_part');
+							$(this).alertmsg('ok', "保存成功");
+						} else {
+							$(this).alertmsg('warn', "保存失败");
+						}
+					},
+					error: function () {
+						$('#oa_user_organization_ztree').trigger('bjui.ajaxStop')
+						$(this).alertmsg('warn', "保存失败");
+					}
+				}
+		);
+	}
+	
+</script>
+
+<div id="oa_user_organization_ztree" class="bjui-pageContent">
+
+</div>
+
+<div class="bjui-pageFooter">
+	<ul>
+		<li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+		<li><button type="button" class="btn-default" data-icon="save" id="oa_userdetail_organization_save" onclick="oa_user_create_save()" style="display:none">保存</button></li>
+	</ul>
+</div>

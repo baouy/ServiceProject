@@ -6,6 +6,78 @@
 
 <script>
 
+	var oa_user_organization_object = new Object()
+	oa_user_organization_object.nodes = 'oa_user_ajaxDataFilter'
+	oa_user_organization_object.onCheck = 'oa_user_NodeCheck'
+
+	$('#oa_user_organization_ztree').append('<ul style="height:300px;width:800px" id="job-ztree" class="ztree hide" data-radio-type="all" data-chk-style="radio" data-check-enable="true" data-expand-all="true" data-toggle="ztree" data-options=' + JSON.stringify(oa_user_organization_object) + '></ul>')
+
+	function oa_user_NodeCheck(event, treeId, treeNode, clickFlag) {
+		var id = treeNode.id
+		var pid = treeNode.pId
+		var name = treeNode.name
+
+		$('#oa_user_organizationId').val(id)
+		$('#oa_user_organizationname').val(name)
+	}
+
+	function oa_user_ajaxDataFilter() {
+
+		var datas = new Array()
+		$.ajax({
+			url: $.cookie("tudou-oa-server") + '/manage/oauserdetail/organization/list',
+			type: 'get',
+			async: false,
+			success: function (responseData) {
+				if (responseData.code == 1) {
+					console.log(responseData);
+					var organization = responseData.data;
+					for (var i = 0; i < organization.length; i++) {
+						datas[i] = organization[i]
+						datas[i].id = organization[i].organizationId;
+						datas[i].pId = organization[i].pid;
+					}
+					return datas;
+				}
+
+			}
+		});
+		return datas;
+
+	}
+
+	function oa_user_create_save() {
+		var itime = $('#oa_user_citime').val() + ' 00:00:00'
+		console.log(itime);
+		itime = new Date(itime).getTime()
+		console.log(itime);
+		$('#oa_user_itime').val(itime)
+
+		var ptime = $('#oa_user_cptime').val() + ' 00:00:00'
+		console.log(ptime);
+		ptime = new Date(ptime).getTime()
+		console.log(ptime);
+		$('#oa_user_ptime').val(ptime)
+
+		var csecuritystart = $('#oa_user_csecuritystart').val() + ' 00:00:00'
+		console.log(csecuritystart);
+		csecuritystart = new Date(csecuritystart).getTime()
+		console.log(csecuritystart);
+		$('#oa_user_securitystart').val(csecuritystart)
+
+		$('#oa_user_form').submit();
+	}
+
+	function oa_user_from_back(d) {
+		if (d.code == 1){
+			BJUI.dialog('closeCurrent',this);
+			$('#manage_oa_user_table').datagrid('refresh_part');
+
+		}else{
+			$(this).alertmsg('warn',d.data);
+		}
+	}
+
 	var oa_user_recruitmentEnumId = $('#oa_user_recruitmentEnumId')
 	oa_user_select_back(oa_user_recruitmentEnumId,1)
 
@@ -21,43 +93,7 @@
 	var oa_user_eEnumId = $('#oa_user_eEnumId')
 	oa_user_select_back(oa_user_eEnumId,5)
 
-	$.ajax({
-		url: $.cookie("tudou-oa-server") +'/manage/oauserdetail/detail/'+user_select_id,
-		dataType: 'json',
-		type: 'GET',
-		success: function(d){
-			if (d.code == 1){
-				var oaUserDetails = d.data.oaUserDetails
-				var upmsUser = d.data.upmsUser
-				for (var i in oaUserDetails) {
-					$.CurrentDialog.find("#oa_user_" + i).val(oaUserDetails[i]);
-					$.CurrentDialog.find("#oa_user_" + i).selectpicker('val', oaUserDetails[i]);
-					if (i == 'itime' || i == 'ptime' || i == 'securitystart'){
-						var date = new Date(oaUserDetails[i])
-						var f = date.getFullYear()
-						var m = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1)
-						var d = date.getDate() < 10? '0' + date.getDate() : date.getDate()
-						var time_c = f + '-' + m +"-" + d
-						$.CurrentDialog.find("#oa_user_c" + i).val(time_c);
-					}
-					if (i =='ismarry'|| i =='fertility'){
-						if (oaUserDetails[i]){
-							$.CurrentDialog.find("#oa_user_" + i).selectpicker('val','1');
-						}else{
-							$.CurrentDialog.find("#oa_user_" + i).selectpicker('val','0');
-						}
-					}
-				}
-
-				for (var i in upmsUser){
-					$.CurrentDialog.find("#oa_user_" + i).val(upmsUser[i]);
-					$.CurrentDialog.find("#oa_user_" + i).selectpicker('val', upmsUser[i]);
-				}
-			}else{
-
-			}
-		}
-	});
+	$("#oa_user_form").attr("action",$.cookie("tudou-oa-server")+ "/manage/oauserdetail/create");
 
 	$("#oa_user_recruitmentEnumId").change(function(){
 		var type = $('#oa_user_recruitmentEnumId option:selected').val();
@@ -75,45 +111,17 @@
 		}
 	});
 
-	$("#oa_user_update_form").attr("action",$.cookie("tudou-oa-server")+ "/manage/oauserdetail/update");
-	
-	function oa_user_update_save() {
-		var itime = $('#oa_user_citime').val() + ' 00:00:00'
-		itime = new Date(itime).getTime()
-		$('#oa_user_itime').val(itime)
-
-		var ptime = $('#oa_user_cptime').val() + ' 00:00:00'
-		ptime = new Date(ptime).getTime()
-		$('#oa_user_ptime').val(ptime)
-
-		var csecuritystart = $('#oa_user_csecuritystart').val() + ' 00:00:00'
-		csecuritystart = new Date(csecuritystart).getTime()
-		$('#oa_user_securitystart').val(csecuritystart)
-
-		$('#oa_user_update_form').submit();
-	}
-
-	function oa_user_from_back(d) {
-		if (d.code == 1){
-			BJUI.dialog('closeCurrent',this);
-			$('#manage_oa_user_table').datagrid('refresh_part');
-
-		}else{
-			$(this).alertmsg('warn',d.data);
-		}
-	}
-
 </script>
 
 
-
 <div class="bjui-pageContent">
-	<form data-toggle="validate" data-callback="oa_user_from_back" id="oa_user_update_form">
+	<form data-toggle="validate" data-callback="oa_user_from_back" id="oa_user_form">
 
-		<input type="hidden" value="" name="userId" id="oa_user_userId">
 		<input type="hidden" value="" name="itime" id="oa_user_itime">
 		<input type="hidden" value="" name="ptime" id="oa_user_ptime">
 		<input type="hidden" value="" name="securitystart" id="oa_user_securitystart">
+
+
 
 		<table class="table table-condensed table-hover" width="100%">
 			<tbody>
@@ -160,28 +168,12 @@
 					<label for="oa_user_username" class="control-label x90 required">登录帐号：</label>
 					<input type="text" name="username" id="oa_user_username" value="" data-rule="required" size="15">
 				</td>
-			</tr>
-
-			<tr>
-				<td>
-					<label for="oa_user_locked" class="control-label x90">状态：</label>
-					<select id="oa_user_locked" data-toggle="selectpicker" data-rule="required" disabled="disabled">
-						<option value="" selected="true"></option>
-						<option value="0">在职</option>
-						<option value="1">离职</option>
-						<option value="2">待入职</option>
-					</select>
-				</td>
-				<td>
-					<label for="oa_user_leavingreason" class="control-label x90">离职原因：</label>
-					<input type="text"  id="oa_user_leavingreason" value="" size="15" readonly="readonly">
-				</td>
-				<td>
-					<label for="oa_user_companyage" class="control-label x90">司龄：</label>
-					<input type="text"  id="oa_user_companyage" value="" size="15" readonly="true">
+				<td id="oa_user_organization_ztree">
+					<label for="oa_user_organizationname" class="control-label x90 required">组织部门：</label>
+					<input type="text" id="oa_user_organizationname" value="" size="15" data-toggle="selectztree" data-tree="#job-ztree" data-rule="required" readonly="true">
+					<input class="hide" type="text" name="organizationId" id="oa_user_organizationId" value="" size="15">
 				</td>
 			</tr>
-
 			<tr class="titleLabel">
 				<td><label class="control-label" style="font-size:18px;">招聘相关</label></td>
 			</tr>
@@ -211,7 +203,7 @@
 					<label for="oa_user_probation" class="control-label x90 required">试用期：</label>
 					<select name="probation" id="oa_user_probation" data-toggle="selectpicker" data-rule="required">
 						<option value=""></option>
-						<option value="1">1</option><option value="2">2</option><option value="3">3</option>
+						<option value="1">1</option><option value="2">2</option><option value="3" selected="true">3</option>
 						<option value="4">4</option><option value="5">5</option><option value="6">6</option>
 					</select>个月
 				</td>
@@ -225,7 +217,7 @@
 					<label for="oa_user_contractage" class="control-label x90 required">合同年限：</label>
 					<select name="contractage" id="oa_user_contractage" data-toggle="selectpicker" data-rule="required">
 						<option value=""></option>
-						<option value="1">1</option><option value="2">2</option><option value="3">3</option>
+						<option value="1">1</option><option value="2">2</option><option value="3" selected="true">3</option>
 						<option value="4">4</option><option value="5">5</option><option value="6">6</option>
 					</select>年
 				</td>
@@ -240,7 +232,7 @@
 					<label for="oa_user_contracttimes" class="control-label x90 required">合同签订次数：</label>
 					<select name="contracttimes" id="oa_user_contracttimes" data-toggle="selectpicker" data-rule="required">
 						<option value=""></option>
-						<option value="1">1</option><option value="2">2</option><option value="3">3</option>
+						<option value="1" selected="true">1</option><option value="2">2</option><option value="3">3</option>
 						<option value="4">4</option><option value="5">5</option><option value="6">6</option>
 					</select>
 				</td>
@@ -297,14 +289,14 @@
 					<label for="oa_user_ismarry" class="control-label x90">婚否：</label>
 					<select name="ismarry" id="oa_user_ismarry" data-toggle="selectpicker" >
 						<option value="" selected="true"></option>
-						<option value="0">否</option><option value="1">是</option>
+						<option value=false>否</option><option value=true>是</option>
 					</select>
 				</td>
 				<td>
 					<label for="oa_user_fertility" class="control-label x90">育否：</label>
 					<select name="fertility" id="oa_user_fertility" data-toggle="selectpicker">
 						<option value="" selected="true"></option>
-						<option value="0">否</option><option value="1">是</option>
+						<option value=false>否</option><option value=true>是</option>
 					</select>
 				</td>
 				<td>
@@ -364,6 +356,6 @@
 <div class="bjui-pageFooter">
 	<ul>
 		<li><button type="button" class="btn-close" data-icon="close">取消</button></li>
-		<li><button type="button" class="btn-default" data-icon="save" onclick="oa_user_update_save()">保存</button></li>
+		<li><button type="button" class="btn-default" data-icon="save" onclick="oa_user_create_save()">保存</button></li>
 	</ul>
 </div>

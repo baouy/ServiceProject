@@ -1,0 +1,152 @@
+<style type="text/css">
+	.required{color: red}
+	.titleLabel{height: 40px;}
+	.titleLabel td label{font-size:18px;color: #adadad}
+</style>
+
+
+<script>
+
+	$.ajax({
+		url: $.cookie("tudou-oa-server") +'/manage/oauserdetail/detail/'+user_select_id,
+		dataType: 'json',
+		type: 'GET',
+		success: function(d){
+			if (d.code == 1){
+				var oaUserDetails = d.data.oaUserDetails
+				var upmsUser = d.data.upmsUser
+				for (var i in oaUserDetails) {
+					$.CurrentDialog.find("#oa_user_" + i).val(oaUserDetails[i]);
+					$.CurrentDialog.find("#oa_user_" + i).selectpicker('val', oaUserDetails[i]);
+				}
+
+				for (var i in upmsUser){
+					$.CurrentDialog.find("#oa_user_" + i).val(upmsUser[i]);
+					$.CurrentDialog.find("#oa_user_" + i).selectpicker('val', upmsUser[i]);
+				}
+			}else{
+
+			}
+		}
+	});
+
+	$("#oa_user_leave_form").attr("action",$.cookie("tudou-oa-server")+ "/manage/oauserdetail/leave");
+
+	function oa_user_leave_save() {
+
+		var leavetime = $('#oa_user_cleavetime').val() + ' 00:00:00'
+		leavetime = new Date(leavetime).getTime()
+		$('#oa_user_leavetime').val(leavetime)
+
+		var securityendtime = $('#oa_user_csecurityendtime').val() + ' 00:00:00'
+		securityendtime = new Date(securityendtime).getTime()
+		$('#oa_user_securityendtime').val(securityendtime)
+
+		var fundtime = $('#oa_user_cfundtime').val() + ' 00:00:00'
+		fundtime = new Date(fundtime).getTime()
+		$('#oa_user_fundtime').val(fundtime)
+
+
+		$('#oa_user_leave_form').submit();
+	}
+
+	function oa_user_from_back(d) {
+		if (d.code == 1){
+			BJUI.dialog('closeCurrent',this);
+			$('#manage_oa_user_table').datagrid('refresh_part');
+
+		}else{
+			$(this).alertmsg('warn',d.data);
+		}
+	}
+
+</script>
+
+<div class="bjui-pageContent">
+	<form data-toggle="validate" data-callback="oa_user_from_back" id="oa_user_leave_form">
+
+		<input type="hidden" value="" name="userId" id="oa_user_userId">
+		<input type="hidden" value="" name="fundtime" id="oa_user_fundtime">
+		<input type="hidden" value="" name="securityendtime" id="oa_user_securityendtime">
+		<input type="hidden" value="" name="leavetime" id="oa_user_leavetime">
+
+		<table class="table table-condensed table-hover" width="100%">
+			<tbody>
+			<tr class="titleLabel">
+				<td><label class="control-label" >基本信息</label></td>
+			</tr>
+			<tr>
+				<td>
+					<label for="oa_user_realname" class="control-label x90 required">姓名：</label>
+					<input type="text" id="oa_user_realname" value="" size="15" readonly="true">
+				</td>
+				<td>
+					<label for="oa_user_companyEmail" class="control-label x90 required">公司邮箱：</label>
+					<input type="text" id="oa_user_companyEmail" value="" size="15" readonly="true">
+				</td>
+				<td>
+					<label for="oa_user_phone" class="control-label x90 required">手机号码：</label>
+					<input type="text" id="oa_user_phone" value="" size="15" readonly="true">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="oa_user_flowerName" class="control-label x90 required">花名：</label>
+					<input type="text" id="oa_user_flowerName" value="" size="15" readonly="true">
+				</td>
+				<td>
+					<label for="oa_user_workNum" class="control-label x90 required">工号：</label>
+					<input type="text" id="oa_user_workNum" value="" size="15" readonly="true">
+				</td>
+				<td>
+					<label for="oa_user_companyMobile" class="control-label x90">公司电话：</label>
+					<input type="text" id="oa_user_companyMobile" value=""  size="15" data-rule="mobile" readonly="true">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="oa_user_sex" class="control-label x90 required">性别：</label>
+					<select id="oa_user_sex" data-toggle="selectpicker" disabled="disabled">
+						<option value="1" selected="true">男</option>
+						<option value="0">女</option>
+					</select>
+				</td>
+				<td>
+					<label for="oa_user_username" class="control-label x90 required">登录帐号：</label>
+					<input type="text" id="oa_user_username" value="" size="15" readonly="true">
+				</td>
+			</tr>
+			<tr>
+
+				<td>
+					<label for="oa_user_cleavetime" class="control-label x90 required">离职时间：</label>
+					<input type="text" id="oa_user_cleavetime" data-toggle="datepicker" value="" data-rule="required" size="15" readonly="true">
+				</td>
+				<td colspan="2">
+					<label for="oa_user_leavingreason" class="control-label x90 required">离职原因：</label>
+					<input type="text" name="leavingreason" id="oa_user_leavingreason"  value="" data-rule="required" size="60" >
+				</td>
+
+			</tr>
+			<tr>
+
+				<td>
+					<label for="oa_user_csecurityendtime" class="control-label x90 required">社保缴纳至：</label>
+					<input type="text" id="oa_user_csecurityendtime" data-toggle="datepicker" value="" data-rule="required" size="15" readonly="true">
+				</td>
+				<td colspan="2">
+					<label for="oa_user_cfundtime" class="control-label x90">公积金缴纳至：</label>
+					<input type="text" id="oa_user_cfundtime"  value="" size="15" data-toggle="datepicker" readonly="true" >
+				</td>
+
+			</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+<div class="bjui-pageFooter">
+	<ul>
+		<li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+		<li><button type="button" class="btn-default" data-icon="save" onclick="oa_user_leave_save()">保存</button></li>
+	</ul>
+</div>

@@ -11991,6 +11991,7 @@
                                 $el = $el_input[n]
                                 if (key == $el.prop("name")){
                                     $el_input[n].val(args[key])
+                                    $el.selectpicker('val', args[key]);
                                     if ($el.val() == args[key]) $td.removeClass(that.classnames.td_changed)
                                     else $el.val(args[key])
                                     break

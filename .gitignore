@@ -7,8 +7,8 @@
 target
 *.log
 *.log.*
-**/resources/tudou-admin
+**/resources/erp
 generatorConfig.xml
 .DS_Store
 *.cache
-*.lock
+*.lock:

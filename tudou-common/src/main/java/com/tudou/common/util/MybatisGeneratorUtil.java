@@ -108,7 +108,6 @@ public class MybatisGeneratorUtil {
 			System.out.println(warning);
 		}
 		System.out.println("========== 结束运行MybatisGenerator ==========");
-
 		System.out.println("========== 开始生成Service ==========");
 		String ctime = new SimpleDateFormat("yyyy/M/d").format(new Date());
 		String servicePath = module + "/" + module + "-rpc-api" + "/src/main/java/" + package_name.replaceAll("\\.", "/") + "/rpc/api";

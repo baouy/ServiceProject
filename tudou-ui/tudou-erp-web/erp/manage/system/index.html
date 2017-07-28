@@ -67,6 +67,7 @@
 	$('#manage_system_table').datagrid(system_datagrid_data);
 
 	function manage_back_edit(d) {
+		console.log(d);
 		if (d.code == 1) {
 			$(this).alertmsg('ok', "操作成功");
 		} else {

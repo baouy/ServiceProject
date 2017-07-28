@@ -5,7 +5,7 @@
 # http://www.sequelpro.com/
 # https://github.com/sequelpro/sequelpro
 #
-# Host: 192.168.20.188 (MySQL 5.5.53-0ubuntu0.14.04.1)
+# Host: 127.0.0.1 (MySQL 5.5.53-0ubuntu0.14.04.1)
 # Database: tudou
 # Generation Time: 2017-05-27 08:21:27 +0000
 # ************************************************************

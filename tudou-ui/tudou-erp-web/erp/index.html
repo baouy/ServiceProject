@@ -75,6 +75,7 @@
 
 	<script>
 		var user_data;
+		var types = new Array()
 		$(function () {
 			$.ajaxSetup({
 				contentType: "application/x-www-form-urlencoded;charset=utf-8",
@@ -84,10 +85,7 @@
 					try {
 						var jsonData = JSON.parse(res);
 						if (jsonData.code == 10000) {
-							$(this).alertmsg('error', '账号以失效请重新登录!');
-							setTimeout(function () {
-								window.location.href = 'login.html';
-							}, 2000);
+							BJUI.loadLogin()
 						}
 					} catch (e) {
 					}
@@ -98,8 +96,8 @@
 			BJUI.init({
 				JSPATH: 'BJUI/',         //[可选]框架路径
 				PLUGINPATH: 'BJUI/plugins/', //[可选]插件路径
-				loginInfo: {url: 'login.html', title: '登录', width: 400, height: 200}, // 会话超时后弹出登录对话框
-				statusCode: {ok: 200, error: 300, timeout: 10001}, //[可选]
+				loginInfo: {url: 'logind.html', title: '账号失效请重新登录', width: 400, height: 200}, // 会话超时后弹出登录对话框
+				statusCode: {ok: 1, error: 500, timeout: 10000}, //[可选]
 				ajaxTimeout: 100000, //[可选]全局Ajax请求超时时间(毫秒)
 				pageInfo: {
 					total: 'total',
@@ -109,7 +107,7 @@
 					orderDirection: 'orderDirection'
 				}, //[可选]分页参数
 				alertMsg: {displayPosition: 'topcenter', displayMode: 'slide', alertTimeout: 3000}, //[可选]信息提示的显示位置，显隐方式，及[info/correct]方式时自动关闭延时(毫秒)
-				keys: {statusCode: 'code', message: 'error'}, //[可选]
+				keys: {statusCode: 'code', message: 'message'}, //[可选]
 				ui: {
 					windowWidth: 0, //框架显示宽度，0=100%宽，> 600为则居中显示
 					showSlidebar: true, //[可选]左侧导航栏锁定/隐藏
@@ -173,7 +171,6 @@
 				});
 			});
 
-
 			$("#customer_fllowName").text("欢迎您，" + $.cookie("flowerName") + "!");
 
 			initrole();
@@ -194,17 +191,25 @@
 							//菜单
 							for (var data of d.data.upmsPermissions) {
 								if (data.type == 1) {
-									$("#top_menu_" + data.systemId).append('<div class="items hide"><ul id="menu_' + data.permissionId + '"class="menu-items" data-faicon="hand-o-up"data-faicon="' + "star-o" + '" data-tit="' + data.name + '"></ul></div>')
+									$("#top_menu_" + data.systemId).append('<div class="items hide"><ul id="menu_' + data.permissionId + '"class="menu-items" data-faicon="fa fa-align-justify" data-faicon="' + "star-o" + '" data-tit="' + data.name + '"></ul></div>')
 								}
 								if (data.type == 3){
 									user_data.push(data)
 								}
 							}
 
+							//子项
 							for (var data of d.data.upmsPermissions) {
 								if (data.type == 2) {
 									var _thisMenu = '<li><a href="' + data.uri + '" data-toggle="navtab" data-options="{id:\'form-input_' + data.permissionId + '\', faicon:\'th-large\'}">' + data.name + '</a></li>';
 									$("#menu_" + data.pid).append(_thisMenu);
+								}
+							}
+
+							//删除
+							for (var data of d.data.upmsSystems) {
+								if ($('#top_menu_'+data.systemId).find('div').length == 0){
+									$('#top_menu_'+data.systemId).remove()
 								}
 							}
 

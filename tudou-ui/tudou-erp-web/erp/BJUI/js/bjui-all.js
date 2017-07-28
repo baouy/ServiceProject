@@ -79,11 +79,13 @@
         },
         init: function(options) {
             var op = $.extend({}, options)
-            
+
+            //davidwang-修改
             $.extend(BJUI.statusCode, op.statusCode)
             $.extend(BJUI.pageInfo, op.pageInfo)
             $.extend(BJUI.alertMsg, op.alertMsg)
             $.extend(BJUI.loginInfo, op.loginInfo)
+            $.extend(BJUI.keys, op.keys)
             $.extend(BJUI.ui, op.ui)
             
             if (op.JSPATH) this.JSPATH = op.JSPATH
@@ -4095,10 +4097,11 @@
         if (json[BJUI.keys.statusCode] == BJUI.statusCode.error) {
             if (json[BJUI.keys.message]) BJUI.alertmsg('error', json[BJUI.keys.message])
         } else if (json[BJUI.keys.statusCode] == BJUI.statusCode.timeout) {
-            BJUI.alertmsg('info', (json[BJUI.keys.message] || BJUI.regional.sessiontimeout))
+            // BJUI.alertmsg('info', (json[BJUI.keys.message] || BJUI.regional.sessiontimeout))
             BJUI.loadLogin()
         } else {
-            if (json[BJUI.keys.message]) BJUI.alertmsg('correct', json[BJUI.keys.message])
+            //davidwang-修改
+            // if (json[BJUI.keys.message]) BJUI.alertmsg('correct', json[BJUI.keys.message])
         }
     }
     
@@ -7089,6 +7092,7 @@
         headSureBack    : null,     // Function - after headSureBack method
         notrheight      : false,    // true/false
         selectChange    : null,     //Function - before selectChange
+        bodyBack        : null,     // Function - after bodyBack method
     }
     
     Datagrid.renderItem = function(value, data, items) {
@@ -7333,7 +7337,14 @@
 
                 }
                 
-                if (!that.init_tbody) that.$tbody.appendTo(that.$tableB)
+                if (!that.init_tbody) {
+                    that.$tbody.appendTo(that.$tableB)
+                    var bodyback = options.bodyBack;
+                    if (typeof bodyback === 'string') {
+                        bodyback =  bodyback.toFunc()
+                        bodyback();
+                    }
+                }
 
                 if (!that.init_thead) that.initThead()
             },
@@ -7694,13 +7705,6 @@
                     type      : options.loadType,
                     cache     : options.cache || false,
                     dataType  : dataType,
-//meiwo-erp ticket-0003 ajax跨域提交cookie-----已执行改动
-//                     xhrFields: {
-//                         withCredentials: true
-//                     },
-//                     headers: {'Cookie' : document.cookie },
-//                     crossDomain: true,
-//-------------------------------------------------------
                     okCallback: function(response) {
                         if (dataType === 'json') {
                             tools.createTrsByData(response, refreshFlag)
