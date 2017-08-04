@@ -69,7 +69,7 @@ public class OaUserDetailsController extends BaseController {
 	@RequiresPermissions("oa:userdetail:read")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
-	public Object list(@ModelAttribute OaViewUserValid oaViewUserValid, HttpServletRequest request) {
+	public Object list(@ModelAttribute OaViewUserValid oaViewUserValid) {
 
 		Subject subject = SecurityUtils.getSubject();
 		String username = (String) subject.getPrincipal();
