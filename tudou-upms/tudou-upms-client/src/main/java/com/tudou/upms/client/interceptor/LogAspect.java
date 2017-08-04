@@ -25,9 +25,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
-import static com.sun.xml.internal.ws.dump.LoggingDumpTube.Position.After;
-import static com.sun.xml.internal.ws.dump.LoggingDumpTube.Position.Before;
-
 /**
  * 日志记录AOP实现
  */
