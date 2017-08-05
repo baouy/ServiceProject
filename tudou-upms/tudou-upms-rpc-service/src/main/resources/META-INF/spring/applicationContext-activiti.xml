@@ -18,7 +18,7 @@
         <property name="history" value="full" /><!-- 历史记录保存模式 -->
 
         <!-- UUID作为主键生成策略 -->
-        <!--<property name="idGenerator" ref="idGen" />-->
+        <property name="idGenerator" ref="idGen" />
 
         <!-- 生成流程图的字体 -->
         <property name="activityFontName" value="simsun"/>
@@ -26,12 +26,20 @@
         <property name="annotationFontName" value="宋体"/><!-- 5.21.0 新增参数 -->
 
         <!-- 自定义用户权限 ，必须重新实现用户和组的相应方法-->
-        <!--<property name="customSessionFactories">-->
-            <!--<list>-->
-                <!--<bean class="com.thinkgem.jeesite.modules.act.service.ext.ActUserEntityServiceFactory"/>-->
-                <!--<bean class="com.thinkgem.jeesite.modules.act.service.ext.ActGroupEntityServiceFactory"/>-->
-            <!--</list>-->
-        <!--</property>-->
+        <property name="customSessionFactories">
+            <list>
+                <bean class="com.tudou.upms.act.ext.ActUserEntityServiceFactory">
+                    <property name="actUserEntityService">
+                        <bean class="com.tudou.upms.act.ext.ActUserEntityService"/>
+                    </property>
+                </bean>
+                <bean class="com.tudou.upms.act.ext.ActGroupEntityServiceFactory">
+                    <property name="actGroupEntityService">
+                        <bean class="com.tudou.upms.act.ext.ActGroupEntityService"/>
+                    </property>
+                </bean>
+            </list>
+        </property>
 
     </bean>
 
@@ -53,6 +61,7 @@
 
     <!-- 设置默认的资源类型 -->
     <bean id="contentTypeResolver" class="org.activiti.rest.common.application.DefaultContentTypeResolver" />
+    <bean id="idGen" class="com.tudou.common.util.IdGen" />
     <!-- Activiti end -->
 
 </beans>
