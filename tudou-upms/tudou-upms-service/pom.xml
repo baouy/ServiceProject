@@ -21,11 +21,6 @@
             <artifactId>tudou-upms-client</artifactId>
             <version>1.0.0</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.tudou</groupId>-->
-            <!--<artifactId>tudou-admin</artifactId>-->
-            <!--<version>1.0.0</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
