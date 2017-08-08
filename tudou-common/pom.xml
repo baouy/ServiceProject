@@ -298,6 +298,7 @@
             <artifactId>jackson-annotations</artifactId>
             <version>2.6.5</version>
         </dependency>
+
         <!-- java mail -->
         <dependency>
             <groupId>javax.mail</groupId>
