@@ -1,0 +1,53 @@
+<script>
+
+	function act_process_deployment_back(d) {
+		if (d.code == 1){
+			$(this).alertmsg('ok','操作成功');
+		}else{
+			$(this).alertmsg('warn',d.data);
+		}
+		
+	}
+	
+	function act_process_deployment_save() {
+		$('#act_process_deployment_form').submit();
+	}
+
+	$("#act_process_deployment_form").attr("action",$.cookie("tudou-upms-server")+ "/act/process/deploy");
+
+</script>
+
+<div class="bjui-pageContent">
+
+	<form data-toggle="validate" data-callback="act_process_deployment_back" id="act_process_deployment_form" enctype="multipart/form-data" method="post" >
+
+		<table class="table table-condensed table-hover" width="100%">
+			<tbody>
+			<tr style="height: 40px;">
+				<td>
+					<label for="act_process_deployment_category" class="control-label x90 required">流程分类：</label>
+					<input type="text" name="category" id="act_process_deployment_category" value="" data-rule="required" size="15">
+				</td>
+			</tr>
+			<tr style="height: 40px;">
+				<td>
+					<label for="file" class="control-label x90 required">流程文件：</label>
+					<input type="file" id="file" name="file" data-rule="required"/>
+					<span>支持文件格式：zip、bar、bpmn、bpmn20.xml</span>
+				</td>
+			</tr>
+
+			<tr style="height: 40px;">
+				<td>
+					<button type="submit" class="btn-default" data-icon="save" onclick="act_process_deployment_save()">保存</button>
+				</td>
+			</tr>
+
+			</tbody>
+		</table>
+
+
+
+	</form>
+
+</div>

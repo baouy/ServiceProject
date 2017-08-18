@@ -19,12 +19,12 @@ public abstract class BaseServiceImpl<Mapper, Record, Example> implements BaseSe
 	public Mapper mapper;
 
 	@Override
-	public int countByExample(Example example) {
+	public long countByExample(Example example) {
 		try {
 			DynamicDataSource.setDataSource(DataSourceEnum.SLAVE.getName());
 			Method countByExample = mapper.getClass().getDeclaredMethod("countByExample", example.getClass());
 			Object result = countByExample.invoke(mapper, example);
-			return Integer.parseInt(String.valueOf(result));
+			return Long.parseLong(String.valueOf(result));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

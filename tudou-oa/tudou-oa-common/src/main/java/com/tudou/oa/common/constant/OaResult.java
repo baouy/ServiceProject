@@ -13,7 +13,7 @@ public class OaResult extends BaseResult{
 		super(oaResultConstant.getCode(), oaResultConstant.getMessage(), data);
 	}
 
-	public OaResult(OaResultConstant oaResultConstant, Object data,Integer pageSize,Integer pageCurrent,Integer total) {
+	public OaResult(OaResultConstant oaResultConstant, Object data,Integer pageSize,Integer pageCurrent,Long total) {
 		super(oaResultConstant.getCode(), oaResultConstant.getMessage(), data,pageSize,pageCurrent,total);
 	}
 

@@ -1,0 +1,91 @@
+<style type="text/css">
+	.required {
+		color: red
+	}
+
+	.titleLabel {
+		height: 40px;
+	}
+
+	.titleLabel td label {
+		font-size: 18px;
+		color: #adadad
+	}
+</style>
+<script>
+
+	$('#act_model_from_id').bind('valid.form', function(){
+		var category = $("#act_model_category").val()
+		var name = $("#act_model_name").val()
+		var key = $("#act_model_key").val()
+		var description = $("#act_model_description").val()
+		$.ajax({
+			url: $.cookie("tudou-upms-server")+ "/act/model/create",
+			dataType: 'json',
+			type: 'POST',
+			async:false,
+			data:{
+				'category':category,
+				'name':name,
+				'key':key,
+				'description':description
+			},
+			success: function(d){
+				if (d.code == 1) {
+					BJUI.dialog('closeCurrent', this);
+					$('#manage_act_model_table').datagrid('refresh_part');
+					act_jup(d.data)
+				} else {
+					$(this).alertmsg('warn', d.data);
+				}
+			},
+			error:function(e){
+				$(this).alertmsg('warn', '保存失败');
+			}
+		});
+
+	})
+
+	function act_model_create_save() {
+		$('#act_model_from_id').submit();
+	}
+
+</script>
+
+
+<div class="bjui-pageContent">
+<form data-toggle="validate" id="act_model_from_id">
+
+	<table class="table table-condensed table-hover" width="100%">
+		<tbody>
+		<tr>
+			<td>
+				<label for="act_model_category" class="control-label x90 required">模块分类：</label>
+				<input type="text" name="category" id="act_model_category" value="" data-rule="required" size="15">
+			</td>
+			<td>
+				<label for="act_model_name" class="control-label x90 required">模块名称：</label>
+				<input type="text" name="name" id="act_model_name" value="" data-rule="required" size="15">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="act_model_key" class="control-label x90 required">模块标示：</label>
+				<input type="text" name="key" id="act_model_key" value="" data-rule="required" size="15">
+			</td>
+			<td>
+				<label for="act_model_description" class="control-label x90">模块描述：</label>
+				<input type="text" name="description" id="act_model_description" value="" size="15">
+			</td>
+
+		</tr>
+		</tbody>
+	</table>
+</form>
+</div>
+<div class="bjui-pageFooter">
+	<ul>
+		<li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+		<li><button type="button" class="btn-default" data-icon="save" onclick="act_model_create_save()">保存</button></li>
+	</ul>
+</div>

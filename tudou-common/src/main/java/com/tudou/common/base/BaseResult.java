@@ -20,7 +20,7 @@ public class BaseResult {
 
     private Integer pageCurrent;
 
-    private Integer total;
+    private Long total;
 
     public BaseResult(int code, String message, Object data) {
         this.code = code;
@@ -28,7 +28,7 @@ public class BaseResult {
         this.data = data;
     }
 
-    public BaseResult(int code, String message, Object data,Integer pageSize,Integer pageCurrent,Integer total) {
+    public BaseResult(int code, String message, Object data,Integer pageSize,Integer pageCurrent,Long total) {
         this.code = code;
         this.message = message;
         this.data = data;
@@ -77,11 +77,11 @@ public class BaseResult {
         this.pageCurrent = pageCurrent;
     }
 
-    public Integer getTotal() {
+    public Long getTotal() {
         return total;
     }
 
-    public void setTotal(Integer total) {
+    public void setTotal(Long total) {
         this.total = total;
     }
 }

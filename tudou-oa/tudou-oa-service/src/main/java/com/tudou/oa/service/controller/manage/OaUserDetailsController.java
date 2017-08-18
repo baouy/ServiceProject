@@ -137,7 +137,7 @@ public class OaUserDetailsController extends BaseController {
 		int pages = oaViewUserValid.getPageSize();
 
 		List<OaViewUser> rows = oaViewUserService.selectByExampleForOffsetPage(oaViewUserExample, pagec,pages);
-		int total = oaViewUserService.countByExample(oaViewUserExample);
+		long total = oaViewUserService.countByExample(oaViewUserExample);
 
 		return new OaResult(OaResultConstant.SUCCESS,rows,pages,pagec,total);
 	}
@@ -158,7 +158,7 @@ public class OaUserDetailsController extends BaseController {
 		OaUserDetailsExample oaUserDetailsExample = new OaUserDetailsExample();
 		oaUserDetailsExample.createCriteria().andFlowerNameEqualTo(oaUserDetails.getFlowerName());
 
-		int num = oaUserDetailsService.countByExample(oaUserDetailsExample);
+		long num = oaUserDetailsService.countByExample(oaUserDetailsExample);
 		if (num > 0){
 			return new OaResult(OaResultConstant.FAILED, "花名已经存在！");
 		}
@@ -210,7 +210,7 @@ public class OaUserDetailsController extends BaseController {
 		UpmsUserExample.Criteria u_criteria = upmsUserExample.createCriteria();
 		u_criteria.andUserIdNotEqualTo(upmsUser.getUserId());
 		u_criteria.andUsernameEqualTo(upmsUser.getUsername());
-		int u_num = upmsUserService.countByExample(upmsUserExample);
+		long u_num = upmsUserService.countByExample(upmsUserExample);
 		if (u_num > 0){
 			return new OaResult(OaResultConstant.FAILED, "登录账号已经存在！");
 		}
@@ -219,7 +219,7 @@ public class OaUserDetailsController extends BaseController {
 		OaUserDetailsExample.Criteria criteria = oaUserDetailsExample.createCriteria();
 		criteria.andFlowerNameEqualTo(oaUserDetails.getFlowerName());
 		criteria.andUserIdNotEqualTo(upmsUser.getUserId());
-		int num = oaUserDetailsService.countByExample(oaUserDetailsExample);
+		long num = oaUserDetailsService.countByExample(oaUserDetailsExample);
 		if (num > 0){
 			return new OaResult(OaResultConstant.FAILED, "花名已经存在！");
 		}

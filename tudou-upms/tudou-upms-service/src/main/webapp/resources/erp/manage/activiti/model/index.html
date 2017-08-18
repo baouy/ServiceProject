@@ -1,0 +1,147 @@
+<script type="text/javascript">
+	var model_btn = ''
+	var toolbarCustom_model_btn = ''
+	for (var data of user_data) {
+		var value = data.permissionValue;
+
+		if (value == 'act:model:create') {
+			toolbarCustom_model_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" data-icon="edit" style="margin-left: 5px;" onclick="act_model_create(this)" >' + '<i class="'+data.icon+'"></i>&nbsp;' + data.name + ' </button>'
+		}
+
+		if (value == 'act:model:update') {
+			toolbarCustom_model_btn += '<button type="button" name=' + data.name + ' class="btn btn-green" data-icon="edit" style="margin-left: 5px;" onclick="act_model_update(this)" >' + '<i class="'+data.icon+'"></i>&nbsp;' + data.name + ' </button>'
+		}
+
+		if (value == 'act:model:deploy') {
+			toolbarCustom_model_btn += '<button type="button" name=' + data.name + ' class="btn btn-green" data-icon="edit" style="margin-left: 5px;" onclick="act_confirm(this)" >' + '<i class="'+data.icon+'"></i>&nbsp;' + data.name + ' </button>'
+		}
+
+		if (value == 'act:model:export') {
+			toolbarCustom_model_btn += '<button type="button" name=' + data.name + ' class="btn btn-green" data-icon="edit" style="margin-left: 5px;" onclick="act_deploy_confirm(this)" >' + '<i class="'+data.icon+'"></i>&nbsp;' + data.name + ' </button>'
+		}
+
+		if (value == 'act:model:delete'){
+			model_btn += 'del,'
+		}
+	}
+
+	var act_model_datagrid_data = {
+		local: 'remote',
+		dataUrl: $.cookie("tudou-upms-server") + '/act/model/list',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height: '100%',
+		columns: [
+			{name: 'category', width: '150', label: '流程分类', align: 'center'},
+			{name: 'id', width: '150', label: '模型ID', align: 'center'},
+			{name: 'key', width: '150', label: '模型标识', align: 'center'},
+			{name: 'name', width: '150', label: '模型名称', align: 'center'},
+			{name: 'version', width: '150', align: 'center', label: '版本号'},
+			{name: 'createTime', width: '150', align: 'center', label: '创建时间'},
+			{name: 'lastUpdateTime', width: '150', align: 'center', label: '最后更新时间'},
+		],
+		paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+		fullGrid: true,
+		showToolbar: true,
+		toolbarItem: model_btn,
+		inlineEditMult: false,
+		dblOnClick: 'act_model_update',
+		toolbarCustom: toolbarCustom_model_btn,
+
+	}
+
+	if (model_btn.indexOf('del') != -1) {
+		act_model_datagrid_data.delConfirm = true
+		act_model_datagrid_data.delPK = 'id'
+		act_model_datagrid_data.delType = 'POST'
+		act_model_datagrid_data.delUrl = $.cookie("tudou-upms-server") + '/act/model/delete'
+		act_model_datagrid_data.delCallback = 'del_act_model_back'
+	}
+
+	$('#manage_act_model_table').datagrid(act_model_datagrid_data);
+
+	function del_act_model_back(d) {
+		if (d.code == 1) {
+			$(this).alertmsg('ok', '删除成功');
+		} else {
+			$(this).alertmsg('warn', d.data);
+		}
+		$('#manage_act_model_table').datagrid('refresh_part');
+	}
+
+	var act_model_id;
+	function act_model_create(n) {
+		var url = n.attributes["url"].value;
+		var name = n.attributes["name"].value;
+		$(this).dialog({
+			title: name,
+			url: url,
+			width: 600,
+			height: 200,
+			mask: true
+		});
+	}
+
+	function act_model_update() {
+		var selected = $('#manage_act_model_table').data('selectedDatas');
+		if (null == selected || selected.length == 0) {
+			return;
+		}
+		act_model_id = selected[0].id
+		window.open($.cookie("tudou-upms-server")+"/act/process-editor/modeler.jsp?modelId="+act_model_id)
+	}
+
+	function act_confirm() {
+		var selected = $("#manage_act_model_table").data('selectedDatas');
+		if (null == selected || selected.length == 0) {
+			return;
+		}
+		act_model_id = selected[0].id
+		$(this).alertmsg('confirm', '是否确定部署吗?', {okCall: 'act_model_deploy'});
+	}
+
+	function act_deploy_confirm() {
+		var selected = $("#manage_act_model_table").data('selectedDatas');
+		if (null == selected || selected.length == 0) {
+			return;
+		}
+		act_model_id = selected[0].id
+		$(this).alertmsg('confirm', '是否确定导出吗?', {okCall: 'act_model_export'});
+	}
+
+	function act_model_deploy() {
+		$.ajax({
+			url: $.cookie("tudou-upms-server")+'/act/model/deploy',
+			dataType: 'json',
+			type: 'POST',
+			data:{
+				'id':act_model_id
+			},
+			success: function(d){
+				if (d.code == 1){
+					$('#manage_act_model_table').datagrid('refresh_part');
+				}else{
+					$(this).alertmsg('warn',d.data);
+				}
+			},
+			error:function(e){
+				$(this).alertmsg('warn',"部署失败!");
+			}
+		});
+	}
+
+	function act_model_export() {
+		window.open($.cookie("tudou-upms-server")+'/act/model/export?id='+act_model_id)
+	}
+
+	function act_jup(name) {
+		console.log($.cookie("tudou-upms-server") + name)
+		window.open('http://192.168.20.189/act/process-editor/modeler.jsp?modelId=421fd309a9624a27880c0a937b260aea')
+	}
+
+</script>
+<div class="bjui-pageContent">
+	<table id="manage_act_model_table" class="table table-hover" data-width="100%"></table>
+</div>

@@ -62,7 +62,7 @@ public class UpmsOrganizationController extends BaseController {
 		int pagec = organizationValid.getPageCurrent();
 		int pages = organizationValid.getPageSize();
 		List<UpmsOrganization> rows = upmsOrganizationService.selectByExampleForOffsetPage(upmsOrganizationExample,pagec,pages);
-		int total = upmsOrganizationService.countByExample(upmsOrganizationExample);
+		long total = upmsOrganizationService.countByExample(upmsOrganizationExample);
 		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,pages,pagec,total);
 	}
 

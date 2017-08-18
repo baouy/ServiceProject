@@ -10,7 +10,7 @@ import java.util.List;
 public abstract class BaseServiceMock<Mapper, Record, Example> implements BaseService<Record, Example> {
 
 	@Override
-	public int countByExample(Example example) {
+	public long countByExample(Example example) {
 		return -1;
 	}
 

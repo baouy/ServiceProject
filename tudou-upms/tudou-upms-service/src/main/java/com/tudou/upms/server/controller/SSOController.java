@@ -80,7 +80,7 @@ public class SSOController {
 		UpmsSystemExample upmsSystemExample = new UpmsSystemExample();
 		upmsSystemExample.createCriteria()
 				.andNameEqualTo(appid);
-		int count = upmsSystemService.countByExample(upmsSystemExample);
+		long count = upmsSystemService.countByExample(upmsSystemExample);
 		if (0 == count) {
 			throw new RuntimeException(String.format("未注册的系统:%s", appid));
 		}

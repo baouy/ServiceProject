@@ -13,7 +13,7 @@ public class UpmsResult extends BaseResult {
         super(upmsResultConstant.getCode(), upmsResultConstant.getMessage(), data);
     }
 
-    public UpmsResult(UpmsResultConstant upmsResultConstant, Object data,Integer pageSize,Integer pageCurrent,Integer total) {
+    public UpmsResult(UpmsResultConstant upmsResultConstant, Object data,Integer pageSize,Integer pageCurrent,Long total) {
         super(upmsResultConstant.getCode(), upmsResultConstant.getMessage(), data,pageSize,pageCurrent,total);
     }
 }

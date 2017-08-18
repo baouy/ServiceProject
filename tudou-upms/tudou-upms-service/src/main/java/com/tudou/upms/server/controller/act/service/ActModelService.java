@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.tudou.upms.server.modelvalid.ModelValid;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.editor.constants.ModelDataJsonConstants;
@@ -41,15 +42,28 @@ public class ActModelService {
 	/**
 	 * 流程模型列表
 	 */
-	public List<Model> modelList(String category) {
+	public List<Model> modelList(ModelValid modelValid,int pc,int ps) {
 
 		ModelQuery modelQuery = repositoryService.createModelQuery().latestVersion().orderByLastUpdateTime().desc();
 
-		if (StringUtils.isNotEmpty(category)){
-			modelQuery.modelCategory(category);
+		if (StringUtils.isNotEmpty(modelValid.getCategory())){
+			modelQuery.modelCategory(modelValid.getCategory());
+		}
+		if (StringUtils.isNotEmpty(modelValid.getId())){
+			modelQuery.modelId(modelValid.getId());
+		}
+		if (StringUtils.isNotEmpty(modelValid.getKey())){
+			modelQuery.modelKey(modelValid.getKey());
+		}
+		if (StringUtils.isNotEmpty(modelValid.getName())){
+			modelQuery.modelNameLike(modelValid.getName());
+		}
+		if (modelValid.getVersion() != null){
+			modelQuery.modelVersion(modelValid.getVersion());
 		}
 
-		List<Model> models = modelQuery.listPage(0, 300);
+		List<Model> models = modelQuery.listPage(pc, ps);
+		modelValid.setMaxnum(modelQuery.count());
 
 		return models;
 	}
@@ -108,11 +122,9 @@ public class ActModelService {
 			if (!StringUtils.endsWith(processName, ".bpmn20.xml")){
 				processName += ".bpmn20.xml";
 			}
-//			System.out.println("========="+processName+"============"+modelData.getName());
 			ByteArrayInputStream in = new ByteArrayInputStream(bpmnBytes);
 			Deployment deployment = repositoryService.createDeployment().name(modelData.getName())
 					.addInputStream(processName, in).deploy();
-//					.addString(processName, new String(bpmnBytes)).deploy();
 
 			// 设置流程分类
 			List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().deploymentId(deployment.getId()).list();

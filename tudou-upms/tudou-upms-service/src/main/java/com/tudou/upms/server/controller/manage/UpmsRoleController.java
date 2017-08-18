@@ -79,7 +79,7 @@ public class UpmsRoleController extends BaseController {
 		int pagec = upmsRoleValid.getPageCurrent();
 		int pages = upmsRoleValid.getPageSize();
 		List<UpmsRole> rows = upmsRoleService.selectByExampleForOffsetPage(upmsRoleExample, pagec, pages);
-		int total = upmsRoleService.countByExample(upmsRoleExample);
+		long total = upmsRoleService.countByExample(upmsRoleExample);
 		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,pages,pagec,total);
 	}
 

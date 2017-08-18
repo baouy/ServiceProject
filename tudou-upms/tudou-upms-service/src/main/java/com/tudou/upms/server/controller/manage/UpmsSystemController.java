@@ -68,7 +68,7 @@ public class UpmsSystemController extends BaseController{
 		int pagec = upmsSystemValid.getPageCurrent();
 		int pages = upmsSystemValid.getPageSize();
 		List<UpmsSystem> rows = upmsSystemService.selectByExampleForOffsetPage(upmsSystemExample,pagec, pages);
-		int total = upmsSystemService.countByExample(upmsSystemExample);
+		long total = upmsSystemService.countByExample(upmsSystemExample);
 		return new UpmsResult(UpmsResultConstant.SUCCESS,rows,pages,pagec,total);
 	}
 
