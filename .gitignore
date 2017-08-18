@@ -7,7 +7,7 @@
 target
 *.log
 *.log.*
-**/resources/erp
+#**/resources/erp
 generatorConfig.xml
 .DS_Store
 *.cache

@@ -7,7 +7,7 @@
 
     <description>tudou-upms</description>
 
-    <context:property-placeholder location="classpath*:tudou-upms-client.properties"/>
+    <!--<context:property-placeholder location="classpath*:tudou-upms-client.properties"/>-->
 
     <!-- Shiro的Web过滤器 -->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
