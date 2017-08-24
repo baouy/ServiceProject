@@ -1,8 +1,12 @@
 package com.tudou.upms.server.interceptor;
 
 import com.tudou.common.util.PropertiesFileUtil;
+import com.tudou.common.util.RedisUtil;
+import com.tudou.common.util.SerializeUtil;
+import com.tudou.upms.dao.model.UpmsLog;
 import com.tudou.upms.dao.model.UpmsUser;
 import com.tudou.upms.rpc.api.UpmsApiService;
+import com.tudou.upms.rpc.api.UpmsLogService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -24,6 +28,8 @@ public class UpmsInterceptor extends HandlerInterceptorAdapter {
     @Autowired
     UpmsApiService upmsApiService;
 
+
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 过滤ajax
@@ -31,10 +37,13 @@ public class UpmsInterceptor extends HandlerInterceptorAdapter {
 //            return true;
 //        }
         // 登录信息
-//        Subject subject = SecurityUtils.getSubject();
-//        String username = (String) subject.getPrincipal();
-//        UpmsUser upmsUser = upmsApiService.selectUpmsUserByUsername(username);
-//        request.setAttribute("upmsUser", upmsUser);
+        Subject subject = SecurityUtils.getSubject();
+        String username = "upms_"+ subject.getPrincipal();
+        UpmsUser upmsUser = (UpmsUser) SerializeUtil.deserialize(RedisUtil.get(username.getBytes()));
+        if (upmsUser == null){
+            upmsUser = upmsApiService.selectUpmsUserByUsername(subject.getPrincipal().toString());
+            RedisUtil.set(username.getBytes(), SerializeUtil.serialize(upmsUser), 1800);
+        }
         return true;
     }
 

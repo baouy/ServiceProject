@@ -13,7 +13,7 @@ public class UcenterResult extends BaseResult{
 		super(ucenterResultConstant.getCode(), ucenterResultConstant.getMessage(), data);
 	}
 
-	public UcenterResult(UcenterResultConstant ucenterResultConstant, Object data,Integer pageSize,Integer pageCurrent,Integer total) {
+	public UcenterResult(UcenterResultConstant ucenterResultConstant, Object data,Integer pageSize,Integer pageCurrent,Long total) {
 		super(ucenterResultConstant.getCode(), ucenterResultConstant.getMessage(), data,pageSize,pageCurrent,total);
 	}
 }

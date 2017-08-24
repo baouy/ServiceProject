@@ -1,0 +1,87 @@
+<style type="text/css">
+	.required {
+		color: red
+	}
+
+	.tr_h {
+		height: 40px;
+	}
+	.titleLabel {
+		height: 40px;
+	}
+
+	.titleLabel td label {
+		font-size: 18px;
+		color: #adadad
+	}
+
+</style>
+<script>
+	
+	function oa_office_s_from_back() {
+		
+	}
+	
+	function oa_office_s_onclick() {
+		
+	}
+
+
+
+</script>
+
+
+<div class="bjui-pageContent">
+	<form data-toggle="validate" data-callback="oa_office_s_from_back" id="oa_office_s_form">
+		<table class="table table-condensed table-bordered table-hover table-striped table-top bjui-tabledit" id="item_supplier_table"
+			   width="100%">
+			<tbody>
+			<tr class="tr_h">
+				<td>
+					<label for="oa_office_leaveType" class="control-label x80">请假类型：</label>
+					<select name="leaveType" id="oa_office_leaveType" data-toggle="selectpicker" data-rule="required" data-width="150">
+						<option value="公休" selected="true">公休</option>
+						<option value="病假">病假</option>
+						<option value="事假">事假</option>
+						<option value="调休">调休</option>
+						<option value="婚假">婚假</option>
+					</select>
+				</td>
+			</tr>
+			<tr class="tr_h">
+				<td>
+					<label for="oa_office_startTime" class="control-label x80">开始时间：</label>
+					<input type="text" name="startTime" id="oa_office_startTime" value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" data-min-date="{%y}-%M-%d" size="15" data-rule="required;datetime">
+				</td>
+			</tr>
+			<tr class="tr_h">
+				<td>
+					<label for="oa_office_startTime" class="control-label x80">结束时间：</label>
+					<input type="text" name="endTime" id="oa_office_endTime" value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" data-min-date="{%y}-%M-%d" size="15" data-rule="required;datetime">
+				</td>
+			</tr>
+			<tr style="height: 100px;">
+				<td>
+					<label for="oa_office_remarks" class="control-label x80">请假原因：</label>
+					<textarea id="oa_office_remarks" name="remarks" cols="45" style="width: 465px;height: 78px;"
+							  rows="3" maxlength="500"></textarea>
+				</td>
+			</tr>
+
+			</tbody>
+
+			</table>
+
+	</form>
+</div>
+
+<div class="bjui-pageFooter">
+	<ul>
+		<li>
+			<button type="button" class="btn-close" data-icon="close">取消</button>
+		</li>
+		<li>
+			<button type="button" class="btn-default" data-icon="save" onclick="oa_office_s_onclick()">保存</button>
+		</li>
+	</ul>
+</div>

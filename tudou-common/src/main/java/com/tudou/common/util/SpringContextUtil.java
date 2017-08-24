@@ -1,5 +1,6 @@
 package com.tudou.common.util;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -55,6 +56,11 @@ public class SpringContextUtil implements ApplicationContextAware {
 		return t;
 	}
 
+	public static <T> T getNBean(Class<T> requiredType) {
+		assertContextInjected();
+		return context.getBean(requiredType);
+	}
+
 	/**
 	 * 是否包含bean
 	 * @param beanName
@@ -80,6 +86,14 @@ public class SpringContextUtil implements ApplicationContextAware {
 	 */
 	public static Class getType(String beanName) {
 		return context.getType(beanName);
+	}
+
+
+	/**
+	 * 检查ApplicationContext不为空.
+	 */
+	private static void assertContextInjected() {
+		Validate.validState(context != null, "applicaitonContext属性未注入, 请在applicationContext.xml中定义SpringContextHolder.");
 	}
 
 }

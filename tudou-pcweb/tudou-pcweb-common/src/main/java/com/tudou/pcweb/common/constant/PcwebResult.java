@@ -13,7 +13,7 @@ public class PcwebResult extends BaseResult {
 		super(pcwebResultConstant.getCode(), pcwebResultConstant.getMessage(), data);
 	}
 
-	public PcwebResult(PcwebResultConstant pcwebResultConstant, Object data,Integer pageSize,Integer pageCurrent,Integer total) {
+	public PcwebResult(PcwebResultConstant pcwebResultConstant, Object data,Integer pageSize,Integer pageCurrent,Long total) {
 		super(pcwebResultConstant.getCode(), pcwebResultConstant.getMessage(), data,pageSize,pageCurrent,total);
 	}
 }

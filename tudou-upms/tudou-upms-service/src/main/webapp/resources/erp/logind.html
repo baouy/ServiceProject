@@ -2,8 +2,10 @@
 
 	function login_saveCalback(d) {
 		if (d.code == 1){
+
 			BJUI.dialog('closeCurrent',this);
 			$(this).alertmsg('ok','登录成功');
+			window.location.reload();
 		}else{
 			$(this).alertmsg('warn',d.data);
 		}
