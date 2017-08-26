@@ -10,7 +10,7 @@
 
 	var oa_office_oa_datagrid_data = {
 		local: 'remote',
-		dataUrl: $.cookie("tudou-upms-server") + '/act/task/process',
+		dataUrl: $.cookie("tudou-oa-server") + '/act/task/process',
 		dataType: 'json',
 		sortAll: false,
 		loadType: 'get',
@@ -22,7 +22,7 @@
 			{name: 'name', width: '150', label: '模型名称', align: 'center'},
 			{name: 'diagramResourceName', width: '150', align: 'center', label: '流程图片',render:function(value,d){
 				if (value.length > 0){
-					return '<a target="_blank" href="/act/process/resource/read?procDefId='+d.id+'&resType=image">'+ value +'</a>';
+					return '<a target="_blank" href="/oa/act/process/resource/read?procDefId='+d.id+'&resType=image">'+ value +'</a>';
 				}else{
 					return value;
 				}
@@ -55,7 +55,7 @@
 		$('#oa_office_new_table').trigger('bjui.ajaxStart')
 		$.ajax({
 			type: 'post',
-			url: $.cookie("tudou-upms-server")+'/act/task/form/',
+			url: $.cookie("tudou-oa-server")+'/act/task/form/',
 			data: {procDefId: procDefId},
 			success: function(d) {
 				if (d.code == 1){

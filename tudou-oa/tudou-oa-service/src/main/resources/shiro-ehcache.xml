@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache name="shirocache">
 
-    <diskStore path="java.io.tmpdir/tudou-upms-server/shiro-ehcache"/>
+    <diskStore path="java.io.tmpdir/tudou-oa-server/shiro-ehcache"/>
 
     <cache name="authorizationCache"
            maxEntriesLocalHeap="2000"

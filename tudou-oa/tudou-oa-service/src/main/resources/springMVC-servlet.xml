@@ -17,6 +17,7 @@
         <!-- 获取登录信息 -->
         <mvc:interceptor>
             <!-- 拦截路径 -->
+            <mvc:mapping path="/act/**"/>
             <mvc:mapping path="/manage/**"/>
             <!-- 非拦截路径 -->
             <mvc:exclude-mapping path="/manage/login"/>

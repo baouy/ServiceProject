@@ -10,7 +10,7 @@
 
 	var act_process_runing_datagrid_data = {
 		local: 'remote',
-		dataUrl: $.cookie("tudou-upms-server") + '/act/process/running',
+		dataUrl: $.cookie("tudou-oa-server") + '/act/process/running',
 		dataType: 'json',
 		sortAll: false,
 		loadType: 'get',
@@ -45,7 +45,7 @@
 		act_process_datagrid_data.delConfirm = true
 		act_process_datagrid_data.delPK = 'processInstanceId'
 		act_process_datagrid_data.delType = 'POST'
-		act_process_datagrid_data.delUrl = $.cookie("tudou-upms-server") + '/act/process/deleteProcIns'
+		act_process_datagrid_data.delUrl = $.cookie("tudou-oa-server") + '/act/process/deleteProcIns'
 		act_process_datagrid_data.delCallback = 'del_act_process_runing_back'
 	}
 

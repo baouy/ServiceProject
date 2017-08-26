@@ -27,7 +27,7 @@
 
 	var act_model_datagrid_data = {
 		local: 'remote',
-		dataUrl: $.cookie("tudou-upms-server") + '/act/model/list',
+		dataUrl: $.cookie("tudou-oa-server") + '/act/model/list',
 		dataType: 'json',
 		sortAll: false,
 		loadType: 'get',
@@ -90,7 +90,7 @@
 			return;
 		}
 		act_model_id = selected[0].id
-		window.open($.cookie("tudou-upms-server")+"/act/process-editor/modeler.jsp?modelId="+act_model_id)
+		window.open($.cookie("tudou-oa-server")+"/act/process-editor/modeler.jsp?modelId="+act_model_id)
 	}
 
 	function act_confirm() {
@@ -113,7 +113,7 @@
 
 	function act_model_deploy() {
 		$.ajax({
-			url: $.cookie("tudou-upms-server")+'/act/model/deploy',
+			url: $.cookie("tudou-oa-server")+'/act/model/deploy',
 			dataType: 'json',
 			type: 'POST',
 			data:{
@@ -133,12 +133,7 @@
 	}
 
 	function act_model_export() {
-		window.open($.cookie("tudou-upms-server")+'/act/model/export?id='+act_model_id)
-	}
-
-	function act_jup(name) {
-		console.log($.cookie("tudou-upms-server") + name)
-		window.open('http://192.168.20.189/act/process-editor/modeler.jsp?modelId=421fd309a9624a27880c0a937b260aea')
+		window.open($.cookie("tudou-oa-server")+'/act/model/export?id='+act_model_id)
 	}
 
 </script>

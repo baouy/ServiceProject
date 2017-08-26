@@ -37,13 +37,13 @@ public class UpmsInterceptor extends HandlerInterceptorAdapter {
 //            return true;
 //        }
         // 登录信息
-        Subject subject = SecurityUtils.getSubject();
-        String username = "upms_"+ subject.getPrincipal();
-        UpmsUser upmsUser = (UpmsUser) SerializeUtil.deserialize(RedisUtil.get(username.getBytes()));
-        if (upmsUser == null){
-            upmsUser = upmsApiService.selectUpmsUserByUsername(subject.getPrincipal().toString());
-            RedisUtil.set(username.getBytes(), SerializeUtil.serialize(upmsUser), 1800);
-        }
+//        Subject subject = SecurityUtils.getSubject();
+//        String username = "upms_"+ subject.getPrincipal();
+//        UpmsUser upmsUser = (UpmsUser) SerializeUtil.deserialize(RedisUtil.get(username.getBytes()));
+//        if (upmsUser == null){
+//            upmsUser = upmsApiService.selectUpmsUserByUsername(subject.getPrincipal().toString());
+//            RedisUtil.set(username.getBytes(), SerializeUtil.serialize(upmsUser), 1800);
+//        }
         return true;
     }
 

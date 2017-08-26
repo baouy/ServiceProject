@@ -19,7 +19,7 @@
 
 	var act_process_datagrid_data = {
 		local: 'remote',
-		dataUrl: $.cookie("tudou-upms-server") + '/act/process/list',
+		dataUrl: $.cookie("tudou-oa-server") + '/act/process/list',
 		dataType: 'json',
 		sortAll: false,
 		loadType: 'get',
@@ -34,14 +34,14 @@
 			{name: 'deploymentTime', width: '150', align: 'center', label: '部署时间'},
 			{name: 'resourceName', width: '150', align: 'center', label: '流程XML',render:function(value,d){
 				if (value.length > 0){
-					return '<a target="_blank" href="/act/process/resource/read?procDefId='+d.id+'&resType=xml">'+ value +'</a>';
+					return '<a target="_blank" href="/oa/act/process/resource/read?procDefId='+d.id+'&resType=xml">'+ value +'</a>';
 				}else{
 					return value;
 				}
 			}},
 			{name: 'diagramResourceName', width: '150', align: 'center', label: '流程图片',render:function(value,d){
 				if (value.length > 0){
-					return '<a target="_blank" href="/act/process/resource/read?procDefId='+d.id+'&resType=image">'+ value +'</a>';
+					return '<a target="_blank" href="/oa/act/process/resource/read?procDefId='+d.id+'&resType=image">'+ value +'</a>';
 				}else{
 					return value;
 				}
@@ -104,7 +104,7 @@
 
 	function act_process_model() {
 		$.ajax({
-			url: $.cookie("tudou-upms-server")+'/act/process/convert/toModel',
+			url: $.cookie("tudou-oa-server")+'/act/process/convert/toModel',
 			dataType: 'json',
 			type: 'POST',
 			data:{
@@ -132,7 +132,7 @@
 			url = '/act/process/update/active'
 		}
 		$.ajax({
-			url: $.cookie("tudou-upms-server") + url,
+			url: $.cookie("tudou-oa-server") + url,
 			dataType: 'json',
 			type: 'POST',
 			data:{

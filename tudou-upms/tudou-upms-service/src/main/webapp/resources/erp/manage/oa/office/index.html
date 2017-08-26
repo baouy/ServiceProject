@@ -2,7 +2,7 @@
 
 	var oa_office_datagrid_data = {
 		local: 'remote',
-		dataUrl: $.cookie("tudou-upms-server") + '/act/task/todo',
+		dataUrl: $.cookie("tudou-oa-server") + '/act/task/todo',
 		dataType: 'json',
 		sortAll: false,
 		loadType: 'get',
@@ -18,7 +18,7 @@
 					return '<a onclick="oa_office_onclick(d)">'+name+'</a>'
 //				}
 //				if (value.length > 0){
-//					return '<a target="_blank" href="/act/process/resource/read?procDefId='+d.id+'&resType=xml">'+ value +'</a>';
+//					return '<a target="_blank" href="/oa/act/process/resource/read?procDefId='+d.id+'&resType=xml">'+ value +'</a>';
 //				}else{
 //					return value;
 //				}
