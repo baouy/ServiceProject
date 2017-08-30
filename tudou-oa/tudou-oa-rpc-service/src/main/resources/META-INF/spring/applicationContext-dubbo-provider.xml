@@ -25,4 +25,8 @@
     <bean id="oaViewUserService" class="com.tudou.oa.rpc.service.impl.OaViewUserServiceImpl"/>
     <dubbo:service interface="com.tudou.oa.rpc.api.OaViewUserService" ref="oaViewUserService" timeout="10000"/>
 
+    <!--&lt;!&ndash; 请假管理 &ndash;&gt;-->
+    <bean id="oaLeaveService" class="com.tudou.oa.rpc.service.impl.OaLeaveServiceImpl"/>
+    <dubbo:service interface="com.tudou.oa.rpc.api.OaLeaveService" ref="oaLeaveService" timeout="10000"/>
+
 </beans>

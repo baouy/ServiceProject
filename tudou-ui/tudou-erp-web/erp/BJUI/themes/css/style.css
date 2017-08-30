@@ -472,6 +472,14 @@ td[align=right] input{text-align:right;}
 .bjui-datagrid .table > tbody > tr > td.datagrid-column-edit .btn.update,
 .bjui-datagrid .table > tbody > tr > td.datagrid-column-edit .btn.cancel{display:none; margin-left:2px;}
 .bjui-datagrid .table > tbody > tr > td.datagrid-column-edit .btn.delete{margin-left:2px;}
+
+.bjui-datagrid .table > tbody > tr > div.datagrid-column-edit{}
+.bjui-datagrid .table > tbody > tr > div.datagrid-column-edit .btn{padding-left:5px; width:50px; height:22px; font-size:12px;}
+.bjui-datagrid .table > tbody > tr > div.datagrid-column-edit .btn.save,
+.bjui-datagrid .table > tbody > tr > div.datagrid-column-edit .btn.update,
+.bjui-datagrid .table > tbody > tr > div.datagrid-column-edit .btn.cancel{display:none; margin-left:2px;}
+.bjui-datagrid .table > tbody > tr > div.datagrid-column-edit .btn.delete{margin-left:2px;}
+
 .bjui-datagrid .table > tbody > tr > td.datagrid-td-selected{border-style:solid; border-width:2px;}
 .bjui-datagrid .table > tbody > tr > td.datagrid-td-selected-drag{border-style:solid; border-width:2px;}
 .bjui-datagrid > .datagrid-paging-box{padding:5px; min-height:27px;}

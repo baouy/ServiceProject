@@ -81,11 +81,6 @@ public class OaViewUser implements Serializable {
 
     private String departmentId;
 
-    /**
-     * 角色名称
-     *
-     * @mbg.generated
-     */
     private String role;
 
     private String roleId;

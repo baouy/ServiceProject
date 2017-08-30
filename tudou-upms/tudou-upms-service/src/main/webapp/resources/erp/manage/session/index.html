@@ -18,8 +18,12 @@
 		filterThead: false,
 		height:'95%',
 		columns: [{name:'id', width:'150', align: 'center', label:'编号'},
-			{name:'startTimestamp', width:'150', align: 'center', label:'创建时间'},
-			{name:'lastAccessTime', width:'150', align: 'center', label:'最后访问时间'},
+			{name:'startTimestamp', width:'150', align: 'center', label:'创建时间',render:function(value){
+				return timetrans(value);
+			}},
+			{name:'lastAccessTime', width:'150', align: 'center', label:'最后访问时间',render:function(value){
+				return timetrans(value);
+			}},
 			{name:'expired', width:'150', align: 'center', label:'是否过期'},
 			{name:'host', width:'150', align: 'center', label:'访问者IP'},
 			{name:'userAgent', width:'150',  align: 'center',label:'用户标识'},

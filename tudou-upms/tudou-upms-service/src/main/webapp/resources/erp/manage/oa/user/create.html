@@ -21,7 +21,6 @@
 	}
 
 	function oa_user_ajaxDataFilter() {
-
 		var datas = new Array()
 		$.ajax({
 			url: $.cookie("tudou-oa-server") + '/manage/oauserdetail/organization/list',
@@ -38,7 +37,6 @@
 					}
 					return datas;
 				}
-
 			}
 		});
 		return datas;
@@ -112,15 +110,12 @@
 
 </script>
 
-
 <div class="bjui-pageContent">
 	<form data-toggle="validate" data-callback="oa_user_from_back" id="oa_user_form">
 
 		<input type="hidden" value="" name="itime" id="oa_user_itime">
 		<input type="hidden" value="" name="ptime" id="oa_user_ptime">
 		<input type="hidden" value="" name="securitystart" id="oa_user_securitystart">
-
-
 
 		<table class="table table-condensed table-hover" width="100%">
 			<tbody>
@@ -332,7 +327,6 @@
 					<label for="oa_user_school" class="control-label x90 required">毕业学校：</label>
 					<input type="text" name="school" id="oa_user_school" value="" size="15" data-rule="required">
 				</td>
-
 			</tr>
 			<tr>
 				<td>

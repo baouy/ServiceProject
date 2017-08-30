@@ -31,7 +31,9 @@
 			{name: 'key', width: '150', label: '流程标识', align: 'center'},
 			{name: 'name', width: '150', label: '流程名称', align: 'center'},
 			{name: 'version', width: '150', align: 'center', label: '流程版本'},
-			{name: 'deploymentTime', width: '150', align: 'center', label: '部署时间'},
+			{name: 'deploymentTime', width: '150', align: 'center', label: '部署时间',render:function(value){
+				return timetrans(value);
+			}},
 			{name: 'resourceName', width: '150', align: 'center', label: '流程XML',render:function(value,d){
 				if (value.length > 0){
 					return '<a target="_blank" href="/oa/act/process/resource/read?procDefId='+d.id+'&resType=xml">'+ value +'</a>';

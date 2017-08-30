@@ -7,6 +7,7 @@ import com.tudou.oa.service.controller.act.utils.TimeUtils;
 import com.tudou.oa.service.controller.act.utils.Variable;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.impl.bpmn.data.Data;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
@@ -25,9 +26,17 @@ public class ActTaskValid extends BaseModelValid{
 	private String taskName; 	// 任务名称
 	private String taskDefKey; 	// 任务定义Key（任务环节标识）
 
+	private String formKey; //页面地址
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+	private Date taskCreateTime; //创建时间
+
 	private String procInsId; 	// 流程实例ID
 	private String procDefId; 	// 流程定义ID
 	private String procDefKey; 	// 流程定义Key（流程定义标识）
+
+	private String procDefName; //流程名称
+	private Integer procDefVersion; //流程版本
 
 	private String businessTable;	// 业务绑定Table
 	private String businessId;		// 业务绑定ID
@@ -40,31 +49,20 @@ public class ActTaskValid extends BaseModelValid{
 	private String comment; 	// 任务意见
 	private String flag; 		// 意见状态
 
-	private Task task; 			// 任务对象
-	private ProcessDefinition procDef; 	// 流程定义对象
-	private ProcessInstance procIns;	// 流程实例对象
-	private HistoricTaskInstance histTask; // 历史任务
-	private HistoricActivityInstance histIns;	//历史活动任务
-
 	private String assignee; // 任务执行人编号
 	private String assigneeName; // 任务执行人名称
 
 	private Variable vars; 		// 流程变量
 //	private Variable taskVars; 	// 流程任务变量
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date beginDate;	// 开始查询日期
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date endDate;	// 结束查询日期
 
-	private List<ActTaskValid> list; // 任务列表
-
-	public ActTaskValid() {
-		super();
-	}
 
 	public String getTaskId() {
-		if (taskId == null && task != null){
-			taskId = task.getId();
-		}
 		return taskId;
 	}
 
@@ -73,9 +71,6 @@ public class ActTaskValid extends BaseModelValid{
 	}
 
 	public String getTaskName() {
-		if (taskName == null && task != null){
-			taskName = task.getName();
-		}
 		return taskName;
 	}
 
@@ -84,9 +79,6 @@ public class ActTaskValid extends BaseModelValid{
 	}
 
 	public String getTaskDefKey() {
-		if (taskDefKey == null && task != null){
-			taskDefKey = task.getTaskDefinitionKey();
-		}
 		return taskDefKey;
 	}
 
@@ -94,65 +86,45 @@ public class ActTaskValid extends BaseModelValid{
 		this.taskDefKey = taskDefKey;
 	}
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	public Date getTaskCreateDate() {
-		if (task != null){
-			return task.getCreateTime();
-		}
-		return null;
+	public String getProcInsId() {
+		return procInsId;
 	}
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	public Date getTaskEndDate() {
-		if (histTask != null){
-			return histTask.getEndTime();
-		}
-		return null;
+	public void setProcInsId(String procInsId) {
+		this.procInsId = procInsId;
 	}
 
-	@JsonIgnore
-	public Task getTask() {
-		return task;
+	public String getProcDefId() {
+		return procDefId;
 	}
 
-	public void setTask(Task task) {
-		this.task = task;
+	public void setProcDefId(String procDefId) {
+		this.procDefId = procDefId;
 	}
 
-	@JsonIgnore
-	public ProcessDefinition getProcDef() {
-		return procDef;
+	public String getProcDefKey() {
+		return procDefKey;
 	}
 
-	public void setProcDef(ProcessDefinition procDef) {
-		this.procDef = procDef;
+	public void setProcDefKey(String procDefKey) {
+		this.procDefKey = procDefKey;
 	}
 
-	public String getProcDefName() {
-		return procDef.getName();
+	public String getBusinessTable() {
+		return businessTable;
 	}
 
-	@JsonIgnore
-	public ProcessInstance getProcIns() {
-		return procIns;
+	public void setBusinessTable(String businessTable) {
+		this.businessTable = businessTable;
 	}
 
-	public void setProcIns(ProcessInstance procIns) {
-		this.procIns = procIns;
-		if (procIns != null && procIns.getBusinessKey() != null){
-			String[] ss = procIns.getBusinessKey().split(":");
-			setBusinessTable(ss[0]);
-			setBusinessId(ss[1]);
-		}
+	public String getBusinessId() {
+		return businessId;
 	}
 
-//	public String getProcExecUrl() {
-//		return procExecUrl;
-//	}
-//
-//	public void setProcExecUrl(String procExecUrl) {
-//		this.procExecUrl = procExecUrl;
-//	}
+	public void setBusinessId(String businessId) {
+		this.businessId = businessId;
+	}
 
 	public String getTitle() {
 		return title;
@@ -168,42 +140,6 @@ public class ActTaskValid extends BaseModelValid{
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	@JsonIgnore
-	public HistoricTaskInstance getHistTask() {
-		return histTask;
-	}
-
-	public void setHistTask(HistoricTaskInstance histTask) {
-		this.histTask = histTask;
-	}
-
-	@JsonIgnore
-	public HistoricActivityInstance getHistIns() {
-		return histIns;
-	}
-
-	public void setHistIns(HistoricActivityInstance histIns) {
-		this.histIns = histIns;
-	}
-
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	public Date getBeginDate() {
-		return beginDate;
-	}
-
-	public void setBeginDate(Date beginDate) {
-		this.beginDate = beginDate;
-	}
-
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
 	}
 
 	public String getComment() {
@@ -222,42 +158,12 @@ public class ActTaskValid extends BaseModelValid{
 		this.flag = flag;
 	}
 
-	public String getProcDefId() {
-		if (procDefId == null && task != null){
-			procDefId = task.getProcessDefinitionId();
-		}
-		return procDefId;
+	public String getAssignee() {
+		return assignee;
 	}
 
-	public void setProcDefId(String procDefId) {
-		this.procDefId = procDefId;
-	}
-
-	public String getProcInsId() {
-		if (procInsId == null && task != null){
-			procInsId = task.getProcessInstanceId();
-		}
-		return procInsId;
-	}
-
-	public void setProcInsId(String procInsId) {
-		this.procInsId = procInsId;
-	}
-
-	public String getBusinessId() {
-		return businessId;
-	}
-
-	public void setBusinessId(String businessId) {
-		this.businessId = businessId;
-	}
-
-	public String getBusinessTable() {
-		return businessTable;
-	}
-
-	public void setBusinessTable(String businessTable) {
-		this.businessTable = businessTable;
+	public void setAssignee(String assignee) {
+		this.assignee = assignee;
 	}
 
 	public String getAssigneeName() {
@@ -268,25 +174,6 @@ public class ActTaskValid extends BaseModelValid{
 		this.assigneeName = assigneeName;
 	}
 
-	public String getAssignee() {
-		if (assignee == null && task != null){
-			assignee = task.getAssignee();
-		}
-		return assignee;
-	}
-
-	public void setAssignee(String assignee) {
-		this.assignee = assignee;
-	}
-
-	public List<ActTaskValid> getList() {
-		return list;
-	}
-
-	public void setList(List<ActTaskValid> list) {
-		this.list = list;
-	}
-
 	public Variable getVars() {
 		return vars;
 	}
@@ -295,54 +182,56 @@ public class ActTaskValid extends BaseModelValid{
 		this.vars = vars;
 	}
 
-	/**
-	 * 通过Map设置流程变量值
-	 * @param map
-	 */
 	public void setVars(Map<String, Object> map) {
 		this.vars = new Variable(map);
 	}
 
-//	public Variable getTaskVars() {
-//		return taskVars;
-//	}
-//
-//	public void setTaskVars(Variable taskVars) {
-//		this.taskVars = taskVars;
-//	}
-//
-//	/**
-//	 * 通过Map设置流程任务变量值
-//	 * @param map
-//	 */
-//	public void setTaskVars(Map<String, Object> map) {
-//		this.taskVars = new Variable(map);
-//	}
-
-	/**
-	 * 获取流程定义KEY
-	 * @return
-	 */
-	public String getProcDefKey() {
-		if (StringUtils.isBlank(procDefKey) && StringUtils.isNotBlank(procDefId)){
-			procDefKey = StringUtils.split(procDefId, ":")[0];
-		}
-		return procDefKey;
+	public Date getBeginDate() {
+		return beginDate;
 	}
 
-	public void setProcDefKey(String procDefKey) {
-		this.procDefKey = procDefKey;
+	public void setBeginDate(Date beginDate) {
+		this.beginDate = beginDate;
 	}
 
-	/**
-	 * 获取过去的任务历时
-	 * @return
-	 */
-	public String getDurationTime(){
-		if (histIns!=null && histIns.getDurationInMillis() != null){
-			return TimeUtils.toTimeString(histIns.getDurationInMillis());
-		}
-		return "";
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getProcDefName() {
+		return procDefName;
+	}
+
+	public void setProcDefName(String procDefName) {
+		this.procDefName = procDefName;
+	}
+
+	public Integer getProcDefVersion() {
+		return procDefVersion;
+	}
+
+	public void setProcDefVersion(Integer procDefVersion) {
+		this.procDefVersion = procDefVersion;
+	}
+
+	public Date getTaskCreateTime() {
+		return taskCreateTime;
+	}
+
+	public void setTaskCreateTime(Date taskCreateTime) {
+		this.taskCreateTime = taskCreateTime;
+	}
+
+	public String getFormKey() {
+		return formKey;
+	}
+
+	public void setFormKey(String formKey) {
+		this.formKey = formKey;
 	}
 
 	/**

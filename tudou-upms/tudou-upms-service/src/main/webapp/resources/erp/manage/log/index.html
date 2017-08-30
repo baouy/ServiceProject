@@ -19,7 +19,9 @@
 		height:'95%',
 		columns: [{name:'description', width:'150',align : 'center', label:'操作'},
 			{name:'username', width:'150',align : 'center', label:'操作用户'},
-			{name:'startTime', width:'150',align : 'center', label:'操作时间'},
+			{name:'startTime', width:'150',align : 'center', label:'操作时间',render:function(value){
+				return timetrans(value);
+			}},
 			{name:'spendTime', width:'150',align : 'center', label:'耗时'},
 			{name:'url', width:'150',align : 'center', label:'请求路径'},
 			{name:'method', width:'150',align : 'center', label:'请求类型'},

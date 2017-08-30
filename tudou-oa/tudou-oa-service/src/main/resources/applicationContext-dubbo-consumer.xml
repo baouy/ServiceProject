@@ -23,6 +23,9 @@
     <!-- 用户详情 -->
     <dubbo:reference id="oaViewUserService" interface="com.tudou.oa.rpc.api.OaViewUserService" mock="true"/>
 
+    <!-- 请假 -->
+    <dubbo:reference id="oaLeaveService" interface="com.tudou.oa.rpc.api.OaLeaveService" mock="true"/>
+
     <!-- 用户 -->
     <dubbo:reference id="upmsUserService" interface="com.tudou.upms.rpc.api.UpmsUserService" mock="true"/>
 
@@ -37,5 +40,7 @@
 
     <!-- 接口服务 -->
     <dubbo:reference id="upmsApiService" interface="com.tudou.upms.rpc.api.UpmsApiService" mock="true"/>
+
+
 
 </beans>

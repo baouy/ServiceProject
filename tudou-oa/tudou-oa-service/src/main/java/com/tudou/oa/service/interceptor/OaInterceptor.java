@@ -2,6 +2,7 @@ package com.tudou.oa.service.interceptor;
 
 import com.tudou.common.util.RedisUtil;
 import com.tudou.common.util.SerializeUtil;
+import com.tudou.common.util.TokenUtil;
 import com.tudou.oa.dao.model.OaViewUser;
 import com.tudou.oa.dao.model.OaViewUserExample;
 import com.tudou.oa.rpc.api.OaViewUserService;
@@ -42,8 +43,7 @@ public class OaInterceptor extends HandlerInterceptorAdapter {
 //            return true;
 //        }
 		// 登录信息
-		Subject subject = SecurityUtils.getSubject();
-		String username = (String) subject.getPrincipal();
+		String username = TokenUtil.getUserName();
 		if (RedisUtil.get(username.getBytes()) == null){
 			OaViewUserExample oaViewUserExample = new OaViewUserExample();
 			OaViewUserExample.Criteria  criteria = oaViewUserExample.createCriteria();

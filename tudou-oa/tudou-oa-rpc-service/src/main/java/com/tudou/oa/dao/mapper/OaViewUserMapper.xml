@@ -17,7 +17,7 @@
     <result column="department" jdbcType="VARCHAR" property="department" />
     <result column="department_id" jdbcType="VARCHAR" property="departmentId" />
     <result column="role" jdbcType="VARCHAR" property="role" />
-    <result column="role_id" jdbcType="CHAR" property="roleId" />
+    <result column="role_id" jdbcType="VARCHAR" property="roleId" />
     <result column="id_number" jdbcType="VARCHAR" property="idNumber" />
     <result column="id_address" jdbcType="VARCHAR" property="idAddress" />
     <result column="email" jdbcType="VARCHAR" property="email" />
@@ -119,7 +119,7 @@
       #{companyMobile,jdbcType=VARCHAR}, #{companyEmail,jdbcType=VARCHAR}, #{flowerName,jdbcType=VARCHAR}, 
       #{workNum,jdbcType=VARCHAR}, #{organization,jdbcType=VARCHAR}, #{organizationId,jdbcType=VARCHAR}, 
       #{department,jdbcType=VARCHAR}, #{departmentId,jdbcType=VARCHAR}, #{role,jdbcType=VARCHAR}, 
-      #{roleId,jdbcType=CHAR}, #{idNumber,jdbcType=VARCHAR}, #{idAddress,jdbcType=VARCHAR}, 
+      #{roleId,jdbcType=VARCHAR}, #{idNumber,jdbcType=VARCHAR}, #{idAddress,jdbcType=VARCHAR}, 
       #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.tudou.oa.dao.model.OaViewUser">
@@ -233,7 +233,7 @@
         #{role,jdbcType=VARCHAR},
       </if>
       <if test="roleId != null">
-        #{roleId,jdbcType=CHAR},
+        #{roleId,jdbcType=VARCHAR},
       </if>
       <if test="idNumber != null">
         #{idNumber,jdbcType=VARCHAR},
@@ -304,7 +304,7 @@
         role = #{record.role,jdbcType=VARCHAR},
       </if>
       <if test="record.roleId != null">
-        role_id = #{record.roleId,jdbcType=CHAR},
+        role_id = #{record.roleId,jdbcType=VARCHAR},
       </if>
       <if test="record.idNumber != null">
         id_number = #{record.idNumber,jdbcType=VARCHAR},
@@ -340,7 +340,7 @@
       department = #{record.department,jdbcType=VARCHAR},
       department_id = #{record.departmentId,jdbcType=VARCHAR},
       role = #{record.role,jdbcType=VARCHAR},
-      role_id = #{record.roleId,jdbcType=CHAR},
+      role_id = #{record.roleId,jdbcType=VARCHAR},
       id_number = #{record.idNumber,jdbcType=VARCHAR},
       id_address = #{record.idAddress,jdbcType=VARCHAR},
       email = #{record.email,jdbcType=VARCHAR},

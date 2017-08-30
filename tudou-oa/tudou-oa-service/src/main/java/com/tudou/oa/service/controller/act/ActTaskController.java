@@ -1,19 +1,19 @@
 package com.tudou.oa.service.controller.act;
 
 import com.tudou.common.base.BaseController;
+import com.tudou.common.util.TokenUtil;
 import com.tudou.oa.common.constant.OaResult;
 import com.tudou.oa.common.constant.OaResultConstant;
+import com.tudou.oa.dao.model.OaViewUser;
 import com.tudou.oa.service.controller.act.service.ActTaskService;
+import com.tudou.oa.service.modelvalid.ActHistoicFlowValid;
 import com.tudou.oa.service.modelvalid.ActTaskValid;
 import com.tudou.oa.service.modelvalid.ProcessValid;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -39,7 +39,6 @@ public class ActTaskController extends BaseController {
 		return new OaResult(OaResultConstant.SUCCESS,taskValids);
 	}
 
-
 	@ApiOperation(value = "流程列表")
 	@RequiresPermissions("oa:office:read")
 	@RequestMapping(value = "/process", method = RequestMethod.GET)
@@ -54,7 +53,7 @@ public class ActTaskController extends BaseController {
 		return new OaResult(OaResultConstant.SUCCESS,list,pc,ps,processValid.getMaxunum());
 	}
 
-	@ApiOperation(value = "流程列表")
+	@ApiOperation(value = "获取表单")
 	@RequiresPermissions("oa:office:edit")
 	@RequestMapping(value = "form")
 	@ResponseBody
@@ -64,9 +63,28 @@ public class ActTaskController extends BaseController {
 		if (formKey.equals("404") || StringUtils.isBlank(formKey)){
 			return new OaResult(OaResultConstant.FAILED,"没有表格开启,请联系管理员! 错误key为:"+formKey);
 		}else{
-			return new OaResult(OaResultConstant.SUCCESS,formKey);
+			act.setFormKey(formKey);
+			return new OaResult(OaResultConstant.SUCCESS,act);
 		}
+	}
 
+	@ApiOperation(value = "签收任务")
+	@RequiresPermissions("oa:office:read")
+	@RequestMapping(value = "claim")
+	@ResponseBody
+	public Object claim(String taskId) {
+		OaViewUser oaViewUser = (OaViewUser)TokenUtil.getUserObject();
+		actTaskService.claim(taskId,oaViewUser.getUserId().toString());
+		return new OaResult(OaResultConstant.SUCCESS,null);
+	}
+
+	@ApiOperation(value = "执行历史列表")
+	@RequestMapping(value = "histoicflow")
+	@RequiresPermissions("oa:office:read")
+	@ResponseBody
+	public Object histoicFlow(String ProcInsId, String startAct, String endAct){
+		List<ActHistoicFlowValid> histoicFlowList = actTaskService.histoicFlowList(ProcInsId, startAct, endAct);
+		return new OaResult(OaResultConstant.SUCCESS,histoicFlowList);
 	}
 
 }

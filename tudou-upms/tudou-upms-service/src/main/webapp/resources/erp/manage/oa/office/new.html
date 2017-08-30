@@ -28,7 +28,9 @@
 				}
 			}},
 			{name: 'version', width: '150', align: 'center', label: '版本号'},
-			{name: 'deploymentTime', width: '150', align: 'center', label: '创建时间'}
+			{name: 'deploymentTime', width: '150', align: 'center', label: '创建时间',render:function(value){
+				return timetrans(value);
+			}},
 		],
 		paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
 		fullGrid: true,
@@ -59,7 +61,8 @@
 			data: {procDefId: procDefId},
 			success: function(d) {
 				if (d.code == 1){
-					oa_office_dialog(name,d.data,500,400);
+					oa_office_data = d.data
+					oa_office_dialog(name,d.data.formKey,800,400);
 				}else{
 					$(this).alertmsg('warn',d.data);
 				}
@@ -69,17 +72,6 @@
 				$(this).alertmsg('warn',textStatus)
 				$('#oa_office_new_table').trigger('bjui.ajaxStop')
 			}
-		});
-	}
-
-
-	function oa_office_dialog(name,url,w,h) {
-		$(this).dialog({
-			title: name,
-			url: url,
-			width: w,
-			height: h,
-			mask: true
 		});
 	}
 
