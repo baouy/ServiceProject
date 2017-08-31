@@ -14,11 +14,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 流程个人任务相关Controller
@@ -101,5 +104,28 @@ public class ActTaskController extends BaseController {
 		List<ActTaskValid> taskValids = actTaskService.historicList(taskValid,pc,ps);
 		return new OaResult(OaResultConstant.SUCCESS,taskValids,pc,ps,taskValid.getMaxnum());
 	}
+
+	@ApiOperation(value = "删除任务")
+	@RequiresPermissions("oa:office:read")
+	@RequestMapping(value = "deleteTask")
+	@ResponseBody
+	public Object deleteTask(String taskId, String reason) {
+		actTaskService.deleteTask(taskId, reason);
+		return new OaResult(OaResultConstant.SUCCESS,null);
+	}
+
+	@ApiOperation(value = "读取带跟踪的图片")
+	@RequiresPermissions("oa:office:read")
+	@RequestMapping(value = "trace/photo/{procDefId}/{execId}")
+	public void tracePhoto(@PathVariable("procDefId") String procDefId, @PathVariable("execId") String execId, HttpServletResponse response) throws Exception {
+		InputStream imageStream = actTaskService.tracePhoto(procDefId, execId);
+		// 输出资源内容到相应对象
+		byte[] b = new byte[1024];
+		int len;
+		while ((len = imageStream.read(b, 0, 1024)) != -1) {
+			response.getOutputStream().write(b, 0, len);
+		}
+	}
+
 
 }

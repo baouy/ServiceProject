@@ -87,6 +87,7 @@ public class ActLeaveServiceImpl implements ActLeaveService{
 			// 启动流程
 			String businessKey = oaLeave.getId().toString();
 			Map<String, Object> variables = Maps.newHashMap();
+			variables.put("title",name+"[请假单]");
 			variables.put("type", "leave");
 			variables.put("busId", businessKey);
 			ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(PD_LEAVE[0], businessKey, variables);

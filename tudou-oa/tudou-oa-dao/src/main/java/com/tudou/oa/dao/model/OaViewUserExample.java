@@ -887,7 +887,7 @@ public class OaViewUserExample implements Serializable {
             return (Criteria) this;
         }
 
-        public Criteria andOrganizationIdIn(List<String> values) {
+        public Criteria andOrganizationIdIn(List<Integer> values) {
             addCriterion("organization_id in", values, "organizationId");
             return (Criteria) this;
         }

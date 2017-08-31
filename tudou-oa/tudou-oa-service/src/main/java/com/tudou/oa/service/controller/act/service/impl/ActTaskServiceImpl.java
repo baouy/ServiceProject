@@ -12,28 +12,38 @@ import com.tudou.oa.service.modelvalid.ActTaskValid;
 import com.tudou.oa.service.modelvalid.ProcessValid;
 import com.tudou.upms.dao.model.UpmsUser;
 import com.tudou.upms.rpc.api.UpmsUserService;
+import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.*;
+import org.activiti.engine.delegate.Expression;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.history.HistoricTaskInstanceQuery;
+import org.activiti.engine.impl.RepositoryServiceImpl;
+import org.activiti.engine.impl.bpmn.behavior.UserTaskActivityBehavior;
+import org.activiti.engine.impl.context.Context;
+import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
+import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
+import org.activiti.engine.impl.pvm.delegate.ActivityBehavior;
+import org.activiti.engine.impl.pvm.process.ActivityImpl;
+import org.activiti.engine.impl.task.TaskDefinition;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
+import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.activiti.spring.ProcessEngineFactoryBean;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
+import java.util.*;
 
 
 /**
@@ -47,7 +57,6 @@ public class ActTaskServiceImpl implements ActTaskService{
 
 	@Autowired
 	private ProcessEngineFactoryBean processEngineFactory;
-	
 	@Autowired
 	private ProcessEngine processEngine;
 	@Autowired
@@ -99,6 +108,7 @@ public class ActTaskServiceImpl implements ActTaskService{
 			e.setTaskId(task.getId());
 			e.setTaskDefKey(task.getTaskDefinitionKey());
 			e.setTaskCreateTime(task.getCreateTime());
+			e.setExecutionId(task.getExecutionId());
 			e.setProcInsId(task.getProcessInstanceId());
 			e.setProcDefId(task.getProcessDefinitionId());
 			e.setVars(task.getProcessVariables());
@@ -133,6 +143,7 @@ public class ActTaskServiceImpl implements ActTaskService{
 			e.setTaskId(task.getId());
 			e.setTaskDefKey(task.getTaskDefinitionKey());
 			e.setTaskCreateTime(task.getCreateTime());
+			e.setExecutionId(task.getExecutionId());
 			e.setProcInsId(task.getProcessInstanceId());
 			e.setProcDefId(task.getProcessDefinitionId());
 			e.setVars(task.getProcessVariables());
@@ -407,6 +418,7 @@ public class ActTaskServiceImpl implements ActTaskService{
 			e.setProcDefId(histTask.getProcessDefinitionId());
 			e.setProcInsId(histTask.getProcessInstanceId());
 			e.setTaskDefKey(histTask.getTaskDefinitionKey());
+			e.setExecutionId(histTask.getExecutionId());
 			e.setEndDate(histTask.getEndTime());
 			ProcessDefinition processDefinition = ProcessDefCache.get(histTask.getProcessDefinitionId());
 			e.setProcDefName(processDefinition.getName());
@@ -418,5 +430,30 @@ public class ActTaskServiceImpl implements ActTaskService{
 
 		return actList;
 	}
+
+
+	@Transactional(readOnly = false)
+	public void deleteTask(String taskId, String deleteReason){
+		taskService.deleteTask(taskId, deleteReason);
+	}
+
+	/**
+	 * 读取带跟踪的图片
+	 * @param executionId	环节ID
+	 * @return	封装了各种节点信息
+	 */
+	public InputStream tracePhoto(String processDefinitionId, String executionId) {
+		BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
+		List<String> activeActivityIds = Lists.newArrayList();
+		if (runtimeService.createExecutionQuery().executionId(executionId).count() > 0){
+			activeActivityIds = runtimeService.getActiveActivityIds(executionId);
+		}
+		// 使用spring注入引擎请使用下面的这行代码
+		Context.setProcessEngineConfiguration(processEngineFactory.getProcessEngineConfiguration());
+		return processEngine.getProcessEngineConfiguration().getProcessDiagramGenerator()
+				.generateDiagram(bpmnModel, "png", activeActivityIds);
+	}
+
+
 
 }

@@ -6,6 +6,7 @@ import com.tudou.oa.service.modelvalid.ProcessValid;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -76,4 +77,18 @@ public interface ActTaskService{
 	 */
 	public List<ActTaskValid> historicList(ActTaskValid act, int pc, int ps);
 
+	/**
+	 * 删除任务
+	 * @param taskId 任务ID
+	 * @param deleteReason 删除原因
+	 */
+	public void deleteTask(String taskId, String deleteReason);
+
+
+	/**
+	 * 读取带跟踪的图片
+	 * @param executionId	环节ID
+	 * @return	封装了各种节点信息
+	 */
+	public InputStream tracePhoto(String processDefinitionId, String executionId);
 }

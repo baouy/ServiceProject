@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.oracle.jrockit.jfr.Transition.To;
+
 /**
  * Created by DavidWang on 2017/6/16.
  */
@@ -43,13 +45,12 @@ public class OaInterceptor extends HandlerInterceptorAdapter {
 //            return true;
 //        }
 		// 登录信息
-		String username = TokenUtil.getUserName();
-		if (RedisUtil.get(username.getBytes()) == null){
+		if (TokenUtil.getUserObject() == null){
 			OaViewUserExample oaViewUserExample = new OaViewUserExample();
 			OaViewUserExample.Criteria  criteria = oaViewUserExample.createCriteria();
-			criteria.andUsernameEqualTo(username);
-			OaViewUser oaViewUser = oaViewUserService.selectByExample(oaViewUserExample).get(0);
-			RedisUtil.set(username.getBytes(), SerializeUtil.serialize(oaViewUser), 1800);
+			criteria.andUsernameEqualTo(TokenUtil.getUserName());
+			OaViewUser oaViewUser = oaViewUserService.selectFirstByExample(oaViewUserExample);
+			RedisUtil.set(TokenUtil.getUserName().getBytes(), SerializeUtil.serialize(oaViewUser), 1800);
 		}
 		return true;
 	}

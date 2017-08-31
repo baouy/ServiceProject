@@ -1,6 +1,7 @@
 /**
  * Created by DavidWang on 2017/8/26.
  */
+var dialog_src
 function timetrans(date){
     var date = new Date(date);//如果date为13位不需要乘1000
     var Y = date.getFullYear() + '-';

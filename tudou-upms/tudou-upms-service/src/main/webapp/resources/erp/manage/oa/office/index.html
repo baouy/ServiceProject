@@ -31,9 +31,11 @@
 				var oa_office_url = '/act/task/claim?taskId='+d.taskId
 				if (d.assignee != null){
 					name = '任务办理'
-					oa_office_url = '/act/task/form?taskId='+d.taskId+'&taskName='+d.taskName+'&taskDefKey='+d.taskDefKey+'&procInsId='+d.procInsId+'&procDefId='+d.procDefId+'&status='+d.status
+					oa_office_url = '/act/task/form?taskId='+d.taskId+'&taskName='+d.taskName+'&taskDefKey='+d.taskDefKey+'&procInsId='+d.procInsId+'&procDefId='+d.procDefId+'&status='+d.status+'&executionId='+d.executionId
 				}
-				var track_url = '/act/diagram-viewer/index.html?processDefinitionId=' + d.procDefId + '&processInstanceId=' + d.procInsId;
+//				var track_url = '/act/diagram-viewer/index.html?processDefinitionId=' + d.procDefId + '&processInstanceId=' + d.procInsId;
+				var track_url = '/act/task/trace/photo/'+d.procDefId+'/'+d.executionId
+
 				var content = '<button type="button" style="font-size: 12px;" class="btn btn-green edit" onclick="oa_office_onclick(\''+oa_office_url+'\',\''+name+'\')"><i class="fa fa-edit"></i> '+name+' </button>'
 						+'<button type="button" style="font-size: 12px;margin-left: 5px;" class="btn btn-green edit" onclick="oa_office_tracking_onclick(\''+track_url+'\')"><i class="fa fa-edit"></i> 追踪 </button>'
 
@@ -76,7 +78,6 @@
 				}
 			});
 		}else{
-			console.log($.cookie("tudou-oa-server") + url);
 			$.ajax({
 				url: $.cookie("tudou-oa-server") + url,
 				dataType: 'json',
@@ -88,7 +89,7 @@
 						return;
 					}
 					oa_office_data = d.data
-					oa_office_dialog(d.data.taskName,d.data.formKey,800,700);
+					oa_office_dialog(d.data.taskName,d.data.formKey,800,800);
 				},
 				error: function () {
 					$('#oa_office_wait_table').trigger('bjui.ajaxStop')
@@ -98,9 +99,10 @@
 		}
 
 	}
-	
+
 	function oa_office_tracking_onclick(url) {
-		window.open($.cookie("tudou-oa-server") + url)
+		dialog_src = $.cookie("tudou-oa-server") + url
+		oa_office_dialog('流程图','/resources/erp/manage/activiti/dialog.html',800,500)
 	}
 
 	function oa_office_changeValue(num) {

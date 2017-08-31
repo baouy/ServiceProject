@@ -2,7 +2,7 @@
 
 	function login_saveCalback(d) {
 		if (d.code == 1){
-
+			$.cookie("flowerName",$("#login_username").val())
 			BJUI.dialog('closeCurrent',this);
 			$(this).alertmsg('ok','登录成功');
 			window.location.reload();

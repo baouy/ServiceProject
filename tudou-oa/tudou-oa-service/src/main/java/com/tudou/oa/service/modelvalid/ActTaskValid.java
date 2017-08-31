@@ -65,6 +65,7 @@ public class ActTaskValid extends BaseModelValid{
 
 	private Long edate;
 
+	private String executionId;
 
 	private long maxnum;
 
@@ -263,6 +264,14 @@ public class ActTaskValid extends BaseModelValid{
 
 	public void setEdate(Long edate) {
 		this.edate = edate;
+	}
+
+	public String getExecutionId() {
+		return executionId;
+	}
+
+	public void setExecutionId(String executionId) {
+		this.executionId = executionId;
 	}
 
 	/**
