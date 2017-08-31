@@ -16,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -85,6 +87,19 @@ public class ActTaskController extends BaseController {
 	public Object histoicFlow(String ProcInsId, String startAct, String endAct){
 		List<ActHistoicFlowValid> histoicFlowList = actTaskService.histoicFlowList(ProcInsId, startAct, endAct);
 		return new OaResult(OaResultConstant.SUCCESS,histoicFlowList);
+	}
+
+	@ApiOperation(value = "获取已办任务")
+	@RequestMapping(value = "historic")
+	@RequiresPermissions("oa:office:read")
+	@ResponseBody
+	public Object historicList(ActTaskValid taskValid) throws Exception {
+
+		int pc = taskValid.getPageCurrent();
+		int ps = taskValid.getPageSize();
+
+		List<ActTaskValid> taskValids = actTaskService.historicList(taskValid,pc,ps);
+		return new OaResult(OaResultConstant.SUCCESS,taskValids,pc,ps,taskValid.getMaxnum());
 	}
 
 }

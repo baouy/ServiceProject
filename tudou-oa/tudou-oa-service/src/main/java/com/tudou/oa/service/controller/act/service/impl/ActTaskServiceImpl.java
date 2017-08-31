@@ -15,6 +15,8 @@ import com.tudou.upms.rpc.api.UpmsUserService;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.HistoricTaskInstanceQuery;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
@@ -29,10 +31,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.shiro.web.filter.mgt.DefaultFilter.user;
 
 /**
  * 流程定义相关Service
@@ -81,11 +83,11 @@ public class ActTaskServiceImpl implements ActTaskService{
 		if (StringUtils.isNotBlank(act.getProcDefKey())){
 			todoTaskQuery.processDefinitionKey(act.getProcDefKey());
 		}
-		if (act.getBeginDate() != null){
-			todoTaskQuery.taskCreatedAfter(act.getBeginDate());
+		if (act.getBdate() != null){
+			todoTaskQuery.taskCreatedAfter(new Date(act.getBdate()));
 		}
-		if (act.getEndDate() != null){
-			todoTaskQuery.taskCreatedBefore(act.getEndDate());
+		if (act.getEdate() != null){
+			todoTaskQuery.taskCreatedBefore(new Date(act.getEdate()));
 		}
 
 		// 查询列表
@@ -375,5 +377,46 @@ public class ActTaskServiceImpl implements ActTaskService{
 		return actList;
 	}
 
+	public List<ActTaskValid> historicList(ActTaskValid act, int pc, int ps){
+		OaViewUser oaViewUser = (OaViewUser) TokenUtil.getUserObject();
+		HistoricTaskInstanceQuery histTaskQuery = historyService.createHistoricTaskInstanceQuery().taskAssignee(oaViewUser.getUserId().toString()).finished()
+				.includeProcessVariables().orderByHistoricTaskInstanceEndTime().desc();
+
+		// 设置查询条件
+		if (StringUtils.isNotBlank(act.getProcDefKey())){
+			histTaskQuery.processDefinitionKey(act.getProcDefKey());
+		}
+		if (act.getBdate() != null){
+			histTaskQuery.taskCompletedAfter(new Date(act.getBdate()));
+		}
+		if (act.getEdate() != null){
+			histTaskQuery.taskCompletedBefore(new Date(act.getEdate()));
+		}
+
+		// 查询总数
+		act.setMaxnum(histTaskQuery.count());
+
+		// 查询列表
+		List<HistoricTaskInstance> histList = histTaskQuery.listPage(pc, ps);
+		//处理分页问题
+		List<ActTaskValid> actList=Lists.newArrayList();
+		for (HistoricTaskInstance histTask : histList) {
+			ActTaskValid e = new ActTaskValid();
+			e.setTaskId(histTask.getId());
+			e.setTaskName(histTask.getName());
+			e.setProcDefId(histTask.getProcessDefinitionId());
+			e.setProcInsId(histTask.getProcessInstanceId());
+			e.setTaskDefKey(histTask.getTaskDefinitionKey());
+			e.setEndDate(histTask.getEndTime());
+			ProcessDefinition processDefinition = ProcessDefCache.get(histTask.getProcessDefinitionId());
+			e.setProcDefName(processDefinition.getName());
+			e.setProcDefVersion(processDefinition.getVersion());
+			e.setVars(histTask.getProcessVariables());
+			e.setStatus("finish");
+			actList.add(e);
+		}
+
+		return actList;
+	}
 
 }

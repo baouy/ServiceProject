@@ -69,4 +69,11 @@ public interface ActTaskService{
 	 */
 	public List<ActHistoicFlowValid> histoicFlowList(String procInsId, String startAct, String endAct);
 
+
+	/**
+	 * 获取已办任务
+	 * @return
+	 */
+	public List<ActTaskValid> historicList(ActTaskValid act, int pc, int ps);
+
 }

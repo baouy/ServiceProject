@@ -125,13 +125,13 @@ $(function () {
                     //系统菜单
                     for (var data of d.data.upmsSystems) {
                         $.cookie(data.name, data.basepath, {path: '/'});
-                        $menuBar.append('<li class="" id ="top_menu_' + data.systemId + '"><a href="javascript:;" data-toggle="slidebar">' + data.title + '</a>');
+                        $menuBar.append('<li class=""  id ="top_menu_' + data.systemId + '" ><a href="javascript:;" class="fa fa-first-order" data-toggle="slidebar"> ' + data.title + ' </a>');
                     }
 
                     //菜单
                     for (var data of d.data.upmsPermissions) {
                         if (data.type == 1) {
-                            $("#top_menu_" + data.systemId).append('<div class="items hide"><ul id="menu_' + data.permissionId + '"class="menu-items" data-faicon="fa fa-align-justify" data-faicon="' + "star-o" + '" data-tit="' + data.name + '"></ul></div>')
+                            $("#top_menu_" + data.systemId).append('<div class="items hide"><ul id="menu_' + data.permissionId + '"class="menu-items" data-faicon="list" data-tit="' + data.name + '"></ul></div>')
                         }
                         if (data.type == 3){
                             user_data.push(data)
@@ -141,7 +141,7 @@ $(function () {
                     //子项
                     for (var data of d.data.upmsPermissions) {
                         if (data.type == 2) {
-                            var _thisMenu = '<li><a href="' + data.uri + '" data-toggle="navtab" data-options="{id:\'form-input_' + data.permissionId + '\', faicon:\'th-large\'}">' + data.name + '</a></li>';
+                            var _thisMenu = '<li><a href="' + data.uri + '" data-toggle="navtab" data-options="{id:\'form-input_' + data.permissionId + '\', faicon:\'list-ul\'}">' + data.name + '</a></li>';
                             $("#menu_" + data.pid).append(_thisMenu);
                         }
                     }

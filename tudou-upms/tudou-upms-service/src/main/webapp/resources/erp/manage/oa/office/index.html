@@ -1,6 +1,6 @@
 <script>
 
-	var toolbarCustom_oa_office_btn = '<div style="margin: 5px;"><label class="control-label">创建时间：</label><span class="wrap_bjui_btn_box"style="position: relative; display: inline-block;"><input type="text" id="oa_office_start_time" data-toggle="datepicker" size="15" class="form-control" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href="javascript:;" data-toggle="datepickerbtn" style="height: 22px; line-height: 22px;"><i class="fa fa-calendar"></i></a></span><label class="control-label">—</label><span class="wrap_bjui_btn_box" style="position: relative; display: inline-block;"><input type="text" id="oa_office_end_time" data-toggle="datepicker" size="15" class="form-control" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href="javascript:;" data-toggle="datepickerbtn" style="height: 22px; line-height: 22px;"><i class="fa fa-calendar"></i></a></span> <button type="button" style="margin-left: 5px;" class="btn btn-green" onclick="oa_office_seletct()"><i class="fa fa-edit"></i> 查询 </button> <button type="button" style="margin-left: 5px;" class="btn btn-green" onclick="oa_office_seletct_clear()"><i class="fa fa-edit"></i> 刷新 </button></div>'
+	var toolbarCustom_oa_office_btn = '<div style="margin: 5px;"><label class="control-label">创建时间：</label><span class="wrap_bjui_btn_box"style="position: relative; display: inline-block;"><input type="text" id="oa_office_start_time" data-toggle="datepicker" size="15" class="form-control" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href="javascript:;" data-toggle="datepickerbtn" style="height: 22px; line-height: 22px;"><i class="fa fa-calendar"></i></a></span><label class="control-label">—</label><span class="wrap_bjui_btn_box" style="position: relative; display: inline-block;"><input type="text" id="oa_office_end_time" data-toggle="datepicker" size="15" class="form-control" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href="javascript:;" data-toggle="datepickerbtn" style="height: 22px; line-height: 22px;"><i class="fa fa-calendar"></i></a></span> <button type="button" style="margin-left: 5px;" class="btn btn-green" onclick="oa_office_seletct(1)"><i class="fa fa-edit"></i> 查询 </button> <button type="button" style="margin-left: 5px;" class="btn btn-green" onclick="oa_office_seletct_clear(1)"><i class="fa fa-edit"></i> 重置 </button></div>'
 
 	var oa_office_datagrid_data = {
 		local: 'remote',
@@ -76,6 +76,7 @@
 				}
 			});
 		}else{
+			console.log($.cookie("tudou-oa-server") + url);
 			$.ajax({
 				url: $.cookie("tudou-oa-server") + url,
 				dataType: 'json',
@@ -105,21 +106,65 @@
 	function oa_office_changeValue(num) {
 		setTimeout(function () {
 			if (num == 0) {
+				$('#oa_office_wait_table').datagrid('refresh_url',$.cookie("tudou-oa-server") + '/act/task/todo')
 				$('#oa_office_wait_table').datagrid('refresh_part');
 			} else if (num == 1) {
-
+				$('#oa_office_wait_table').datagrid('refresh_url',$.cookie("tudou-oa-server") + '/act/task/historic')
+				$('#oa_office_complete_table').datagrid('refresh_part');
 			} else if (num == 2) {
 				$('#oa_office_new_table').datagrid('refresh_part');
 			}
 		}, 300);
 	}
 
-	function oa_office_seletct() {
+	function oa_office_seletct(num) {
+		var starttime = '',endtime = ''
+		if (num == 1){
+			if ($('#oa_office_start_time').val() != 0 || $('#oa_office_end_time').val() != 0){
+				if ($('#oa_office_start_time').val() != 0){
+					starttime =  new Date($('#oa_office_start_time').val()).getTime()
+				}
+				if ($('#oa_office_end_time').val() != 0){
+					endtime = new Date($('#oa_office_end_time').val()).getTime()
+				}
+				$('#oa_office_wait_table').datagrid('refresh_url',$.cookie("tudou-oa-server") + '/act/task/todo?bdate='+starttime+"&edate="+endtime)
+				$('#oa_office_wait_table').datagrid('refresh_part')
+			}
+		}else{
+
+			if ($('#oa_office_complete_start_time').val() != 0 || $('#oa_office_complete_end_time').val() != 0){
+				if ($('#oa_office_complete_start_time').val() != 0){
+					starttime =  new Date($('#oa_office_complete_start_time').val()).getTime()
+				}
+				if ($('#oa_office_complete_end_time').val() != 0){
+					endtime = new Date($('#oa_office_complete_end_time').val()).getTime()
+				}
+				$('#oa_office_complete_table').datagrid('refresh_url',$.cookie("tudou-oa-server") + '/act/task/historic?bdate='+new Date(starttime).getTime()+"&edate="+new Date(endtime).getTime())
+				$('#oa_office_complete_table').datagrid('refresh_part')
+			}
+
+		}
+
 
 	}
 
-	function oa_office_seletct_clear() {
+	function oa_office_seletct_clear(num) {
+		if (num == 1){
+			if ($('#oa_office_start_time').val() != 0 || $('#oa_office_end_time').val() != 0){
+				$('#oa_office_start_time').val('')
+				$('#oa_office_end_time').val('')
+				$('#oa_office_wait_table').datagrid('refresh_url',$.cookie("tudou-oa-server") + '/act/task/todo')
+				$('#oa_office_wait_table').datagrid('refresh_part');
+			}
 
+		}else{
+			if ($('#oa_office_complete_start_time').val() != 0 || $('#oa_office_complete_end_time').val() != 0) {
+				$('#oa_office_complete_start_time').val('')
+				$('#oa_office_complete_end_time').val('')
+				$('#oa_office_wait_table').datagrid('refresh_url', $.cookie("tudou-oa-server") + '/act/task/historic')
+				$('#oa_office_complete_table').datagrid('refresh_part');
+			}
+		}
 	}
 
 	function oa_office_dialog(name,url,w,h) {

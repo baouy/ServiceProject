@@ -61,6 +61,13 @@ public class ActTaskValid extends BaseModelValid{
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date endDate;	// 结束查询日期
 
+	private Long bdate;
+
+	private Long edate;
+
+
+	private long maxnum;
+
 
 	public String getTaskId() {
 		return taskId;
@@ -232,6 +239,30 @@ public class ActTaskValid extends BaseModelValid{
 
 	public void setFormKey(String formKey) {
 		this.formKey = formKey;
+	}
+
+	public long getMaxnum() {
+		return maxnum;
+	}
+
+	public void setMaxnum(long maxnum) {
+		this.maxnum = maxnum;
+	}
+
+	public Long getBdate() {
+		return bdate;
+	}
+
+	public void setBdate(Long bdate) {
+		this.bdate = bdate;
+	}
+
+	public Long getEdate() {
+		return edate;
+	}
+
+	public void setEdate(Long edate) {
+		this.edate = edate;
 	}
 
 	/**

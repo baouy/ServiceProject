@@ -1,0 +1,55 @@
+<script>
+
+	var toolbarCustom_oa_complete_office_btn = '<div style="margin: 5px;"><label class="control-label">创建时间：</label><span class="wrap_bjui_btn_box"style="position: relative; display: inline-block;"><input type="text" id="oa_office_complete_start_time" data-toggle="datepicker" size="15" class="form-control" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href="javascript:;" data-toggle="datepickerbtn" style="height: 22px; line-height: 22px;"><i class="fa fa-calendar"></i></a></span><label class="control-label">—</label><span class="wrap_bjui_btn_box" style="position: relative; display: inline-block;"><input type="text" id="oa_office_complete_end_time" data-toggle="datepicker" size="15" class="form-control" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href="javascript:;" data-toggle="datepickerbtn" style="height: 22px; line-height: 22px;"><i class="fa fa-calendar"></i></a></span> <button type="button" style="margin-left: 5px;" class="btn btn-green" onclick="oa_office_seletct(2)"><i class="fa fa-edit"></i> 查询 </button> <button type="button" style="margin-left: 5px;" class="btn btn-green" onclick="oa_office_seletct_clear(2)"><i class="fa fa-edit"></i> 重置 </button></div>'
+
+	var oa_office_complete_datagrid_data = {
+		local: 'remote',
+		dataUrl: $.cookie("tudou-oa-server") + '/act/task/historic',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterThead: false,
+		height: '93%',
+		columns: [
+			{
+				width: '150', align: 'center', label: '标题', render: function (value, d) {
+				var name = d.vars.map.title ? d.vars.map.title : d.taskId
+				return name;
+			}
+			},
+			{width: '150', name: 'taskName', align: 'center', label: '当前环节'},
+			{width: '150', name: 'procDefName', align: 'center', label: '流程名称'},
+			{
+				width: '150', name: 'procDefVersion', align: 'center', label: '流程版本', render: function (value, d) {
+				return 'V:' + value
+			}
+			},
+			{width: '150', name: 'endDate', align: 'center', label: '完成时间'},
+			{
+				width: '150', align: 'center', label: '操作', render: function (value, d) {
+
+					var oa_office_url = '/act/task/form?taskId='+d.taskId+'&taskName='+d.taskName+'&taskDefKey='+d.taskDefKey+'&procInsId='+d.procInsId+'&procDefId='+d.procDefId+'&status='+d.status
+					var name = ''
+				var track_url = '/act/diagram-viewer/index.html?processDefinitionId=' + d.procDefId + '&processInstanceId=' + d.procInsId;
+
+				var content = '<button type="button" style="font-size: 12px;" class="btn btn-green edit" onclick="oa_office_onclick(\''+oa_office_url+'\',\''+name+'\')"><i class="fa fa-edit"></i> 详情 </button>'
+						+'<button type="button" style="font-size: 12px;margin-left: 5px;" class="btn btn-green edit" onclick="oa_office_tracking_onclick(\''+track_url+'\')"><i class="fa fa-edit"></i> 历史 </button>'
+
+				return content;
+			}
+			}
+		],
+		paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+		fullGrid: true,
+		showToolbar: true,
+		toolbarCustom: toolbarCustom_oa_complete_office_btn,
+//		dblOnClick: 'oa_office_onclick',
+	}
+
+	$('#oa_office_complete_table').datagrid(oa_office_complete_datagrid_data);
+
+	
+</script>
+
+
+<table id="oa_office_complete_table" class="table table-hover" data-width="100%"></table>

@@ -79,7 +79,6 @@
 								$("#oa_office_s_" + i).val(timetrans(d.data[i]))
 								break;
 							case 'endTime':
-								console.log(timetrans(d.data[i]));
 								$("#oa_office_s_" + i).val(timetrans(d.data[i]))
 								break;
 							case 'leaveType':
@@ -125,6 +124,12 @@
 
 		$('#oa_office_histoicflow_table').datagrid(oa_office_histoicflow_datagrid_data);
 
+
+		if (oa_office_data.status == 'finish'){
+			$('#oa_office_remarks').attr("readonly","true")
+			$('#oa_office_cancel').fadeOut()
+			$('#oa_office_sure').fadeOut()
+		}
 	}
 
 	function oa_office_s_from_back(d) {
@@ -226,8 +231,7 @@
 
 	<div style="margin-top: 20px;">
 		<table id="oa_office_histoicflow_table" class="table table-hover"  data-width="100%"></table>
-
-		</div>
+	</div>
 
 </div>
 
@@ -239,10 +243,10 @@
 			<button type="button" class="btn-close" data-icon="close">取消</button>
 		</li>
 		<li>
-			<button id="oa_office_cancel" type="button" class="btn-default" data-icon="save" onclick="oa_office_rejected()" style="display: none;" >驳回</button>
+			<button id="oa_office_cancel" type="button" class="btn-orange" data-icon="undo" onclick="oa_office_rejected()" style="display: none;" >驳回</button>
 		</li>
 		<li>
-			<button id="oa_office_sure" type="button" class="btn-default" data-icon="save" onclick="oa_office_s_onclick()">保存</button>
+			<button id="oa_office_sure" type="button" class="btn-green" data-icon="save" onclick="oa_office_s_onclick()">保存</button>
 		</li>
 	</ul>
 </div>
