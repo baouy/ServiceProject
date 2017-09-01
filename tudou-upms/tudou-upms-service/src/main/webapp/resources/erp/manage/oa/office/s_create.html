@@ -62,7 +62,7 @@
 		$('#oa_office_s_endTime').attr("readonly","true")
 		$('#oa_office_reason').attr("readonly","true")
 
-		$('#oa_office_create_img').attr('src',$.cookie("tudou-oa-server")+'/act/task/trace/photo/'+oa_office_data.procDefId+'/'+oa_office_data.executionId)
+		$('#oa_office_create_img').attr('src',$.cookie("tudou-oa-server")+'/act/task/trace/photo/'+oa_office_data.procDefId+'/'+oa_office_data.executionId+"?t="+new Date().getTime())
 
 		$('#oa_office_content').trigger('bjui.ajaxStart')
 		$.ajax({

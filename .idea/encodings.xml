@@ -2,10 +2,19 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/tudou-activiti" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/todou-mes" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-ap" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-common" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-crm" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-gen" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-gen" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-gen/tudou-gen-client" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-gen/tudou-gen-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-gen/tudou-gen-dao" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-gen/tudou-gen-rpc-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-gen/tudou-gen-rpc-service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-gen/tudou-gen-service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-mq-task" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-mweb" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-oa" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-oa/tudou-oa-common" charset="UTF-8" />
@@ -21,6 +30,7 @@
     <file url="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-rpc-api" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-rpc-service" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tudou-scheduler" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-ucenter" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-common" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-dao" charset="UTF-8" />

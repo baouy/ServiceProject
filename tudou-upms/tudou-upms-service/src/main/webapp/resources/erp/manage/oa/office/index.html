@@ -34,7 +34,7 @@
 					oa_office_url = '/act/task/form?taskId='+d.taskId+'&taskName='+d.taskName+'&taskDefKey='+d.taskDefKey+'&procInsId='+d.procInsId+'&procDefId='+d.procDefId+'&status='+d.status+'&executionId='+d.executionId
 				}
 //				var track_url = '/act/diagram-viewer/index.html?processDefinitionId=' + d.procDefId + '&processInstanceId=' + d.procInsId;
-				var track_url = '/act/task/trace/photo/'+d.procDefId+'/'+d.executionId
+				var track_url = '/act/task/trace/photo/'+d.procDefId+'/'+d.executionId+"?t="+new Date().getTime()
 
 				var content = '<button type="button" style="font-size: 12px;" class="btn btn-green edit" onclick="oa_office_onclick(\''+oa_office_url+'\',\''+name+'\')"><i class="fa fa-edit"></i> '+name+' </button>'
 						+'<button type="button" style="font-size: 12px;margin-left: 5px;" class="btn btn-green edit" onclick="oa_office_tracking_onclick(\''+track_url+'\')"><i class="fa fa-edit"></i> 追踪 </button>'

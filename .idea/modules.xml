@@ -2,10 +2,18 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/todou-mes/todou-mes.iml" filepath="$PROJECT_DIR$/todou-mes/todou-mes.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou.iml" filepath="$PROJECT_DIR$/tudou.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-ap/tudou-ap.iml" filepath="$PROJECT_DIR$/tudou-ap/tudou-ap.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-common/tudou-common.iml" filepath="$PROJECT_DIR$/tudou-common/tudou-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-crm/tudou-crm.iml" filepath="$PROJECT_DIR$/tudou-crm/tudou-crm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-gen/tudou-gen.iml" filepath="$PROJECT_DIR$/tudou-gen/tudou-gen.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-gen/tudou-gen-common/tudou-gen-common.iml" filepath="$PROJECT_DIR$/tudou-gen/tudou-gen-common/tudou-gen-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-gen/tudou-gen-dao/tudou-gen-dao.iml" filepath="$PROJECT_DIR$/tudou-gen/tudou-gen-dao/tudou-gen-dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-gen/tudou-gen-rpc-api/tudou-gen-rpc-api.iml" filepath="$PROJECT_DIR$/tudou-gen/tudou-gen-rpc-api/tudou-gen-rpc-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-gen/tudou-gen-rpc-service/tudou-gen-rpc-service.iml" filepath="$PROJECT_DIR$/tudou-gen/tudou-gen-rpc-service/tudou-gen-rpc-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-gen/tudou-gen-service/tudou-gen-service.iml" filepath="$PROJECT_DIR$/tudou-gen/tudou-gen-service/tudou-gen-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-mq-task/tudou-mq-task.iml" filepath="$PROJECT_DIR$/tudou-mq-task/tudou-mq-task.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-mweb/tudou-mweb.iml" filepath="$PROJECT_DIR$/tudou-mweb/tudou-mweb.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-oa/tudou-oa.iml" filepath="$PROJECT_DIR$/tudou-oa/tudou-oa.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-oa/tudou-oa-common/tudou-oa-common.iml" filepath="$PROJECT_DIR$/tudou-oa/tudou-oa-common/tudou-oa-common.iml" />
@@ -21,6 +29,7 @@
       <module fileurl="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-rpc-api/tudou-pcweb-rpc-api.iml" filepath="$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-rpc-api/tudou-pcweb-rpc-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-rpc-service/tudou-pcweb-rpc-service.iml" filepath="$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-rpc-service/tudou-pcweb-rpc-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-web/tudou-pcweb-web.iml" filepath="$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-web/tudou-pcweb-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-scheduler/tudou-scheduler.iml" filepath="$PROJECT_DIR$/tudou-scheduler/tudou-scheduler.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-common/tudou-ucenter-common.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-common/tudou-ucenter-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-dao/tudou-ucenter-dao.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-dao/tudou-ucenter-dao.iml" />

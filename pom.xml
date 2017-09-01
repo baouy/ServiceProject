@@ -31,6 +31,10 @@
         <module>tudou-ap</module>
         <module>tudou-ucenter</module>
         <module>tudou-crm</module>
+        <module>tudou-scheduler</module>
+        <module>tudou-mq-task</module>
+        <module>todou-mes</module>
+        <module>tudou-gen</module>
     </modules>
 
 
