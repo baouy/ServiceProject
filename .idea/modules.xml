@@ -36,6 +36,7 @@
       <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-rpc-api/tudou-ucenter-rpc-api.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-rpc-api/tudou-ucenter-rpc-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-rpc-service/tudou-ucenter-rpc-service.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-rpc-service/tudou-ucenter-rpc-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-web/tudou-ucenter-web.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-web/tudou-ucenter-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-upms/tudou-upms.iml" filepath="$PROJECT_DIR$/tudou-upms/tudou-upms.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-upms/tudou-upms-client/tudou-upms-client.iml" filepath="$PROJECT_DIR$/tudou-upms/tudou-upms-client/tudou-upms-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-upms/tudou-upms-common/tudou-upms-common.iml" filepath="$PROJECT_DIR$/tudou-upms/tudou-upms-common/tudou-upms-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-upms/tudou-upms-dao/tudou-upms-dao.iml" filepath="$PROJECT_DIR$/tudou-upms/tudou-upms-dao/tudou-upms-dao.iml" />

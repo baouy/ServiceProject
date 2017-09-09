@@ -17,7 +17,7 @@
         <!-- 获取登录信息 -->
         <mvc:interceptor>
             <mvc:mapping path="/manage/**"/>
-            <bean class="com.tudou.upms.server.interceptor.UpmsInterceptor"></bean>
+            <bean class="com.tudou.gen.server.interceptor.GenInterceptor"></bean>
         </mvc:interceptor>
     </mvc:interceptors>
 

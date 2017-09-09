@@ -7093,6 +7093,8 @@
         notrheight      : false,    // true/false
         selectChange    : null,     //Function - before selectChange
         bodyBack        : null,     // Function - after bodyBack method
+        checkboxnum     : false,    //true/false
+        initEdit        : null,     // Function - after initEdit method
     }
     
     Datagrid.renderItem = function(value, data, items) {
@@ -7424,6 +7426,14 @@
 
                     that.$element.trigger('afterLoad.bjui.datagrid', {datas:newData})
                     if (that.init_tfoot) that.initTfoot()
+
+                    //davidwang-加入完成方法
+                    var back = options.initEdit;
+                    if (typeof back === 'string') {
+                        back = back.toFunc()
+                        back('');
+                    }
+
                 }
                 
                 if (refreshFlag && that.$boxM) {
@@ -8780,6 +8790,14 @@
     Datagrid.prototype.refresh_url = function(url){
         this.options.dataUrl = url
     }
+
+    Datagrid.prototype.refresh_data = function(data){
+        var that = this
+        that.options.data = data
+        that.allData = data
+        that.tools.initTbody(that.allData, true)
+
+    }
     
     Datagrid.prototype.refresh = function() {
         var that = this, options = that.options, tools = that.tools, isDom = that.isDom, pageInfo = BJUI.pageInfo, paging = that.paging, postData = {}
@@ -8789,7 +8807,7 @@
                 tools.initTbody(that.allData, true)
                 return
             }
-            
+
             BJUI.debug('Datagrid Plugin: Not Set the dataUrl option!')
             return
         }
@@ -11944,10 +11962,15 @@
                         
                         if (checked == val)
                             $td.removeClass(that.classnames.td_changed)
-                        
-                        changeData[op.name] = checked
+
+                        if (options.checkboxnum){
+                            changeData[op.name] = checked?'1':'0';
+                        }else{
+                            changeData[op.name] = checked
+                        }
+
+
                     })
-                    
                     break
                 case 'findgrid':
                     changeData[op.name] = $el.val()
@@ -11981,7 +12004,7 @@
                     break
                 case 'lookup':
                     $td.on('customEvent.bjui.lookup', '[data-toggle="lookupbtn"]', function(e, args) {
-                        //meiwo-davidwang-lookup回调修改
+                        //davidwang-lookup回调修改
                         $td.toggleClass(that.classnames.td_changed)
                         for (var key in args) {
                             if (typeof data[key] !== 'undefined') {
@@ -12000,7 +12023,7 @@
                         }
 
                     })
-                    //meiwo-lookupbtn
+                    //davidwang-lookupbtn
                     $el.change(function() {
                         $td.addClass(that.classnames.td_changed)
                         if ($el.val() == val) $td.removeClass(that.classnames.td_changed)
@@ -12084,8 +12107,14 @@
                 if (typeof val === 'undefined' || val === 'null' || val === null)
                     val = ''
                 
-                if (op.type === 'boolean')
-                    $input.prop('checked', val)
+                if (op.type === 'boolean'){
+                    //davidwang修改
+                    if(val == '1'){
+                        val = true
+                    }else if(val == '0' || val == ''){
+                        val = false
+                    }
+                    $input.prop('checked', val)}
                 else if (op.type === 'findgrid')
                     $input.data('context', $tr).val(String(val))
                 else {

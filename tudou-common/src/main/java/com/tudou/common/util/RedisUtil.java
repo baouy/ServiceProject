@@ -271,4 +271,14 @@ public class RedisUtil {
 		}
 	}
 
+
+	public synchronized static void expire(String key,int seconds) {
+		try {
+			Jedis jedis = RedisUtil.getJedis();
+			jedis.expire(key, seconds);
+			jedis.close();
+		} catch (Exception e) {
+			_log.error("sadd error : " + e);
+		}
+	}
 }

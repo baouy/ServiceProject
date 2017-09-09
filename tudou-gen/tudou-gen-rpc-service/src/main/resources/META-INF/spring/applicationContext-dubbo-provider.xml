@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="tudou-gen-rpc-service" owner="tudou"/>
+
+    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+
+    <dubbo:protocol name="dubbo" port="20884"/>
+
+    <bean id="genSchemeService" class="com.tudou.gen.rpc.service.impl.GenSchemeServiceImpl"/>
+    <dubbo:service interface="com.tudou.gen.rpc.api.GenSchemeService" ref="genSchemeService" timeout="10000"/>
+
+    <bean id="genTableColumnService" class="com.tudou.gen.rpc.service.impl.GenTableColumnServiceImpl"/>
+    <dubbo:service interface="com.tudou.gen.rpc.api.GenTableColumnService" ref="genTableColumnService" timeout="10000"/>
+
+    <bean id="genTableService" class="com.tudou.gen.rpc.service.impl.GenTableServiceImpl"/>
+    <dubbo:service interface="com.tudou.gen.rpc.api.GenTableService" ref="genTableService" timeout="10000"/>
+
+    <bean id="genApiService" class="com.tudou.gen.rpc.service.impl.GenApiServiceImpl"/>
+    <dubbo:service interface="com.tudou.gen.rpc.api.GenApiService" ref="genApiService" timeout="10000"/>
+
+</beans>

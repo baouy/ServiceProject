@@ -17,24 +17,11 @@ public class GenInterceptor extends HandlerInterceptorAdapter {
 
     private static Logger _log = LoggerFactory.getLogger(GenInterceptor.class);
 
-    @Autowired
-    UpmsApiService upmsApiService;
-
-
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 过滤ajax
 //        if (null != request.getHeader("X-Requested-With") && request.getHeader("X-Requested-With").equalsIgnoreCase("XMLHttpRequest")) {
 //            return true;
-//        }
-        // 登录信息
-//        Subject subject = SecurityUtils.getSubject();
-//        String username = "upms_"+ subject.getPrincipal();
-//        UpmsUser upmsUser = (UpmsUser) SerializeUtil.deserialize(RedisUtil.get(username.getBytes()));
-//        if (upmsUser == null){
-//            upmsUser = upmsApiService.selectUpmsUserByUsername(subject.getPrincipal().toString());
-//            RedisUtil.set(username.getBytes(), SerializeUtil.serialize(upmsUser), 1800);
 //        }
         return true;
     }

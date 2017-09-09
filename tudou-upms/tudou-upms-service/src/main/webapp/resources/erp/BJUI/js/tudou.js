@@ -13,6 +13,31 @@ function timetrans(date){
     return Y+M+D+h+m+s;
 }
 
+
+function show_dialog(name,url,w,h) {
+    $(this).dialog({
+        title: name,
+        url: url,
+        width: w,
+        height: h,
+        mask: true
+    });
+}
+
+function loading_s(n,v) {
+    var content = 'bjui.ajaxStart'
+    if (!v){
+        content = 'bjui.ajaxStop'
+    }
+    n.trigger(content)
+}
+
+var gen_dic_java = [{'String':'String'},{'Long':'Long'},{'Integer':'Integer'},{'Double':'Double'},{'java.util.Date':'Date'},{'This':'ThisObj'},{'Custom':'Custom'}]
+
+var gen_dic_select = [{'=':'='},{'!=':'!='},{'&gt;':'>'},{'&gt;=':'>='},{'&lt;':'<'},{'&lt;=':'<='},{'between':'between'},{'like':'like'},{'left_like':'left_like'},{'right_like':'right_like'}]
+
+var gen_dic_string = [{'input':'单行文本'},{'textarea':'多行文本'},{'select;':'下拉选项'},{'radiobox;':'单选按钮'},{'checkbox;':'复选框'},{'dateselect;':'日期选择'},{'userselect;':'人员选择'},{'officeselect;':'部门选择'},{'treeselect;':'树选择控件'},{'fileselect;':'文件上传选择'}]
+
 var user_data;
 var types = new Array()
 $(function () {
@@ -23,6 +48,7 @@ $(function () {
             var res = XMLHttpRequest.responseText;
             try {
                 var jsonData = JSON.parse(res);
+                console.log(jsonData);
                 if (jsonData.code == 10000) {
                     BJUI.loadLogin()
                 }

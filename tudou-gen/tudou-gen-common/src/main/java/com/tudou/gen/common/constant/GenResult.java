@@ -1,4 +1,4 @@
-package com.tudou.gen.comon.constant;
+package com.tudou.gen.common.constant;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tudou.common.base.BaseResult;

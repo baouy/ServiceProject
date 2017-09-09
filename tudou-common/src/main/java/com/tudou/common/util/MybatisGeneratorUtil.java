@@ -125,7 +125,6 @@ public class MybatisGeneratorUtil {
 				context.put("model", model);
 				context.put("ctime", ctime);
 				VelocityUtil.generate(service_vm, service, context);
-				System.out.println(service);
 			}
 			// 生成serviceMock
 			File serviceMockFile = new File(serviceMock);
@@ -135,7 +134,6 @@ public class MybatisGeneratorUtil {
 				context.put("model", model);
 				context.put("ctime", ctime);
 				VelocityUtil.generate(serviceMock_vm, serviceMock, context);
-				System.out.println(serviceMock);
 			}
 			// 生成serviceImpl
 			File serviceImplFile = new File(serviceImpl);
@@ -146,7 +144,6 @@ public class MybatisGeneratorUtil {
 				context.put("mapper", StringUtil.toLowerCaseFirstOne(model));
 				context.put("ctime", ctime);
 				VelocityUtil.generate(serviceImpl_vm, serviceImpl, context);
-				System.out.println(serviceImpl);
 			}
 		}
 		System.out.println("========== 结束生成Service ==========");
