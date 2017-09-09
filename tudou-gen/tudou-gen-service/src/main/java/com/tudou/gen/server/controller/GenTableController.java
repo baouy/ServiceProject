@@ -1,7 +1,6 @@
 package com.tudou.gen.server.controller;
 
 import com.alibaba.dubbo.common.utils.StringUtils;
-import com.alibaba.fastjson.JSON;
 import com.tudou.common.util.IdGen;
 import com.tudou.common.util.StringUtil;
 import com.tudou.common.util.TokenUtil;
@@ -176,5 +175,22 @@ public class GenTableController {
 		return new GenResult(GenResultConstant.SUCCESS,null);
 	}
 
+
+	@ApiOperation(value = "数据库列表")
+	@RequiresPermissions("gen:table:delete")
+	@RequestMapping(value = "/delete")
+	@ResponseBody
+	public Object delete(@ModelAttribute GenTable genTable) {
+		GenTableExample genTableExample = new GenTableExample();
+		GenTableExample.Criteria criteria = genTableExample.createCriteria();
+		criteria.andIdEqualTo(genTable.getId());
+		genTableService.deleteByExample(genTableExample);
+		GenTableColumnExample genTableColumnExample = new GenTableColumnExample();
+		GenTableColumnExample.Criteria criteria1 = genTableColumnExample.createCriteria();
+		criteria1.andGenTableIdEqualTo(genTable.getId());
+		genTableColumnService.deleteByExample(genTableColumnExample);
+
+		return new GenResult(GenResultConstant.SUCCESS,null);
+	}
 
 }

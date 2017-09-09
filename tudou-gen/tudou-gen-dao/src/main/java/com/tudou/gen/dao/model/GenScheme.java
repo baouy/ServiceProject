@@ -1,9 +1,11 @@
 package com.tudou.gen.dao.model;
 
+import com.tudou.common.base.BaseModelValid;
+
 import java.io.Serializable;
 import java.util.Date;
 
-public class GenScheme implements Serializable {
+public class GenScheme extends BaseModelValid implements Serializable{
     /**
      * 编号
      *

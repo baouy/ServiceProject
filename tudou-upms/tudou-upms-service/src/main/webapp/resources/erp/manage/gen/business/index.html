@@ -43,7 +43,7 @@
 		gen_datagrid_data.delConfirm = true
 		gen_datagrid_data.delPK = 'id'
 		gen_datagrid_data.delType = 'POST'
-		gen_datagrid_data.delUrl = $.cookie("tudou-gen-server") + '/manange/gentable/delete'
+		gen_datagrid_data.delUrl = $.cookie("tudou-gen-server") + '/manage/gentable/delete'
 		gen_datagrid_data.delCallback = 'del_gen_table_back'
 	}
 
@@ -93,37 +93,6 @@
 
         show_dialog(name,url,w,h)
 	}
-
-//	var selected;
-//	function log_delete() {
-//		selected = $("#manage_log_table").data('selectedDatas');
-//		if (null == selected || selected.length == 0) {
-//			return;
-//		}
-//		$(this).alertmsg('confirm', '是否确定吗?', {okCall: 'ajax_log_delete'});
-//	}
-//
-//	function ajax_log_delete() {
-//		var ids = new Array();
-//		for (var i = 0 ; i < selected.length ; i ++) {
-//			ids.push(selected[i].logId);
-//		}
-//		$.ajax({
-//			url: $.cookie("tudou-upms-server")+'/manage/log/delete/'+ids.join(','),
-//			dataType: 'json',
-//			type: 'get',
-//			success: function(d){
-//				if (d.code == 1){
-//					$('#manage_log_table').datagrid('refresh');
-//				}else{
-//					$(this).alertmsg('warn',d.data);
-//				}
-//			},
-//			error:function(e){
-//				$(this).alertmsg('warn',"删除失败!");
-//			}
-//		});
-//	}
 
 </script>
 
