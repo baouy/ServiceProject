@@ -1,0 +1,105 @@
+<script>
+    var oanotify_btn = ''
+    var toolbaroanotify_btn = ''
+    for (var data of user_data) {
+        var value = data.permissionValue;
+        switch (value) {
+            case 'oa:notify:create':
+                toolbaroanotify_btn += '<button type="button" id="oanotify_add_btn" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" w="1500" h="700" style="margin-left: 5px;" onclick="oanotify_create_onclick(this)" >' + '<i class="' + data.icon + '"></i>&nbsp;' + data.name + ' </button>'
+                break;
+            case 'oa:notify:update':
+                toolbaroanotify_btn += '<button type="button" id="oanotify_edit_btn" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" w="1500" h="700"  style="margin-left: 5px;" onclick="oanotify_update_onclick(this)" >' + '<i class="' + data.icon + '"></i>&nbsp;' + data.name + ' </button>'
+                break;
+            case 'oa:notify:delete':
+                oanotify_btn += 'del,'
+                break;
+        }
+    }
+
+    var oanotify_datagrid_data = {
+        local: 'remote',
+        dataUrl: $.cookie("tudou-oa-server") + '/manage/oanotify/list',
+        dataType: 'json',
+        sortAll: false,
+        loadType: 'get',
+        filterAll: true,
+        height: '100%',
+        columns: [
+            {name: 'type', width: '150', align: 'center', label: '类型'},
+            {name: 'title', width: '150', align: 'center', label: '标题'},
+            {name: 'content', width: '150', align: 'center', label: '内容'},
+            {name: 'files', width: '150', align: 'center', label: '附件'},
+            {name: 'status', width: '150', align: 'center', label: '状态'},
+            {name: 'createBy', width: '150', align: 'center', label: '创建者'},
+            {name: 'createDate', width: '150', align: 'center', label: '创建时间'},
+            {name: 'updateBy', width: '150', align: 'center', label: '更新者'},
+            {name: 'updateDate', width: '150', align: 'center', label: '更新时间'},
+            {name: 'remarks', width: '150', align: 'center', label: '备注信息'},
+            {name: 'delFlag', width: '150', align: 'center', label: '删除标记'},
+        ],
+        paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+        hiddenFields: ['id'],
+        fullGrid: true,
+        showToolbar: true,
+        toolbarItem: oanotify_btn,
+        inlineEditMult: false,
+        toolbarCustom: toolbaroanotify_btn,
+        dblOnClick: 'oanotify_dblonclick',
+    }
+
+    if (oanotify_btn.indexOf('del') != -1) {
+        oanotify_datagrid_data.delConfirm = true
+        oanotify_datagrid_data.delPK = 'id'
+        oanotify_datagrid_data.delType = 'POST'
+        oanotify_datagrid_data.delUrl = $.cookie("tudou-oa-server") + '/manage/oanotify/delete'
+        oanotify_datagrid_data.delCallback = 'del_oanotify_table_back'
+    }
+
+    $('#gen_table_list_table').datagrid(oanotify_datagrid_data);
+
+    function del_oanotify_table_back(d) {
+        if (d.code == 1) {
+            $(this).alertmsg('ok', '删除成功');
+        } else {
+            $(this).alertmsg('warn', d.data);
+        }
+        $('oanotify_list_table').datagrid('refresh_part');
+    }
+
+    function oanotify_create_onclick(n) {
+        oanotify_id = null
+        var url = n.attributes["url"].value;
+        var name = n.attributes["name"].value;
+        var w = n.attributes["w"].value;
+        var h = n.attributes["h"].value;
+
+        show_dialog(name, url, w, h)
+    }
+
+    function oanotify_dblonclick() {
+        $("#{smodule}_edit_btn").click();
+    }
+
+    var oanotify_id = null
+
+    function oanotify_update_onclick(n) {
+        var selected = $('#oanotify_list_table').data('selectedDatas');
+        if (null == selected || selected.length == 0) {
+            return;
+        }
+
+        oanotify_id = selected[0].id
+
+        var url = n.attributes["url"].value;
+        var name = n.attributes["name"].value;
+        var w = n.attributes["w"].value;
+        var h = n.attributes["h"].value;
+
+        show_dialog(name, url, w, h)
+    }
+
+</script>
+
+<div class="bjui-pageContent">
+	<table id="oanotify_list_table" class="table table-hover" data-width="100%"></table>
+</div>

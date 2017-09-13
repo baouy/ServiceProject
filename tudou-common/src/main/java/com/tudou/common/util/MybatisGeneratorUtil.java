@@ -33,6 +33,8 @@ public class MybatisGeneratorUtil {
 	 * @param jdbc_driver   驱动路径
 	 * @param jdbc_url      链接
 	 * @param jdbc_username 帐号
+	 *
+	 *
 	 * @param jdbc_password 密码
 	 * @param module        项目模块
 	 * @param database      数据库
@@ -162,5 +164,7 @@ public class MybatisGeneratorUtil {
 		}
 		dir.delete();
 	}
+
+
 
 }

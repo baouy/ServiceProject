@@ -1,0 +1,29 @@
+package ${package_name}.rpc.service.impl;
+
+import com.tudou.common.annotation.BaseService;
+import com.tudou.common.base.BaseServiceImpl;
+import ${package_name}.dao.mapper.${vmmodel}Mapper;
+import ${package_name}.dao.model.${vmmodel};
+import ${package_name}.dao.model.${vmmodel}Example;
+import ${package_name}.rpc.api.${vmmodel}Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+* ${vmmodel}Service实现
+* Created by tudou on ${ctime}.
+*/
+@Service
+@Transactional
+@BaseService
+public class ${vmmodel}ServiceImpl extends BaseServiceImpl<${vmmodel}Mapper, ${vmmodel}, ${vmmodel}Example> implements ${vmmodel}Service {
+
+    private static Logger _log = LoggerFactory.getLogger(${vmmodel}ServiceImpl.class);
+
+    @Autowired
+    ${vmmodel}Mapper ${mapper}Mapper;
+
+}

@@ -42,6 +42,42 @@ public class StringUtil {
         return str;
     }
 
+    public static String lineToLower(String str) {
+        if (null == str || "".equals(str)) {
+            return str;
+        }
+        str = str.toLowerCase();
+        Matcher matcher = linePattern.matcher(str);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, matcher.group(1).toUpperCase());
+        }
+        matcher.appendTail(sb);
+
+        str = sb.toString();
+        str = str.substring(0, 1).toLowerCase() + str.substring(1);
+
+        return str;
+    }
+
+    public static String allToLower(String str) {
+        if (null == str || "".equals(str)) {
+            return str;
+        }
+        str = str.toLowerCase();
+        Matcher matcher = linePattern.matcher(str);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, matcher.group(1).toLowerCase());
+        }
+        matcher.appendTail(sb);
+
+        str = sb.toString();
+        str = str.substring(0, 1).toLowerCase() + str.substring(1).toLowerCase();
+
+        return str;
+    }
+
     /**
      * 驼峰转下划线(简单写法，效率低于{@link #humpToLine2(String)})
      * @param str
@@ -172,6 +208,27 @@ public class StringUtil {
         }
         List<String> list = Arrays.asList(idArray);
         return list;
+    }
+
+    public static String stringListtoString(String id,String split){
+        String[] idArray = new String[]{};
+        if (StringUtils.contains(id, split)) {
+            idArray = id.split(split);
+        } else {
+            idArray = new String[]{id};
+        }
+
+        String top = "";
+        String end = "";
+        for (int i = 0 ; i < idArray.length ; i++){
+            if (i == 0){
+                top = idArray[i].toLowerCase();
+            }else{
+                end += idArray[i].toLowerCase();
+            }
+        }
+
+        return top + ":" + end;
     }
 
 

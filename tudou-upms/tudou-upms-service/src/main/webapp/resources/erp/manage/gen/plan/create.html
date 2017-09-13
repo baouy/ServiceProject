@@ -1,15 +1,90 @@
 <script>
-	
-	function gen_scheme_cancel_onclick() {
+
+	$('#gen_scheme_id').val(genscheme_id)
+	var plan_selectpicker = $('#gen_scheme_category')
+	var gen_scheme_genTableId = $('#gen_scheme_genTableId')
+    plan_selectpicker.append($("<option value=>请选择表名</option>"));
+    gen_scheme_genTableId.append($("<option value=>请选择业务表名</option>"));
+    $.each(gen_dic_table, function(i, n) {
+        $.each(Object.keys(n), function(i, w) {
+            plan_selectpicker.append($("<option value=" + w + ">" + n[w] + "</option>"));
+            plan_selectpicker.selectpicker('refresh');
+        })
+    })
+
+    loading_s($('#planmain'),true)
+    $.ajax({
+        url: $.cookie("tudou-gen-server") + '/manage/gentable/list',
+        dataType: 'json',
+        type: 'get',
+        success: function (d) {
+            if(d.code == 1){
+                for (var n of d.data){
+                    var name = n.name +':' + n.comments
+                    gen_scheme_genTableId.append($("<option value=" + n.id + ">" + name + "</option>"));
+                }
+                gen_scheme_genTableId.selectpicker('refresh');
+                if (genscheme_id != null){
+                    gen_scheme_detail()
+                }
+            }
+            loading_s($('#planmain'),false)
+        }
+    });
+
+	function gen_scheme_detail() {
+        $.ajax({
+            url: $.cookie("tudou-gen-server") + '/manage/genscheme/detail',
+            dataType: 'json',
+            type: 'get',
+            data:{
+                id : genscheme_id,
+            },
+            success: function (d) {
+                if(d.code == 1){
+                    for (var i in d.data){
+                        $("#gen_scheme_" + i).val(d.data[i]);
+                        if (i == 'category'){
+                            $("#gen_scheme_" + i).selectpicker('val', d.data[i]);
+                        }
+                        if (i == 'genTableId'){
+                            $("#gen_scheme_" + i).selectpicker('val', d.data[i]);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+    function gen_scheme_cancel_onclick() {
 		
     }
+
+    $("#gen_scheme_from").attr("action",$.cookie("tudou-gen-server")+ "/manage/genscheme/save");
 	
     function gen_scheme_save_onclick() {
-		
+		$('#gen_scheme_type').val(0)
+        $('#gen_scheme_from').submit()
+    }
+    
+    function gen_scheme_asave_onclick() {
+        $('#gen_scheme_type').val(1)
+        $('#gen_scheme_from').submit()
+    }
+    
+    function gen_scheme_tsave_onclick() {
+        $('#gen_scheme_type').val(2)
+        $('#gen_scheme_from').submit()
     }
 	
-    function gen_scheme_from_back() {
-		
+    function gen_scheme_from_back(d) {
+//        if (d.code == 1){
+//            $('#gen_tablescheme_list_table').datagrid('refresh_part');
+//            BJUI.dialog('closeCurrent',this);
+//        }else{
+//            $(this).alertmsg('warn',d.data);
+//        }
     }
 
 </script>
@@ -18,7 +93,8 @@
 	<div class="bjui-pageContent">
 
 		<form data-toggle="validate" data-callback="gen_scheme_from_back" id="gen_scheme_from">
-
+			<input type="hidden" name="id" id="gen_scheme_id">
+			<input type="hidden" name="status" id="gen_scheme_type">
 			<table class="table table-condensed table-bordered table-hover table-striped table-top bjui-tabledit"
 				   width="100%">
 				<tbody>
@@ -35,24 +111,27 @@
 						<select name="category" id="gen_scheme_category" data-toggle="selectpicker" data-rule="required" data-width="200"></select>
 					</td>
 				</tr>
-				<!--<tr>-->
-					<!--<td>-->
-						<!--<label class="control-label x100 required">生成包路径：</label>-->
-						<!--<input type="text" name="packageName" id="gen_scheme_packageName" value="" data-rule="required" size="20">-->
-					<!--</td>-->
-				<!--</tr>-->
+				<tr>
+					<td>
+						<label class="control-label x100 required">生成包路径：</label>
+						<input type="text" name="packageName" id="gen_scheme_packageName" value="com.tudou" data-rule="required" size="20">
+						<span>如:(默认一般为工程包com.tudou)</span>
+					</td>
+				</tr>
 				<tr>
 					<td>
 						<label class="control-label x100 required">生成模块名：</label>
-						<input type="text" name="moduleName" id="gen_scheme_moduleName" value="" data-rule="required" size="20">
+						<input type="text" name="moduleName" id="gen_scheme_moduleName" value="tudou" data-rule="required" size="20">
+						<span>如:(默认一般为工程名称tudou)</span>
 					</td>
 				</tr>
-				<!--<tr>-->
-					<!--<td>-->
-						<!--<label class="control-label x100 required">生成子模块名：</label>-->
-						<!--<input type="text" name="subModuleName" id="gen_scheme_subModuleName" value="" data-rule="required" size="20">-->
-					<!--</td>-->
-				<!--</tr>-->
+				<tr>
+					<td>
+						<label class="control-label x100 required">生成子模块名：</label>
+						<input type="text" name="subModuleName" id="gen_scheme_subModuleName" value="" data-rule="required" size="20">
+						<span>如:(upms,oa,gen,pay,crm等)</span>
+					</td>
+				</tr>
 				<tr>
 					<td>
 						<label class="control-label x100 required">生成功能描述：</label>
@@ -77,12 +156,6 @@
 						<select name="genTableId" id="gen_scheme_genTableId" data-toggle="selectpicker" data-rule="required" data-width="200"></select>
 					</td>
 				</tr>
-				<tr>
-					<td>
-						<label class="control-label x100 required">生成选项：</label>
-						<select name="select" id="gen_scheme_select" data-toggle="selectpicker" data-rule="required" data-width="200"></select>
-					</td>
-				</tr>
 				</tbody>
 			</table>
 		</form>
@@ -95,7 +168,13 @@
 				<button type="button" class="btn-close" data-icon="close" onclick="gen_scheme_cancel_onclick()">取消</button>
 			</li>
 			<li>
-				<button id="gen_table_sure" type="button" class="btn-green" data-icon="save" onclick="gen_scheme_save_onclick()">保存</button>
+				<button type="button" class="btn-green" data-icon="save" onclick="gen_scheme_tsave_onclick()">生成代码</button>
+			</li>
+			<li>
+				<button type="button" class="btn-green" data-icon="save" onclick="gen_scheme_asave_onclick()">保存并生成代码</button>
+			</li>
+			<li>
+				<button type="button" class="btn-green" data-icon="save" onclick="gen_scheme_save_onclick()">保存方案</button>
 			</li>
 		</ul>
 	</div>

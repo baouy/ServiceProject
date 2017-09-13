@@ -92,6 +92,7 @@ public class UpmsSystemController extends BaseController{
 		upmsSystem.setCtime(time);
 		upmsSystem.setOrders(time);
 		int count = upmsSystemService.insertSelective(upmsSystem);
+
 		return new UpmsResult(UpmsResultConstant.SUCCESS, count);
 	}
 
@@ -112,6 +113,7 @@ public class UpmsSystemController extends BaseController{
 		}
 		upmsSystem.setSystemId(upmsSystem.getSystemId());
 		int count = upmsSystemService.updateByPrimaryKeySelective(upmsSystem);
+
 		return new UpmsResult(UpmsResultConstant.SUCCESS, count);
 	}
 

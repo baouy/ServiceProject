@@ -15,6 +15,7 @@ import com.tudou.gen.server.modelvalid.GenTableColumnValid;
 import com.tudou.gen.server.util.GenUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -70,7 +71,7 @@ public class GenTableController {
 	}
 
 	@ApiOperation(value = "数据库列表")
-	@RequiresPermissions(value = {"gen:table:create","gen:table:update"})
+	@RequiresPermissions(value = {"gen:table:create","gen:table:update"},logical = Logical.OR)
 	@RequestMapping(value = "/dblist")
 	@ResponseBody
 	public Object dblist(@ModelAttribute TableList tableList) {
@@ -81,7 +82,7 @@ public class GenTableController {
 	}
 
 	@ApiOperation(value = "数据库详情列表")
-	@RequiresPermissions(value = {"gen:table:create","gen:table:update"})
+	@RequiresPermissions(value = {"gen:table:create","gen:table:update"},logical = Logical.OR)
 	@RequestMapping(value = "/dblist_detail")
 	@ResponseBody
 	public Object dblist_detail(@ModelAttribute TableList tableList) {
@@ -140,7 +141,7 @@ public class GenTableController {
 	}
 
 	@ApiOperation(value = "数据库详情保存")
-	@RequiresPermissions(value = {"gen:table:create","gen:table:update"})
+	@RequiresPermissions(value = {"gen:table:create","gen:table:update"} ,logical = Logical.OR)
 	@RequestMapping(value = "/save")
 	@ResponseBody
 	public Object save(@RequestBody GenTableAddValid genTableAddValid) {
@@ -171,10 +172,10 @@ public class GenTableController {
 			genTableColumn.setUpdateBy(name);
 			genTableColumn.setUpdateDate(new_time);
 			genTableColumnService.insertSelective(genTableColumn);
+
 		}
 		return new GenResult(GenResultConstant.SUCCESS,null);
 	}
-
 
 	@ApiOperation(value = "数据库列表")
 	@RequiresPermissions("gen:table:delete")

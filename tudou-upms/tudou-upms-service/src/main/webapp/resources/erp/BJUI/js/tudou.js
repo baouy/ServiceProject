@@ -13,7 +13,6 @@ function timetrans(date){
     return Y+M+D+h+m+s;
 }
 
-
 function show_dialog(name,url,w,h) {
     $(this).dialog({
         title: name,
@@ -38,6 +37,8 @@ var gen_dic_select = [{'=':'='},{'!=':'!='},{'&gt;':'>'},{'&gt;=':'>='},{'&lt;':
 
 var gen_dic_string = [{'input':'单行文本'},{'textarea':'多行文本'},{'select;':'下拉选项'},{'radiobox;':'单选按钮'},{'checkbox;':'复选框'},{'dateselect;':'日期选择'},{'userselect;':'人员选择'},{'officeselect;':'部门选择'},{'treeselect;':'树选择控件'},{'fileselect;':'文件上传选择'}]
 
+var gen_dic_table = [{'curd':'增删改查（单表）'},{'curd_many':'增删改查（一对多）'},{'dao':'仅持久层（MyBatisGenerator）'},{'html':'仅生成界面(Html)'},{'treeTable':'树结构表（一体）'},{'treeTableAndList':'树结构表（左树右表）'}]
+
 var user_data;
 var types = new Array()
 $(function () {
@@ -48,7 +49,6 @@ $(function () {
             var res = XMLHttpRequest.responseText;
             try {
                 var jsonData = JSON.parse(res);
-                console.log(jsonData);
                 if (jsonData.code == 10000) {
                     BJUI.loadLogin()
                 }

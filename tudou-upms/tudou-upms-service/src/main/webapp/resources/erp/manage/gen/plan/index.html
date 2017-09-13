@@ -63,7 +63,6 @@
 
     function act_genscheme_create_onclick(n) {
         genscheme_id = null
-        genscheme_name = null
         var url = n.attributes["url"].value;
         var name = n.attributes["name"].value;
         var w = n.attributes["w"].value;
@@ -76,7 +75,7 @@
         $("#genscheme_edit_btn").click();
     }
 
-    var genscheme_id = null,genscheme_name = null,genscheme_comments= null,genscheme_className = null
+    var genscheme_id = null
     function act_genscheme_update_onclick(n) {
         var selected = $('#gen_tablescheme_list_table').data('selectedDatas');
         if (null == selected || selected.length == 0) {
@@ -84,9 +83,6 @@
         }
 
         genscheme_id = selected[0].id
-        genscheme_name = selected[0].name
-        genscheme_comments = selected[0].comments
-        genscheme_className = selected[0].className
 
         var url = n.attributes["url"].value;
         var name = n.attributes["name"].value;

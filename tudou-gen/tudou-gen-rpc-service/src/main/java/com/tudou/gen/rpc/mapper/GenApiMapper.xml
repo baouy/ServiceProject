@@ -13,6 +13,10 @@
         ORDER BY t.TABLE_NAME
     </select>
 
+    <select id="findTableDetail" resultType="com.tudou.gen.dao.model.TableList">
+        SELECT table_name as name FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = 'tudou' AND table_name = (#{name})
+    </select>
+
     <select id="findTableColumnList" resultType="com.tudou.gen.dao.model.GenTableColumn">
         SELECT t.COLUMN_NAME AS name, (CASE WHEN t.IS_NULLABLE = 'YES' THEN '1' ELSE '0' END) AS isNull,
         (t.ORDINAL_POSITION * 10) AS sort,t.COLUMN_COMMENT AS comments,t.COLUMN_TYPE AS jdbcType
