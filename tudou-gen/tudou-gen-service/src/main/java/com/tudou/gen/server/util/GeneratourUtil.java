@@ -76,35 +76,30 @@ public class GeneratourUtil {
 		String path = dir[0] + project + "/";
 
 		//GeneratorConfig模板路径
-//		String generatorConfig_vm = "/template/generatorConfig.vm";
-//		// Service模板路径
-//		String service_vm = "/template/Service.vm";
-//		// ServiceMock模板路径
-//		String serviceMock_vm = "/template/ServiceMock.vm";
-//		// ServiceImpl模板路径
-//		String serviceImpl_vm = "/template/ServiceImpl.vm";
-//		// Controller 模板路径
-//		String controller_vm = "/template/Controller.vm";
+		String generatorConfig_vm = "/template/generatorConfig.vm";
+		// Service模板路径
+		String service_vm = "/template/Service.vm";
+		// ServiceMock模板路径
+		String serviceMock_vm = "/template/ServiceMock.vm";
+		// ServiceImpl模板路径
+		String serviceImpl_vm = "/template/ServiceImpl.vm";
+		// Controller 模板路径
+		String controller_vm = "/template/Controller.vm";
 		// index 模板路径
 		String index_vm = "/template/index.vm";
 
-//
-//		Map<String, String> last_insert_id_tables = new HashMap<>();
-//		generatorConfig_vm = "/"+GeneratourUtil.class.getResource(generatorConfig_vm).getPath().replaceFirst("/", "");
-//
-//		service_vm = GeneratourUtil.class.getResource(service_vm).getPath().replaceFirst("/", "");
-//		serviceMock_vm = GeneratourUtil.class.getResource(serviceMock_vm).getPath().replaceFirst("/", "");
-//		serviceImpl_vm = GeneratourUtil.class.getResource(serviceImpl_vm).getPath().replaceFirst("/", "");
-//		controller_vm = "/"+GeneratourUtil.class.getResource(controller_vm).getPath().replaceFirst("/", "");
+		Map<String, String> last_insert_id_tables = new HashMap<>();
+		generatorConfig_vm = "/"+GeneratourUtil.class.getResource(generatorConfig_vm).getPath().replaceFirst("/", "");
+
+		service_vm = GeneratourUtil.class.getResource(service_vm).getPath().replaceFirst("/", "");
+		serviceMock_vm = GeneratourUtil.class.getResource(serviceMock_vm).getPath().replaceFirst("/", "");
+		serviceImpl_vm = GeneratourUtil.class.getResource(serviceImpl_vm).getPath().replaceFirst("/", "");
+		controller_vm = "/"+GeneratourUtil.class.getResource(controller_vm).getPath().replaceFirst("/", "");
 		index_vm = "/"+GeneratourUtil.class.getResource(index_vm).getPath().replaceFirst("/", "");
 
-//
-//		String targetProject = path+module + "/" + module + "-dao";
-//		String module_path = path+module + "/" + module + "-dao/src/main/resources/generatorConfig.xml";
-//
-//		String servicePath = path + module + "/" + module + "-rpc-api" + "/src/main/java/" + package_name.replaceAll("\\.", "/") + "/rpc/api";
-//		String serviceImplPath = path + module + "/" + module + "-rpc-service" + "/src/main/java/" + package_name.replaceAll("\\.", "/") + "/rpc/service/impl";
-//
+		String targetProject = path+module + "/" + module + "-dao";
+		String module_path = path+module + "/" + module + "-dao/src/main/resources/generatorConfig.xml";
+
 		try {
 //			VelocityContext context = new VelocityContext();
 //			String targetProject_sqlMap = path+module + "/" + module + "-rpc-service";
@@ -117,8 +112,8 @@ public class GeneratourUtil {
 //			context.put("generator_jdbc_password", AESUtil.AESDecode("TvMXT+TLFod0JxEmceskAA=="));
 //			context.put("last_insert_id_tables", last_insert_id_tables);
 //			VelocityUtil.generate(generatorConfig_vm, module_path, context);
-//
-//			System.out.println("========== 开始删除生成文件 ==========");
+
+			System.out.println("========== 开始删除生成文件 ==========");
 			String ctime = new SimpleDateFormat("yyyy/M/d").format(new Date());
 			for (int i = 0; i < tables.size(); i++){
 				String name = tables.get(i).get("model_name").toString();
@@ -126,11 +121,26 @@ public class GeneratourUtil {
 //				new File(targetProject + "/src/main/java/" + package_name.replaceAll("\\.", "/") + "/dao/model/"+name+"Example.java").delete();
 //				new File(targetProject + "/src/main/java/" + package_name.replaceAll("\\.", "/") + "/dao/mapper/"+name+"Mapper.java").delete();
 //				new File(targetProject_sqlMap + "/src/main/java/" + package_name.replaceAll("\\.", "/") + "/dao/mapper/"+name+"Mapper.xml").delete();
-//
+
 				String table_name = ObjectUtils.toString(tables.get(i).get("table_name"));
 				String model = lineToHump(table_name);
 				String nmodule = lineToLower(table_name);
 				String smodule = allToLower(table_name);
+
+//				String servicePath = path + module + "/" + module + "-rpc-api" + "/src/main/java/" + package_name.replaceAll("\\.", "/") + "/rpc/api";
+//				File servicePathfile = new File(servicePath);
+//				if (!servicePathfile.exists()){
+//					servicePathfile.mkdirs();
+//				}
+//				String serviceImplPath = path + module + "/" + module + "-rpc-service" + "/src/main/java/" + package_name.replaceAll("\\.", "/") + "/rpc/service/impl";
+//				File serviceImplPathfile = new File(servicePath);
+//				if (!serviceImplPathfile.exists()){
+//					serviceImplPathfile.mkdirs();
+//				}
+//
+//				String service = servicePath + "/" + model + "Service.java";
+//				String serviceMock = servicePath + "/" + model + "ServiceMock.java";
+//				String serviceImpl = serviceImplPath + "/" + model + "ServiceImpl.java";
 //
 //				System.out.println("========== 开始生成Service ==========");
 //				// 生成service
@@ -148,18 +158,18 @@ public class GeneratourUtil {
 //				String controllerPath = path + module + "/" + module + "-service" + "/src/main/java/" + package_name.replaceAll("\\.", "/") + "/service/controller/manage/";
 //
 //				String controller = controllerPath + model + "Controller.java";
-//				VelocityContext context = new VelocityContext();
-//				context.put("package_name", package_name);
-//				context.put("module",nmodule);
-//				context.put("smodule",smodule);
+//				VelocityContext context2 = new VelocityContext();
+//				context2.put("package_name", package_name);
+//				context2.put("module",nmodule);
+//				context2.put("smodule",smodule);
 //				//module tudou-oa
-//				context.put("vmmodel", model);
-//				context.put("smodel", lineToHump(genScheme.getSubModuleName()));
-//				context.put("permissions",stringListtoString(table_name,"_"));
-//				context.put("modelname",genScheme.getFunctionName());
-//				context.put("ctime", ctime);
-//				context.put("columns",columns);
-//				VelocityUtil.generate(controller_vm, controller, context);
+//				context2.put("vmmodel", model);
+//				context2.put("smodel", lineToHump(genScheme.getSubModuleName()));
+//				context2.put("permissions",stringListtoString(table_name,"_"));
+//				context2.put("modelname",genScheme.getFunctionName());
+//				context2.put("ctime", ctime);
+//				context2.put("columns",columns);
+//				VelocityUtil.generate(controller_vm, controller, context2);
 //
 //				System.out.println("========== 结束生成Controller ==========");
 
@@ -171,7 +181,6 @@ public class GeneratourUtil {
 				}
 
 				String index = htmlPath + "/index.html";
-
 				VelocityContext context1 = new VelocityContext();
 				context1.put("module",nmodule);
 				context1.put("smodule",smodule);
@@ -182,10 +191,9 @@ public class GeneratourUtil {
 
 				System.out.println("========== 结束生成Html ==========");
 
-
 			}
-//			System.out.println("========== 结束删除生成文件 ==========");
-//
+			System.out.println("========== 结束删除生成文件 ==========");
+
 //			System.out.println("========== 开始运行MybatisGenerator ==========");
 //			List<String> warnings = new ArrayList<>();
 //			File configFile = new File(module_path);
@@ -198,8 +206,6 @@ public class GeneratourUtil {
 //				System.out.println(warning);
 //			}
 //			System.out.println("========== 结束运行MybatisGenerator ==========");
-
-
 
 		}catch (Exception e) {
 			e.printStackTrace();
