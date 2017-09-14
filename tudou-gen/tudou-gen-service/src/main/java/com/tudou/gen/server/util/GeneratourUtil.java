@@ -87,6 +87,8 @@ public class GeneratourUtil {
 		String controller_vm = "/template/Controller.vm";
 		// index 模板路径
 		String index_vm = "/template/index.vm";
+		// save 模板路径
+		String save_vm = "/template/save.vm";
 
 		Map<String, String> last_insert_id_tables = new HashMap<>();
 		generatorConfig_vm = "/"+GeneratourUtil.class.getResource(generatorConfig_vm).getPath().replaceFirst("/", "");
@@ -96,6 +98,7 @@ public class GeneratourUtil {
 		serviceImpl_vm = GeneratourUtil.class.getResource(serviceImpl_vm).getPath().replaceFirst("/", "");
 		controller_vm = "/"+GeneratourUtil.class.getResource(controller_vm).getPath().replaceFirst("/", "");
 		index_vm = "/"+GeneratourUtil.class.getResource(index_vm).getPath().replaceFirst("/", "");
+		save_vm = "/"+GeneratourUtil.class.getResource(save_vm).getPath().replaceFirst("/", "");
 
 		String targetProject = path+module + "/" + module + "-dao";
 		String module_path = path+module + "/" + module + "-dao/src/main/resources/generatorConfig.xml";
@@ -173,25 +176,43 @@ public class GeneratourUtil {
 //
 //				System.out.println("========== 结束生成Controller ==========");
 
-				System.out.println("========== 开始生成Html ==========");
-				String htmlPath = path + "tudou-upms/tudou-upms-service/src/main/webapp/resources/erp/manage/"+genScheme.getSubModuleName()+"/"+smodule ;
-				File htmlfile = new File(htmlPath);
-				if (!htmlfile.exists()){
-					htmlfile.mkdirs();
-				}
-
-				String index = htmlPath + "/index.html";
-				VelocityContext context1 = new VelocityContext();
-				context1.put("module",nmodule);
-				context1.put("smodule",smodule);
-				context1.put("smodel", genScheme.getSubModuleName());
-				context1.put("permissions",stringListtoString(table_name,"_"));
-				context1.put("columns",columns);
-				VelocityUtil.generate(index_vm, index, context1);
+//				System.out.println("========== 开始生成Html ==========");
+//				String htmlPath = path + "tudou-upms/tudou-upms-service/src/main/webapp/resources/erp/manage/"+genScheme.getSubModuleName()+"/"+smodule ;
+//				File htmlfile = new File(htmlPath);
+//				if (!htmlfile.exists()){
+//					htmlfile.mkdirs();
+//				}
+//
+//				String index = htmlPath + "/index.html";
+//				VelocityContext context1 = new VelocityContext();
+//				context1.put("module",nmodule);
+//				context1.put("smodule",smodule);
+//				context1.put("smodel", genScheme.getSubModuleName());
+//				context1.put("permissions",stringListtoString(table_name,"_"));
+//				context1.put("columns",columns);
+//				VelocityUtil.generate(index_vm, index, context1);
 
 				System.out.println("========== 结束生成Html ==========");
 
+				System.out.println("========== 开始生成SaveHtml ==========");
+				String savePath = path + "tudou-upms/tudou-upms-service/src/main/webapp/resources/erp/manage/"+genScheme.getSubModuleName()+"/"+smodule ;
+				File savefile = new File(savePath);
+				if (!savefile.exists()){
+					savefile.mkdirs();
+				}
+
+				String save = savePath + "/save.html";
+				VelocityContext context3 = new VelocityContext();
+				context3.put("smodule",smodule);
+				context3.put("smodel", genScheme.getSubModuleName());
+				context3.put("permissions",stringListtoString(table_name,"_"));
+				context3.put("columns",columns);
+				VelocityUtil.generate(save_vm, save, context3);
+
+				System.out.println("========== 开始生成SaveHtml ==========");
+
 			}
+
 			System.out.println("========== 结束删除生成文件 ==========");
 
 //			System.out.println("========== 开始运行MybatisGenerator ==========");

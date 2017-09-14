@@ -1,0 +1,175 @@
+<style type="text/css">
+	.required {
+		color: red
+	}
+
+	.tr_h {
+		height: 40px;
+	}
+
+	.titleLabel {
+		height: 40px;
+	}
+
+	.titleLabel td label {
+		font-size: 18px;
+		color: #adadad
+	}
+
+</style>
+<script>
+
+    if (oanotify_id != null) {
+        $('#oanotify_form_id').val(oanotify_id)
+        $('#oanotify_div_content').trigger('bjui.ajaxStart')
+        $.ajax({
+            url: $.cookie("tudou-oa-server") + '/manage/oanotify/detail',
+            dataType: 'json',
+            type: 'GET',
+            data: {
+                'id': oanotify_id
+            },
+            success: function (d) {
+                $('#oanotify_div_content').trigger('bjui.ajaxStop')
+                if (d.code == 1) {
+                    for (var i in d.data) {
+
+                    }
+                }
+            },
+            error: function () {
+                $('#oanotify_div_content').trigger('bjui.ajaxStop')
+            }
+        });
+    }
+
+    function oanotify_form_back(d) {
+        if (d.code == 1) {
+            $('#oanotify_list_table').datagrid('refresh_part');
+            BJUI.dialog('closeCurrent', this);
+        } else {
+            $(this).alertmsg('warn', d.data);
+        }
+    }
+
+    function oanotify_save() {
+        var radio = $('input:radio[name="status_ts"]:checked').val()
+        $('#oanotify_status').val(radio)
+
+        $('#oanotify_form').submit();
+    }
+
+    $("#oanotify_form").attr("action", $.cookie("tudou-oa-server") + "/manage/oanotify/save");
+
+    var selectpicker = $('#oanotify_type')
+    selectpicker.append($("<option value=>请选择</option>"));
+    $.each(notify_type_dic, function (i, n) {
+        $.each(Object.keys(n), function (i, w) {
+            selectpicker.append($("<option value=" + w + ">" + n[w] + "</option>"));
+            selectpicker.selectpicker('refresh');
+        })
+    })
+
+    function oanotify_upload_success(file, data) {
+        var json = $.parseJSON(data)
+        $(this).bjuiajax('ajaxDone', json)
+        if (json.state == 200) {
+            $('#oanotify_files').val(json.content).trigger('validate')
+            $('#oanotify_files_pic').html('<img src="' + json.content + '" width="150"/>')
+        }
+    }
+
+</script>
+
+<div id="oanotify_div_content">
+	<div class="bjui-pageContent">
+		<form data-toggle="validate" data-callback="oanotify_form_back" id="oanotify_form">
+
+			<input type="hidden" value="" name="id" id="oanotify_form_id">
+
+			<table class="table table-condensed table-bordered table-hover table-striped table-top bjui-tabledit"
+				   id="item_supplier_table"
+				   width="100%">
+				<tbody>
+
+				<label for="oanotify_type" class="control-label x100">类型：</label>
+				<tr class="tr_h">
+					<td>
+						<select name="type" id="oanotify_type" data-toggle="selectpicker"
+								data-rule="required" data-width="150">
+						</select>
+
+
+					</td>
+				</tr>
+
+				<label for="oanotify_title" class="control-label x100">标题：</label>
+				<tr class="tr_h">
+					<td>
+						<input type="text" name="title" id="oanotify_title" value="" data-rule="required" size="15">
+
+
+					</td>
+				</tr>
+
+				<label for="oanotify_content" class="control-label x100">内容：</label>
+				<tr class="tr_h" style="height: 100px;">
+					<td>
+						<textarea id="oanotify_content" name="content" cols="55" style="width: 465px;height: 78px;"
+								  rows="3" maxlength="500"></textarea>
+
+
+					</td>
+				</tr>
+
+				<label for="oanotify_files" class="control-label x100">附件：</label>
+				<tr class="tr_h">
+					<td>
+						<div style="display: inline-block; vertical-align: middle;">
+							<div id="oanotify_files_up" data-toggle="upload" data-uploader="/v1/newitem/fileupload"
+								 data-file-size-limit="1024000000"
+								 data-file-type-exts="*.jpg;*.png;*.gif;*.mpg"
+								 data-multi="false"
+								 data-on-upload-success="oanotify_upload_success"
+								 data-icon="cloud-upload"></div>
+							<input type="hidden" name="files" value="" id="oanotify_files">
+							<span id="oanotify_files_pic"></span>
+						</div>
+
+
+					</td>
+				</tr>
+
+				<label for="oanotify_status" class="control-label x100">状态：</label>
+				<tr class="tr_h">
+					<td>
+						<input type="hidden" value="" name="status" id="oanotify_status">
+						<input type="radio" name="status_ts" id="oanotify_status1" data-toggle="icheck" value="true"
+							   data-label="是&nbsp;&nbsp;">
+						<input type="radio" name="status_ts" id="oanotify_status2" data-toggle="icheck" value="false"
+							   data-label="否" checked>
+
+
+					</td>
+				</tr>
+
+
+				</tbody>
+			</table>
+		</form>
+	</div>
+
+
+	<div class="bjui-pageFooter">
+		<ul>
+			<li>
+				<button type="button" class="btn-close" data-icon="close">取消</button>
+			</li>
+			<li>
+				<button id="oa_office_sure" type="button" class="btn-green" data-icon="save"
+						onclick="oanotify_save()">保存
+				</button>
+			</li>
+		</ul>
+	</div>
+</div>

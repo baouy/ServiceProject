@@ -41,6 +41,7 @@
     <!-- 接口服务 -->
     <dubbo:reference id="upmsApiService" interface="com.tudou.upms.rpc.api.UpmsApiService" mock="true"/>
 
-
+    <!-- 通知服务 -->
+    <dubbo:reference id="oaNotifyService" interface="com.tudou.oa.rpc.api.OaNotifyService" mock="true"/>
 
 </beans>

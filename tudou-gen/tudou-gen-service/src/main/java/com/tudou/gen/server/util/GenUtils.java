@@ -62,6 +62,13 @@ public class GenUtils {
 				column.setIsInsert("1");
 			}
 
+			if (StringUtils.isBlank(column.getQueryType())){
+				column.setQueryType("like");
+			}
+
+			if (StringUtils.isBlank(column.getShowType())){
+				column.setShowType("input");
+			}
 
 			// 查询字段
 			if (StringUtils.isBlank(column.getIsQuery())){
@@ -75,8 +82,6 @@ public class GenUtils {
 					&& !StringUtils.equalsIgnoreCase(column.getName(), "del_flag")){
 				column.setIsEdit("1");
 			}
-
-
 
 //			// 列表字段
 //			if (StringUtils.equalsIgnoreCase(column.getName(), "name")
@@ -146,7 +151,6 @@ public class GenUtils {
 			// 删除标记
 			else if (StringUtils.equalsIgnoreCase(column.getName(), "del_flag")){
 				column.setShowType("radiobox");
-				column.setDictType("del_flag");
 			}
 		}
 	}
