@@ -95,9 +95,9 @@
                     <execution>
                         <id>make-assembly</id>
                         <phase>package</phase>
-                        <gschedulerls>
-                            <gschedulerl>single</gschedulerl>
-                        </gschedulerls>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
