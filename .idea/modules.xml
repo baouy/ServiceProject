@@ -30,6 +30,11 @@
       <module fileurl="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-rpc-service/tudou-pcweb-rpc-service.iml" filepath="$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-rpc-service/tudou-pcweb-rpc-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-web/tudou-pcweb-web.iml" filepath="$PROJECT_DIR$/tudou-pcweb/tudou-pcweb-web/tudou-pcweb-web.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-scheduler/tudou-scheduler.iml" filepath="$PROJECT_DIR$/tudou-scheduler/tudou-scheduler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-scheduler/tudou-scheduler-common/tudou-scheduler-common.iml" filepath="$PROJECT_DIR$/tudou-scheduler/tudou-scheduler-common/tudou-scheduler-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-scheduler/tudou-scheduler-dao/tudou-scheduler-dao.iml" filepath="$PROJECT_DIR$/tudou-scheduler/tudou-scheduler-dao/tudou-scheduler-dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-scheduler/tudou-scheduler-rpc-api/tudou-scheduler-rpc-api.iml" filepath="$PROJECT_DIR$/tudou-scheduler/tudou-scheduler-rpc-api/tudou-scheduler-rpc-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-scheduler/tudou-scheduler-rpc-service/tudou-scheduler-rpc-service.iml" filepath="$PROJECT_DIR$/tudou-scheduler/tudou-scheduler-rpc-service/tudou-scheduler-rpc-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-scheduler/tudou-scheduler-service/tudou-scheduler-service.iml" filepath="$PROJECT_DIR$/tudou-scheduler/tudou-scheduler-service/tudou-scheduler-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-common/tudou-ucenter-common.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-common/tudou-ucenter-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-dao/tudou-ucenter-dao.iml" filepath="$PROJECT_DIR$/tudou-ucenter/tudou-ucenter-dao/tudou-ucenter-dao.iml" />

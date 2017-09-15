@@ -10,6 +10,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tudou-scheduler</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>tudou-scheduler-common</module>
+        <module>tudou-scheduler-dao</module>
+        <module>tudou-scheduler-rpc-api</module>
+        <module>tudou-scheduler-rpc-service</module>
+        <module>tudou-scheduler-service</module>
+    </modules>
 
 
 </project>
