@@ -1,0 +1,112 @@
+<script>
+
+    var qrtz_btn = ''
+    var toolbarGenscheme_btn = ''
+    for (var data of user_data) {
+        var value = data.permissionValue;
+        switch (value){
+            case 'qrtz:scheduler:create':
+                toolbarGenscheme_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" w="550" h="550" style="margin-left: 5px;" onclick="qrtz_create_onclick(this)" >' + '<i class="'+data.icon+'"></i>&nbsp;' + data.name + ' </button>'
+                break;
+            case 'qrtz:scheduler:update':
+                toolbarGenscheme_btn += '<button type="button" id="qrtz_edit_btn" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" w="550" h="550"  style="margin-left: 5px;" onclick="qrtz_update_onclick(this)" >' + '<i class="'+data.icon+'"></i>&nbsp;' + data.name + ' </button>'
+                break;
+            case 'qrtz:scheduler:delete':
+                qrtz_btn += 'del,'
+                break;
+        }
+    }
+
+    var qrtz_datagrid_data = {
+        local: 'remote',
+        dataUrl: $.cookie("tudou-qrtz-server")+'/manage/qrtz/list',
+        dataType: 'json',
+        sortAll: false,
+        loadType: 'get',
+        filterAll: true,
+        height:'100%',
+        columns: [{name:'jobName', width:'150',align : 'center', label:'任务名称'},
+            {name:'jobGroup', width:'150',align : 'center', label:'任务组'},
+            {name:'triggerName', width:'150',align : 'center', label:'trigger名'},
+            {name:'triggerGroup', width:'150',align : 'center', label:'trigger组'},
+            {name:'triggerType', width:'150',align : 'center', label:'trigger类型'},
+            {name:'jobStatus', width:'150',align : 'center', label:'任务状态'},
+            {name:'jobClass', width:'150',align : 'center', label:'执行类名'},
+            {name:'cronExpression', width:'150',align : 'center', label:'cron表达式'},
+            {name:'startTime', width:'150',align : 'center', label:'开始时间',render:function(value){
+                return timetrans(value);
+            }},
+            {name:'endTime', width:'150',align : 'center', label:'结束时间',render:function(value){
+                return timetrans(value);
+            }},
+            {name:'repeatType', width:'150',align : 'center', label:'重复类型'},
+            {name:'repeatCount', width:'150',align : 'center', label:'重复次数'},
+            {name:'repeatIntervalStr', width:'150',align : 'center', label:'时间间隔'},
+            {name:'desc', width:'150',align : 'center', label:'备注'},
+        ],
+        paging: {pageSize:50, selectPageSize:'50,100,200', pageCurrent:1},
+        hiddenFields: ['id'],
+        fullGrid: true,
+        showToolbar: true,
+        toolbarItem: qrtz_btn,
+        inlineEditMult: false,
+        toolbarCustom: toolbarGenscheme_btn,
+        dblOnClick: 'qrtz_dblonclick',
+    }
+
+    if (qrtz_btn.indexOf('del') != -1) {
+        qrtz_datagrid_data.delConfirm = true
+        qrtz_datagrid_data.delPK = 'id'
+        qrtz_datagrid_data.delType = 'POST'
+        qrtz_datagrid_data.delUrl = $.cookie("tudou-gen-server") + '/manage/gentable/delete'
+        qrtz_datagrid_data.delCallback = 'del_qrtz_table_back'
+    }
+
+    $('#qrtz_scheduler_list_table').datagrid(qrtz_datagrid_data);
+
+    function del_qrtz_table_back(d) {
+        if (d.code == 1) {
+            $(this).alertmsg('ok', '删除成功');
+        } else {
+            $(this).alertmsg('warn', d.data);
+        }
+        $('#qrtz_scheduler_list_table').datagrid('refresh_part');
+    }
+
+
+    function qrtz_create_onclick(n) {
+        qrtz_id = null
+        var url = n.attributes["url"].value;
+        var name = n.attributes["name"].value;
+        var w = n.attributes["w"].value;
+        var h = n.attributes["h"].value;
+
+        show_dialog(name,url,w,h)
+    }
+
+    function qrtz_dblonclick() {
+        $("#qrtz_edit_btn").click();
+    }
+
+    var qrtz_id = null
+    function qrtz_update_onclick(n) {
+        var selected = $('#qrtz_scheduler_list_table').data('selectedDatas');
+        if (null == selected || selected.length == 0) {
+            return;
+        }
+
+        qrtz_id = selected[0].id
+
+        var url = n.attributes["url"].value;
+        var name = n.attributes["name"].value;
+        var w = n.attributes["w"].value;
+        var h = n.attributes["h"].value;
+
+        show_dialog(name,url,w,h)
+    }
+
+</script>
+
+<div class="bjui-pageContent" >
+	<table id="qrtz_scheduler_list_table" class="table table-hover" data-width="100%"> </table>
+</div>

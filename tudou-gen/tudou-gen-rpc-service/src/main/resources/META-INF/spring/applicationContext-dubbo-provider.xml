@@ -13,6 +13,8 @@
 
     <dubbo:protocol name="dubbo" port="20884"/>
 
+    <dubbo:monitor protocol="registry"/>
+
     <bean id="genSchemeService" class="com.tudou.gen.rpc.service.impl.GenSchemeServiceImpl"/>
     <dubbo:service interface="com.tudou.gen.rpc.api.GenSchemeService" ref="genSchemeService" timeout="10000"/>
 

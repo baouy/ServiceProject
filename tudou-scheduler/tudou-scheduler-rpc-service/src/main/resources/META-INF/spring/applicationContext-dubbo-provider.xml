@@ -13,7 +13,12 @@
 
     <dubbo:protocol name="dubbo" port="20885"/>
 
+    <dubbo:monitor protocol="registry"/>
+
     <!--&lt;!&ndash; OA枚举 &ndash;&gt;-->
+
+    <bean id="schedulerJobService" class="com.tudou.scheduler.rpc.service.impl.SchedulerJobServiceImpl"/>
+    <dubbo:service interface="com.tudou.scheduler.rpc.api.SchedulerJobService" ref="schedulerJobService" timeout="10000"/>
 
 
 </beans>
