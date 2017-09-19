@@ -35,6 +35,7 @@
         <module>tudou-mq-task</module>
         <module>todou-mes</module>
         <module>tudou-gen</module>
+        <module>tudou-im</module>
     </modules>
 
 

@@ -10,6 +10,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tudou-pay</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>tudou-pay-common</module>
+        <module>tudou-pay-dao</module>
+        <module>tudou-pay-rpc-api</module>
+        <module>tudou-pay-rpc-service</module>
+        <module>tudou-pay-web</module>
+    </modules>
 
 
 </project>
