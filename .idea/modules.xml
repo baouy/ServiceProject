@@ -23,6 +23,8 @@
       <module fileurl="file://$PROJECT_DIR$/tudou-oa/tudou-oa-rpc-service/tudou-oa-rpc-service.iml" filepath="$PROJECT_DIR$/tudou-oa/tudou-oa-rpc-service/tudou-oa-rpc-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-oa/tudou-oa-service/tudou-oa-service.iml" filepath="$PROJECT_DIR$/tudou-oa/tudou-oa-service/tudou-oa-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-oss/tudou-oss.iml" filepath="$PROJECT_DIR$/tudou-oss/tudou-oss.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-oss/tudou-oss-common/tudou-oss-common.iml" filepath="$PROJECT_DIR$/tudou-oss/tudou-oss-common/tudou-oss-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-oss/tudou-oss-service/tudou-oss-service.iml" filepath="$PROJECT_DIR$/tudou-oss/tudou-oss-service/tudou-oss-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-pay/tudou-pay.iml" filepath="$PROJECT_DIR$/tudou-pay/tudou-pay.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-pay/tudou-pay-common/tudou-pay-common.iml" filepath="$PROJECT_DIR$/tudou-pay/tudou-pay-common/tudou-pay-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-pay/tudou-pay-dao/tudou-pay-dao.iml" filepath="$PROJECT_DIR$/tudou-pay/tudou-pay-dao/tudou-pay-dao.iml" />
