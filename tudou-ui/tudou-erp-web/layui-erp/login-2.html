@@ -6,20 +6,19 @@
     <meta name="description" content="美窝ERP——V1.0.0" >
     <link rel="icon" href="images/favicon.ico" mce_href="images/favicon.ico" type="image/x-icon">
     <title>美窝ERP</title>
-    <link href="../layui/module/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="../layui/css/ie7.css" rel="stylesheet"><!---->
-    <script src="../layui/layui.js"></script>
-   <!-- <script src="BJUI/other/html5shiv.min.js"></script>
-    <script src="BJUI/other/respond.min.js"></script>-->
-    <!--<script src="BJUI/js/jquery-1.11.3.min.js"></script>
-    <script src="BJUI/js/jquery.cookie.min.js"></script>-->
-    <!--<script src="BJUI/plugins/viewer/viewer.min.js"></script>
-    <link rel="stylesheet" href="BJUI/plugins/viewer/viewer.min.css">-->
+    <link href="BJUI/themes/css/bootstrap.css" rel="stylesheet">
+    <link href="BJUI/themes/css/ie7.css" rel="stylesheet">
+    <script src="BJUI/other/html5shiv.min.js"></script>
+    <script src="BJUI/other/respond.min.js"></script>
+    <script src="BJUI/js/jquery-1.11.3.min.js"></script>
+    <script src="BJUI/js/jquery.cookie.min.js"></script>
+    <script src="BJUI/plugins/viewer/viewer.min.js"></script>
+    <link rel="stylesheet" href="BJUI/plugins/viewer/viewer.min.css">
 
     <style type="text/css">
         * {font-family: "Verdana", "Tahoma", "Lucida Grande", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;}
         body {
-            background: #771720;
+            background: url(BJUI/images/loginbg.jpg) no-repeat center center fixed;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
@@ -51,69 +50,65 @@
 
     </style>
     <script type="text/javascript">
-        layui.define(['jquery','cookie'],function () {
-            var $ = layui.jquery;
-            $(function() {
+        $(function() {
 
-                $("#login_ok").click(function(){
-                    var issubmit = true;
-                    var i_index  = 0;
-                    $(this).find('.in').each(function(i){
-                        if ($.trim($(this).val()).length == 0) {
-                            $(this).css('border', '1px #ff0000 solid');
-                            issubmit = false;
-                            if (i_index == 0)
-                                i_index  = i;
-                        }
-                    });
-                    if (!issubmit) {
-                        $(this).find('.in').eq(i_index).focus();
-                        return false;
+            $("#login_ok").click(function(){
+                var issubmit = true;
+                var i_index  = 0;
+                $(this).find('.in').each(function(i){
+                    if ($.trim($(this).val()).length == 0) {
+                        $(this).css('border', '1px #ff0000 solid');
+                        issubmit = false;
+                        if (i_index == 0)
+                            i_index  = i;
                     }
+                });
+                if (!issubmit) {
+                    $(this).find('.in').eq(i_index).focus();
+                    return false;
+                }
 
-                    $.ajax({
-                        url: '/sso/login',
-                        dataType: 'json',
-                        type: 'POST',
-                        data:{
-                            username:$("#j_username").val(),
-                            password:$("#j_password").val(),
-                            rememberMe:document.getElementById("rememberMe").checked
-                        },
-                        success: function(d){
-                            if(d.code == 1) {
-                                var bjui_theme = $.cookie("bjui_theme");
-                                if (bjui_theme == null){
-                                    $.cookie('bjui_theme','green', { path: '/', expires: 15 });
-                                }
-                                $.cookie("flowerName",$("#j_username").val())
-                                window.location.href = 'index.html';
-                            }else{
-                                $("#login_tip").text(d.data);
-                                setTimeout(function(){
-                                    $("#login_tip").text("");
-                                },4000);
-
-                                $("#login_ok").attr("disabled", false).val('登陆');
+                $.ajax({
+                    url: '/sso/login',
+                    dataType: 'json',
+                    type: 'POST',
+                    data:{
+                        username:$("#j_username").val(),
+                        password:$("#j_password").val(),
+                        rememberMe:document.getElementById("rememberMe").checked
+                    },
+                    success: function(d){
+                        if(d.code == 1) {
+                            var bjui_theme = $.cookie("bjui_theme");
+                            if (bjui_theme == null){
+                                $.cookie('bjui_theme','green', { path: '/', expires: 15 });
                             }
-                        },
-                        error:function(){
-                            $("#login_tip").text("数据访问错误");
+                            $.cookie("flowerName",$("#j_username").val())
+                            window.location.href = 'index.html';
+                        }else{
+                            $("#login_tip").text(d.data);
                             setTimeout(function(){
                                 $("#login_tip").text("");
                             },4000);
+
+                            $("#login_ok").attr("disabled", false).val('登陆');
                         }
-                    });
-                    return false;
+                    },
+                    error:function(){
+                        $("#login_tip").text("数据访问错误");
+                        setTimeout(function(){
+                            $("#login_tip").text("");
+                        },4000);
+                    }
                 });
-
+                return false;
             });
-        });
 
+        });
     </script>
 </head>
 
-<body style="">
+<body style="background-image: url(BJUI/images/loginbg.jpg);">
 <!--[if lte IE 7]>
 <style type="text/css">
     #errorie {position: fixed; top: 0; z-index: 100000; height: 30px; background: #FCF8E3;}

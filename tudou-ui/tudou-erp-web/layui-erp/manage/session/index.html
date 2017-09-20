@@ -1,0 +1,85 @@
+<script type="text/javascript">
+	layui.define(['jquery', 'BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins'], function () {
+		var $ = layui.jquery,layer= layui.layer;
+		for (var data of user_data) {
+			var value = data.permissionValue;
+			switch (value) {
+				case 'upms:session:forceout':
+					$('#session_exit').fadeIn()
+					break;
+			}
+		}
+
+		$('#manage_session_table').datagrid({
+			local: 'remote',
+			dataUrl: $.cookie("tudou-upms-server") + '/manage/session/list',
+			dataType: 'json',
+			sortAll: false,
+			loadType: 'get',
+			filterThead: false,
+			height: '95%',
+			columns: [{name: 'id', width: '150', align: 'center', label: '编号'},
+				{
+					name: 'startTimestamp', width: '150', align: 'center', label: '创建时间', render: function (value) {
+					return zjoin.timetrans(value);
+				}
+				},
+				{
+					name: 'lastAccessTime', width: '150', align: 'center', label: '最后访问时间', render: function (value) {
+					return zjoin.timetrans(value);
+				}
+				},
+				{name: 'expired', width: '150', align: 'center', label: '是否过期'},
+				{name: 'host', width: '150', align: 'center', label: '访问者IP'},
+				{name: 'userAgent', width: '150', align: 'center', label: '用户标识'},
+				{
+					name: 'status',
+					width: '150',
+					align: 'center',
+					label: '状态',
+					type: 'select',
+					items: [{'on_line': '在线'}, {'off_line': '离线'}, {'force_logout': '踢离'}]
+				},
+			],
+			paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+			fullGrid: true,
+		});
+
+		var selected;
+		$("#session_exit").bind('click',function(){
+			selected = $("#manage_session_table").data('selectedDatas');
+			if (null == selected || selected.length == 0) {
+				return;
+			}
+			layer.confirm( '是否确定?', {icon: 3},
+					function(index){
+						var ids = new Array();
+						for (var i = 0; i < selected.length; i++) {
+							ids.push(selected[i].id);
+						}
+						$.ajax({
+							url: $.cookie("tudou-upms-server") + '/manage/session/forceout/' + ids.join(','),
+							dataType: 'json',
+							type: 'get',
+							success: function (d) {
+								if (d.code == 1) {
+									$('#manage_session_table').datagrid('refresh');
+								} else {
+									layer.warn( d.data);
+								}
+							},
+							error: function (e) {
+								layer.err( "退出失败!");
+							}
+						});
+						layer.close(index);
+					}, function(){});
+		});
+
+	});
+</script>
+
+<div class="bjui-pageContent" >
+	<button id="session_exit" type="button" class="layui-btn layui-btn-small layui-btn-danger" style="margin-bottom: 5px;display:none;" ><i class="layui-icon">&#xe879;</i>&nbsp; 强制退出 </button>
+	<table id="manage_session_table" class="table table-hover" data-width="100%"> </table>
+</div>

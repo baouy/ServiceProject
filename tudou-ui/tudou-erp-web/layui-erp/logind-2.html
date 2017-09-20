@@ -1,0 +1,46 @@
+<script type="text/javascript">
+
+	function login_saveCalback(d) {
+		if (d.code == 1){
+			$.cookie("flowerName",$("#login_username").val())
+			BJUI.dialog('closeCurrent',this);
+			$(this).alertmsg('ok','登录成功');
+			window.location.reload();
+		}else{
+			$(this).alertmsg('warn',d.data);
+		}
+	}
+
+	function login_clost() {
+		window.location.href = 'login.html';
+	}
+	
+</script>
+
+<div class="bjui-pageContent">
+	<form class="form-horizontal" action="/sso/login" role="form" data-toggle="validate" data-callback="login_saveCalback">
+		<div class="form-group">
+			<label for="login_username" class="col-sm-3 control-label">账 号</label>
+			<div class="col-sm-7">
+				<input type="text" class="form-control" id="login_username" name="username" value="" placeholder="" data-rule="required">
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="login_password" class="col-sm-3 control-label">密 码</label>
+			<div class="col-sm-7">
+				<input type="password" class="form-control" id="login_password" name="password" value="" placeholder="" data-rule="required">
+			</div>
+		</div>
+	</form>
+</div>
+
+<div class="bjui-pageFooter">
+	<ul>
+		<li>
+			<button type="button" class="btn-close" data-icon="close" onclick="login_clost()">取消</button>
+		</li>
+		<li>
+			<button type="submit" class="btn-default" data-icon="save">登录</button>
+		</li>
+	</ul>
+</div>
