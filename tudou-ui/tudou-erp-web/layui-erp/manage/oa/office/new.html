@@ -1,0 +1,91 @@
+<script>
+    layui.define( function () {
+        var $ = layui.jquery
+        var toolbarCustom_process_btn = ''
+        for (var data of user_data) {
+            var value = data.permissionValue;
+            if (value == 'oa:office:edit') {
+                toolbarCustom_process_btn += '<button type="button" name=' + data.name + ' class="layui-btn layui-btn-small" style="margin-left: 5px;" onclick="select_start()" >' + '<i class="layui-icon">&#xe037;</i>&nbsp;' + data.name + ' </button>'
+            }
+        }
+
+        var oa_office_oa_datagrid_data = {
+            local: 'remote',
+            dataUrl: $.cookie("tudou-oa-server") + '/act/task/process',
+            dataType: 'json',
+            sortAll: false,
+            loadType: 'get',
+            filterAll: true,
+            height: '100%',
+            columns: [
+                {name: 'category', width: '150', label: '流程分类', align: 'center'},
+                {name: 'key', width: '150', label: '流程标识', align: 'center'},
+                {name: 'name', width: '150', label: '模型名称', align: 'center'},
+                {
+                    name: 'diagramResourceName',
+                    width: '150',
+                    align: 'center',
+                    label: '流程图片',
+                    render: function (value, d) {
+                        if (value.length > 0) {
+                            return '<a target="_blank" href="/oa/act/process/resource/read?procDefId=' + d.id + '&resType=image">' + value + '</a>';
+                        } else {
+                            return value;
+                        }
+                    }
+                },
+                {name: 'version', width: '150', align: 'center', label: '版本号'},
+                {
+                    name: 'deploymentTime', width: '150', align: 'center', label: '创建时间', render: function (value) {
+                    return zjoin.timetrans(value);
+                }
+                },
+            ],
+            paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+            fullGrid: true,
+            showToolbar: true,
+            toolbarItem: null,
+            inlineEditMult: false,
+            dblOnClick: 'select_start',
+            toolbarCustom: toolbarCustom_process_btn,
+
+        }
+
+        $('#oa_office_new_table').datagrid(oa_office_oa_datagrid_data);
+
+
+        function select_start() {
+            var selected = $("#oa_office_new_table").data('selectedDatas');
+            if (null == selected || selected.length == 0) {
+                return;
+            }
+
+            var procDefId = selected[0].id
+            var name = selected[0].name
+
+            $('#oa_office_new_table').trigger('bjui.ajaxStart')
+            $.ajax({
+                type: 'post',
+                url: $.cookie("tudou-oa-server") + '/act/task/form/',
+                data: {procDefId: procDefId},
+                success: function (d) {
+                    if (d.code == 1) {
+                        oa_office_data = d.data
+                        oa_office_dialog(name, d.data.formKey, 800, 400);
+                    } else {
+                        $(this).alertmsg('warn', d.data);
+                    }
+                    $('#oa_office_new_table').trigger('bjui.ajaxStop')
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $(this).alertmsg('warn', textStatus)
+                    $('#oa_office_new_table').trigger('bjui.ajaxStop')
+                }
+            });
+        }
+    });
+</script>
+
+<div class="bjui-pageContent" style="top: 135px;">
+<table id="oa_office_new_table" class="table table-hover" data-width="100%"></table>
+    </div>

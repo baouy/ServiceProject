@@ -1,0 +1,53 @@
+<script>
+    layui.define(['jquery', 'BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins'], function () {
+        var $ = layui.jquery, form = layui.form;
+        $(".layui-layer-btn0").bind('click',function () {
+            $('#model_create_save_btn').click();
+        })
+        form.on('submit(model_create_save)',function (data) {
+            $.ajax({
+                url: $.cookie("tudou-oa-server") + "/act/model/create",
+                dataType: 'json',
+                type: 'POST',
+                async: false,
+                data: data.field,
+                success: function (d) {
+                    if (d.code == 1) {
+                        layer.closeAll()
+                        $('#manage_act_model_table').datagrid('refresh_part');
+                        act_jup(d.data)
+                    } else {
+                        layer.warn( d.data);
+                    }
+                },
+                error: function (e) {
+                    layer.err('保存失败');
+                }
+            });
+            return false
+        });
+    });
+</script>
+<form class="layui-form">
+    <div class="layui-form-item">
+        <label for="act_model_category" class="layui-form-label">模块分类：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="category" id="act_model_category" value="" lay-verify="required" class="layui-input">
+        </div>
+        <label for="act_model_name" class="layui-form-label">模块名称：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" id="act_model_name" value="" lay-verify="required" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="act_model_key" class="layui-form-label">模块标示：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="key" id="act_model_key" value="" lay-verify="required" class="layui-input">
+        </div>
+        <label for="act_model_description" class="layui-form-label">模块描述：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="description" id="act_model_description" value="" class="layui-input">
+        </div>
+    </div>
+    <button id="model_create_save_btn" lay-submit="" class="layui-hide" lay-filter="model_create_save"></button>
+</form>

@@ -1,0 +1,102 @@
+<script>
+	
+	function gen_scheme_cancel_onclick() {
+		
+    }
+	
+    function gen_scheme_save_onclick() {
+		
+    }
+	
+    function gen_scheme_from_back() {
+		
+    }
+
+</script>
+
+<div id="planmain">
+	<div class="bjui-pageContent">
+
+		<form data-toggle="validate" data-callback="gen_scheme_from_back" id="gen_scheme_from">
+
+			<table class="table table-condensed table-bordered table-hover table-striped table-top bjui-tabledit"
+				   width="100%">
+				<tbody>
+				<tr>
+					<td>
+						<label class="control-label x100 required">方案名称：</label>
+						<input type="text" name="name" id="gen_scheme_name" value="" data-rule="required" size="20">
+						<label class="control-label"></label>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="control-label x100 required">表名：</label>
+						<select name="category" id="gen_scheme_category" data-toggle="selectpicker" data-rule="required" data-width="200"></select>
+					</td>
+				</tr>
+				<!--<tr>-->
+					<!--<td>-->
+						<!--<label class="control-label x100 required">生成包路径：</label>-->
+						<!--<input type="text" name="packageName" id="gen_scheme_packageName" value="" data-rule="required" size="20">-->
+					<!--</td>-->
+				<!--</tr>-->
+				<tr>
+					<td>
+						<label class="control-label x100 required">生成模块名：</label>
+						<input type="text" name="moduleName" id="gen_scheme_moduleName" value="" data-rule="required" size="20">
+					</td>
+				</tr>
+				<!--<tr>-->
+					<!--<td>-->
+						<!--<label class="control-label x100 required">生成子模块名：</label>-->
+						<!--<input type="text" name="subModuleName" id="gen_scheme_subModuleName" value="" data-rule="required" size="20">-->
+					<!--</td>-->
+				<!--</tr>-->
+				<tr>
+					<td>
+						<label class="control-label x100 required">生成功能描述：</label>
+						<input type="text" name="functionName" id="gen_scheme_functionName" value="" data-rule="required" size="20">
+					</td>
+				</tr>
+				<!--<tr>-->
+					<!--<td>-->
+						<!--<label class="control-label x100 required">生成功能名：</label>-->
+						<!--<input type="text" name="functionNameSimple" id="gen_scheme_functionNameSimple" value="" data-rule="required" size="20">-->
+					<!--</td>-->
+				<!--</tr>-->
+				<tr>
+					<td>
+						<label class="control-label x100 required">生成功能作者：</label>
+						<input type="text" name="functionAuthor" id="gen_scheme_functionAuthor" value="" data-rule="required" size="20">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="control-label x100 required">业务表名：</label>
+						<select name="genTableId" id="gen_scheme_genTableId" data-toggle="selectpicker" data-rule="required" data-width="200"></select>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="control-label x100 required">生成选项：</label>
+						<select name="select" id="gen_scheme_select" data-toggle="selectpicker" data-rule="required" data-width="200"></select>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</form>
+
+	</div>
+
+	<div class="bjui-pageFooter">
+		<ul>
+			<li>
+				<button type="button" class="btn-close" data-icon="close" onclick="gen_scheme_cancel_onclick()">取消</button>
+			</li>
+			<li>
+				<button id="gen_table_sure" type="button" class="btn-green" data-icon="save" onclick="gen_scheme_save_onclick()">保存</button>
+			</li>
+		</ul>
+	</div>
+</div>
