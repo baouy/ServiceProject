@@ -1,0 +1,146 @@
+<script>
+    layui.define(['form','laydate'],function () {
+        var $ = layui.jquery, form = layui.form, laydate = layui.laydate;
+        form.render(null, 'oa_user_leave_form');
+        laydate.render({
+            elem: '.laydate',
+            trigger: 'click'
+            , type: 'date'
+            , format: 'yyyy-MM-dd' //可任意组合
+        });
+        lay('.laydate2').each(function () {
+            laydate.render({
+                elem: this,
+                trigger: 'click'
+                , type: 'date'
+                , format: 'yyyy-MM' //可任意组合
+            });
+        });
+
+        layer.load()
+        $.ajax({
+            url: $.cookie("tudou-oa-server") + '/manage/oauserdetail/detail/' + $("#user_select_id").val(),
+            dataType: 'json',
+            type: 'GET',
+            success: function (d) {
+                layer.closeAll('loading')
+                if (d.code == 1) {
+                    var oaUserDetails = d.data.oaUserDetails
+                    var upmsUser = d.data.upmsUser
+                    for (var i in oaUserDetails) {
+                        layer.current().find("#oa_user_" + i).val(oaUserDetails[i]);
+                    }
+                    for (var i in upmsUser) {
+                        layer.current().find("#oa_user_" + i).val(upmsUser[i]);
+                    }
+                    form.render('select', 'oa_user_leave_form');
+                } else {
+
+                }
+            },error:function (e) {
+                layer.closeAll('loading')
+            }
+        });
+
+
+        $(".layui-layer-btn0").bind('click',function () {
+            $("#oa_user_leave_form_btn").click();
+        })
+
+        form.on('submit(oa_user_leave_form)',function (data) {
+            $.ajax({
+                url:$.cookie("tudou-oa-server") + "/manage/oauserdetail/leave",
+                type:'post',
+                data:data.field,
+                success:function (d) {
+                    if (d.code == 1) {
+                        layer.closeAll()
+                        $('#manage_oa_user_table').datagrid('refresh_part');
+                    } else {
+                        layer.warn(d.data);
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+<div class="bjui-pageContent">
+    <form class="layui-form"  id="oa_user_leave_form" lay-filter="oa_user_leave_form">
+        <input type="hidden" value="" name="userId" id="oa_user_userId">
+        <fieldset class="layui-elem-field layui-field-title">
+            <legend>基本信息</legend>
+        </fieldset>
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名：</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="oa_user_realname" value=""  readonly="true">
+            </div>
+            <label class="layui-form-label">公司邮箱：</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="oa_user_companyEmail" value=""  readonly="true">
+            </div>
+            <label class="layui-form-label">手机号码：</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="oa_user_phone" value=""  readonly="true">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">花名：</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="oa_user_flowerName" value=""  readonly="true">
+            </div>
+            <label class="layui-form-label">工号：</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="oa_user_workNum" value=""  readonly="true">
+            </div>
+            <label class="layui-form-label">公司电话：</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="oa_user_companyMobile" value=""  lay-verify="mobile"
+                       readonly="true">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别：</label>
+            <div class="layui-input-inline">
+                <select id="oa_user_sex" disabled>
+                    <option value="1">男</option>
+                    <option value="2">女</option>
+                </select>
+            </div>
+            <label class="layui-form-label">登录帐号：</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="oa_user_username" value=""  readonly="true">
+            </div>
+
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">离职时间：</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input laydate" name = "cleavetime"id="oa_user_cleavetime" data-toggle="datepicker" value=""
+                       lay-verify="date"
+                        readonly="true">
+            </div>
+            <label class="layui-form-label">离职原因：</label>
+            <div class="layui-input-inline" style="width: 500px">
+                <input type="text" class="layui-input" name="leavingreason" id="oa_user_leavingreason" value=""
+                       lay-verify="required"
+                       size="60">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">社保缴纳至：</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input laydate2" id="oa_user_csecurityendtime"  name = "csecurityendtime"
+                       value="" lay-verify="date"
+                        readonly="true">
+            </div>
+            <label class="layui-form-label">公积金缴纳至：</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input laydate2" id="oa_user_cfundtime" lay-verify="date" name = "cfundtime" value="" s readonly="true">
+            </div>
+        </div>
+        <button id="oa_user_leave_form_btn" lay-submit="" class="layui-hide" lay-filter="oa_user_leave_form"></button>
+    </form>
+</div>

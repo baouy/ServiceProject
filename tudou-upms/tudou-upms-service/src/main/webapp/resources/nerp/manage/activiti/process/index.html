@@ -1,0 +1,215 @@
+<script>
+	layui.define(['jquery', 'BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins'], function () {
+		var $ = layui.jquery,element = layui.element;
+		element.init('tab')
+		element.on('tab(process-tab)', function(data){
+			var url = $(this).attr('data-url'),_for = $(this).attr('data-for');
+			if(url && _for){
+				$("#"+_for).load(url);
+			}
+		});
+		var process_btn = ''
+		var toolbarCustom_process_btn = ''
+		for (var data of user_data) {
+			var value = data.permissionValue;
+			if (value == 'act:process:model') {
+                toolbarCustom_process_btn += '<button type="button" id="act_process_confirm" name=' + data.name + ' url="' + data.uri + '" class="layui-btn layui-btn-small user_dialog_btn"style="margin-left: 5px;"  >'
+                toolbarCustom_process_btn+='<i class="layui-icon">'+ data.icon +'</i>'
+                toolbarCustom_process_btn+= '&nbsp;' + data.name + ' </button>'
+			}
+			if (value == 'act:process:suspended') {
+                toolbarCustom_process_btn += '<button type="button" id="act_process_s_confirm" name=' + data.name + ' url="' + data.uri + '" class="layui-btn layui-btn-small user_dialog_btn"style="margin-left: 5px;"  >'
+                toolbarCustom_process_btn+='<i class="layui-icon">'+ data.icon +'</i>'
+                toolbarCustom_process_btn+= '&nbsp;' + data.name + ' </button>'
+			}
+
+			if (value == 'act:process:delete') {
+				process_btn += 'del,'
+			}
+		}
+
+		var act_process_datagrid_data = {
+			local: 'remote',
+			dataUrl: $.cookie("tudou-oa-server") + '/act/process/list',
+			dataType: 'json',
+			sortAll: false,
+			loadType: 'get',
+			filterAll: true,
+			height: '97%',
+			columns: [
+				{name: 'category', width: '150', label: '流程分类', align: 'center'},
+				{name: 'id', width: '150', label: '流程ID', align: 'center'},
+				{name: 'key', width: '150', label: '流程标识', align: 'center'},
+				{name: 'name', width: '150', label: '流程名称', align: 'center'},
+				{name: 'version', width: '150', align: 'center', label: '流程版本'},
+				{
+					name: 'deploymentTime', width: '150', align: 'center', label: '部署时间', render: function (value) {
+					return zjoin.timetrans(value);
+				}
+				},
+				{
+					name: 'resourceName', width: '150', align: 'center', label: '流程XML', render: function (value, d) {
+					if (value.length > 0) {
+						return '<a target="_blank" href="/oa/act/process/resource/read?procDefId=' + d.id + '&resType=xml">' + value + '</a>';
+					} else {
+						return value;
+					}
+				}
+				},
+				{
+					name: 'diagramResourceName',
+					width: '150',
+					align: 'center',
+					label: '流程图片',
+					render: function (value, d) {
+						if (value.length > 0) {
+							return '<a target="_blank" href="/oa/act/process/resource/read?procDefId=' + d.id + '&resType=image">' + value + '</a>';
+						} else {
+							return value;
+						}
+					}
+				},
+				{
+					name: 'suspended',
+					width: '150',
+					align: 'center',
+					label: '状态',
+					type: 'select',
+					items: [{'true': '启动中'}, {'false': '暂停中'}]
+				},
+			],
+			paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+			fullGrid: true,
+			showToolbar: true,
+			toolbarItem: process_btn,
+			inlineEditMult: false,
+			toolbarCustom: toolbarCustom_process_btn,
+		}
+
+		if (process_btn.indexOf('del') != -1) {
+			act_process_datagrid_data.delConfirm = true
+			act_process_datagrid_data.delPK = 'deploymentId'
+			act_process_datagrid_data.delType = 'POST'
+			act_process_datagrid_data.delUrl = $.cookie("tudou-oa-server") + '/act/process/delete'
+			act_process_datagrid_data.delCallback = 'del_act_process_back'
+		}
+
+		$('#manage_act_process_table').datagrid(act_process_datagrid_data);
+
+
+		window.del_act_process_back = del_act_process_back
+		function del_act_process_back(d) {
+			if (d.code == 1) {
+				layer.ok('删除成功');
+			} else {
+                layer.warn(d.data);
+			}
+			$('#manage_act_process_table').datagrid('refresh_part');
+		}
+
+		var act_process_id, act_is_suspend
+        $("#act_process_confirm").bind('click', function () {
+			var selected = $("#manage_act_process_table").data('selectedDatas');
+			if (null == selected || selected.length == 0) {
+				return;
+			}
+			act_process_id = selected[0].id
+            layer.confirm('是否确定转化为模型?', {icon: 3},
+                function (index) {
+                    $.ajax({
+                        url: $.cookie("tudou-oa-server") + '/act/process/convert/toModel',
+                        dataType: 'json',
+                        type: 'POST',
+                        data: {
+                            'procDefId': act_process_id
+                        },
+                        success: function (d) {
+                            if (d.code == 1) {
+                                layer.ok('操作成功')
+                                $('#manage_act_process_table').datagrid('refresh_part')
+                            } else {
+                                layer.warn(d.data)
+                            }
+                        },
+                        error: function (e) {
+                            layer.warn("转化模型失败!");
+                        }
+                    });
+                    layer.close(index);
+                }, function () {
+                });
+
+		})
+
+        $("#act_process_s_confirm").bind('click', function () {
+			var selected = $("#manage_act_process_table").data('selectedDatas');
+			if (null == selected || selected.length == 0) {
+				return;
+			}
+			act_process_id = selected[0].id
+			act_is_suspend = selected[0].suspended
+
+            layer.confirm('是否激活和挂起?', {icon: 3},
+                function (index) {
+                    var url
+                    if (act_is_suspend) {
+                        url = '/act/process/update/suspend'
+                    } else {
+                        url = '/act/process/update/active'
+                    }
+                    $.ajax({
+                        url: $.cookie("tudou-oa-server") + url,
+                        dataType: 'json',
+                        type: 'POST',
+                        data: {
+                            'procDefId': act_process_id
+                        },
+                        success: function (d) {
+                            if (d.code == 1) {
+                                $('#manage_act_process_table').datagrid('refresh_part');
+                                layer.ok('操作成功');
+                            } else {
+                                layer.warn(d.data);
+                            }
+                        },
+                        error: function (e) {
+                            layer.warn("操作失败!");
+                        }
+                    });
+                    layer.close(index);
+                }, function () {
+                });
+		})
+
+		function act_process_changeValue(num) {
+			setTimeout(function () {
+				if (num == 0) {
+					$('#manage_act_process_table').datagrid('refresh_part');
+				} else if (num == 1) {
+
+				} else if (num == 2) {
+					$('#manage_act_process_runing_table').datagrid('refresh_part');
+				}
+			}, 300);
+		}
+		window.process_btn = process_btn;
+		window.act_process_datagrid_data = act_process_datagrid_data;
+	});
+</script>
+
+<div class="layui-tab layui-tab-brief" lay-filter="process-tab">
+	<ul class="layui-tab-title" style="left: 0px;  top: 0px;">
+		<li class="layui-this" lay-id="deployment_process">流程管理</li>
+		<li data-url="/resources/nerp/manage/activiti/process/deployment.html" data-for="act_process_table_deployment" lay-id="deployment_layid">部署流程</li>
+		<li data-url="/resources/nerp/manage/activiti/process/runing.html" data-for="act_process_table_runing">运行中的流程</li>
+	</ul>
+	<div class="layui-tab-content">
+		<div class="layui-tab-item layui-show layui-subpage" style="padding-top: 0px;">
+			<div class="bjui-pageContent">
+				<table id="manage_act_process_table" class="table table-hover" data-width="100%"></table>
+			</div>
+		</div>
+		<div class="layui-tab-item layui-subpage" id="act_process_table_deployment" style="padding-top: 0px;">暂无内容</div>
+		<div class="layui-tab-item layui-subpage" id="act_process_table_runing"  style="padding-top: 0px;">暂无内容</div>
+	</div>
+</div>

@@ -1,0 +1,71 @@
+<script>
+	layui.define(['jquery','BJUIajax','BJUIdatagrid','BJUIinitui','BJUIplugins','ztree','ztreecheck'],function() {
+		var $ = layui.jquery, layer = layui.layer;
+		var changeDatas = [];
+		var setting = {
+			check: {
+				enable: true,
+				// 勾选关联父，取消关联子
+				chkboxType: {"Y": "p", "N": "s"}
+			},
+			async: {
+				enable: true,
+				url: $.cookie("tudou-upms-server") + '/manage/permission/role/' + $("#role_select_id").val()
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			},
+			callback: {
+				onCheck: function () {
+					var zTree = $.fn.zTree.getZTreeObj("ztree")
+					var changeNodes = zTree.getChangeCheckedNodes();
+					changeDatas = [];
+					for (var i = 0; i < changeNodes.length; i++) {
+						var changeData = {};
+						changeData.id = changeNodes[i].id;
+						changeData.checked = changeNodes[i].checked;
+						changeDatas.push(changeData);
+					}
+				}
+			}
+		};
+
+		layer.load()
+		$.fn.zTree.init($('#ztree'), setting);
+        layer.closeAll('loading')
+
+        $('.layui-layer-btn0').bind('click', function () {
+            role_permission_save();
+        });
+
+		function role_permission_save() {
+			$.ajax({
+				type: 'post',
+				url: $.cookie("tudou-upms-server") + '/manage/role/permission/' + $("#role_select_id").val(),
+				data: {datas: JSON.stringify(changeDatas), role_select_id: $("#role_select_id").val()},
+				success: function (result) {
+					if (result.code != 1) {
+						if (result.data instanceof Array) {
+							$.each(result.data, function (index, value) {
+                                layer.warn(value.errorMsg)
+							});
+						} else {
+                            layer.warn(result.data.errorMsg)
+						}
+					} else {
+						layer.ok('操作成功')
+						layer.closeCurrent()
+					}
+				},
+				error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    layer.warn(textStatus)
+				}
+			});
+		}
+	});
+</script>
+<div class="bjui-pageContent" id="role_permission_div" style="padding-left: 100px;">
+	<ul id="ztree" class="ztree" ></ul>
+</div>
