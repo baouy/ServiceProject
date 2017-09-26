@@ -85,11 +85,17 @@
         });
 
         form.on('submit(oa_user_create_save)',function (data) {
+            var field = data.field
+            for (var n in field){
+                if (n == 'itime' || n == 'ptime' || n == 'securitystart'){
+                    field[n] = new Date(field[n]).getTime()
+                }
+            }
             layer.load()
             $.ajax({
                 url:$.cookie("tudou-oa-server") + "/manage/oauserdetail/update",
                 type:'post',
-                data:data.field,
+                data:field,
                 success:function (da) {
                     layer.closeAll('loading')
                     if(da.code==1) {
@@ -131,19 +137,19 @@
             <label class="layui-form-label">手机号码</label>
             <div class="layui-input-inline">
                 <input type="text" name="phone" id="oa_user_phone" lay-verify="required|phone" placeholder=""
-                       autocomplete="off" class="layui-input" value="">
+                       autocomplete="off" class="layui-input" value="" readonly="true">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">花名</label>
             <div class="layui-input-inline">
                 <input type="text" name="flowerName" id="oa_user_flowerName" lay-verify="required" autocomplete="off"
-                       class="layui-input" value="">
+                       class="layui-input" value="" readonly="true">
             </div>
             <label class="layui-form-label">工号</label>
             <div class="layui-input-inline">
                 <input type="text" name="workNum" id="oa_user_workNum" lay-verify="required" placeholder=""
-                       autocomplete="off" class="layui-input" value="">
+                       autocomplete="off" class="layui-input" value="" readonly="true">
             </div>
             <label class="layui-form-label">公司电话</label>
             <div class="layui-input-inline">
@@ -160,7 +166,7 @@
             <label class="layui-form-label">登录帐号</label>
             <div class="layui-input-inline">
                 <input type="text" name="username" id="oa_user_username" lay-verify="required|username" placeholder=""
-                       autocomplete="off" class="layui-input" value="">
+                       autocomplete="off" class="layui-input" value="" readonly="true">
             </div>
 
         </div>

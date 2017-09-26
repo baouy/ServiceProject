@@ -3106,7 +3106,7 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
                 }
 
                 if (options.toolbarCustom) {
-                    var $custom, $custombox = $('<div style="display:inline-block;"></div>')
+                    var $custom, $custombox = $('<div class="layui-btn-group" role="group"></div>')
 
                     if (typeof options.toolbarCustom === 'string') {
                         var custom = $(options.toolbarCustom)

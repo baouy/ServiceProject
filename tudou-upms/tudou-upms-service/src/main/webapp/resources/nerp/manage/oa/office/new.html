@@ -28,7 +28,8 @@
                     label: '流程图片',
                     render: function (value, d) {
                         if (value.length > 0) {
-                            return '<a target="_blank" href="/oa/act/process/resource/read?procDefId=' + d.id + '&resType=image">' + value + '</a>';
+                            var url = '/act/process/resource/read?procDefId=' + d.id + '&resType=image'
+                            return '<a target="_blank" onclick="oa_office_tracking_onclick(\''+url+'\')">' + value + '</a>';
                         } else {
                             return value;
                         }
@@ -53,7 +54,7 @@
 
         $('#oa_office_new_table').datagrid(oa_office_oa_datagrid_data);
 
-
+        window.select_start = select_start
         function select_start() {
             var selected = $("#oa_office_new_table").data('selectedDatas');
             if (null == selected || selected.length == 0) {
@@ -63,7 +64,7 @@
             var procDefId = selected[0].id
             var name = selected[0].name
 
-            $('#oa_office_new_table').trigger('bjui.ajaxStart')
+            layer.load()
             $.ajax({
                 type: 'post',
                 url: $.cookie("tudou-oa-server") + '/act/task/form/',
@@ -71,21 +72,21 @@
                 success: function (d) {
                     if (d.code == 1) {
                         oa_office_data = d.data
-                        oa_office_dialog(name, d.data.formKey, 800, 400);
+                        oa_office_dialog(name, d.data.formKey, '800px', '400px',['保存', '取消']);
                     } else {
-                        $(this).alertmsg('warn', d.data);
+                        layer.warn(d.data)
                     }
-                    $('#oa_office_new_table').trigger('bjui.ajaxStop')
+                    layer.closeAll()
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    $(this).alertmsg('warn', textStatus)
-                    $('#oa_office_new_table').trigger('bjui.ajaxStop')
+                    layer.warn(textStatus)
+                    layer.closeAll()
                 }
             });
         }
     });
 </script>
 
-<div class="bjui-pageContent" style="top: 135px;">
+<div class="bjui-pageContent">
 <table id="oa_office_new_table" class="table table-hover" data-width="100%"></table>
-    </div>
+</div>

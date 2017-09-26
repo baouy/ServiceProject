@@ -7,7 +7,7 @@
                 $("#" + _for).load(url);
             }
         });
-        var toolbarCustom_oa_office_btn = '<div style="margin: 5px;"><label class="control-label">创建时间：</label><span class="wrap_bjui_btn_box"style="position: relative; display: inline-block;"><input type="text" id="oa_office_start_time" data-toggle="datepicker" size="15" class="form-control laydate" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href="javascript:;" data-toggle="datepickerbtn" style="height: 22px; line-height: 22px;"><i class="layui-icon skin-color">&#xe97d;</i></a></span><label class="control-label">—</label><span class="wrap_bjui_btn_box" style="position: relative; display: inline-block;"><input type="text" id="oa_office_end_time" data-toggle="datepicker" size="15" class="form-control laydate" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href="javascript:;" data-toggle="datepickerbtn" style="height: 22px; line-height: 22px;"><i class="layui-icon skin-color">&#xe97d;</i></a></span> <button type="button" style="margin-left: 5px;" class="layui-btn layui-btn-small" onclick="oa_office_seletct(1)"><i class="layui-icon">&#xe8b6;</i>&nbsp; 查询 </button> <button type="button" style="margin-left: 5px;" class="layui-btn layui-btn-small" onclick="oa_office_seletct_clear(1)"><i class="layui-icon">&#xe991;</i> &nbsp;重置 </button></div>'
+        var toolbarCustom_oa_office_btn = '<label class="control-label">创建时间：</label><span class="wrap_bjui_btn_box"style="position: relative; display: inline-block;"><input type="text" id="oa_office_start_time" data-toggle="datepicker" size="15" class="form-control laydate" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href="javascript:;" data-toggle="datepickerbtn"><i class="layui-icon skin-color" style="margin-top: 20px;">&#xe97d;</i></a></span><label class="control-label">—</label><span class="wrap_bjui_btn_box" style="position: relative; display: inline-block;"><input type="text" id="oa_office_end_time" data-toggle="datepicker" size="15" class="form-control laydate" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href="javascript:;" data-toggle="datepickerbtn"  line-height: 22px;"><i class="layui-icon skin-color">&#xe97d;</i></a></span> <button type="button" style="margin-left: 5px;" class="btn layui-btn layui-btn-small" onclick="oa_office_seletct(1)"><i class="layui-icon">&#xe8b6;</i>&nbsp; 查询 </button> <button type="button" style="margin-left: 5px;" class="btn layui-btn layui-btn-small" onclick="oa_office_seletct_clear(1)"><i class="layui-icon">&#xe991;</i> &nbsp;重置 </button>'
 
         var oa_office_datagrid_data = {
             local: 'remote',
@@ -16,7 +16,7 @@
             sortAll: false,
             loadType: 'get',
             filterThead: false,
-            height: '93%',
+            height: '100%',
             columns: [
                 {
                     width: '150', align: 'center', label: '标题', render: function (value, d) {
@@ -67,18 +67,18 @@
                 ,trigger: 'click'
             });
         });
-        var oa_office_data
 
+       window.oa_office_data
+        window.oa_office_onclick = oa_office_onclick
         function oa_office_onclick(url, name) {
+            layer.load()
             if (name == '签收') {
-                console.log($.cookie("tudou-oa-server") + url);
-                $('#oa_office_wait_table').trigger('bjui.ajaxStart')
                 $.ajax({
                     url: $.cookie("tudou-oa-server") + url,
                     dataType: 'json',
                     type: 'GET',
                     success: function (d) {
-                        $('#oa_office_wait_table').trigger('bjui.ajaxStop')
+                        layer.closeAll('loading')
                         if (d.code != 1) {
                             $(this).alertmsg('warn', "签收失败");
                             return;
@@ -87,8 +87,7 @@
                         $(this).alertmsg('ok', "保存成功");
                     },
                     error: function () {
-                        $('#oa_office_wait_table').trigger('bjui.ajaxStop')
-
+                        layer.closeAll('loading')
                     }
                 });
             } else {
@@ -97,42 +96,30 @@
                     dataType: 'json',
                     type: 'GET',
                     success: function (d) {
-                        $('#oa_office_wait_table').trigger('bjui.ajaxStop')
+                        layer.closeAll('loading')
                         if (d.code != 1) {
                             $(this).alertmsg('warn', "请求失败");
                             return;
                         }
                         oa_office_data = d.data
-                        oa_office_dialog(d.data.taskName, d.data.formKey, 800, 800);
+                        oa_office_dialog(d.data.taskName, d.data.formKey, '800px', '800px',['保存','驳回', '取消']);
                     },
                     error: function () {
-                        $('#oa_office_wait_table').trigger('bjui.ajaxStop')
-
+                        layer.closeAll('loading')
                     }
                 });
             }
 
         }
 
+        window.oa_office_tracking_onclick = oa_office_tracking_onclick
         function oa_office_tracking_onclick(url) {
             dialog_src = $.cookie("tudou-oa-server") + url
-            oa_office_dialog('流程图', '/resources/erp/manage/activiti/dialog.html', 800, 500)
+            oa_office_dialog('流程图', '/resources/nerp/manage/activiti/dialog.html', '800px', '500px')
         }
 
-        function oa_office_changeValue(num) {
-            setTimeout(function () {
-                if (num == 0) {
-                    $('#oa_office_wait_table').datagrid('refresh_url', $.cookie("tudou-oa-server") + '/act/task/todo')
-                    $('#oa_office_wait_table').datagrid('refresh_part');
-                } else if (num == 1) {
-                    $('#oa_office_wait_table').datagrid('refresh_url', $.cookie("tudou-oa-server") + '/act/task/historic')
-                    $('#oa_office_complete_table').datagrid('refresh_part');
-                } else if (num == 2) {
-                    $('#oa_office_new_table').datagrid('refresh_part');
-                }
-            }, 300);
-        }
 
+        window.oa_office_seletct = oa_office_seletct
         function oa_office_seletct(num) {
             var starttime = '', endtime = ''
             if (num == 1) {
@@ -160,10 +147,9 @@
                 }
 
             }
-
-
         }
 
+        window.oa_office_seletct_clear = oa_office_seletct_clear
         function oa_office_seletct_clear(num) {
             if (num == 1) {
                 if ($('#oa_office_start_time').val() != 0 || $('#oa_office_end_time').val() != 0) {
@@ -183,13 +169,31 @@
             }
         }
 
+        window.oa_office_dialog = oa_office_dialog
         function oa_office_dialog(name, url, w, h) {
-            $(this).dialog({
+            layer.open({
+                type: 5,
                 title: name,
-                url: url,
-                width: w,
-                height: h,
-                mask: true
+                area: [w, h],
+                content: url,
+                btnAlign: 'r',
+                moveType: 1,//拖拽模式，0或者1
+                yes:function(){
+                }
+            });
+        }
+
+        function oa_office_dialog(name, url, w, h,btn) {
+            layer.open({
+                type: 5,
+                title: name,
+                area: [w, h],
+                content: url,
+                btnAlign: 'r',
+                btn: btn,
+                moveType: 1,//拖拽模式，0或者1
+                yes:function(){
+                }
             });
         }
     });
@@ -198,26 +202,17 @@
 
 <div class="layui-tab layui-tab-brief" lay-filter="office-tab">
     <ul class="layui-tab-title" style="left: 0px;  top: 0px;">
-        <li class="active layui-this">待办任务
-            <!--<a style="font-size: 13px" href="#oa_office_wait_id" role="tab" data-toggle="tab"
-               onclick="oa_office_changeValue(0)"></a>-->
-        </li>
-        <li data-url="/resources/erp/manage/oa/office/complete.html" data-for="oa_office_complete_id">已办任务
-            <!--<a style="font-size: 13px" href="manage/oa/office/complete.html" role="tab" data-toggle="ajaxtab"
-               data-target="#oa_office_complete_id" data-reload="false" onclick="oa_office_changeValue(1)"></a>-->
-        </li>
-        <li data-url="/resources/erp/manage/oa/office/new.html" data-for="oa_office_new_id">发起流程
-            <!--<a style="font-size: 13px" href="manage/oa/office/new.html" role="tab" data-toggle="ajaxtab"
-               data-target="#oa_office_new_id" data-reload="false" onclick="oa_office_changeValue(2)"></a>-->
-        </li>
+        <li class="active layui-this">待办任务</li>
+        <li data-url="/resources/nerp/manage/oa/office/complete.html" data-for="oa_office_complete_id">已办任务</li>
+        <li data-url="/resources/nerp/manage/oa/office/new.html" data-for="oa_office_new_id">发起流程</li>
     </ul>
     <div class="layui-tab-content">
-        <div class="layui-tab-item layui-show" id="oa_office_wait_id" style="padding-top: 0px;">
-            <div class="bjui-pageContent" style="top: 135px;">
+        <div class="layui-tab-item layui-show layui-subpage" id="oa_office_wait_id" style="padding-top: 0px;">
+            <div class="bjui-pageContent">
                 <table id="oa_office_wait_table" class="table table-hover" data-width="100%"></table>
             </div>
         </div>
-        <div class="layui-tab-item" id="oa_office_complete_id"></div>
-        <div class="layui-tab-item" id="oa_office_new_id"></div>
+        <div class="layui-tab-item layui-subpage" id="oa_office_complete_id"></div>
+        <div class="layui-tab-item layui-subpage" id="oa_office_new_id"></div>
     </div>
 </div>

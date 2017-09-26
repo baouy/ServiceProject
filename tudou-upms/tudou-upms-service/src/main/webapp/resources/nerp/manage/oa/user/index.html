@@ -3,13 +3,12 @@
 		var $ = layui.jquery,form = layui.form
 		var oa_user_datagrid_data = {
 			local: 'remote',
-			height: '95%',
+			height: '100%',
 			dataUrl: $.cookie("tudou-oa-server") + '/manage/oauserdetail/list',
 			dataType: 'json',
 			loadType: 'get',
 			sortAll: false,
 			filterAll: true,
-			height: '100%',
 			columns: [
 				{name: 'workNum', width: '90', label: '工号'},
 				{name: 'realname', width: '80', label: '姓名'},
@@ -53,7 +52,7 @@
 						'<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
 				oa_user_datagrid_data.dblOnClick = 'oa_user_other_dialog'
 			} else if (value == 'oa:userdetail:organization' || value == 'upms:user:role') {
-				oa_toolbarCustom_btn += '<button  type="button" name=' + data.name + ' url=' + data.uri + ' w=' + 500 + ' h=' + 750 + ' class="layui-btn layui-btn-small oa_userdetail_edit" style="margin-left: 5px;" >' +
+				oa_toolbarCustom_btn += '<button  type="button" name=' + data.name + ' url=' + data.uri + ' w=' + 1000 + ' h=' + 750 + ' class="layui-btn layui-btn-small oa_userdetail_edit" style="margin-left: 5px;" >' +
 						'<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
 			} else if (value == 'oa:userdetail:leave') {
 				oa_toolbarCustom_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + ' w=' + 1000 + ' h=' + 500 + ' class="layui-btn layui-btn-small layui-btn-danger oa_userdetail_edit" style="margin-left: 5px;" >' +
@@ -111,9 +110,11 @@
 				}
 			});
 		}
+
 		$(".oa_userdetail_edit").bind('click',function(){
 			oa_user_other_dialog($(this))
-		});
+		})
+
 		//获取枚举
 		function oa_user_select_back(selectpicker, type) {
 			if (types.length > 0) {
@@ -128,6 +129,7 @@
 				}
 				return;
 			}
+
 			$.ajax({
 				url: $.cookie("tudou-oa-server") + '/manage/oaenum/list',
 				dataType: 'json',

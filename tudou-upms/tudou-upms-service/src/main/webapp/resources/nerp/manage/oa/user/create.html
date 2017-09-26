@@ -11,13 +11,14 @@
                 , format: 'yyyy-MM-dd' //可任意组合
             });
         });
+
         var oa_user_organization_object = new Object()
         oa_user_organization_object.nodes = 'oa_user_ajaxDataFilter'
         oa_user_organization_object.onCheck = 'oa_user_NodeCheck'
         window.oa_user_ajaxDataFilter = oa_user_ajaxDataFilter;
         window.oa_user_NodeCheck = oa_user_NodeCheck;
 
-        $('#oa_user_organization_ztree').append('<ul style="height:500px;width:800px" id="job-ztree" class="ztree hide" data-radio-type="all" data-chk-style="radio" data-check-enable="true" data-expand-all="true" data-toggle="ztree" data-options=' + JSON.stringify(oa_user_organization_object) + '></ul>')
+        $('#oa_user_organization_ztree').append('<ul style="height:500px;width:800px" id="job-ztree"  class="ztree hide" data-radio-type="all" data-chk-style="radio" data-check-enable="true" data-expand-all="true" data-toggle="ztree" data-options=' + JSON.stringify(oa_user_organization_object) + '></ul>')
         $("#oa_user_organization_ztree").initui();
 
         function oa_user_NodeCheck(event, treeId, treeNode, clickFlag) {
@@ -31,20 +32,24 @@
 
         function oa_user_ajaxDataFilter() {
             var datas = new Array()
+            layer.load()
             $.ajax({
                 url: $.cookie("tudou-oa-server") + '/manage/oauserdetail/organization/list',
                 type: 'get',
                 async: false,
                 success: function (responseData) {
+                    layer.closeAll('loading')
                     if (responseData.code == 1) {
                         var organization = responseData.data;
                         for (var i = 0; i < organization.length; i++) {
                             datas[i] = organization[i]
-                            datas[i].id = organization[i].organizationId;
-                            datas[i].pId = organization[i].pid;
+                            datas[i].id = organization[i].organizationId
+                            datas[i].pId = organization[i].pid
                         }
-                        return datas;
+                        return datas
                     }
+                },error :function (e) {
+                    layer.closeAll('loading')
                 }
             });
             return datas;
@@ -57,13 +62,19 @@
         });
 
         form.on('submit(oa_user_create_save)',function (data) {
+            var field = data.field
+            for (var n in field){
+                if (n == 'itime' || n == 'ptime' || n == 'securitystart'){
+                    field[n] = new Date(field[n]).getTime()
+                }
+            }
             layer.load()
             $.ajax({
                 url:$.cookie("tudou-oa-server") + "/manage/oauserdetail/create",
                 type:'post',
-                data:data.field,
+                data:field,
                 success:function (da) {
-                    layer.closeAll('loading'
+                    layer.closeAll('loading')
                     if(da.code==1){
                         layer.ok("创建成功！")
                         $('#manage_oa_user_table').datagrid('refresh');
@@ -113,9 +124,6 @@
 </script>
 <div class="bjui-pageContent">
 <form class="layui-form" id="oa_user_form" lay-filter="oauserform">
-    <input type="hidden" value="" name="itime" id="oa_user_itime">
-    <input type="hidden" value="" name="ptime" id="oa_user_ptime">
-    <input type="hidden" value="" name="securitystart" id="oa_user_securitystart">
     <fieldset class="layui-elem-field layui-field-title">
         <legend>基本信息</legend>
     </fieldset>
@@ -159,7 +167,7 @@
         </div>
         <label class="layui-form-label">组织部门</label>
         <div class="layui-input-inline" id="oa_user_organization_ztree">
-            <input type="text" id="oa_user_organizationname" value="" data-toggle="selectztree"  data-tree="#job-ztree" lay-verify="required" readonly="true" class="layui-input">
+            <input type="text" id="oa_user_organizationname" value="" data-toggle="selectztree" data-tree="#job-ztree" lay-verify="required" readonly="true" class="layui-input">
             <input  type="hidden" name="organizationId" id="oa_user_organizationId" value="">
         </div>
     </div>
@@ -182,7 +190,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">入职时间</label>
         <div class="layui-input-inline">
-            <input type="text" name="oa_user_citime" id="oa_user_citime" lay-verify="date"   class="layui-input laydate" value="">
+            <input type="text" name="itime" id="oa_user_itime" lay-verify="date"   class="layui-input laydate" value="">
         </div>
         <label class="layui-form-label">试用期</label>
         <div class="layui-input-inline">
@@ -198,7 +206,7 @@
         </div>
         <label class="layui-form-label">转正时间</label>
         <div class="layui-input-inline">
-            <input type="text" name="oa_user_cptime" id="oa_user_cptime" lay-verify="date" class="layui-input laydate" value="">
+            <input type="text" name="ptime" id="oa_user_ptime" lay-verify="date" class="layui-input laydate" value="">
         </div>
     </div>
     <div class="layui-form-item">
@@ -251,7 +259,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">社保缴纳起始月份</label>
         <div class="layui-input-inline">
-            <input type="text" name="oa_user_csecuritystart" id="oa_user_csecuritystart" lay-verify="date" class="layui-input laydate" value="">
+            <input type="text" name="securitystart" id="oa_user_securitystart" lay-verify="date" class="layui-input laydate" value="">
         </div>
     </div>
     <fieldset class="layui-elem-field layui-field-title">
