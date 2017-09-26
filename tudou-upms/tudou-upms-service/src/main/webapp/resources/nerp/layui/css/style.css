@@ -320,7 +320,7 @@ label.x150{display:inline-block; width:150px; padding-right:5px;}
 th[align=left]{text-align:left;}
 th[align=center]{text-align:center;}
 th[align=right]{text-align:right;}
-td[align=center] input{text-align:center;width: 100%;height: 34px;}
+td[align=center] input{text-align:center;width: 100%;height: 30px;}
 td[align=right] input{text-align:right;}
 .table.nowrap td,
 .table.nowrap th{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
@@ -434,7 +434,7 @@ td[align=right] input{text-align:right;}
 .bjui-pageFooter > .pagination-box > ul > li.jumpto .goto{margin-left:-1px; height:25px; line-height:17px;}
 .bjui-pageHeader li .btn,
 .bjui-pageFooter li .btn{height:25px;}
-.bjui-pageContent{position:absolute;top: 40px; bottom:0; width:100%; overflow:auto;}
+.bjui-pageContent{position:absolute;top: 0px; bottom:0; width:100%; overflow:auto;}
 .zjoin-pageContent{top:0px;}
 .bjui-dialog .bjui-pageContent{padding:10px;}
 .bjui-pageContent.tableContent{padding:0;}

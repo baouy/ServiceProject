@@ -28,137 +28,139 @@
 
         //创建
         if (taskId == null) {
-            $('#oa_office_sure').html('保存')
+//            $('#oa_office_sure').html('保存')
         }
         //审批
         else {
-            $('#oa_office_sure').html('同意')
-            $('#oa_office_cancel').fadeIn()
-            $('#oa_office_remarks_tr').fadeIn()
-            $('#oa_office_taskId').val(taskId)
-            $('#oa_office_processInstanceId').val(oa_office_data.procInsId)
-
-            $('#oa_office_leaveType').attr("disabled", "disabled")
-            $('#oa_office_s_startTime').attr("readonly", "true")
-            $('#oa_office_s_startTime').attr('data-toggle', "")
-            $('#oa_office_s_endTime').attr('data-toggle', "")
-            $('#oa_office_s_endTime').attr("readonly", "true")
-            $('#oa_office_reason').attr("readonly", "true")
-
-            $('#oa_office_create_img').attr('src', $.cookie("tudou-oa-server") + '/act/task/trace/photo/' + oa_office_data.procDefId + '/' + oa_office_data.executionId + "?t=" + new Date().getTime())
-
-            $('#oa_office_content').trigger('bjui.ajaxStart')
-            $.ajax({
-                url: $.cookie("tudou-oa-server") + '/manage/oaleave/detail',
-                dataType: 'json',
-                type: 'GET',
-                data: {
-                    'processInstanceId': oa_office_data.procInsId
-                },
-                success: function (d) {
-                    $('#oa_office_content').trigger('bjui.ajaxStop')
-                    if (d.code == 1) {
-                        for (var i in d.data) {
-                            switch (i) {
-                                case 'startTime':
-                                    $("#oa_office_s_" + i).val(zjoin.timetrans(d.data[i]))
-                                    break;
-                                case 'endTime':
-                                    $("#oa_office_s_" + i).val(zjoin.timetrans(d.data[i]))
-                                    break;
-                                case 'leaveType':
-                                    $("#oa_office_" + i).selectpicker('val', d.data[i]);
-                                    break;
-                                case 'reason':
-                                    $("#oa_office_" + i).val(d.data[i])
-                                    break;
-                                case 'remarks':
-                                    $("#oa_office_" + i).val(d.data[i])
-                                    break;
-                                case 'id':
-                                    $("#oa_office_" + i).val(d.data[i])
-                                    break;
-                            }
-
-                        }
-                    }
-                },
-                error: function () {
-                    $('#oa_office_content').trigger('bjui.ajaxStop')
-                }
-            });
-
-            var oa_office_histoicflow_datagrid_data = {
-                local: 'remote',
-                dataUrl: $.cookie("tudou-oa-server") + '/act/task/histoicflow?ProcInsId=' + oa_office_data.procInsId,
-                dataType: 'json',
-                sortAll: false,
-                loadType: 'get',
-                filterThead: false,
-                columns: [
-                    {width: '150', name: 'activityName', align: 'center', label: '执行环节'},
-                    {width: '150', name: 'assigneeName', align: 'center', label: '执行人'},
-                    {width: '150', name: 'startTime', align: 'center', label: '开始时间'},
-                    {width: '150', name: 'endTime', align: 'center', label: '结束时间'},
-                    {width: '150', name: 'comment', align: 'center', label: '提交意见'},
-                    {width: '150', name: 'durationTime', align: 'center', label: '任务历时'},
-                ],
-                paging: false,
-                fullGrid: true,
-            }
-
-            $('#oa_office_histoicflow_table').datagrid(oa_office_histoicflow_datagrid_data);
-
-
-            if (oa_office_data.status == 'finish') {
-                $('#oa_office_remarks').attr("readonly", "true")
-                $('#oa_office_cancel').fadeOut()
-                $('#oa_office_sure').fadeOut()
-            }
+//            $('#oa_office_sure').html('同意')
+//            $('#oa_office_cancel').fadeIn()
+//            $('#oa_office_remarks_tr').fadeIn()
+//            $('#oa_office_taskId').val(taskId)
+//            $('#oa_office_processInstanceId').val(oa_office_data.procInsId)
+//
+//            $('#oa_office_leaveType').attr("disabled", "disabled")
+//            $('#oa_office_s_startTime').attr("readonly", "true")
+//            $('#oa_office_s_startTime').attr('data-toggle', "")
+//            $('#oa_office_s_endTime').attr('data-toggle', "")
+//            $('#oa_office_s_endTime').attr("readonly", "true")
+//            $('#oa_office_reason').attr("readonly", "true")
+//
+//            $('#oa_office_create_img').attr('src', $.cookie("tudou-oa-server") + '/act/task/trace/photo/' + oa_office_data.procDefId + '/' + oa_office_data.executionId + "?t=" + new Date().getTime())
+//
+//            $('#oa_office_content').trigger('bjui.ajaxStart')
+//            $.ajax({
+//                url: $.cookie("tudou-oa-server") + '/manage/oaleave/detail',
+//                dataType: 'json',
+//                type: 'GET',
+//                data: {
+//                    'processInstanceId': oa_office_data.procInsId
+//                },
+//                success: function (d) {
+//                    $('#oa_office_content').trigger('bjui.ajaxStop')
+//                    if (d.code == 1) {
+//                        for (var i in d.data) {
+//                            switch (i) {
+//                                case 'startTime':
+//                                    $("#oa_office_s_" + i).val(zjoin.timetrans(d.data[i]))
+//                                    break;
+//                                case 'endTime':
+//                                    $("#oa_office_s_" + i).val(zjoin.timetrans(d.data[i]))
+//                                    break;
+//                                case 'leaveType':
+//                                    $("#oa_office_" + i).selectpicker('val', d.data[i]);
+//                                    break;
+//                                case 'reason':
+//                                    $("#oa_office_" + i).val(d.data[i])
+//                                    break;
+//                                case 'remarks':
+//                                    $("#oa_office_" + i).val(d.data[i])
+//                                    break;
+//                                case 'id':
+//                                    $("#oa_office_" + i).val(d.data[i])
+//                                    break;
+//                            }
+//
+//                        }
+//                    }
+//                },
+//                error: function () {
+//                    $('#oa_office_content').trigger('bjui.ajaxStop')
+//                }
+//            });
+//
+//            var oa_office_histoicflow_datagrid_data = {
+//                local: 'remote',
+//                dataUrl: $.cookie("tudou-oa-server") + '/act/task/histoicflow?ProcInsId=' + oa_office_data.procInsId,
+//                dataType: 'json',
+//                sortAll: false,
+//                loadType: 'get',
+//                filterThead: false,
+//                columns: [
+//                    {width: '150', name: 'activityName', align: 'center', label: '执行环节'},
+//                    {width: '150', name: 'assigneeName', align: 'center', label: '执行人'},
+//                    {width: '150', name: 'startTime', align: 'center', label: '开始时间'},
+//                    {width: '150', name: 'endTime', align: 'center', label: '结束时间'},
+//                    {width: '150', name: 'comment', align: 'center', label: '提交意见'},
+//                    {width: '150', name: 'durationTime', align: 'center', label: '任务历时'},
+//                ],
+//                paging: false,
+//                fullGrid: true,
+//            }
+//
+//            $('#oa_office_histoicflow_table').datagrid(oa_office_histoicflow_datagrid_data);
+//
+//
+//            if (oa_office_data.status == 'finish') {
+//                $('#oa_office_remarks').attr("readonly", "true")
+//                $('#oa_office_cancel').fadeOut()
+//                $('#oa_office_sure').fadeOut()
+//            }
         }
 
-        function oa_office_s_from_back(d) {
-            if (d.code == 1) {
-                if (taskId != null) {
-                    $('#oa_office_wait_table').datagrid('refresh_part');
-                }
-                BJUI.dialog('closeCurrent', this);
-            } else {
-                $(this).alertmsg('warn', d.data);
-            }
-        }
+//        function oa_office_s_from_back(d) {
+//            if (d.code == 1) {
+//                if (taskId != null) {
+//                    $('#oa_office_wait_table').datagrid('refresh_part');
+//                }
+//                BJUI.dialog('closeCurrent', this);
+//            } else {
+//                $(this).alertmsg('warn', d.data);
+//            }
+//        }
 
-        function oa_office_s_onclick() {
-            oa_office_all_save(true)
-        }
+//        function oa_office_s_onclick() {
+//            oa_office_all_save(true)
+//        }
+//
+//        function oa_office_rejected() {
+//            oa_office_all_save(false)
+//        }
 
-        function oa_office_rejected() {
-            oa_office_all_save(false)
-        }
-
-        function oa_office_all_save(num) {
-            var stime = $('#oa_office_s_startTime').val()
-            stime = new Date(stime)
-            $('#oa_office_startTime').val(stime)
-
-            var etime = $('#oa_office_s_endTime').val()
-            etime = new Date(etime)
-            $('#oa_office_endTime').val(etime)
-
-            $('#oa_office_type').val(num)
-            $('#oa_office_tag').val(oa_office_tag)
-
-            $('#oa_office_s_form').submit();
-        }
-
-        $("#oa_office_s_form").attr("action", $.cookie("tudou-oa-server") + "/manage/oaleave/save");
+//        function oa_office_all_save(num) {
+//            var stime = $('#oa_office_s_startTime').val()
+//            stime = new Date(stime)
+//            $('#oa_office_startTime').val(stime)
+//
+//            var etime = $('#oa_office_s_endTime').val()
+//            etime = new Date(etime)
+//            $('#oa_office_endTime').val(etime)
+//
+//            $('#oa_office_type').val(num)
+//            $('#oa_office_tag').val(oa_office_tag)
+//
+//            $('#oa_office_s_form').submit();
+//        }
+//
+//        $("#oa_office_s_form").attr("action", $.cookie("tudou-oa-server") + "/manage/oaleave/save");
 
     })
+
+
 </script>
 
 <div id="oa_office_content">
 <div class="bjui-pageContent">
-	<form data-toggle="validate" data-callback="oa_office_s_from_back" id="oa_office_s_form">
+	<form data-toggle="validate" id="oa_office_s_form">
 
 		<input type="hidden" value="" name="startTime" id="oa_office_startTime">
 		<input type="hidden" value="" name="endTime" id="oa_office_endTime">
@@ -224,17 +226,16 @@
 </div>
 
 
-<div class="bjui-pageFooter">
-	<ul>
-		<li>
-			<button type="button" class="btn-close" data-icon="close">取消</button>
-		</li>
-		<li>
-			<button id="oa_office_cancel" type="button" class="btn-orange" data-icon="undo" onclick="oa_office_rejected()" style="display: none;" >驳回</button>
-		</li>
-		<li>
-			<button id="oa_office_sure" type="button" class="btn-green" data-icon="save" onclick="oa_office_s_onclick()">保存</button>
-		</li>
-	</ul>
-</div>
-	</div>
+<!--<div class="bjui-pageFooter">-->
+	<!--<ul>-->
+		<!--<li>-->
+			<!--<button type="button" class="btn-close" data-icon="close">取消</button>-->
+		<!--</li>-->
+		<!--<li>-->
+			<!--<button id="oa_office_cancel" type="button" class="btn-orange" data-icon="undo" onclick="oa_office_rejected()" style="display: none;" >驳回</button>-->
+		<!--</li>-->
+		<!--<li>-->
+			<!--<button id="oa_office_sure" type="button" class="btn-green" data-icon="save" onclick="oa_office_s_onclick()">保存</button>-->
+		<!--</li>-->
+	<!--</ul>-->
+<!--</div>-->

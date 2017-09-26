@@ -74,6 +74,7 @@ layui.define('BJUIextends', function(exports){
             if($element.parents('th').length>0){
                 $element = $(this).addClass('zjoin-filter')
             }
+            if($(this).hasClass('layui-btn-input')) $(this).css({'height':'30px'})
             width && $element.css('width', width)
         })
 

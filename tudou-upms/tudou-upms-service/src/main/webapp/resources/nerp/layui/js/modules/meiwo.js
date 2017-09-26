@@ -156,9 +156,10 @@ layui.define(['layer', 'element', 'table', 'zjoin', 'ZJOINdropdown', 'ZJOINselec
     fixWindow()
     function fixWindow() {
         var h = window.innerHeight,w = window.innerWidth;
-        h = h - 40 - 50
+        h = h - 40 - 50 - 41
         w = w-180
         $(".layui-tab-content").css({"height": h + 'px',"width":w+'px'});
+        $(".main-footer").css({"width":w+'px'});
     }
     $("#user-flowername").text($.cookie("flowerName"));
     $("#customer_timeout").click(function () {

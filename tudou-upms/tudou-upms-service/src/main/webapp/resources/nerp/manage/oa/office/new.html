@@ -76,11 +76,11 @@
                     } else {
                         layer.warn(d.data)
                     }
-                    layer.closeAll()
+                    layer.closeAll('loading')
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     layer.warn(textStatus)
-                    layer.closeAll()
+                    layer.closeAll('loading')
                 }
             });
         }

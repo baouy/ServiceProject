@@ -7,7 +7,8 @@
                 $("#" + _for).load(url);
             }
         });
-        var toolbarCustom_oa_office_btn = '<label class="control-label">创建时间：</label><span class="wrap_bjui_btn_box"style="position: relative; display: inline-block;"><input type="text" id="oa_office_start_time" data-toggle="datepicker" size="15" class="form-control laydate" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href="javascript:;" data-toggle="datepickerbtn"><i class="layui-icon skin-color" style="margin-top: 20px;">&#xe97d;</i></a></span><label class="control-label">—</label><span class="wrap_bjui_btn_box" style="position: relative; display: inline-block;"><input type="text" id="oa_office_end_time" data-toggle="datepicker" size="15" class="form-control laydate" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href="javascript:;" data-toggle="datepickerbtn"  line-height: 22px;"><i class="layui-icon skin-color">&#xe97d;</i></a></span> <button type="button" style="margin-left: 5px;" class="btn layui-btn layui-btn-small" onclick="oa_office_seletct(1)"><i class="layui-icon">&#xe8b6;</i>&nbsp; 查询 </button> <button type="button" style="margin-left: 5px;" class="btn layui-btn layui-btn-small" onclick="oa_office_seletct_clear(1)"><i class="layui-icon">&#xe991;</i> &nbsp;重置 </button>'
+
+        var toolbarCustom_oa_office_btn = '<div style="margin-left: 5px;"><label class="control-label">创建时间：</label><span class="wrap_bjui_btn_box"style="position: relative; display: inline-block;"><input type="text" id="oa_office_start_time" data-toggle="datepicker" size="15" class="form-control laydate layui-btn-input" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href=" " data-toggle="datepickerbtn" style="height: 28px; line-height: 28px;"><i class="layui-icon skin-color">&#xe97d;</i></a ></span><label class="control-label">—</label><span class="wrap_bjui_btn_box" style="position: relative; display: inline-block;"><input type="text" id="oa_office_end_time" data-toggle="datepicker" size="15" class="form-control laydate layui-btn-input" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href="javascript:;" data-toggle="datepickerbtn" style="height: 28px; line-height: 28px;"><i class="layui-icon skin-color">&#xe97d;</i></a ></span> <button type="button" style="margin-left: 5px;" class="layui-btn layui-btn-small" onclick="oa_office_seletct(1)"><i class="layui-icon">&#xe8b6;</i>&nbsp; 查询 </button> <button type="button" style="margin-left: 5px;" class="layui-btn layui-btn-small" onclick="oa_office_seletct_clear(1)"><i class="layui-icon">&#xe991;</i> &nbsp;重置 </button></div>'
 
         var oa_office_datagrid_data = {
             local: 'remote',
@@ -206,13 +207,13 @@
         <li data-url="/resources/nerp/manage/oa/office/complete.html" data-for="oa_office_complete_id">已办任务</li>
         <li data-url="/resources/nerp/manage/oa/office/new.html" data-for="oa_office_new_id">发起流程</li>
     </ul>
-    <div class="layui-tab-content">
-        <div class="layui-tab-item layui-show layui-subpage" id="oa_office_wait_id" style="padding-top: 0px;">
+    <div class="layui-tab-content layui-subpage">
+        <div class="layui-tab-item layui-show " id="oa_office_wait_id" style="padding-top: 0px;">
             <div class="bjui-pageContent">
                 <table id="oa_office_wait_table" class="table table-hover" data-width="100%"></table>
             </div>
         </div>
-        <div class="layui-tab-item layui-subpage" id="oa_office_complete_id"></div>
-        <div class="layui-tab-item layui-subpage" id="oa_office_new_id"></div>
+        <div class="layui-tab-item " id="oa_office_complete_id"></div>
+        <div class="layui-tab-item " id="oa_office_new_id"></div>
     </div>
 </div>

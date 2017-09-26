@@ -40,14 +40,22 @@ body {
 /*
  * Content Wrapper - contains the main content
  */
-.content-wrapper,
-.main-footer {
+.content-wrapper {
   -webkit-transition: -webkit-transform 0.3s ease-in-out, margin 0.3s ease-in-out;
   -moz-transition: -moz-transform 0.3s ease-in-out, margin 0.3s ease-in-out;
   -o-transition: -o-transform 0.3s ease-in-out, margin 0.3s ease-in-out;
   transition: transform 0.3s ease-in-out, margin 0.3s ease-in-out;
   margin-left: 180px;
   z-index: 820;
+}
+.main-footer{
+  -webkit-transition: -webkit-transform 0.3s ease-in-out, margin 0.3s ease-in-out;
+  -moz-transition: -moz-transform 0.3s ease-in-out, margin 0.3s ease-in-out;
+  -o-transition: -o-transform 0.3s ease-in-out, margin 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, margin 0.3s ease-in-out;
+  position: fixed;
+  z-index: 800;
+  bottom: 0px
 }
 .layout-top-nav .content-wrapper,
 .layout-top-nav .main-footer {
@@ -80,9 +88,9 @@ body {
   z-index: 800;
 }
 .main-footer {
-  background: #fff;
-  padding: 15px;
   color: #444;
+  line-height: 40px;
+  padding: 0 20px;
   border-top: 1px solid #d2d6de;
 }
 /* Fixed layout */
@@ -551,10 +559,11 @@ a:focus {
 @media (min-width: 768px) {
   .sidebar-mini.sidebar-collapse .content-wrapper,
   .sidebar-mini.sidebar-collapse .right-side,
-  .sidebar-mini.sidebar-collapse .main-footer {
+  .sidebar-mini.sidebar-collapse  {
     margin-left: 50px !important;
     z-index: 840;
   }
+
   .sidebar-mini.sidebar-collapse .main-sidebar {
     -webkit-transform: translate(0, 0);
     -ms-transform: translate(0, 0);

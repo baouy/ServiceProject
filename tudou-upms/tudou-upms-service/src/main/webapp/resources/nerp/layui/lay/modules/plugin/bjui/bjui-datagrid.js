@@ -1292,8 +1292,7 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
 
                 if (boxH < 0) boxH = 0
                 else {
-                    if(that.$grid.parents('.layui-subpage') && that.$grid.parents('.layui-subpage').length>0)  boxH -= 10
-                    else boxH -= 50
+                    if(that.$grid.parents('.layui-subpage') && that.$grid.parents('.layui-subpage').length>0)  boxH -= 40
                 }
                 that.$boxB.height(boxH)
                 that.$boxM.height(boxH).css({top: topM})
@@ -3106,7 +3105,7 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
                 }
 
                 if (options.toolbarCustom) {
-                    var $custom, $custombox = $('<div class="layui-btn-group" role="group"></div>')
+                    var $custom, $custombox = $('<div style="display:inline-block;"></div>')// $('<div class="layui-btn-group" role="group"></div>')
 
                     if (typeof options.toolbarCustom === 'string') {
                         var custom = $(options.toolbarCustom)
