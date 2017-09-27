@@ -2591,6 +2591,18 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
         }
     }
 
+    //davidwang-更新请求url
+    Datagrid.prototype.refresh_url = function(url){
+        this.options.dataUrl = url
+    }
+
+    Datagrid.prototype.refresh_data = function(data){
+        var that = this
+        that.options.data = data
+        that.allData = data
+        that.tools.initTbody(that.allData, true)
+    }
+
     //davidwang-刷新table部分
     Datagrid.prototype.refresh_part = function () {
         var that = this, tools = that.tools;

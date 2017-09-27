@@ -8796,7 +8796,6 @@
         that.options.data = data
         that.allData = data
         that.tools.initTbody(that.allData, true)
-
     }
     
     Datagrid.prototype.refresh = function() {
