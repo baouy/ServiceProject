@@ -1,261 +1,357 @@
-<style type="text/css">
-	.tr_title {
-		font-size: 20px;
-		margin: 10px;
-	}
-</style>
-
 <script>
-    var selectpicker = $('#gen_table_name')
-	var selectpicker_data
+    layui.define(['jquery', 'BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins'], function () {
 
-    if(gen_name != null){
-        var name = gen_name +":" + gen_comments
-        selectpicker.append($("<option value=" + gen_name + ">" + name + "</option>"));
-        selectpicker.selectpicker('refresh');
-        selectpicker.selectpicker('val',gen_name);
-        selectpicker.attr('disabled',"disabled")
-        $('#gen_table_select').hide()
-        select_picker()
-    }else{
-        loading_s($('#businessmain'),true)
-        $.ajax({
-            url: $.cookie("tudou-gen-server") + '/manage/gentable/dblist',
-            dataType: 'json',
-            type: 'get',
-            success: function (d) {
-                if(d.code == 1){
-                    selectpicker_data = d.data
-                    for (var n of d.data){
-                        var name = n.name +':' + n.comments
-                        selectpicker.append($("<option value=" + n.name + ">" + name + "</option>"));
-                    }
-                    selectpicker.selectpicker('refresh');
-                }
-                loading_s($('#businessmain'),false)
-            },
-            error: function (e) {
-                loading_s($('#businessmain'),false)
-                $(this).alertmsg('warn', "加载失败,请联系管理员!");
-            }
-        });
-	}
+        var $ = layui.jquery, form = layui.form, layer = layui.layer
+        form.render(null, 'oa_office_detail_form');
+        var selectpicker = $('#gen_table_name')
+        var selectpicker_data,gen_id = null,gen_name = null,gen_comments = null,gen_className = null
 
-    var create_data,gen_create_datagrid_data
-	function select_picker() {
-	    var name = selectpicker.val()
-        loading_s($('#businessmain'),true)
-        $.ajax({
-            url: $.cookie("tudou-gen-server") + '/manage/gentable/dblist_detail',
-            dataType: 'json',
-            type: 'get',
-			data:{
-                id:gen_id,
-                name:name
-			},
-            success: function (d) {
-                loading_s($('#businessmain'),false)
-                if(d.code == 1){
-
-                    if(gen_id != null){
-                        $('#gen_table_comments').val(gen_comments)
-                        $('#gen_table_className').val(gen_className)
-                    }else{
-                        for(var n of selectpicker_data){
-                            if (n.name == name){
-                                $('#gen_table_comments').val(n.comments)
-                            }
+        if (business_selected != null) {
+            gen_name = business_selected[0].name
+            gen_comments = business_selected[0].comments
+            gen_className = business_selected[0].className
+            var name = gen_name + ":" + gen_comments
+            selectpicker.append($("<option value=" + gen_name + ">" + name + "</option>"))
+            selectpicker.val(gen_name)
+            selectpicker.attr('disabled', "disabled")
+            $('#gen_table_select').hide()
+			gen_id = business_selected[0].id
+            form.render(null, 'oa_office_detail_form');
+            select_picker()
+        } else {
+            layer.load()
+            $.ajax({
+                url: $.cookie("tudou-gen-server") + '/manage/gentable/dblist',
+                dataType: 'json',
+                type: 'get',
+                success: function (d) {
+                    if (d.code == 1) {
+                        selectpicker_data = d.data
+                        for (var n of d.data) {
+                            var name = n.name + ':' + n.comments
+                            selectpicker.append($("<option value=" + n.name + ">" + name + "</option>"));
                         }
-                        $('#gen_table_className').val(d.data.className)
-					}
-					create_data = d.data.genTableColumns
+                    }
+                    layer.closeAll('loading')
+                    form.render(null, 'oa_office_detail_form');
+                },
+                error: function (e) {
+                    layer.closeAll('loading')
+                    layer.warn("加载失败,请联系管理员!");
+                }
+            });
+        }
 
-					if (gen_create_datagrid_data != undefined){
-                        console.log(create_data.length);
-                        $('#gen_table_create_list_table').datagrid('refresh_data',create_data)
-                        return;
-					}
+        var create_data, gen_create_datagrid_data
+		$('#gen_table_select').bind('click',function () {
+            select_picker()
+        })
+
+        function select_picker() {
+            var name = selectpicker.val()
+			layer.load()
+            $.ajax({
+                url: $.cookie("tudou-gen-server") + '/manage/gentable/dblist_detail',
+                dataType: 'json',
+                type: 'get',
+                data: {
+                    id: gen_id,
+                    name: name
+                },
+                success: function (d) {
+                    layer.closeAll('loading')
+                    if (d.code == 1) {
+
+                        if (gen_id != null) {
+                            $('#gen_table_comments').val(gen_comments)
+                            $('#gen_table_className').val(gen_className)
+                        } else {
+                            for (var n of selectpicker_data) {
+                                if (n.name == name) {
+                                    $('#gen_table_comments').val(n.comments)
+                                }
+                            }
+                            $('#gen_table_className').val(d.data.className)
+                        }
+                        create_data = d.data.genTableColumns
+
+                        if (gen_create_datagrid_data != undefined) {
+                            console.log(create_data.length);
+                            $('#gen_table_create_list_table').datagrid('refresh_data', create_data)
+                            return;
+                        }
                         gen_create_datagrid_data = {
                             local: 'local',
                             data: create_data,
                             dataType: 'json',
                             loadType: 'get',
                             filterThead: false,
-                            columns: [{name:'name', width:'150',align : 'center', label:'列名',edit:false,quicksort:false},
-                                {name:'comments', width:'150',align : 'center', label:'说明',edit:true,quicksort:false},
-                                {name:'jdbcType', width:'150',align : 'center', label:'物料类型',edit:false,quicksort:false},
-                                {name:'javaType',type:'select', width:'150',align : 'center', label:'java类型',items: gen_dic_java,edit:true,quicksort:false},
-                                {name:'javaField', width:'150',align : 'center', label:'java属性名称',edit:true,quicksort:false},
-                                {name:'isPk',type:'boolean', width:'150',align : 'center', label:'主键',edit:true,quicksort:false},
-                                {name:'isNull',type:'boolean', width:'150',align : 'center', label:'可空',edit:true,quicksort:false},
-                                {name:'isInsert',type:'boolean', width:'150',align : 'center', label:'插入',edit:true,quicksort:false},
-                                {name:'isEdit',type:'boolean', width:'150',align : 'center', label:'编辑',edit:true,quicksort:false},
-                                {name:'isList',type:'boolean', width:'150',align : 'center', label:'列表',edit:true,quicksort:false},
-                                {name:'isQuery',type:'boolean', width:'150',align : 'center', label:'查询',edit:true,quicksort:false},
-                                {name:'queryType',type:'select', width:'150',align : 'center', label:'查询匹配方式',items: gen_dic_select,edit:true,quicksort:false},
-                                {name:'showType',type:'select', width:'150',align : 'center', label:'显示表单类型',items: gen_dic_string,edit:true,quicksort:false},
-                                {name:'dictType', width:'150',align : 'center', label:'字典类型',edit:true,quicksort:false},
-                                {name:'sort', width:'150',align : 'center', label:'排序',edit:true,quicksort:false},
+                            height: '100%',
+                            columns: [{
+                                name: 'name',
+                                width: '150',
+                                align: 'center',
+                                label: '列名',
+                                edit: false,
+                                quicksort: false
+                            },
+                                {
+                                    name: 'comments',
+                                    width: '150',
+                                    align: 'center',
+                                    label: '说明',
+                                    edit: true,
+                                    quicksort: false
+                                },
+                                {
+                                    name: 'jdbcType',
+                                    width: '150',
+                                    align: 'center',
+                                    label: '物料类型',
+                                    edit: false,
+                                    quicksort: false
+                                },
+                                {
+                                    name: 'javaType',
+                                    type: 'select',
+                                    width: '150',
+                                    align: 'center',
+                                    label: 'java类型',
+                                    items: gen_dic_java,
+                                    edit: true,
+                                    quicksort: false
+                                },
+                                {
+                                    name: 'javaField',
+                                    width: '150',
+                                    align: 'center',
+                                    label: 'java属性名称',
+                                    edit: true,
+                                    quicksort: false
+                                },
+                                {
+                                    name: 'isPk',
+                                    type: 'boolean',
+                                    width: '150',
+                                    align: 'center',
+                                    label: '主键',
+                                    edit: true,
+                                    quicksort: false
+                                },
+                                {
+                                    name: 'isNull',
+                                    type: 'boolean',
+                                    width: '150',
+                                    align: 'center',
+                                    label: '可空',
+                                    edit: true,
+                                    quicksort: false
+                                },
+                                {
+                                    name: 'isInsert',
+                                    type: 'boolean',
+                                    width: '150',
+                                    align: 'center',
+                                    label: '插入',
+                                    edit: true,
+                                    quicksort: false
+                                },
+                                {
+                                    name: 'isEdit',
+                                    type: 'boolean',
+                                    width: '150',
+                                    align: 'center',
+                                    label: '编辑',
+                                    edit: true,
+                                    quicksort: false
+                                },
+                                {
+                                    name: 'isList',
+                                    type: 'boolean',
+                                    width: '150',
+                                    align: 'center',
+                                    label: '列表',
+                                    edit: true,
+                                    quicksort: false
+                                },
+                                {
+                                    name: 'isQuery',
+                                    type: 'boolean',
+                                    width: '150',
+                                    align: 'center',
+                                    label: '查询',
+                                    edit: true,
+                                    quicksort: false
+                                },
+                                {
+                                    name: 'queryType',
+                                    type: 'select',
+                                    width: '150',
+                                    align: 'center',
+                                    label: '查询匹配方式',
+                                    items: gen_dic_select,
+                                    edit: true,
+                                    quicksort: false
+                                },
+                                {
+                                    name: 'showType',
+                                    type: 'select',
+                                    width: '150',
+                                    align: 'center',
+                                    label: '显示表单类型',
+                                    items: gen_dic_string,
+                                    edit: true,
+                                    quicksort: false
+                                },
+                                {
+                                    name: 'dictType',
+                                    width: '150',
+                                    align: 'center',
+                                    label: '字典类型',
+                                    edit: true,
+                                    quicksort: false
+                                },
+                                {
+                                    name: 'sort',
+                                    width: '150',
+                                    align: 'center',
+                                    label: '排序',
+                                    edit: true,
+                                    quicksort: false
+                                },
                             ],
                             paging: false,
                             fullGrid: true,
-                            editUrl:'meiwo',
-                            inlineEditMult:true,
-                            columnMenu:false,
-                            issaveallback:'save_json',
-							checkboxnum:true,
-							initEdit:'initEditBack'
+                            editUrl: 'meiwo',
+                            inlineEditMult: true,
+                            columnMenu: false,
+                            issaveallback: 'save_json',
+                            checkboxnum: true,
+                            initEdit: 'initEditBack'
                         }
 
-                    $('#gen_table_create_list_table').datagrid(gen_create_datagrid_data)
-                    initEditBack()
-                }else{
-                    $(this).alertmsg('warn',d.data);
+                        $('#gen_table_create_list_table').datagrid(gen_create_datagrid_data)
+                        $('#gen_table_create_list_table').datagrid('refresh')
+                        initEditBack()
+                    } else {
+                        layer.warn(d.data);
+                        init_input()
+
+                    }
+                },
+                error: function (e) {
                     init_input()
-
-				}
-
-            },
-            error: function (e) {
-                init_input()
-                loading_s($('#businessmain'),false)
-                $(this).alertmsg('warn', "加载失败,请联系管理员!");
-            }
-        });
-    }
-
-
-    function init_input() {
-		$('#gen_table_comments').val('')
-        $('#gen_table_className').val('')
-        create_data = []
-        $('#gen_table_create_list_table').datagrid('refresh_data',create_data)
-        $('#gen_table_create_list_table').datagrid('refresh')
-
-    }
-
-    function gen_table_save_onclick() {
-        $('#gen_table_create_list_table').datagrid('saveAll');
-        $('#oa_office_s_form').submit();
-    }
-
-    function gen_table_cancel_onclick() {
-
-    }
-
-    $(this).on('bjui.beforeCloseDialog', function(e) {
-        gen_create_datagrid_data = undefined
-    })
-
-	var gen_object
-	function save_json(json) {
-        gen_object = new Object();
-        gen_object.list = json
-    }
-
-    function initEditBack() {
-        for (var i = 0 ; i < create_data.length; i ++){
-            $('#gen_table_create_list_table').datagrid('doEditRow',i)
+                    layer.closeAll('loading')
+                    layer.warn("加载失败,请联系管理员!");
+                }
+            });
         }
-    }
 
-    $('#oa_office_s_form').bind('valid.form', function() {
-        var name = $('#gen_table_name').val()
-        var comments = $('#gen_table_comments').val()
-        var className = $('#gen_table_className').val()
+        function init_input() {
+            $('#gen_table_comments').val('')
+            $('#gen_table_className').val('')
+            create_data = []
+            $('#gen_table_create_list_table').datagrid('refresh_data', create_data)
+            $('#gen_table_create_list_table').datagrid('refresh')
 
-		var object = new Object()
-        object.id = gen_id
-        object.name = name
-        object.comments = comments
-		object.className = className
-        gen_object.genTable = object
+        }
 
-        loading_s($('#businessmain'),true)
-        $.ajax({
-            url: $.cookie("tudou-gen-server") + '/manage/gentable/save',
-            dataType: 'json',
-            contentType:"application/json",
-            type: 'post',
-            data: JSON.stringify(gen_object),
-            success: function (d) {
-                loading_s($('#businessmain'),true)
-                if(d.code == 1){
-                    BJUI.dialog('closeCurrent', this);
-                    $('#gen_table_list_table').datagrid('refresh_part')
-                }else{
-                    $(this).alertmsg('warn',d.data);
-				}
-            },error: function (d) {
-                $(this).alertmsg('warn', "加载失败,请联系管理员!");
-                loading_s($('#businessmain'),true)
+        var gen_object
+
+		window.save_json = save_json
+        function save_json(json) {
+            gen_object = new Object();
+            gen_object.list = json
+        }
+
+        window.initEditBack = initEditBack
+        function initEditBack() {
+            for (var i = 0; i < create_data.length; i++) {
+                $('#gen_table_create_list_table').datagrid('doEditRow', i)
             }
+        }
+
+        $(".layui-layer-btn0").bind('click',function (){
+            $('#gen_table_create_list_table').datagrid('saveAll');
+            $("#oa_office_detail_save_btn").click();
+            return
+        });
+
+        form.on('submit(oa_office_detail_form)',function (data) {
+            var field = data.field
+            var object = new Object()
+            object.id = gen_id
+            object.name = field['name']
+            object.comments = field['comments']
+            object.className = field['className']
+            gen_object.genTable = object
+
+            layer.load()
+            $.ajax({
+                url: $.cookie("tudou-gen-server") + '/manage/gentable/save',
+                dataType: 'json',
+                contentType: "application/json",
+                type: 'post',
+                data: JSON.stringify(gen_object),
+                success: function (d) {
+                    layer.closeAll('loading')
+                    if (d.code == 1) {
+                        layer.closeAll();
+                        $('#gen_table_list_table').datagrid('refresh_part')
+                        layer.ok("提交成功!");
+                    } else {
+                        layer.warn(d.data);
+                    }
+                }, error: function (d) {
+                    layer.closeAll('loading')
+                    layer.warn("加载失败,请联系管理员!");
+                }
+            })
+			return false;
         })
-
-
     })
 
 </script>
 
-<div id="businessmain">
 <div class="bjui-pageContent">
+	<form class="layui-form" lay-filter="oa_office_detail_form">
 
-	<form data-toggle="validate" data-callback="oa_office_s_from_back" id="oa_office_s_form">
-
-		<table class="table table-condensed table-bordered table-hover table-striped table-top bjui-tabledit" id="item_supplier_table"
-			   width="100%">
-			<tbody>
-				<tr>
-					<td>
-						<label class="control-label tr_title">基础信息：</label>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label class="control-label x90 required">表名：</label>
-						<select name="name" id="gen_table_name" data-toggle="selectpicker" data-rule="required" data-width="200"></select>
-						<button id="gen_table_select" type="button" class="btn-green" data-icon="search" onclick="select_picker()"> 查询 </button>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label class="control-label x90 required">说明：</label>
-						<input type="text" name="comments" id="gen_table_comments" value="" data-rule="required" size="15">
-					</td>
-
-				</tr>
-				<tr>
-					<td>
-						<label class="control-label x90 required">类名：</label>
-						<input type="text" name="className" id="gen_table_className" value="" data-rule="required" size="15">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label class="control-label tr_title">字段列表：</label>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<fieldset class="layui-elem-field layui-field-title">
+			<legend>基本信息</legend>
+		</fieldset>
+		<div class="layui-form-item">
+			<label class="layui-form-label">表名：</label>
+			<div class="layui-input-inline">
+				<select name="name" id="gen_table_name"></select>
+			</div>
+			<div class="layui-input-inline">
+				<button id="gen_table_select" class="layui-btn" type="button"><i
+						class="layui-icon">&#xe609;</i> 查询
+				</button>
+			</div>
+			<label class="layui-form-label">说明：</label>
+			<div class="layui-input-inline">
+				<input type="text" name="comments" id="gen_table_comments" lay-verify="required" autocomplete="off"
+					   class="layui-input" value="">
+			</div>
+			<label class="layui-form-label">类名：</label>
+			<div class="layui-input-inline">
+				<input type="text" name="className" id="gen_table_className" lay-verify="required" autocomplete="off"
+					   class="layui-input" value="">
+			</div>
+		</div>
+		<fieldset class="layui-elem-field layui-field-title">
+			<legend>字段列表：</legend>
+		</fieldset>
+		<button id="oa_office_detail_save_btn" lay-submit="" class="layui-hide" lay-filter="oa_office_detail_form">
+			立即提交
+		</button>
 	</form>
 
-	<!--<div id="create_load">-->
-	<!--</div>-->
-	<table id="gen_table_create_list_table" class="table table-hover" data-width="100%"> </table>
+	<table id="gen_table_create_list_table" class="table table-hover"></table>
 
 </div>
 
-<div class="bjui-pageFooter">
-	<ul>
-		<li>
-			<button type="button" class="btn-close" data-icon="close" onclick="gen_table_cancel_onclick()">取消</button>
-		</li>
-		<li>
-			<button id="gen_table_sure" type="button" class="btn-green" data-icon="save" onclick="gen_table_save_onclick()">保存</button>
-		</li>
-	</ul>
-</div>
-</div>
 
 
 

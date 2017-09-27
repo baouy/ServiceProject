@@ -6928,34 +6928,31 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
             data = that.isDom ? $tr.data('initData') : that.data[data_index]
             datas.push(data)
 
-            $tr.isValid(function (v) {
-                if (v) {
-                    // Update data
-                    changeData = $tr.data(that.datanames.changeData)
-                    $.extend(data, changeData)
-                    // Specification post data
-                    if (options.jsonPrefix) {
-                        tempData = {}
+            if(!form.valid($tr)){
+                postData = []
 
-                        $.each(data, function (name, value) {
-                            if (!that.tools.isGridData(name))
-                                tempData[options.jsonPrefix + '.' + name] = value
-                        })
-                    } else {
-                        tempData = $.extend({}, data)
+                return false
+            }
 
-                        for (var key in keys)
-                            delete tempData[keys[key]]
-                    }
+            changeData = $tr.data(that.datanames.changeData)
+            $.extend(data, changeData)
+// Specification post data
+            if (options.jsonPrefix) {
+                tempData = {}
 
-                    len--
-                    postData.push(tempData)
-                } else {
-                    postData = []
+                $.each(data, function (name, value) {
+                    if (!that.tools.isGridData(name))
+                        tempData[options.jsonPrefix + '.' + name] = value
+                })
+            } else {
+                tempData = $.extend({}, data)
 
-                    return false
-                }
-            })
+                for (var key in keys)
+                    delete tempData[keys[key]]
+            }
+
+            len--
+            postData.push(tempData)
         })
 
         // do save

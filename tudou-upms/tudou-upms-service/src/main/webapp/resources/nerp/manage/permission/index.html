@@ -118,12 +118,14 @@
         }
 
         function ajaxDataFilter() {
+            layer.load()
             var datas = new Array();
             $.ajax({
                 url: $.cookie("tudou-upms-server") + '/manage/permission/list',
                 type: 'get',
                 async: false,
                 success: function (responseData) {
+                    layer.closeAll('loading')
                     if (responseData) {
                         if (responseData.code != 1) {
                             return datas;
@@ -152,6 +154,8 @@
                         return datas;
                     }
 
+                },error:function () {
+                    layer.closeAll('loading')
                 }
             });
             return datas;

@@ -7,10 +7,10 @@
 			var value = data.permissionValue;
 			switch (value) {
 				case 'gen:table:create':
-					toolbarGen_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" w="1500" h="700" style="margin-left: 5px;" onclick="act_gen_create_onclick(this)" >' + '<i class="' + data.icon + '"></i>&nbsp;' + data.name + ' </button>'
+					toolbarGen_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + '  class="layui-btn layui-btn-small"style="margin-left: 5px;" id="act_gen_create_onclick" >' + '<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
 					break;
 				case 'gen:table:update':
-					toolbarGen_btn += '<button type="button" id="gen_edit_btn" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" w="1500" h="700"  style="margin-left: 5px;" onclick="act_gen_update_onclick(this)" >' + '<i class="' + data.icon + '"></i>&nbsp;' + data.name + ' </button>'
+					toolbarGen_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + '  class="layui-btn layui-btn-small"style="margin-left: 5px;" id="act_gen_update_onclick" >' + '<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
 					break;
 				case 'gen:table:delete':
 					gen_btn += 'del,'
@@ -37,7 +37,7 @@
 			toolbarItem: gen_btn,
 			inlineEditMult: false,
 			toolbarCustom: toolbarGen_btn,
-			dblOnClick: 'gen_dblonclick',
+			dblOnClick: 'business_dblonclick',
 		}
 
 		if (gen_btn.indexOf('del') != -1) {
@@ -50,51 +50,58 @@
 
 		$('#gen_table_list_table').datagrid(gen_datagrid_data);
 
+		window.del_gen_table_back = del_gen_table_back
 		function del_gen_table_back(d) {
 			if (d.code == 1) {
-				$(this).alertmsg('ok', '删除成功');
+				layer.ok('删除成功');
 			} else {
-				$(this).alertmsg('warn', d.data);
+				layer.warn(d.data);
 			}
 			$('#gen_table_list_table').datagrid('refresh_part');
 		}
 
+        window.business_selected = null
+        $("#act_gen_create_onclick").bind('click',function(){
+            var url =$(this).attr('url');
+            var name = $(this).attr('name');
+            layer.open({
+                type: 5,
+                title: name,
+                area: ['1500px', '900px'],
+                content: url,
+                btn: ['保存', '取消'],
+                btnAlign: 'r',
+                moveType: 1,//拖拽模式，0或者1
+                yes:function(){
+                }
+            });
+        })
 
-		function act_gen_create_onclick(n) {
-			gen_id = null
-			gen_name = null
-			var url = n.attributes["url"].value;
-			var name = n.attributes["name"].value;
-			var w = n.attributes["w"].value;
-			var h = n.attributes["h"].value;
+		$('#act_gen_update_onclick').bind('click',function () {
+            business_selected = $('#gen_table_list_table').data('selectedDatas');
+            if (null == business_selected || business_selected.length == 0) {
+                return;
+            }
+            var url = $(this).attr('url');
+			var name = $(this).attr('name');
+            layer.open({
+                type: 5,
+                title: name,
+                area: ['1500px', '900px'],
+                content: url,
+                btn: ['保存', '取消'],
+                btnAlign: 'r',
+                moveType: 1,//拖拽模式，0或者1
+                yes:function(){
+                }
+            });
+        })
 
-			show_dialog(name, url, w, h)
-		}
+		window.business_dblonclick = business_dblonclick
+        function business_dblonclick() {
+            $("#act_gen_update_onclick").click();
+        }
 
-		function gen_dblonclick() {
-			$("#gen_edit_btn").click();
-		}
-
-		var gen_id = null, gen_name = null, gen_comments = null, gen_className = null
-
-		function act_gen_update_onclick(n) {
-			var selected = $('#gen_table_list_table').data('selectedDatas');
-			if (null == selected || selected.length == 0) {
-				return;
-			}
-
-			gen_id = selected[0].id
-			gen_name = selected[0].name
-			gen_comments = selected[0].comments
-			gen_className = selected[0].className
-
-			var url = n.attributes["url"].value;
-			var name = n.attributes["name"].value;
-			var w = n.attributes["w"].value;
-			var h = n.attributes["h"].value;
-
-			show_dialog(name, url, w, h)
-		}
 	});
 </script>
 
