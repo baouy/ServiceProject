@@ -48,11 +48,11 @@
 				oa_toolbarCustom_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + '  class="layui-btn layui-btn-small"style="margin-left: 5px;" id="oa_user_add_dialog" >' +
 						'<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
 			} else if (value == 'oa:userdetail:update') {
-				oa_toolbarCustom_btn += '<button id="oa_userdetail_edit" type="button" name=' + data.name + ' url=' + data.uri + ' w=' + 1000 + ' h=' + 750 + ' class="layui-btn layui-btn-small oa_userdetail_edit" style="margin-left: 5px;">' +
+				oa_toolbarCustom_btn += '<button id="oa_userdetail_edit" type="button" name=' + data.name + ' url=' + data.uri + ' w=' + 1000 + ' h=' + 700 + ' class="layui-btn layui-btn-small oa_userdetail_edit" style="margin-left: 5px;">' +
 						'<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
 				oa_user_datagrid_data.dblOnClick = 'oa_user_other_dialog'
 			} else if (value == 'oa:userdetail:organization' || value == 'upms:user:role') {
-				oa_toolbarCustom_btn += '<button  type="button" name=' + data.name + ' url=' + data.uri + ' w=' + 1000 + ' h=' + 750 + ' class="layui-btn layui-btn-small oa_userdetail_edit" style="margin-left: 5px;" >' +
+				oa_toolbarCustom_btn += '<button  type="button" name=' + data.name + ' url=' + data.uri + ' w=' + 1000 + ' h=' + 700 + ' class="layui-btn layui-btn-small oa_userdetail_edit" style="margin-left: 5px;" >' +
 						'<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
 			} else if (value == 'oa:userdetail:leave') {
 				oa_toolbarCustom_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + ' w=' + 1000 + ' h=' + 500 + ' class="layui-btn layui-btn-small layui-btn-danger oa_userdetail_edit" style="margin-left: 5px;" >' +
@@ -72,7 +72,7 @@
 			layer.open({
 				type: 5,
 				title: name,
-				area: ['1000px', '750px'],
+				area: ['1000px', '700px'],
 				content: url,
 				btn: ['保存', '取消'],
 				btnAlign: 'r',

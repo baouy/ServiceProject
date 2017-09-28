@@ -1,102 +1,187 @@
 <script>
-	
-	function gen_scheme_cancel_onclick() {
-		
-    }
-	
-    function gen_scheme_save_onclick() {
-		
-    }
-	
-    function gen_scheme_from_back() {
-		
-    }
+    layui.define(['jquery'], function () {
+        var $ = layui.jquery, form = layui.form, layer = layui.layer
+        var genscheme_id = null
+		if (plan_selected != null){
+            genscheme_id = plan_selected[0].id
+		}
+        $('#gen_scheme_id').val(genscheme_id)
+        var plan_selectpicker = $('#gen_scheme_category')
+        var gen_scheme_genTableId = $('#gen_scheme_genTableId')
+        plan_selectpicker.append($("<option value=>请选择表名</option>"));
+        gen_scheme_genTableId.append($("<option value=>请选择业务表名</option>"));
+        $.each(gen_dic_table, function (i, n) {
+            $.each(Object.keys(n), function (i, w) {
+                plan_selectpicker.append($("<option value=" + w + ">" + n[w] + "</option>"));
+            })
+        })
+
+        layer.load()
+        $.ajax({
+            url: $.cookie("tudou-gen-server") + '/manage/gentable/list',
+            dataType: 'json',
+            type: 'get',
+            success: function (d) {
+                if (d.code == 1) {
+                    for (var n of d.data) {
+                        var name = n.name + ':' + n.comments
+                        gen_scheme_genTableId.append($("<option value=" + n.id + ">" + name + "</option>"));
+                    }
+                    if (genscheme_id != null) {
+                        gen_scheme_detail()
+                    }
+                    form.render(null, 'gen_plan_save_form');
+                }
+                layer.closeAll('loading')
+            },error:function () {
+				layer.closeAll('loading')
+            }
+        });
+
+        function gen_scheme_detail() {
+            layer.load()
+            $.ajax({
+                url: $.cookie("tudou-gen-server") + '/manage/genscheme/detail',
+                dataType: 'json',
+                type: 'get',
+                data: {
+                    id: genscheme_id,
+                },
+                success: function (d) {
+                    layer.closeAll('loading')
+                    if (d.code == 1) {
+                        for (var i in d.data) {
+                            $("#gen_scheme_" + i).val(d.data[i]);
+                        }
+                    }
+                    form.render(null, 'gen_plan_save_form');
+                },error:function (e) {
+                    layer.closeAll('loading')
+                }
+            });
+        }
+
+        $(".layui-layer-btn0").bind('click',function (){
+            $('#gen_scheme_type').val(0)
+            $("#gen_plan_save_btn").click();
+            return
+        });
+
+        $(".layui-layer-btn1").bind('click',function (){
+            $('#gen_scheme_type').val(1)
+            $("#gen_plan_save_btn").click();
+            return
+        });
+
+        $(".layui-layer-btn2").bind('click',function (){
+            $('#gen_scheme_type').val(2)
+            $("#gen_plan_save_btn").click();
+            return
+        });
+
+        form.on('submit(gen_plan_save_form)',function (data) {
+            var field = data.field
+            layer.load()
+            $.ajax({
+                url: $.cookie("tudou-gen-server") + '/manage/genscheme/save',
+                dataType: 'json',
+                type: 'post',
+                data: field,
+                success: function (d) {
+                    layer.closeAll('loading')
+                    if (d.code == 1) {
+                        layer.closeAll();
+                        layer.ok("提交成功!");
+                    } else {
+                        layer.warn(d.data);
+                    }
+                }, error: function (d) {
+                    layer.closeAll('loading')
+                    layer.warn("加载失败,请联系管理员!");
+                }})
+			return false;
+        })
+
+    })
 
 </script>
 
-<div id="planmain">
 	<div class="bjui-pageContent">
+		<form class="layui-form" lay-filter="gen_plan_save_form">
+			<input type="hidden" name="id" id="gen_scheme_id">
+			<input type="hidden" name="status" id="gen_scheme_type">
 
-		<form data-toggle="validate" data-callback="gen_scheme_from_back" id="gen_scheme_from">
+			<div class="layui-form-item">
+				<label class="layui-form-label">方案名称：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="name" id="gen_scheme_name" lay-verify="required" autocomplete="off"
+						   class="layui-input" value="">
+				</div>
+			</div>
 
-			<table class="table table-condensed table-bordered table-hover table-striped table-top bjui-tabledit"
-				   width="100%">
-				<tbody>
-				<tr>
-					<td>
-						<label class="control-label x100 required">方案名称：</label>
-						<input type="text" name="name" id="gen_scheme_name" value="" data-rule="required" size="20">
-						<label class="control-label"></label>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label class="control-label x100 required">表名：</label>
-						<select name="category" id="gen_scheme_category" data-toggle="selectpicker" data-rule="required" data-width="200"></select>
-					</td>
-				</tr>
-				<!--<tr>-->
-					<!--<td>-->
-						<!--<label class="control-label x100 required">生成包路径：</label>-->
-						<!--<input type="text" name="packageName" id="gen_scheme_packageName" value="" data-rule="required" size="20">-->
-					<!--</td>-->
-				<!--</tr>-->
-				<tr>
-					<td>
-						<label class="control-label x100 required">生成模块名：</label>
-						<input type="text" name="moduleName" id="gen_scheme_moduleName" value="" data-rule="required" size="20">
-					</td>
-				</tr>
-				<!--<tr>-->
-					<!--<td>-->
-						<!--<label class="control-label x100 required">生成子模块名：</label>-->
-						<!--<input type="text" name="subModuleName" id="gen_scheme_subModuleName" value="" data-rule="required" size="20">-->
-					<!--</td>-->
-				<!--</tr>-->
-				<tr>
-					<td>
-						<label class="control-label x100 required">生成功能描述：</label>
-						<input type="text" name="functionName" id="gen_scheme_functionName" value="" data-rule="required" size="20">
-					</td>
-				</tr>
-				<!--<tr>-->
-					<!--<td>-->
-						<!--<label class="control-label x100 required">生成功能名：</label>-->
-						<!--<input type="text" name="functionNameSimple" id="gen_scheme_functionNameSimple" value="" data-rule="required" size="20">-->
-					<!--</td>-->
-				<!--</tr>-->
-				<tr>
-					<td>
-						<label class="control-label x100 required">生成功能作者：</label>
-						<input type="text" name="functionAuthor" id="gen_scheme_functionAuthor" value="" data-rule="required" size="20">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label class="control-label x100 required">业务表名：</label>
-						<select name="genTableId" id="gen_scheme_genTableId" data-toggle="selectpicker" data-rule="required" data-width="200"></select>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label class="control-label x100 required">生成选项：</label>
-						<select name="select" id="gen_scheme_select" data-toggle="selectpicker" data-rule="required" data-width="200"></select>
-					</td>
-				</tr>
-				</tbody>
-			</table>
+			<div class="layui-form-item">
+				<label class="layui-form-label">表名：</label>
+				<div class="layui-input-inline">
+					<select name="category" id="gen_scheme_category" lay-verify="required"></select>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">生成包路径：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="packageName" id="gen_scheme_packageName" lay-verify="required" autocomplete="off"
+						   class="layui-input" value="">
+				</div>
+				<div class="layui-input-block">
+					<div class="layui-form-mid layui-word-aux">如:(默认一般为工程包com.tudou)</div>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">生成模块名：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="moduleName" id="gen_scheme_moduleName" lay-verify="required" autocomplete="off"
+						   class="layui-input" value="">
+				</div>
+				<div class="layui-input-block">
+					<div class="layui-form-mid layui-word-aux">如:(默认一般为工程名称tudou)</div>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">生成子模块名：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="subModuleName" id="gen_scheme_subModuleName" lay-verify="required" autocomplete="off" class="layui-input" value="">
+				</div>
+				<div class="layui-input-block">
+					<div class="layui-form-mid layui-word-aux">如:(upms,oa,gen,pay,crm等)</div>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">生成功能描述：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="functionName" id="gen_scheme_functionName" lay-verify="required" autocomplete="off"  class="layui-input" value="">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">生成功能作者：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="functionAuthor" id="gen_scheme_functionAuthor" lay-verify="required" autocomplete="off"
+						   class="layui-input" value="">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">业务表名：</label>
+				<div class="layui-input-inline">
+					<select name="genTableId" id="gen_scheme_genTableId" lay-verify="required"></select>
+				</div>
+			</div>
+			<button id="gen_plan_save_btn" lay-submit="" class="layui-hide" lay-filter="gen_plan_save_form">
+				立即提交
+			</button>
 		</form>
 
 	</div>
-
-	<div class="bjui-pageFooter">
-		<ul>
-			<li>
-				<button type="button" class="btn-close" data-icon="close" onclick="gen_scheme_cancel_onclick()">取消</button>
-			</li>
-			<li>
-				<button id="gen_table_sure" type="button" class="btn-green" data-icon="save" onclick="gen_scheme_save_onclick()">保存</button>
-			</li>
-		</ul>
-	</div>
-</div>

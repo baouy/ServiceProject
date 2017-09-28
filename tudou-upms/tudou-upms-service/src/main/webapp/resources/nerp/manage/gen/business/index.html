@@ -62,12 +62,13 @@
 
         window.business_selected = null
         $("#act_gen_create_onclick").bind('click',function(){
+            business_selected = null
             var url =$(this).attr('url');
             var name = $(this).attr('name');
             layer.open({
                 type: 5,
                 title: name,
-                area: ['1500px', '900px'],
+                area: ['1300px', '700px'],
                 content: url,
                 btn: ['保存', '取消'],
                 btnAlign: 'r',
@@ -87,7 +88,7 @@
             layer.open({
                 type: 5,
                 title: name,
-                area: ['1500px', '900px'],
+                area: ['1300px', '700px'],
                 content: url,
                 btn: ['保存', '取消'],
                 btnAlign: 'r',

@@ -6842,8 +6842,14 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
                 if (typeof val === 'undefined' || val === 'null' || val === null)
                     val = ''
 
-                if (op.type === 'boolean')
-                    $input.prop('checked', val)
+                if (op.type === 'boolean'){
+                    //davidwang修改
+                    if(val == '1'){
+                        val = true
+                    }else if(val == '0' || val == ''){
+                        val = false
+                    }
+                    $input.prop('checked', val)}
                 else if (op.type === 'findgrid')
                     $input.data('context', $tr).val(String(val))
                 else {
