@@ -50,9 +50,15 @@
 
 		<div class="layui-form-item">
 			<label class="layui-form-label">流程文件：</label>
-			<button type="button" class="layui-btn" id="deployment_file">
-				<i class="layui-icon">&#xe67c;</i>支持文件格式：zip、bar、bpmn、bpmn20.xml
-			</button>
+			<!--<button type="button" class="layui-btn" id="deployment_file">-->
+				<!--<i class="layui-icon">&#xe67c;</i>支持文件格式：zip、bar、bpmn、bpmn20.xml-->
+			<!--</button>-->
+			<div class="layui-upload-drag" id="deployment_file">
+				<i class="layui-icon">&#xe67c;</i>
+				<p>点击上传，或将文件拖拽到此处</p>
+				<p>支持文件格式：zip、bar、bpmn、bpmn20.xml</p>
+			</div>
+
 		</div>
 
 		<div class="layui-form-item" style="padding-top:8px; border-top:1px #DDD solid;">
