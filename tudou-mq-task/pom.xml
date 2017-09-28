@@ -10,6 +10,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tudou-mq-task</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>tudou-mq-task-common</module>
+        <module>tudou-mq-task-dao</module>
+        <module>tudou-mq-task-rpc-service</module>
+        <module>tudou-mq-task-rpc-api</module>
+        <module>tudou-mq-task-web</module>
+    </modules>
 
 
 </project>
