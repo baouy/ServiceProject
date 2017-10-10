@@ -4,6 +4,7 @@ import com.tudou.upms.dao.mapper.UpmsUserMapper;
 import com.tudou.upms.dao.model.UpmsOrganization;
 import com.tudou.upms.dao.model.UpmsPermission;
 import com.tudou.upms.dao.model.UpmsPermissionExample;
+import com.tudou.upms.dao.model.UpmsUser;
 import com.tudou.upms.rpc.api.UpmsOrganizationService;
 import com.tudou.upms.rpc.api.UpmsPermissionService;
 import com.tudou.upms.rpc.api.UpmsSystemService;

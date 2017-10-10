@@ -14,11 +14,6 @@
     <file url="file://$PROJECT_DIR$/tudou-gen/tudou-gen-service" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-im" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-mq-task" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/tudou-mq-task/tudou-mq-task-common" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/tudou-mq-task/tudou-mq-task-dao" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/tudou-mq-task/tudou-mq-task-rpc-api" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/tudou-mq-task/tudou-mq-task-rpc-service" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/tudou-mq-task/tudou-mq-task-web" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-mweb" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-oa" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tudou-oa/tudou-oa-common" charset="UTF-8" />
