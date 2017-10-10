@@ -31,7 +31,7 @@
     _mobile = /ipad|iphone|ipod|android|blackberry|windows phone|opera mini|silk/i.test(navigator.userAgent);
 
   // Plugin init
-  $.fn[_iCheck] = function(options, fire) {
+  $.fn[_iCheck] = function(options, fire) {debugger
 
     // Walker
     var handle = 'input[type="' + _checkbox + '"], input[type="' + _radio + '"]',
