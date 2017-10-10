@@ -15,6 +15,11 @@
       <module fileurl="file://$PROJECT_DIR$/tudou-gen/tudou-gen-service/tudou-gen-service.iml" filepath="$PROJECT_DIR$/tudou-gen/tudou-gen-service/tudou-gen-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-im/tudou-im.iml" filepath="$PROJECT_DIR$/tudou-im/tudou-im.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-mq-task/tudou-mq-task.iml" filepath="$PROJECT_DIR$/tudou-mq-task/tudou-mq-task.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-mq-task/tudou-mq-task-common/tudou-mq-task-common.iml" filepath="$PROJECT_DIR$/tudou-mq-task/tudou-mq-task-common/tudou-mq-task-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-mq-task/tudou-mq-task-dao/tudou-mq-task-dao.iml" filepath="$PROJECT_DIR$/tudou-mq-task/tudou-mq-task-dao/tudou-mq-task-dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-mq-task/tudou-mq-task-rpc-api/tudou-mq-task-rpc-api.iml" filepath="$PROJECT_DIR$/tudou-mq-task/tudou-mq-task-rpc-api/tudou-mq-task-rpc-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-mq-task/tudou-mq-task-rpc-service/tudou-mq-task-rpc-service.iml" filepath="$PROJECT_DIR$/tudou-mq-task/tudou-mq-task-rpc-service/tudou-mq-task-rpc-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tudou-mq-task/tudou-mq-task-web/tudou-mq-task-web.iml" filepath="$PROJECT_DIR$/tudou-mq-task/tudou-mq-task-web/tudou-mq-task-web.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-mweb/tudou-mweb.iml" filepath="$PROJECT_DIR$/tudou-mweb/tudou-mweb.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-oa/tudou-oa.iml" filepath="$PROJECT_DIR$/tudou-oa/tudou-oa.iml" />
       <module fileurl="file://$PROJECT_DIR$/tudou-oa/tudou-oa-common/tudou-oa-common.iml" filepath="$PROJECT_DIR$/tudou-oa/tudou-oa-common/tudou-oa-common.iml" />

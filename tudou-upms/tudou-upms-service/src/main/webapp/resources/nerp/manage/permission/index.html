@@ -299,9 +299,6 @@
             status = $('#itemclass_status').is(':checked') == true ? 1 : 0
             layer.load()
 
-            console.log(pid);
-            console.log(systemId);
-
             $.ajax({
                         url: $.cookie("tudou-upms-server") + '/manage/permission/create',
                         dataType: 'json',
@@ -378,13 +375,13 @@
                         <div class="layui-form-item">
                             <label for="itemclass_name" class="layui-form-label">名称：</label>
                             <div class="layui-input-inline">
-                                <input type="text" size="30" class="layui-input" name="name" id="itemclass_name" ></div>
+                                <input type="text" size="30" class="layui-input" name="name" id="itemclass_name" lay-verify="required"></div>
                         </div>
                         <div class="layui-form-item">
                             <label for="itemclass_permissionValue" class="layui-form-label">权限值：</label>
                             <div class="layui-input-inline">
                                 <input type="text"  class="layui-input" name="permissionValue"
-                                       id="itemclass_permissionValue"></div>
+                                       id="itemclass_permissionValue" lay-verify="required"></div>
                         </div>
                         <div class="layui-form-item">
                             <label for="itemclass_uri" class="layui-form-label">路径：</label>
