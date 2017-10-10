@@ -8,7 +8,7 @@
  */
 layui.define(['jquery'], function (exports) {
     "use strict";
-    var $ = layui.jquery
+    var $ = layui.jquery,element = layui.element
         , DataKey = 'zjoin.pushmenu'
 
         , Default = {
@@ -90,7 +90,9 @@ layui.define(['jquery'], function (exports) {
         if(a > 0 ) w -=130;
         else w+=130;
         $(".layui-tab-content").css({"width":w+'px'});
+        $(".admin-header.layui-tab").css({"width":w+'px'});
         $(".main-footer").css({"width":w+'px'});
+        element.call.tabAuto();
     }
 
     PushMenu.prototype.open = function () {

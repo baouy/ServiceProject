@@ -115,7 +115,7 @@ layui.define('BJUIextends', function(exports){
                     l = l -(window.innerWidth-$l.width())/2
                     t = t- (window.innerHeight -$l.height()-42-45)/2
                 }
-                var $div = $('<div class="zjoin-filter-box" style="width:'+w+'px;top:'+t+'px;left: '+l+'px;z-index:'+zindex+';"></div>');
+                var $div = $('<div class="zjoin-filter-box" style="width:'+w+'px;top:'+t+'px;left: '+l+'px;z-index:'+zindex+';height: auto;"></div>');
                 var $ul = $('<ul class="filter-ul"></ul>')
                 $('<li filter-data = "like" class="selected">包含</li>').appendTo($ul);
                 $('<li filter-data = "=">等于</li>').appendTo($ul);

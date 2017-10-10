@@ -109,6 +109,23 @@ layui.define(['jquery', 'context'], function (exports) {
                     othis.addClass(THIS).addClass("admin-this").siblings().removeClass(THIS).removeClass("admin-this");
                     item.eq(index).addClass(SHOW).siblings().removeClass(SHOW);
                 }
+                if(othis.parent('ul').hasClass('admin-tab-title')) {
+                    var tw = 0;
+                    othis.parent('ul').children('.layui-context').each(function () {
+                        tw += $(this).width() + 30;//左右padding有15px
+                    })
+                    var titlewidth = othis.parents('div').eq(0).width()
+                    if (tw > titlewidth) {
+                        /**
+                         * 第几个 * 平均宽度 - 一半的宽度 = 偏移量
+                         */
+                        var lo = titlewidth/2 - ((index+1)*(tw/othis.parent('ul').children('.layui-context').length)-($(this).width() + 30)/2)
+                        lo = lo >0 ? 0:lo
+                        lo = lo < titlewidth - tw ? titlewidth - tw : lo
+                        othis.parent('ul').css('left', lo + 'px')
+                    }
+                }
+
 
                 layui.event.call(this, MOD_NAME, 'tab(' + filter + ')', {
                     elem: parents
@@ -139,15 +156,15 @@ layui.define(['jquery', 'context'], function (exports) {
 
             //Tab自适应
             , tabAuto: function () {
-                var SCROLL = 'layui-tab-scroll', MORE = 'layui-tab-more', BAR = 'layui-tab-bar'
-                    , CLOSE = 'layui-tab-close', that = this;
+                var  BAR = 'layui-tab-bar' , CLOSE = 'layui-tab-close', that = this;
 
                 $('.layui-tab').each(function () {
                     var othis = $(this)
                         , title = othis.children('.layui-tab-title')
+                        , menuHeader = title.parent('div')
                         , item = othis.children('.layui-tab-content').children('.layui-tab-item')
-                        , STOPE = 'lay-stope="tabmore"'
-                        , span = $('<span class="layui-unselect layui-tab-bar" ' + STOPE + '><i ' + STOPE + ' class="layui-icon">&#xe61a;</i></span>');
+                        , span1 = $('<div class="layui-unselect layui-tab-bar layui-tab-bar1 skin-backcolor layui-hide"><i class="layui-icon skin-color">&#xe603;</i></div>')
+                        , span2 = $('<div class="layui-unselect layui-tab-bar layui-tab-bar2 skin-backcolor layui-hide"><i class="layui-icon skin-color">&#xe602;</i></div>');
 
                     if (that === window && device.ie != 8) {
                         call.hideTabMore(true)
@@ -167,18 +184,50 @@ layui.define(['jquery', 'context'], function (exports) {
                         });
                     }
 
-                    //响应式
-                    if (title.prop('scrollWidth') > title.outerWidth() + 1) {
-                        if (title.find('.' + BAR)[0]) return;
-                        title.append(span);
-                        othis.attr('overflow', '');
-                        span.on('click', function (e) {
-                            title[this.title ? 'removeClass' : 'addClass'](MORE);
-                            this.title = this.title ? '' : '收缩';
-                        });
-                    } else {
-                        title.find('.' + BAR).remove();
-                        othis.removeAttr('overflow');
+                    if(title.hasClass('admin-tab-title')) {
+                        //计算tab菜单总宽度
+                        var tw = 0,index=0, i=0;
+                        title.children('.layui-context').each(function () {
+                            tw += $(this).width() + 30;
+                            i++;
+                            if($(this).hasClass('layui-this')) index = i;
+                        })
+
+                        //响应式
+                        var titlewidth = menuHeader.width()
+                        if (tw > titlewidth) {
+                            if (menuHeader.find('.' + BAR).length > 0) menuHeader.find('.' + BAR).remove();
+                            title.before(span1)
+                            title.after(span2);
+                            othis.attr('overflow', '');
+                            span2.on('click', function () {
+                                var lo = Number(title.css('left').replace('px', ''));
+                                lo -= tw / title.children('.layui-context').length;
+                                if (lo < titlewidth - tw) lo = titlewidth - tw
+                                title.css('left', lo + 'px')
+                            });
+                            span1.on('click', function () {
+                                var lo = Number(title.css('left').replace('px', ''));
+                                lo += tw / title.children('.layui-context').length;
+                                lo  = lo > 0 ? 0:lo;
+                                title.css('left', lo + 'px')
+                            });
+                            menuHeader.on('mouseenter',function () {
+                                $(this).find('.layui-tab-bar').removeClass('layui-hide')
+                            }).on('mouseleave',function () {
+                                $(this).find('.layui-tab-bar').addClass('layui-hide')
+                            });
+
+                            var lw = titlewidth/2 - ((index+1)*(tw/title.children('.layui-context').length)-(title.children('.layui-context').eq(index).width() + 30)/2)
+                            lw = lw >0 ? 0:lw
+                            lw = lw < titlewidth - tw ? titlewidth - tw : lw
+                            title.css('left', lw + 'px')
+
+                        } else {
+                            menuHeader.find('.' + BAR).remove();
+                            othis.removeAttr('overflow');
+                            title.css('left', '0px')//重置定位
+                        }
                     }
                 });
             }
@@ -461,7 +510,7 @@ layui.define(['jquery', 'context'], function (exports) {
     dom.on('click', TITLE, call.tabClick); //Tab切换
     dom.on('click', call.hideTabMore); //隐藏展开的Tab
     $(window).on('resize', call.tabAuto); //自适应
-
+    element.call =call
     exports(MOD_NAME, element);
 });
 

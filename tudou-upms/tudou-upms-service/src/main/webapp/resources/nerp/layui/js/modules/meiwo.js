@@ -81,7 +81,7 @@ layui.define(['layer', 'element', 'table', 'zjoin', 'ZJOINdropdown', 'ZJOINselec
                         }
                         n ++
                         if(!layui.device().ios && !layui.device().android){
-                            html +='</i><span>&nbsp;'+data.title+'</span></div>';
+                            html +='</i><span class="menutitle">&nbsp;'+data.title+'</span></div>';
                         }else{
                             html +='</i></div>';
                         }
@@ -108,15 +108,14 @@ layui.define(['layer', 'element', 'table', 'zjoin', 'ZJOINdropdown', 'ZJOINselec
                         var pid = $(this).attr('data-id');
                         $menuBar.find('.treeview').remove();
                         $menuBar.find('.sidebar-menuli').remove();
-                        //$menuBar.append('<li class="sidebar-menuli" data-url="/resources/erp/main.html" data-id="-1"><a href="#"><i class="layui-icon">&#xe907;</i>&nbsp;&nbsp;&nbsp;&nbsp;首页</a></li>');
                         for (var data of treeviewData) {
                             if (data.systemId == pid) {
-                                $menuBar.append('<li class="treeview treeview-' + data.systemId + '" ><a href="javascript:void(0)"><i class="layui-icon">&#xe9e7;</i>&nbsp;<span>' + data.name + '</span><span class="pull-right-container"></span> </a><ul class="treeview-menu" id="treeview-menu-' + data.permissionId + '"> </ul></li>');
+                                $menuBar.append('<li class="treeview treeview-' + data.systemId + '" ><a href="javascript:void(0)"><i class="layui-icon">'+data.icon+'</i>&nbsp;<span>' + data.name + '</span><span class="pull-right-container"></span> </a><ul class="treeview-menu" id="treeview-menu-' + data.permissionId + '"> </ul></li>');
                             }
                         }
                         for (var data of treeviewMenuData) {
                             if (data.systemId == pid) {
-                                $("#treeview-menu-" + data.pid).append('<li class="sidebar-menuli" data-url="' + data.uri + '" data-id="' + data.permissionId + '"><a href="javascript:void(0)"><i class="layui-icon">&#xe5c3;</i>&nbsp;<span>' + data.name + '</span></a></li>');
+                                $("#treeview-menu-" + data.pid).append('<li class="sidebar-menuli" data-url="' + data.uri + '" data-id="' + data.permissionId + '"><a href="javascript:void(0)"><i class="layui-icon">'+data.icon+'</i>&nbsp;<span>' + data.name + '</span></a></li>');
                             }
                         }
                         $menuBar.find('.treeview :eq(0)').parent('li').addClass('menu-open active ').click();
@@ -167,9 +166,13 @@ layui.define(['layer', 'element', 'table', 'zjoin', 'ZJOINdropdown', 'ZJOINselec
     function fixWindow() {
         var h = window.innerHeight,w = window.innerWidth;
         h = h - 40 - 50 - 41
-        w = w-180
+
+        if($('body').hasClass('sidebar-collapse')) w = w-50
+        else w = w-180
         $(".layui-tab-content").css({"height": h + 'px',"width":w+'px'});
+        $(".admin-header.layui-tab").css({"width":w+'px'});
         $(".main-footer").css({"width":w+'px'});
+        element.call.tabAuto()
     }
     $("#user-flowername").text($.cookie("flowerName"));
     $("#customer_timeout").click(function () {

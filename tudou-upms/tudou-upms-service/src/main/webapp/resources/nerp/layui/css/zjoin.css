@@ -373,7 +373,7 @@ a:focus {
     float: left;
   }
   .navbar-custom-menu .navbar-nav > li > a {
-    padding-top: 15px;
+    padding-top: 7px;
     padding-bottom: 15px;
     line-height: 20px;
   }
@@ -450,6 +450,7 @@ a:focus {
     -o-transform: translate(0, 0);
     transform: translate(0, 0);
   }
+  .menutitle{display: none}
 }
 .sidebar {
   padding-bottom: 10px;
@@ -559,10 +560,12 @@ a:focus {
 @media (min-width: 768px) {
   .sidebar-mini.sidebar-collapse .content-wrapper,
   .sidebar-mini.sidebar-collapse .right-side,
-  .sidebar-mini.sidebar-collapse  {
-    margin-left: 50px !important;
+  .sidebar-mini.sidebar-collapse{
+    margin-left: 25px !important;
     z-index: 840;
   }
+
+
 
   .sidebar-mini.sidebar-collapse .main-sidebar {
     -webkit-transform: translate(0, 0);
@@ -1214,6 +1217,7 @@ a:focus {
   position: absolute;
   right: 0;
   left: auto;
+  top:55px;
 }
 @media (max-width: 991px) {
   .navbar-custom-menu > .navbar-nav {

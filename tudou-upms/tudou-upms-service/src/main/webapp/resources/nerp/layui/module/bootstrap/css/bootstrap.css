@@ -2311,7 +2311,7 @@ th {
 .table-bordered > thead > tr > td,
 .table-bordered > tbody > tr > td,
 .table-bordered > tfoot > tr > td {
-  border: 1px solid #ddd;
+  border: 1px solid #e5e5e5;
 }
 .table-bordered > thead > tr > th,
 .table-bordered > thead > tr > td {
@@ -2589,6 +2589,7 @@ output {
 fieldset[disabled] .form-control {
   background-color: #eee;
   opacity: 1;
+  border: none;
 }
 .form-control[disabled],
 fieldset[disabled] .form-control {
