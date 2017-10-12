@@ -58,7 +58,6 @@ public class ${vmmodel}Controller extends BaseController {
 				    criteria.and${camelColumnName}Like("%" +${module}.get${camelColumnName}() + "%");
 				}
                 #end
-
             #end
         #end
 

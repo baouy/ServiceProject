@@ -26,6 +26,14 @@
         layui.define(['jquery','cookie','layer'],function () {
             var $ = layui.jquery;
             $(function() {
+
+                var name = $.cookie("flowerName")
+                if (name != 'null') {
+                    window.location.href = 'index.html';
+                }
+
+
+
                 $("#login_ok").click(function(){
                     var issubmit = true;
                     var i_index  = 0;

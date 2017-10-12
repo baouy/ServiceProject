@@ -26,6 +26,8 @@
 	<link rel="stylesheet" href="editor-app/css/style-common.css">
     <link rel="stylesheet" href="editor-app/css/style-editor.css">
 
+	<link rel="stylesheet" href="../common/font-awesome/css/font-awesome.min.css">
+
 </head>
 <body>
 <script type="text/javascript">
@@ -138,5 +140,6 @@ var appContextRoot='${pageContext.request.contextPath}/oa/act';
 	<script src="editor-app/configuration/properties.js" type="text/javascript"></script>
 	<script src="editor-app/configuration/properties-custom-controllers.js" type="text/javascript"></script>
 
+	<script type="text/javascript" src="../common/js/base-modal.js"></script>
 </body>
 </html>

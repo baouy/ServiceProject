@@ -11,7 +11,6 @@
     <!-- 日志记录AOP实现 -->
     <bean class="com.tudou.upms.client.interceptor.LogAspect"/>
 
-
     <!-- 日志记录AOP实现 -->
     <bean class="com.tudou.common.aspect.RpcLogAspect"/>
 
