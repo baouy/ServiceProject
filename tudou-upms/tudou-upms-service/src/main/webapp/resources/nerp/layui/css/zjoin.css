@@ -5001,4 +5001,4 @@ table.text-center th {
 }
 .zjoin-icon-ul li{float: left;height: 30px;line-height: 30px;width: 30px;text-align: center}
 .zjoin-icon-ul li:hover{background-color: wheat;cursor: pointer}
-
+.zjoin-upload{max-width: 100%;max-height: 100%;}

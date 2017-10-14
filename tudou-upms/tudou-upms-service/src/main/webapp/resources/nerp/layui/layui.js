@@ -74,7 +74,7 @@
             , BJUIdatagrid: 'modules/plugin/bjui/bjui-datagrid'
             , BJUIinitui: 'modules/plugin/bjui/bjui-initui'
             , BJUIplugins: 'modules/plugin/bjui/bjui-plugins'
-            ,BJUIselect: 'modules/plugin/bjui/select'
+            //,BJUIselect: 'modules/plugin/bjui/select'
             ,BJUIicheck: 'modules/plugin/bjui/icheck'
 
             ,ZJOINdropdown:'modules/plugin/zjoin/bootstrap-dropdown'

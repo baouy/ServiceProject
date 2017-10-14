@@ -197,7 +197,7 @@ layui.define(['layer', 'element', 'table', 'zjoin', 'ZJOINdropdown', 'ZJOINselec
         BJUI.initLayout()
         fixWindow()
         setTimeout(function() {$(this).trigger(BJUI.eventType.resizeGrid)}, 30)
-    })
+    });
 
     exports('meiwo', {}); //注意，这里是模块输出的核心，模块名必须和use时的模块名一致
 });

@@ -1,18 +1,12 @@
 package com.tudou.gen.server.util;
 
-import com.tudou.common.util.AESUtil;
 import com.tudou.common.util.StringUtil;
 import com.tudou.common.util.VelocityUtil;
 import com.tudou.gen.dao.model.GenScheme;
 import com.tudou.gen.dao.model.GenTable;
 import com.tudou.gen.dao.model.GenTableColumn;
-import org.activiti.engine.repository.Model;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.velocity.VelocityContext;
-import org.mybatis.generator.api.MyBatisGenerator;
-import org.mybatis.generator.config.Configuration;
-import org.mybatis.generator.config.xml.ConfigurationParser;
-import org.mybatis.generator.internal.DefaultShellCallback;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -176,21 +170,21 @@ public class GeneratourUtil {
 //
 //				System.out.println("========== 结束生成Controller ==========");
 
-//				System.out.println("========== 开始生成Html ==========");
-//				String htmlPath = path + "tudou-upms/tudou-upms-service/src/main/webapp/resources/erp/manage/"+genScheme.getSubModuleName()+"/"+smodule ;
-//				File htmlfile = new File(htmlPath);
-//				if (!htmlfile.exists()){
-//					htmlfile.mkdirs();
-//				}
-//
-//				String index = htmlPath + "/index.html";
-//				VelocityContext context1 = new VelocityContext();
-//				context1.put("module",nmodule);
-//				context1.put("smodule",smodule);
-//				context1.put("smodel", genScheme.getSubModuleName());
-//				context1.put("permissions",stringListtoString(table_name,"_"));
-//				context1.put("columns",columns);
-//				VelocityUtil.generate(index_vm, index, context1);
+				System.out.println("========== 开始生成Html ==========");
+				String htmlPath = path + "tudou-upms/tudou-upms-service/src/main/webapp/resources/erp/manage/"+genScheme.getSubModuleName()+"/"+smodule ;
+				File htmlfile = new File(htmlPath);
+				if (!htmlfile.exists()){
+					htmlfile.mkdirs();
+				}
+
+				String index = htmlPath + "/index.html";
+				VelocityContext context1 = new VelocityContext();
+				context1.put("module",nmodule);
+				context1.put("smodule",smodule);
+				context1.put("smodel", genScheme.getSubModuleName());
+				context1.put("permissions",stringListtoString(table_name,"_"));
+				context1.put("columns",columns);
+				VelocityUtil.generate(index_vm, index, context1);
 
 				System.out.println("========== 结束生成Html ==========");
 

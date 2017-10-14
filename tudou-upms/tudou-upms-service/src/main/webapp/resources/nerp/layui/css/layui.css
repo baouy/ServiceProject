@@ -299,7 +299,7 @@ a cite{font-style: normal; *cursor:pointer;}
 .layui-btn-small i{font-size: 16px !important;}
 /* 迷你 */.layui-btn-mini{height: 22px; line-height: 22px; padding: 0 5px; font-size: 12px;}
 .layui-btn-mini i{font-size: 14px !important;}
-/* 按钮组 */.layui-btn-group{display: inline-block; vertical-align: middle; font-size: 0;padding-left: 5px;}
+/* 按钮组 */.layui-btn-group{display: inline-block; vertical-align: middle; font-size: 0;/*padding-left: 5px;*/}
 .layui-btn-group .layui-btn{margin-left: 5px!important; margin-right: 0!important; border-left: 1px solid rgba(255,255,255,.5); border-radius: 3px;}
 .layui-btn-group .layui-btn-primary{border-left: none;}
 .layui-btn-group .layui-btn-primary:hover{border-color: #C9C9C9; color: #009688;}

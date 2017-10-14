@@ -104,7 +104,21 @@ var layer = {
       content: content,
       yes: yes
     }, type ? {} : options));
-  }, 
+  },
+
+  dialog: function (name,url,w,h) {
+    layer.open({
+      type: 5,
+      title: name,
+      area: [w+'px', h+'px'],
+      content: url,
+      btn: ['保存', '取消'],
+      btnAlign: 'r',
+      moveType: 1,//拖拽模式，0或者1
+      yes:function(){
+      }
+    });
+  },
   
   confirm: function(content, options, yes, cancel){ 
     var type = typeof options === 'function';
@@ -369,7 +383,7 @@ Class.pt.vessel = function(conType, callback){
       + '</div>'
       + '<span class="layui-layer-setwin">'+ function(){
         var closebtn = ismax ? '<a class="layui-layer-min" href="javascript:;"><cite></cite></a><a class="layui-layer-ico layui-layer-max" href="javascript:;"></a>' : '';
-        config.closeBtn && (closebtn += '<a class="layui-layer-ico '+ doms[7] +' '+ doms[7] + (config.title ? config.closeBtn : (config.type == 4 ? '1' : '2')) +'" href="javascript:;"></a>');
+        config.closeBtn && (closebtn += '<a class=" '+ doms[7] +' '+ doms[7] + (config.title ? config.closeBtn : (config.type == 4 ? '1' : '2')) +'" href="javascript:;"><i class="layui-icon layer-close-icon">&#x1006;</i></a>');
         return closebtn;
       }() + '</span>'
       + (config.btn ? function(){

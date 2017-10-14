@@ -536,7 +536,12 @@ layui.define('layer', function (exports) {
         layui.each(fieldElem, function (_, item) {
             if (!item.name) return;
             if (/^checkbox|radio$/.test(item.type) && !item.checked) return;
-            field[item.name] = item.value;
+            if (/^checkbox$/.test(item.type)) {
+                field[item.name] = field[item.name] ? field[item.name] + "," +item.value : item.value;
+            }else {
+                field[item.name] = item.value;
+            }
+
         });
 
         //获取字段

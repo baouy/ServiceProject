@@ -15,34 +15,36 @@ layui.define(['layer', 'form', 'ZJOINS'], function (exports) {
     Zjoin.prototype.set = function (options) {
         var that = this;
         $.extend(true, that.config, options);
+        ZJOIN_default = that.config
         return that;
     };
     var upload = function () {
+        var head = $("head").remove("script[role='reload']");
+        $("<scri" + "pt>" + "</scr" + "ipt>").attr({ role: 'reload', src: '/resources/nerp/layui/js/modules/qiniu.js', type: 'text/javascript' }).appendTo(head);
         layer.open({
             type: 1,
             id: 'fly-jie-upload',
             title: '插入图片',
-            shade: true,
+            shade: 0.5,
             area: '300px',
-            skin: 'layui-layer-border',
             content: ['<div id="container" class="layui-form layui-form-pane" style="margin: 20px;"><p><div id="pickfiles" class="layui-btn" style="width:100%;padding:0!important"><div id="upload-progress" style="width:100%;height:100%;">上传文件</div></div></p></div>'].join(''),
             success: function (layero, index) {
                 $.ajax({
-                    type: "POST",
-                    url: "/api/uptoken/",
+                    type: "GET",
+                    url: $.cookie("tudou-oa-server") +'/manage/oanotify/uptoken',
                     dataType: "json",
                     success: function (data) {
-                        if (data.code != 0) return layer.close(index), layer.msg('无效token', {
+                        if (data.code != 1) return layer.close(index), layer.msg('无效token', {
                             icon: 5
                         });
                         $("#upload-progress").css({
-                            "background": "url(/layui/images/loading.png) no-repeat",
+                            "background": "url(/resources/nerp/layui/images/loading.png) no-repeat",
                             "background-size": "0% 100%"
                         });
                         var uploader = Qiniu.uploader({
                             runtimes: 'html5,flash,html4',
                             browse_button: 'pickfiles',
-                            uptoken_url: '/api/uptoken/',
+                            uptoken_url: $.cookie("tudou-oa-server") +'/manage/oanotify/uptoken',
                             uptoken: data.value,
                             unique_names: false,
                             save_key: false,

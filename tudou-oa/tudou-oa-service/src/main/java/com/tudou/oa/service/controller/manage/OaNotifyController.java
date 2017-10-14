@@ -1,6 +1,8 @@
 package com.tudou.oa.service.controller.manage;
 
 import com.tudou.common.base.BaseController;
+import com.tudou.common.base.BaseResult;
+import com.tudou.common.util.QiniuUtil;
 import com.tudou.common.util.TokenUtil;
 import com.tudou.oa.common.constant.OaResult;
 import com.tudou.oa.common.constant.OaResultConstant;
@@ -34,6 +36,12 @@ public class OaNotifyController extends BaseController {
 
 	@Autowired
 	private OaNotifyService oaNotifyService;
+
+	@RequestMapping(value = "/uptoken", method = RequestMethod.GET)
+	@ResponseBody
+	public Object uptocken(@ModelAttribute OaNotify oaNotify) {
+		return new BaseResult(1,"ok",QiniuUtil.getUpToken());
+	}
 
 	@ApiOperation(value = "通知通告列表")
 	@RequiresPermissions("oa:notify:read")
@@ -119,11 +127,13 @@ public class OaNotifyController extends BaseController {
 			criteria.andIdEqualTo(oaNotify.getId());
 			oaNotify.setUpdateBy(TokenUtil.getUserName());
 			oaNotify.setUpdateDate(new Date());
-			oaNotifyService.updateByExample(oaNotify, oaNotifyExample);
+			oaNotifyService.updateByExampleSelective(oaNotify, oaNotifyExample);
 		} else {
 			//新增
 			oaNotify.setCreateBy(TokenUtil.getUserName());
 			oaNotify.setCreateDate(new Date());
+			oaNotify.setUpdateBy(TokenUtil.getUserName());
+			oaNotify.setUpdateDate(new Date());
 			oaNotifyService.insertSelective(oaNotify);
 		}
 
@@ -135,7 +145,7 @@ public class OaNotifyController extends BaseController {
 	@RequiresPermissions("oa:notify:delete")
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	@ResponseBody
-	public Object delete(@RequestParam OaNotify oaNotify) {
+	public Object delete(OaNotify oaNotify) {
 		OaNotifyExample oaNotifyExample = new OaNotifyExample();
 		OaNotifyExample.Criteria criteria = oaNotifyExample.createCriteria();
 		criteria.andIdEqualTo(oaNotify.getId());

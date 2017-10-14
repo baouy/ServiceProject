@@ -3140,7 +3140,7 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
 
                     if ($custom && $custom.length && typeof $custom !== 'string') {
                         if (hastoolbaritem) {
-                            $custombox.css('margin-left', '5px')
+                            //$custombox.css('margin-left', '5px')
                         }
                         $custombox.appendTo(that.$toolbar)
                         $custom.appendTo($custombox)
