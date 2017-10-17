@@ -1,0 +1,88 @@
+<script type="text/javascript">
+    layui.define(['form','layedit','laydate'],function () {
+        var $ = layui.jquery, form = layui.form,layedit=layui.layedit,laydate= layui.laydate;
+        var upmsmarkdown_Eidtor;
+																																																				
+        var selected = $('#upmsmarkdown_list_table').data('selectedDatas');
+        var upmsmarkdown_id;
+        if (selected && selected.length > 0) {upmsmarkdown_id = selected[0].id;}
+        if (upmsmarkdown_id != null) {
+            $('#upmsmarkdown_form_mId').val(upmsmarkdown_id);
+            layer.load();
+            $.ajax({
+                url: $.cookie("tudou-upms-server") + '/manage/upmsmarkdown/detail',
+                dataType: 'json',
+                type: 'POST',
+                data: {'mId': upmsmarkdown_id},
+                success: function (d) {
+                    if (d.code == 1) {
+                        var cl = layer.current();
+                        for(var x in d.data)  cl.find('#upmsmarkdown_'+x).val(d.data[x]);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+                    form.render();
+                    layer.closeAll('loading');
+                },
+                error: function () {
+                    layer.closeAll('loading');
+                }
+            });
+        }
+
+        $(".layui-layer-btn0").bind('click',function () {
+            if(upmsmarkdown_Eidtor) layedit.sync(upmsmarkdown_Eidtor);
+            $("#upmsmarkdown_form_save_btn").click();
+        });
+
+        form.on('submit(upmsmarkdown_form_submit)',function (data) {
+
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+            $.ajax({
+                url:$.cookie("tudou-upms-server") + "/manage/upmsmarkdown/save",
+                type:'post',
+                data:data.field,
+                success:function (d) {
+                    if(d.code==1){
+                        $('#upmsmarkdown_list_table').datagrid('refresh_part');
+                        layer.closeCurrent();
+                    }else {
+                        layer.warn( d.data);
+                    }
+                }
+            })
+            return false;
+        });
+
+																																																																				        form.render(null,'upmsmarkdown_form');
+    });
+</script>
+
+	<div class="bjui-pageContent">
+		<form class="layui-form" lay-filter="upmsmarkdown_form" id="upmsmarkdown_form">
+			<input type="hidden" value="" name="mId" id="upmsmarkdown_mId">
+                                <div class="layui-form-item">
+            <label for="upmsmarkdown_keywords" class="layui-form-label">关键词：</label>
+                        <div class="layui-input-inline">
+                <input type="text" name="keywords" id="upmsmarkdown_keywords" lay-verify="required" class="layui-input" value="">
+            </div>
+                        </div>
+                            <div class="layui-form-item">
+            <label for="upmsmarkdown_title" class="layui-form-label">标题：</label>
+                        <div class="layui-input-inline">
+                <input type="text" name="title" id="upmsmarkdown_title" lay-verify="required" class="layui-input" value="">
+            </div>
+                        </div>
+                            <div class="layui-form-item">
+            <label for="upmsmarkdown_content" class="layui-form-label">内容：</label>
+                        <div class="layui-input-inline">
+                <input type="text" name="content" id="upmsmarkdown_content" lay-verify="required" class="layui-input" value="">
+            </div>
+                        </div>
+                                                                                    <button id="upmsmarkdown_form_save_btn" lay-submit="" class="layui-hide" lay-filter="upmsmarkdown_form_submit"></button>
+		</form>
+	</div>
+
+
+	
