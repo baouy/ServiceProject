@@ -97,25 +97,31 @@ var KisBpmAssignmentPopupCtrl = [ '$scope', function($scope) {
     $scope.selectUser = function (multiple) {
         var title = "选择代理人(单选)"
         var ids = ($scope.assignment.assignee ? $scope.assignment.assignee : 0);
+        var name = ($scope.assignment.assigneeName ? $scope.assignment.assigneeName : 0);
         if (multiple == 1) {
             title = "选择候选人(多选)";
             //候选人id
             ids = 0;
+            name = 0
             if($scope.assignment.candidateUsers) {
                 var idsArr = [];
+                var nameArr = []
                 //alert( $scope.assignment.candidateUsers.length);
                 for (var i = 0; i < $scope.assignment.candidateUsers.length; i++) {
                     if ($scope.assignment.candidateUsers[i].value)
                         idsArr.push($scope.assignment.candidateUsers[i].value);
+                    if ($scope.assignment.candidateUsers[i].name)
+                        nameArr.push($scope.assignment.candidateUsers[i].name);
                 }
                 if (idsArr.length > 0) {
                     ids = idsArr.join(",");
+                    name = nameArr.join(',')
                 }
             }
         }
         modals.openWin({
             winId: 'userSelectWin',
-            url: appContextRoot + '/user/select/' + multiple + '/' + ids,
+            url: appContextRoot + '/user/select/' + multiple + '/' + ids + '/'+name,
             width: '800px',
             title: title
         })
@@ -124,19 +130,24 @@ var KisBpmAssignmentPopupCtrl = [ '$scope', function($scope) {
     //候选组
     $scope.selectGroup = function () {
         var ids = 0;
+        var names = 0;
         if($scope.assignment.candidateGroups) {
             var idsArr = [];
+            var nameArr = [];
             for (var i = 0; i < $scope.assignment.candidateGroups.length; i++) {
                 if ($scope.assignment.candidateGroups[i].value)
                     idsArr.push($scope.assignment.candidateGroups[i].value);
+                if ($scope.assignment.candidateGroups[i].name)
+                    nameArr.push($scope.assignment.candidateGroups[i].name);
             }
             if (idsArr.length > 0) {
                 ids = idsArr.join(",");
+                names = nameArr.join(',');
             }
         }
         modals.openWin({
             winId: 'groupSelectWin',
-            url: appContextRoot + '/group/select/' + ids,
+            url: appContextRoot + '/group/select/' + ids +"/"+names,
             width: '1200px',
             title: '选择候选组(多选)'
         })

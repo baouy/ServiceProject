@@ -32,6 +32,7 @@
 <body>
 <script type="text/javascript">
 var appContextRoot='${pageContext.request.contextPath}/oa/act';
+var basePath = appContextRoot
 </script>
 	<!-- <div class="navbar navbar-fixed-top navbar-inverse" role="navigation" id="main-header">
 	    <div class="navbar-header">
@@ -140,6 +141,7 @@ var appContextRoot='${pageContext.request.contextPath}/oa/act';
 	<script src="editor-app/configuration/properties.js" type="text/javascript"></script>
 	<script src="editor-app/configuration/properties-custom-controllers.js" type="text/javascript"></script>
 
+	<script type="text/javascript" src="../common/js/base.js"></script>
 	<script type="text/javascript" src="../common/js/base-modal.js"></script>
 </body>
 </html>

@@ -1,0 +1,208 @@
+<link rel="stylesheet" href="/oa/act/adminlte/plugins/datatables/dataTables.bootstrap.css">
+<style>
+    table.dataTable thead > tr > th {
+        padding-right: 0px;
+    }
+</style>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+        <li class="fa fa-remove"></li>
+    </button>
+    <h4 class="modal-title"></h4>
+</div>
+<div class="modal-body">
+    <div class="row" style="margin-top:-10px;margin-bottom: 10px;">
+        <input type="hidden" id="groupIds">
+        <div class="col-xs-7">
+            <input type="text" readonly id="groupNames" class="form-control"  placeholder="已选用户组">
+        </div>
+        <div class="col-xs-5">
+            <span id="userTitle"><h5 id='groupName' class='pull-left'>【用户列表】</h5></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-7">
+            <div class="box box-primary">
+                <!--隐藏域保存选中的用户-->
+                <!--<input type="hidden" name="userIds" id="userIds" style="width: 100%"/>-->
+                <div class="dataTables_filter" id="searchDiv_group_select" style="display: none">
+                    <input placeholder="请输入用户组名/编码" name="name" class="form-control" type="search" likeOption="true"/>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default" data-btn-type="search">查询</button>
+                        <button type="button" class="btn btn-primary" data-btn-type="select" id="selectUser">选择</button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <table id="group_select_table" class="table table-bordered table-stripped table-hover">
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-5">
+
+            <div class="box box-primary">
+                <div class="dataTables_filter" id="searchDiv_user_select" style="display: none">
+                    <input placeholder="请输入用户名" name="name" class="form-control" type="search"
+                           likeOption="true"/>
+                    <input type="hidden" name="roleId" id="roleId" operator="eq" likeOption="false" value="-1"/>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default" data-btn-type="search">查询</button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <table id="user_select_table" class="table table-bordered table-stripped table-hover">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript" src="/oa/act/adminlte/plugins/datatables/jquery.dataTables.js"></script>
+<script type="text/javascript"
+        src="/oa/act/adminlte/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript" src="/oa/act/common/js/dataTables.js"></script>
+<script type="text/javascript" src="/oa/act/common/js/base-form.js"></script>
+<script type="text/javascript" src="/oa/act/common/js/base-datasource.js"></script>
+<script>
+    var groupSelectTable;
+    var userSelectTable;
+    var ids = "${ids?default(0)}";//回填ids
+    var names = "${names?default(0)}";//回填names
+    ids = ids == 0 ? '' : ids;
+    names = names == 0? '':names;
+    //用户选择控制器
+    var userSelectCtrl = {
+        initTable: function () {
+            jQuery("#groupIds").val(ids);
+            jQuery("#groupNames").val(names);
+            var self = this;
+            var config = {
+                rowClick: function (row, isSelected) {
+                    console.log(isSelected);
+                    jQuery("#roleId").val(isSelected ? row.roleId : "-1");
+                    jQuery("#groupName").remove();
+                    if (isSelected)
+                        jQuery("#userTitle").append("<h5 id='groupName' class='pull-left'>【" + row.title + "】</h5>");
+                    userSelectTable.reloadData();
+                }
+            };
+
+            var data_list = [
+                {key: 'rowIndex', hidden: false, header: '序号', align: 'center','allowSort':false},
+                {key: 'isSelected', hidden: false, header: '选择', align: 'center','allowSort':false,fnRender:'fnRenderSelectUser'},
+                {key: 'roleId', hidden: false, header: '用户组ID', align: 'center','allowSort':false},
+                {key: 'title', hidden: false, header: '用户组名', align: 'center','allowSort':false},
+                {key: 'name', hidden: false, header: '用户编码', align: 'center','allowSort':false}]
+
+            groupSelectTable = new CommonTable('/user/role/list',"group_select_table",data_list,"searchDiv_group_select",'roleId', config);
+            //回调选中
+            groupSelectTable.serverCallback = function () {
+                self.setCheckBoxState();
+            };
+
+            var userConfig={
+                lengthChange:true,
+                pagingType:'simple_numbers'
+            };
+
+            var user_list = [
+                {key: 'rowIndex', hidden: false, header: '序号', align: 'center','allowSort':false},
+                {key: 'realname', hidden: false, header: '用户名', align: 'center','allowSort':false},
+                {key: 'username', hidden: false, header: '登录名', align: 'center','allowSort':false},
+                {key: 'email', hidden: false, header: '邮箱', align: 'center','allowSort':false}]
+
+            userSelectTable = new CommonTable('/user/list',"user_select_table",user_list, "searchDiv_user_select",'rowIndex',userConfig);
+        },
+        //查询 换页选择框回填
+        setCheckBoxState: function () {
+            var selectUserIds = jQuery("#groupIds").val();
+            if (selectUserIds) {
+                var userIdArr = selectUserIds.split(",");
+                //选中增加的用户
+                jQuery.each(userIdArr, function (index, userId) {
+                    if (groupSelectTable.table.$("#" + userId).length > 0) {
+                        groupSelectTable.table.$("#" + userId).find(":checkbox.checkbox_group").prop("checked", true);
+                    }
+                });
+                //删除已经选中的
+                groupSelectTable.table.$("tr").find(":checkbox.checkbox_group:checked").each(function () {
+                    var curUserId = jQuery(this).parents("tr").attr("id");
+                    //找不到，已经被删除
+                    if (selectUserIds.indexOf(curUserId) == -1) {
+                        groupSelectTable.table.$("#" + curUserId).find(":checkbox.checkbox_group").prop("checked", false);
+                    }
+                });
+            } else {
+                jQuery(":checkbox.checkbox_group").prop("checked", false);
+            }
+        },
+        //绑定用户组选择事件
+        bindSelectUserEvent: function () {
+            jQuery("#selectUser").click(function () {
+                var controllerScope = jQuery('div[ng-controller="KisBpmAssignmentPopupCtrl"]').scope();  // Get controller's scope
+                var userIds = jQuery("#groupIds").val();
+                var userNames = jQuery("#groupNames").val();
+                controllerScope.setCandidateGroups(userIds, userNames);
+                modals.hideWin("groupSelectWin");
+            })
+        },
+        selectThis: function (obj) {
+            var isChecked = jQuery(obj).is(":checked");
+            //单选
+            var userIds = jQuery("#groupIds").val();
+            var userRs = jQuery("#groupNames").val();
+            var value = jQuery(obj).parents("tr").eq(0).attr("id");
+            var data = groupSelectTable.table.rows('.selected').data()
+            var userArr = this.getSelectedUserArr(userIds, value, isChecked);
+            var nameArr = this.getSelectedUserArr(userRs, data[0].title, isChecked);
+            jQuery("#groupIds").val(userArr.join(","));
+            this.updateSelectedUserNames(nameArr);
+        },
+        updateSelectedUserNames: function (name) {
+            var userIds = jQuery("#groupIds").val();
+            if (userIds == 0 || !userIds) {
+                jQuery("#groupNames").val("");
+            } else {
+                jQuery("#groupNames").val(name);
+            }
+        },
+        getSelectedUserArr: function (userIdss, curValue, isChecked) {
+            var userArr = [];
+            if (userIdss)
+                userArr = userIdss.split(",");
+            if (isChecked) {
+                var flag = true;
+                for (var i = 0; i < userArr.length; i++) {
+                    if (userArr[i] == curValue) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag)
+                    userArr.push(curValue);
+            } else {
+                for (var i = 0; i < userArr.length; i++) {
+                    var userIdValue = userArr[i];
+                    if (userIdValue == curValue) {
+                        userArr.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+            return userArr;
+        }
+
+
+    }
+
+
+    function fnRenderSelectUser(value) {
+        return "<input type='checkbox' value='1' class='checkbox_group' onchange='userSelectCtrl.selectThis(this)'>";
+    }
+    //方法入口
+    jQuery(function () {
+        userSelectCtrl.initTable();
+        userSelectCtrl.bindSelectUserEvent();
+    })
+</script>

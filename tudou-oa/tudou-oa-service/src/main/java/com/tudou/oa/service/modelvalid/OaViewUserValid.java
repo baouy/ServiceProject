@@ -114,6 +114,8 @@ public class OaViewUserValid extends BaseModelValid{
 	 */
 	private String email;
 
+	private String roleId;
+
 	/**
 	 * 电话
 	 *
@@ -255,5 +257,13 @@ public class OaViewUserValid extends BaseModelValid{
 
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	public String getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(String roleId) {
+		this.roleId = roleId;
 	}
 }

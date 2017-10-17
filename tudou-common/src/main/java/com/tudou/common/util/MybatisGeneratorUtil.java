@@ -28,8 +28,6 @@ public class MybatisGeneratorUtil {
 	// ServiceImpl模板路径
 	private static String serviceImpl_vm = "/template/ServiceImpl.vm";
 
-	private static String test_vm = "/template/test.vm";
-
 	/**
 	 * 根据模板生成generatorConfig.xml文件
 	 * @param jdbc_driver   驱动路径
@@ -153,23 +151,6 @@ public class MybatisGeneratorUtil {
 		System.out.println("========== 结束生成Service ==========");
 		System.out.println("========== 开始生成Controller ==========");
 		System.out.println("========== 结束生成Controller ==========");
-	}
-
-	public static void test(String module) {
-		String test = "/"+MybatisGeneratorUtil.class.getResource(test_vm).getPath().replaceFirst("/", "");
-		String module_path = module + "/" + module + "-dao/src/main/resources/test.doc";
-		try {
-			VelocityContext context = new VelocityContext();
-			context.put("username", "我是名称");
-			context.put("password", "我是密码");
-			context.put("name", "我是姓名");
-			context.put("national","我是名族");
-			context.put("birthday","1990年02月02日");
-			context.put("other","○情绪行为困扰");
-			VelocityUtil.generate(test, module_path, context);
-		}catch (Exception e){
-
-		}
 	}
 
 
