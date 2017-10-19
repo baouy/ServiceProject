@@ -3338,8 +3338,7 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
     Datagrid.prototype.fixedWidth = function (isInit) {
 
         var that = this, options = that.options, bW, excludeW = 0, fixedW, columnModel = that.columnModel, length = columnModel.length
-        var leftW = $(".layui-tab-content").width();
-
+        var leftW = $(that.$grid).parent('.bjui-pageContent').width();//$(".layui-tab-content").width();debugger
         if (isInit && that.initFixedW) return
         that.initFixedW = true
 
@@ -7809,6 +7808,9 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
     Datagrid.prototype.resizeGrid = function () {
         var that = this, $target = that.$grid.getPageTarget(), parentW, parentH
         var _resizeGrid = function () {
+
+            //add by digua 修复表格自适应导致的过滤栏错位
+            that.$boxH.find(".zjoin-filter-box").remove()
             var ww = that.$grid.width(), $headDiv = that.$tableH.next('.datagrid-thead-dialog-div'),
                 newTemplate = ((that.options.tdTemplate && that.options.templateWidth) && that.options.templateWidth > ww) || that.options.templateWidth === 0
 
@@ -7907,8 +7909,7 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
     Datagrid.prototype.resizeCurrentGrid = function () {
         var that = this,  parentW
         var _resizeGrid = function () {
-            console.log("正在触发datagrid自适应")
-            debugger
+            that.$boxH.find(".zjoin-filter-box").remove()
             var ww = that.$grid.width(), $headDiv = that.$tableH.next('.datagrid-thead-dialog-div'),
                 newTemplate = ((that.options.tdTemplate && that.options.templateWidth) && that.options.templateWidth > ww) || that.options.templateWidth === 0
 

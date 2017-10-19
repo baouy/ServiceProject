@@ -1,3 +1,16 @@
+<script type="text/javascript">
+layui.define( function () {
+    layer.open({
+        id:'meiwo-layer-'+$(".admin-this").attr('lay-id'),
+        type: 5,
+        title: '通知公告',
+        area: ['400px', '200px'],
+        content: '<div style="height: 100px;line-height: 60px;margin: 0 auto;font-size: 20px;"><p><b>这只是测试弹窗，不影响其他操作……</b></p><p><b>切换页面将自动隐藏本弹窗</b></p></div>',
+        btnAlign: 'r',
+        moveType: 1//拖拽模式，0或者1
+    });
+});
+</script>
 <ul class="layui-timeline">
     <li class="layui-timeline-item">
         <i class="layui-icon layui-timeline-axis skin-color">&#xe05e;</i>

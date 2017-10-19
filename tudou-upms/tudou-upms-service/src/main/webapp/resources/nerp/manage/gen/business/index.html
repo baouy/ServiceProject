@@ -70,6 +70,7 @@
             var url =$(this).attr('url');
             var name = $(this).attr('name');
             layer.open({
+				id:'meiwo-layer-'+$(".admin-this").attr('lay-id'),
                 type: 5,
                 title: name,
                 area: ['1300px', '700px'],
@@ -92,6 +93,7 @@
             if(business_selected[0].subTable) url = '/resources/nerp/manage/gen/business/create2.html'
 			var name = $(this).attr('name');
             layer.open({
+				id:'meiwo-layer-'+$(".admin-this").attr('lay-id'),
                 type: 5,
                 title: name,
                 area: ['1300px', '700px'],

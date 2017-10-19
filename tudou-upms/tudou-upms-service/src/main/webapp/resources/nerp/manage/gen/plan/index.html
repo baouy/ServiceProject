@@ -69,6 +69,7 @@
             var url = $(this).attr('url');
             var name = $(this).attr('name');
             layer.open({
+				id:'meiwo-layer-'+$(".admin-this").attr('lay-id'),
                 type: 5,
                 title: name,
                 area: ['900px', '550px'],
@@ -95,6 +96,7 @@
             var url = $(this).attr('url');
             var name = $(this).attr('name');
             layer.open({
+				id:'meiwo-layer-'+$(".admin-this").attr('lay-id'),
                 type: 5,
                 title: name,
 				area: ['900px', '550px'],

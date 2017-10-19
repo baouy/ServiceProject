@@ -105,6 +105,12 @@ layui.define(['jquery', 'context'], function (exports) {
                     , elemA = othis.find('a')
                     , filter = parents.attr('lay-filter');
 
+                //add by digua 2017/10/19 切换菜单时，先隐藏其他层的弹窗，再显示当前页的弹窗
+                $(".layui-layer").addClass('layui-hide');
+                $(".layui-layer").removeClass('layui-layer-current');
+                var clid = $(othis[0]).attr('lay-id');
+                $('#meiwo-layer-'+clid).parent('.layui-layer').removeClass('layui-hide')
+                $('#meiwo-layer-'+clid).parent('.layui-layer').addClass('layui-layer-current')
                 if (!(elemA.attr('href') !== 'javascript:;' && elemA.attr('target') === '_blank')) {
                     othis.addClass(THIS).addClass("admin-this").siblings().removeClass(THIS).removeClass("admin-this");
                     item.eq(index).addClass(SHOW).siblings().removeClass(SHOW);
@@ -138,6 +144,9 @@ layui.define(['jquery', 'context'], function (exports) {
                 var li = othis || $(this).parent(), index = li.index();
                 var parents = li.parents('.layui-tab').eq(0);
                 var item = parents.siblings('.layui-tab-content').children('.layui-tab-item')
+
+                var clid = $(li[0]).attr('lay-id');
+                $('#meiwo-layer-'+clid).parent('.layui-layer').remove()
 
                 if (li.hasClass(THIS)) {
                     if (li.next()[0]) {
