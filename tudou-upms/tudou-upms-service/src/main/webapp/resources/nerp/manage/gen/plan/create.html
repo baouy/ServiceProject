@@ -1,15 +1,16 @@
 <script>
     layui.define(['jquery'], function () {
         var $ = layui.jquery, form = layui.form, layer = layui.layer
-        var genscheme_id = null
+        var genscheme_id = null;
+		$("#gen_scheme_functionAuthor").val($.cookie("flowerName"))
 		if (plan_selected != null){
             genscheme_id = plan_selected[0].id
 		}
         $('#gen_scheme_id').val(genscheme_id)
         var plan_selectpicker = $('#gen_scheme_category')
         var gen_scheme_genTableId = $('#gen_scheme_genTableId')
-        plan_selectpicker.append($("<option value=>请选择表名</option>"));
-        gen_scheme_genTableId.append($("<option value=>请选择业务表名</option>"));
+        plan_selectpicker.append($("<option value=>请选择表类型</option>"));
+        gen_scheme_genTableId.append($("<option value=>请选择业务表</option>"));
         $.each(gen_dic_table, function (i, n) {
             $.each(Object.keys(n), function (i, w) {
                 plan_selectpicker.append($("<option value=" + w + ">" + n[w] + "</option>"));
@@ -53,6 +54,10 @@
                         for (var i in d.data) {
                             $("#gen_scheme_" + i).val(d.data[i]);
                         }
+						var arr = d.data['fileType'].split(',');
+						for(var x of arr){
+							layer.current().find(":checkbox[name='fileType'][value="+x+"]").attr("checked", "true");
+						}
                     }
                     form.render(null, 'gen_plan_save_form');
                 },error:function (e) {
@@ -92,7 +97,10 @@
                     layer.closeAll('loading')
                     if (d.code == 1) {
                         layer.closeAll();
-                        layer.ok("提交成功!");
+						if($('#gen_scheme_type').val()==0){
+							$('#gen_tablescheme_list_table').datagrid('refresh');
+						}
+						layer.ok("提交成功!");
                     } else {
                         layer.warn(d.data);
                     }
@@ -114,74 +122,67 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">方案名称：</label>
 				<div class="layui-input-inline">
-					<input type="text" name="name" id="gen_scheme_name" lay-verify="required" autocomplete="off"
-						   class="layui-input" value="">
+					<input type="text" name="name" id="gen_scheme_name" lay-verify="required" class="layui-input" value="">
+				</div>
+				<label class="layui-form-label">生成作者：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="functionAuthor" id="gen_scheme_functionAuthor"   class="layui-input" readonly>
 				</div>
 			</div>
 
 			<div class="layui-form-item">
-				<label class="layui-form-label">表名：</label>
+				<label class="layui-form-label">业务表：</label>
+				<div class="layui-input-inline">
+					<select name="genTableId" id="gen_scheme_genTableId" lay-verify="required"></select>
+				</div>
+				<label class="layui-form-label">表类型：</label>
 				<div class="layui-input-inline">
 					<select name="category" id="gen_scheme_category" lay-verify="required"></select>
 				</div>
 			</div>
-
 			<div class="layui-form-item">
-				<label class="layui-form-label">生成包路径：</label>
-				<div class="layui-input-inline">
-					<input type="text" name="packageName" id="gen_scheme_packageName" lay-verify="required" autocomplete="off"
-						   class="layui-input" value="">
+				<label class="layui-form-label">生成类型：</label>
+				<div class="layui-input-block">
+					<input type="checkbox" title="列表页(index)" value="1" name="fileType">
+					<input type="checkbox" title="保存(save)" value="2" name="fileType">
+					<input type="checkbox" title="数据层(dao)" value="3" name="fileType">
+					<input type="checkbox" title="控制类(controller)" value="4" name="fileType">
+					<input type="checkbox" title="服务层(service)" value="5" name="fileType">
 				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">包路径：</label>
 				<div class="layui-input-inline">
-					<div class="layui-form-mid layui-word-aux">如:(默认一般为工程包com.tudou)</div>
+					<input type="text" name="packageName" id="gen_scheme_packageName" lay-verify="required" placeholder="一般为工程包如：com.tudou" class="layui-input" value="">
+				</div>
+				<label class="layui-form-label">模块名称：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="moduleName" id="gen_scheme_moduleName" lay-verify="required" placeholder="一般为工程名如：tudou" class="layui-input" value="">
 				</div>
 			</div>
 
 			<div class="layui-form-item">
-				<label class="layui-form-label">生成模块名：</label>
+				<label class="layui-form-label">子模块名：</label>
 				<div class="layui-input-inline">
-					<input type="text" name="moduleName" id="gen_scheme_moduleName" lay-verify="required" autocomplete="off"
-						   class="layui-input" value="">
+					<input type="text" name="subModuleName" id="gen_scheme_subModuleName" lay-verify="required" placeholder="如:upms,oa,gen,pay,crm" class="layui-input" value="">
 				</div>
+				<label class="layui-form-label">功能描述：</label>
 				<div class="layui-input-inline">
-					<div class="layui-form-mid layui-word-aux">如:(默认一般为工程名称tudou)</div>
+					<input type="text" name="functionName" id="gen_scheme_functionName" lay-verify="required"   class="layui-input" value="">
 				</div>
-			</div>
 
-			<div class="layui-form-item">
-				<label class="layui-form-label">生成子模块名：</label>
-				<div class="layui-input-inline">
-					<input type="text" name="subModuleName" id="gen_scheme_subModuleName" lay-verify="required" autocomplete="off" class="layui-input" value="">
-				</div>
-				<div class="layui-input-inline">
-					<div class="layui-form-mid layui-word-aux">如:(upms,oa,gen,pay,crm等)</div>
-				</div>
 			</div>
+			<div class="layui-form-item">
+					<fieldset class="layui-elem-field">
+						<legend>说明：</legend>
+						<div class="layui-field-box">
+							<p>业务表：业务配置中的表组合。【指定生成时依赖的字段表】</p>
+							<p>表类型：表示是单表还是多表操作，或者其他类型。【指定生成时依赖的模板包】</p>
+							<p>生成类型：【指定需要生成的文件】</p>
+						</div>
+					</fieldset>
 
-			<div class="layui-form-item">
-				<label class="layui-form-label">生成功能描述：</label>
-				<div class="layui-input-inline">
-					<input type="text" name="functionName" id="gen_scheme_functionName" lay-verify="required" autocomplete="off"  class="layui-input" value="">
-				</div>
 			</div>
-
-			<div class="layui-form-item">
-				<label class="layui-form-label">生成功能作者：</label>
-				<div class="layui-input-inline">
-					<input type="text" name="functionAuthor" id="gen_scheme_functionAuthor" lay-verify="required" autocomplete="off"
-						   class="layui-input" value="">
-				</div>
-			</div>
-
-			<div class="layui-form-item">
-				<label class="layui-form-label">业务表名：</label>
-				<div class="layui-input-inline">
-					<select name="genTableId" id="gen_scheme_genTableId" lay-verify="required"></select>
-				</div>
-			</div>
-			<button id="gen_plan_save_btn" lay-submit="" class="layui-hide" lay-filter="gen_plan_save_form">
-				立即提交
-			</button>
+			<button id="gen_plan_save_btn" lay-submit="" class="layui-hide" lay-filter="gen_plan_save_form"></button>
 		</form>
-
 	</div>

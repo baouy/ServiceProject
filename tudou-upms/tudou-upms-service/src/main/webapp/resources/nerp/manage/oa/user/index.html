@@ -17,7 +17,9 @@
 				{name: 'organization', width: '180', label: '组织'},
 				{name: 'department', width: '180', label: '部门'},
 				{name: 'role', width: '180', label: '岗位'},
-				{name: 'phone', width: '180', label: '手机号'},
+				{name: 'phone', width: '180', label: '手机号',render:function (value,data) {
+					return '<a onclick="call(data)" style="cursor: pointer">'+value+'</a>'
+				}},
 				{name: 'sex', width: '80', label: '性别', type: 'select', items: [{'0': '女'}, {'1': '男'}]},
 				{name: 'companyMobile', width: '180', label: '公司电话'},
 				{name: 'companyEmail', width: '100', label: '公司邮箱'},

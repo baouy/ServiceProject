@@ -898,7 +898,7 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
                     }, datas.length + 1)
                 }
             },
-            coverTemplate: function () {
+            coverTemplate: function () {debugger
                 var tools = this, options = that.options, datas = that.data, model = that.columnModel, trs
 
                 if (that.isTemplate) {
@@ -946,7 +946,7 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
                     if (!trs)
                         this.createTrs(datas, true)
                     else {
-                        that.$tbody.html(trs)
+                        that.$tbody.empty().html(trs)
 
                         that.initEvents()
                         if (options.editMode) that.edit()
@@ -6420,6 +6420,7 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
                 }
             })
         }
+        form.render();
     }
 
     // Api - cancel edit
@@ -7811,7 +7812,9 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
                 newTemplate = ((that.options.tdTemplate && that.options.templateWidth) && that.options.templateWidth > ww) || that.options.templateWidth === 0
 
             // tdtemplate
-            if (newTemplate !== that.isTemplate) {
+            //if (newTemplate !== that.isTemplate ) {
+            // edit digua 2017/10/16
+            if (newTemplate !== that.isTemplate && that.isTemplate !="" ) {
                 that.isTemplate = newTemplate
                 that.tools.coverTemplate()
                 return

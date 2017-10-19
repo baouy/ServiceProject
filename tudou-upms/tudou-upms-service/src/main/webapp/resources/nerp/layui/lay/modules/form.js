@@ -512,7 +512,7 @@ layui.define('layer', function (exports) {
                      });*/
                     var html = '<span class="msg-box n-right" for="password">' +
                         '<span role="alert" class="msg-wrap n-error">' +
-                        '<span class="n-icon"><i class="layui-icon n-msg">&#xe69c;</i>&nbsp;</span>' +
+                        '<span class="n-icon"><i class="layui-icon n-msg">&#xea31;</i>&nbsp;</span>' +
                         '<span class="n-msg">' + verify[thisVer][1] + '</span>' +
                         '</span>' +
                         '</span>';
@@ -574,7 +574,7 @@ layui.define('layer', function (exports) {
                 } else {
                     var html = '<span class="msg-box n-right" for="password">' +
                         '<span role="alert" class="msg-wrap n-error">' +
-                        '<span class="n-icon"><i class="layui-icon n-msg">&#xe69c;</i>&nbsp;</span>' +
+                        '<span class="n-icon"><i class="layui-icon n-msg">&#xea31;</i>&nbsp;</span>' +
                         '<span class="n-msg">' + verify[thisVer][1] + '</span>' +
                         '</span>' +
                         '</span>';

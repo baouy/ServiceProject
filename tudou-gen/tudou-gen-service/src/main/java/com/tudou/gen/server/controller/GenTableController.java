@@ -83,6 +83,72 @@ public class GenTableController {
 
 	@ApiOperation(value = "数据库详情列表")
 	@RequiresPermissions(value = {"gen:table:create","gen:table:update"},logical = Logical.OR)
+	@RequestMapping(value = "/dblist_detail2")
+	@ResponseBody
+	public Object dblist_detail2(@ModelAttribute TableList tableList) {
+		String tableNames = tableList.getName();
+		tableNames = !org.apache.commons.lang.StringUtils.isBlank(tableList.getSubTable())?tableNames +","+tableList.getSubTable():tableNames;
+
+		List<GenTableColumn> genTableColumns = genApiService.findTableColumnListByTables(tableNames);
+
+		ArrayList<GenTableColumn> genTableColumnArrayList = null;
+		List<String> strings = genApiService.findTablePK(tableList);
+
+		GenTableColumnValid genTableColumnValid = new GenTableColumnValid();
+
+		if (StringUtils.isBlank(tableList.getId())){
+			genTableColumnArrayList = new ArrayList<>(genTableColumns);
+			//新增的时候 解决多表关联导致的排序值重复
+			for(int i =0;i<genTableColumnArrayList.size();i++){
+				genTableColumnArrayList.get(i).setSort(genTableColumnArrayList.get(i).getSort()+i);
+			}
+			GenTableExample genTableExample = new GenTableExample();
+			GenTableExample.Criteria criteria = genTableExample.createCriteria();
+			criteria.andNameEqualTo(tableList.getName());
+
+			genTableColumnValid.setClassName(StringUtil.toCapitalizeCamelCase(tableList.getName()));
+		}else{
+			GenTableColumnExample genTableColumnExample = new GenTableColumnExample();
+			genTableColumnExample.setOrderByClause("sort ASC");
+			GenTableColumnExample.Criteria criteria1 = genTableColumnExample.createCriteria();
+			criteria1.andGenTableIdEqualTo(tableList.getId());
+			//从插入表读出columns ，genTableColumnArrayList 系统表
+			List<GenTableColumn> columns = genTableColumnService.selectByExample(genTableColumnExample);
+			genTableColumnArrayList = new ArrayList<>(columns);
+			for(GenTableColumn column : genTableColumns){
+				boolean b = false;
+				for (GenTableColumn column1 : genTableColumnArrayList){
+					if (column1.getName().equals(column.getName())){
+						b = true;
+					}
+				}
+				if (!b){
+					genTableColumnArrayList.add(column);
+				}
+			}
+
+			for (GenTableColumn column1 : genTableColumns){
+				boolean b = false;
+				//这是干啥？？
+				for(GenTableColumn column : columns){
+					if (!column1.getName().equals(column.getName())){
+						b = true;
+					}
+				}
+				if(!b){
+					column1.setDelFlag("1");
+				}
+			}
+		}
+
+		genTableColumnValid.setGenTableColumns(genTableColumnArrayList);
+		genTableColumnValid.setPkList(strings);
+		GenUtils.initColumnField(genTableColumnValid);
+
+		return new GenResult(GenResultConstant.SUCCESS,genTableColumnValid);
+	}
+	@ApiOperation(value = "数据库详情列表多表")
+	@RequiresPermissions(value = {"gen:table:create","gen:table:update"},logical = Logical.OR)
 	@RequestMapping(value = "/dblist_detail")
 	@ResponseBody
 	public Object dblist_detail(@ModelAttribute TableList tableList) {

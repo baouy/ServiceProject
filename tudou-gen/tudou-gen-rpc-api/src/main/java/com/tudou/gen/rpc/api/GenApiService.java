@@ -15,14 +15,16 @@ public interface GenApiService {
 	 */
 	List<TableList> findTableList(TableList tableList);
 
-	/**
+    /**
 	 * 获取数据表字段
 	 * @param tableList
 	 * @return
 	 */
 	List<GenTableColumn> findTableColumnList(TableList tableList);
 
-	/**
+    List<GenTableColumn> findTableColumnListByTables(String tableNames);
+
+    /**
 	 * 获取数据表主键
 	 * @param tableList
 	 * @return

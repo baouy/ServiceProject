@@ -2,21 +2,23 @@
 	layui.define(['jquery', 'BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins'], function () {
 		var $ = layui.jquery;
 		var gen_btn = ''
-		var toolbarGen_btn = ''
+		var toolbarGen_btn = '<div class="layui-btn-group">'
 		for (var data of user_data) {
 			var value = data.permissionValue;
 			switch (value) {
 				case 'gen:table:create':
-					toolbarGen_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + '  class="layui-btn layui-btn-small"style="margin-left: 5px;" id="act_gen_create_onclick" >' + '<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
+					toolbarGen_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + '  class="layui-btn layui-btn-small act_gen_create_onclick" id="act_gen_create_onclick" >' + '<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + '(单表) </button>';
+					toolbarGen_btn += '<button type="button" name="多表关联编辑" url="/resources/nerp/manage/gen/business/create2.html"  class="layui-btn layui-btn-small act_gen_create_onclick" id="act_gen_create_onclick2" >' + '<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + '(多表) </button>'
 					break;
 				case 'gen:table:update':
-					toolbarGen_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + '  class="layui-btn layui-btn-small"style="margin-left: 5px;" id="act_gen_update_onclick" >' + '<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
+					toolbarGen_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + '  class="layui-btn layui-btn-small" id="act_gen_update_onclick" >' + '<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
 					break;
 				case 'gen:table:delete':
 					gen_btn += 'del,'
 					break;
 			}
 		}
+		toolbarGen_btn+="</div>";
 
 		var gen_datagrid_data = {
 			local: 'remote',
@@ -26,9 +28,11 @@
 			loadType: 'get',
 			filterAll: true,
 			height: '100%',
-			columns: [{name: 'name', width: '150', align: 'center', label: '表名'},
-				{name: 'comments', width: '150', align: 'center', label: '说明'},
-				{name: 'className', width: '150', align: 'center', label: '类名'}
+			columns: [{name: 'name', width: '150', align: 'center', label: '主表'},
+				{name: 'className', width: '150', align: 'center', label: '类名'},
+				{name: 'subTable', width: '300', align: 'center', label: '子表'},
+				{name: 'comments', width: '300', align: 'center', label: '说明'}
+
 			],
 			paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
 			hiddenFields: ['id'],
@@ -61,7 +65,7 @@
 		}
 
         window.business_selected = null
-        $("#act_gen_create_onclick").bind('click',function(){
+        $(".act_gen_create_onclick").bind('click',function(){
             business_selected = null
             var url =$(this).attr('url');
             var name = $(this).attr('name');
@@ -72,6 +76,7 @@
                 content: url,
                 btn: ['保存', '取消'],
                 btnAlign: 'r',
+				maxmin:true,
                 moveType: 1,//拖拽模式，0或者1
                 yes:function(){
                 }
@@ -83,7 +88,8 @@
             if (null == business_selected || business_selected.length == 0) {
                 return;
             }
-            var url = $(this).attr('url');
+			var url = $(this).attr('url');
+            if(business_selected[0].subTable) url = '/resources/nerp/manage/gen/business/create2.html'
 			var name = $(this).attr('name');
             layer.open({
                 type: 5,
@@ -92,6 +98,7 @@
                 content: url,
                 btn: ['保存', '取消'],
                 btnAlign: 'r',
+				maxmin:true,
                 moveType: 1,//拖拽模式，0或者1
                 yes:function(){
                 }
@@ -102,7 +109,6 @@
         function business_dblonclick() {
             $("#act_gen_update_onclick").click();
         }
-
 	});
 </script>
 

@@ -71,7 +71,7 @@ public class GenTableSchemeController extends BaseController{
 		return new GenResult(GenResultConstant.SUCCESS,genTables,pages,pagec,total);
 	}
 
-	@ApiOperation(value = "生成方案列表")
+	@ApiOperation(value = "保存生成方案")
 	@RequiresPermissions(value = {"gen:tablescheme:create","gen:tablescheme:update"},logical = Logical.OR)
 	@RequestMapping(value = "/save")
 	@ResponseBody
@@ -89,7 +89,7 @@ public class GenTableSchemeController extends BaseController{
 			GenTableExample.Criteria criteria = genTableExample.createCriteria();
 			criteria.andIdEqualTo(genScheme.getGenTableId());
 			GenTable genTable = genTableService.selectFirstByExample(genTableExample);
-			GeneratourUtil.ChooseVM(genScheme,columns,genTable);
+			GeneratourUtil.CURD(genScheme,columns,genTable);
 		}
 		if (StringUtils.isBlank(genScheme.getId())){
 			//新增
@@ -124,6 +124,17 @@ public class GenTableSchemeController extends BaseController{
 		return new GenResult(GenResultConstant.SUCCESS,genScheme);
 	}
 
+	@ApiOperation(value = "数据库列表")
+	@RequiresPermissions("gen:table:delete")
+	@RequestMapping(value = "/delete")
+	@ResponseBody
+	public Object delete(@ModelAttribute GenScheme genScheme) {
+		GenSchemeExample genSchemeExample = new GenSchemeExample();
+		GenSchemeExample.Criteria criteria = genSchemeExample.createCriteria();
+		criteria.andIdEqualTo(genScheme.getId());
+		genSchemeService.deleteByExample(genSchemeExample);
+		return new GenResult(GenResultConstant.SUCCESS,null);
+	}
 
 
 }

@@ -27,10 +27,12 @@
             filterAll: true,
             height: '100%',
             columns: [{name: 'name', width: '150', align: 'center', label: '方案名称'},
-                {name: 'packageName', width: '150', align: 'center', label: '生成模块'},
+				{name: 'category', width: '200', align: 'center', label: '表业务类型',type:'select',items:gen_dic_table},
+				{name: 'packageName', width: '150', align: 'center', label: '所在包名'},
                 {name: 'moduleName', width: '150', align: 'center', label: '模块名'},
-                {name: 'functionName', width: '150', align: 'center', label: '功能名'},
-                {name: 'functionAuthor', width: '150', align: 'center', label: '功能作者'},
+                {name: 'functionName', width: '150', align: 'center', label: '功能表述'},
+
+                {name: 'functionAuthor', width: '150', align: 'center', label: '生成作者'},
             ],
             paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
             hiddenFields: ['id'],
@@ -46,7 +48,7 @@
             genscheme_datagrid_data.delConfirm = true
             genscheme_datagrid_data.delPK = 'id'
             genscheme_datagrid_data.delType = 'POST'
-            genscheme_datagrid_data.delUrl = $.cookie("tudou-gen-server") + '/manage/gentable/delete'
+            genscheme_datagrid_data.delUrl = $.cookie("tudou-gen-server") + '/manage/genscheme/delete'
             genscheme_datagrid_data.delCallback = 'del_genscheme_table_back'
         }
 
@@ -69,7 +71,7 @@
             layer.open({
                 type: 5,
                 title: name,
-                area: ['800px', '700px'],
+                area: ['900px', '550px'],
                 content: url,
                 btn: ['保存方案','保存并生成代码','生成代码','取消'],
                 btnAlign: 'r',
@@ -95,7 +97,7 @@
             layer.open({
                 type: 5,
                 title: name,
-                area: ['800px', '700px'],
+				area: ['900px', '550px'],
                 content: url,
                 btn: ['保存方案','保存并生成代码','生成代码','取消'],
                 btnAlign: 'r',

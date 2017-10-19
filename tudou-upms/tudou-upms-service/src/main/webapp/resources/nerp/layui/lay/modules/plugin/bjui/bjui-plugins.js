@@ -9,7 +9,7 @@
 
 layui.define('BJUIextends', function(exports){
     "use strict";
-    var $ = layui.jquery,BJUI=layui.BJUIcore;
+    var $ = layui.jquery,BJUI=layui.BJUIcore,form = layui.form;
 
 
     $(document).on(BJUI.eventType.initUI, function(e) {
@@ -33,7 +33,6 @@ layui.define('BJUIextends', function(exports){
                         /* Fixed validate msgbox position */
                         var $parent = $(this).closest('div'),
                             $ilabel = $parent.next('[for="' + id + '"]')
-
                         $parent.attr('data-icheck', name)
                         $ilabel.attr('data-icheck', name)
                     })
@@ -54,7 +53,8 @@ layui.define('BJUIextends', function(exports){
                 var group = $(this).data('group')
 
                 $box.find(':checkbox[name="' + group + '"]').iCheck(checked)
-            })
+            });
+
         }
 
         /* fixed ui style */

@@ -19,7 +19,7 @@ layui.define(['layer', 'element', 'table', 'zjoin', 'ZJOINdropdown', 'ZJOINselec
 
     window.gen_dic_string = [{'input':'单行文本'},{'textarea':'多行文本'},{'select':'下拉选项'},{'radiobox':'单选按钮'},{'checkbox':'复选框'},{'dateselect':'日期选择'},{'userselect':'人员选择'},{'officeselect':'部门选择'},{'treeselect':'树选择控件'},{'fileselect':'文件上传选择'}]
 
-    window.gen_dic_table = [{'curd':'增删改查（单表）'},{'curd_many':'增删改查（一对多）'},{'dao':'仅持久层（MyBatisGenerator）'},{'html':'仅生成界面(Html)'},{'treeTable':'树结构表（一体）'},{'treeTableAndList':'树结构表（左树右表）'}]
+    window.gen_dic_table = [{'single':'单表或多表一对一关联'},{'multilist':'多表关联（主从嵌套模式）'},{'treeTable':'树结构表（一体）'},{'treeTableAndList':'树结构表（左树右表）'}]
 
     window.notify_type_dic = [{'1':'会议通告'},{'2':'奖惩通告'},{'3':'活动通知'}]
 
@@ -72,16 +72,16 @@ layui.define(['layer', 'element', 'table', 'zjoin', 'ZJOINdropdown', 'ZJOINselec
                 if (d.code == 1) {
                     //系统菜单
                     var $selectMenu = $("#top-erp-menu-bar");
-                    var n = 0
+                    var n = 0;
                     for (var data of d.data.upmsSystems) {
                         $.cookie(data.name, data.basepath, {path: '/'});
-                        var html ='<div class="top-menu-bar '
+                        var html ='<div class="top-menu-bar ';
                         if (n == 0){
                             html +=' zjoin-this" data-id='+data.systemId+'><i class="layui-icon">'+data.icon;
                         }else{
                             html +='" data-id='+data.systemId+'><i class="layui-icon">'+data.icon;
                         }
-                        n ++
+                        n ++;
                         if(!layui.device().ios && !layui.device().android){
                             html +='</i><span class="menutitle">&nbsp;'+data.title+'</span></div>';
                         }else{
@@ -197,8 +197,8 @@ layui.define(['layer', 'element', 'table', 'zjoin', 'ZJOINdropdown', 'ZJOINselec
     window.types = types;
 
     $(window).resize(function() {
-        BJUI.initLayout()
-        fixWindow()
+        BJUI.initLayout();
+        fixWindow();
         setTimeout(function() {$(this).trigger(BJUI.eventType.resizeGrid)}, 30)
     });
 
