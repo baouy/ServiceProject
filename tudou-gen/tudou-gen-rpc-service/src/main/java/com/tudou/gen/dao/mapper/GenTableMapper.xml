@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.tudou.gen.dao.model.GenTable">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="sub_table" jdbcType="VARCHAR" property="subTable" />
     <result column="comments" jdbcType="VARCHAR" property="comments" />
     <result column="class_name" jdbcType="VARCHAR" property="className" />
     <result column="parent_table" jdbcType="VARCHAR" property="parentTable" />
@@ -74,7 +75,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, comments, class_name, parent_table, parent_table_fk, create_by, create_date, 
+    id, name,sub_table, comments, class_name, parent_table, parent_table_fk, create_by, create_date,
     update_by, update_date, remarks, del_flag
   </sql>
   <select id="selectByExample" parameterType="com.tudou.gen.dao.model.GenTableExample" resultMap="BaseResultMap">
@@ -108,12 +109,12 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.tudou.gen.dao.model.GenTable">
-    insert into gen_table (id, name, comments, 
+    insert into gen_table (id, name,sub_table, comments,
       class_name, parent_table, parent_table_fk, 
       create_by, create_date, update_by, 
       update_date, remarks, del_flag
       )
-    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{subTable,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR},
       #{className,jdbcType=VARCHAR}, #{parentTable,jdbcType=VARCHAR}, #{parentTableFk,jdbcType=VARCHAR}, 
       #{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{remarks,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR}
@@ -127,6 +128,9 @@
       </if>
       <if test="name != null">
         name,
+      </if>
+      <if test="subTable != null">
+        sub_table,
       </if>
       <if test="comments != null">
         comments,
@@ -165,6 +169,9 @@
       </if>
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="subTable != null">
+        #{subTable,jdbcType=VARCHAR},
       </if>
       <if test="comments != null">
         #{comments,jdbcType=VARCHAR},
@@ -213,6 +220,9 @@
       <if test="record.name != null">
         name = #{record.name,jdbcType=VARCHAR},
       </if>
+      <if test="record.subTable != null">
+        sub_table = #{record.subTable,jdbcType=VARCHAR},
+      </if>
       <if test="record.comments != null">
         comments = #{record.comments,jdbcType=VARCHAR},
       </if>
@@ -252,6 +262,7 @@
     update gen_table
     set id = #{record.id,jdbcType=VARCHAR},
       name = #{record.name,jdbcType=VARCHAR},
+      sub_table = #{record.subTable,jdbcType=VARCHAR},
       comments = #{record.comments,jdbcType=VARCHAR},
       class_name = #{record.className,jdbcType=VARCHAR},
       parent_table = #{record.parentTable,jdbcType=VARCHAR},
@@ -271,6 +282,9 @@
     <set>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="subTable != null">
+        sub_table = #{subTable,jdbcType=VARCHAR},
       </if>
       <if test="comments != null">
         comments = #{comments,jdbcType=VARCHAR},
@@ -308,6 +322,7 @@
   <update id="updateByPrimaryKey" parameterType="com.tudou.gen.dao.model.GenTable">
     update gen_table
     set name = #{name,jdbcType=VARCHAR},
+      sub_table = #{subTable,jdbcType=VARCHAR},
       comments = #{comments,jdbcType=VARCHAR},
       class_name = #{className,jdbcType=VARCHAR},
       parent_table = #{parentTable,jdbcType=VARCHAR},

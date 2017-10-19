@@ -115,6 +115,7 @@ var layer = {
       btn: ['保存', '取消'],
       btnAlign: 'r',
       moveType: 1,//拖拽模式，0或者1
+      maxmin: true, //开启最大化最小化按钮
       yes:function(){
       }
     });
@@ -355,7 +356,7 @@ Class.pt.config = {
   isOutAnim: true,
   icon: -1,
   moveType: 1,
-  resize: false,
+  resize: true,
   scrollbar: true, //是否允许浏览器滚动条
   tips: 2
 };
@@ -364,7 +365,7 @@ Class.pt.config = {
 Class.pt.vessel = function(conType, callback){
   var that = this, times = that.index, config = that.config;
   var zIndex = config.zIndex + times, titype = typeof config.title === 'object';
-  var ismax = config.maxmin && (config.type === 1 || config.type === 2);
+  var ismax = config.maxmin && (config.type === 1 || config.type === 2 || config.type == 5);
   var titleHTML = (config.title ? '<div class="layui-layer-title" style="'+ (titype ? config.title[1] : '') +'">' 
     + (titype ? config.title[0] : config.title)
   + '</div>' : '');
@@ -382,7 +383,7 @@ Class.pt.vessel = function(conType, callback){
         + (config.type == 1 && conType ? '' : (config.content||''))
       + '</div>'
       + '<span class="layui-layer-setwin">'+ function(){
-        var closebtn = ismax ? '<a class="layui-layer-min" href="javascript:;"><cite></cite></a><a class="layui-layer-ico layui-layer-max" href="javascript:;"></a>' : '';
+        var closebtn = ismax ? '<a class="layui-layer-min" href="javascript:;"><i class="layui-icon layer-close-icon">&#xe5d1;</i></a><a class="layui-layer-max" href="javascript:;"><i class="layui-icon layer-close-icon">&#xe5d0;</i></a>' : '';
         config.closeBtn && (closebtn += '<a class=" '+ doms[7] +' '+ doms[7] + (config.title ? config.closeBtn : (config.type == 4 ? '1' : '2')) +'" href="javascript:;"><i class="layui-icon layer-close-icon">&#x1006;</i></a>');
         return closebtn;
       }() + '</span>'
@@ -694,9 +695,7 @@ Class.pt.move = function(){
       ready.moveElem.css('cursor', 'move').show();
     }
   });
-  
   resizeElem.on('mousedown', function(e){
-    e.preventDefault();
     dict.resizeStart = true;
     dict.offset = [e.clientX, e.clientY];
     dict.area = [
@@ -705,6 +704,7 @@ Class.pt.move = function(){
     ];
     ready.moveElem.css('cursor', 'se-resize').show();
   });
+
   
   _DOC.on('mousemove', function(e){
 
@@ -737,6 +737,7 @@ Class.pt.move = function(){
     
     //Resize
     if(config.resize && dict.resizeStart){
+
       var X = e.clientX - dict.offset[0]
       ,Y = e.clientY - dict.offset[1];
       
@@ -750,12 +751,15 @@ Class.pt.move = function(){
       config.resizing && config.resizing(layero);
     }
   }).on('mouseup', function(e){
+
     if(dict.moveStart){
       delete dict.moveStart;
       ready.moveElem.hide();
       config.moveEnd && config.moveEnd(layero);
     }
     if(dict.resizeStart){
+      //digua edit on 2017/10/19 拉伸结束后内容自适应
+      layer.current().trigger(BJUI.eventType.resizeGrid)
       delete dict.resizeStart;
       ready.moveElem.hide();
     }

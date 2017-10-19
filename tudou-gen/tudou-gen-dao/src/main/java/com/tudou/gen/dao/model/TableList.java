@@ -12,6 +12,8 @@ public class TableList implements Serializable {
 
 	private String comments;
 
+	private String subTable;
+
 	public String getName() {
 		return name;
 	}
@@ -38,5 +40,13 @@ public class TableList implements Serializable {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getSubTable() {
+		return subTable;
+	}
+
+	public void setSubTable(String subTable) {
+		this.subTable = subTable;
 	}
 }

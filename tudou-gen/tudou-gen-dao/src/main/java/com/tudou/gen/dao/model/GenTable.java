@@ -20,6 +20,8 @@ public class GenTable extends BaseModelValid implements Serializable {
      */
     private String name;
 
+    private String subTable;
+
     /**
      * 描述
      *
@@ -186,6 +188,14 @@ public class GenTable extends BaseModelValid implements Serializable {
 
     public void setDelFlag(String delFlag) {
         this.delFlag = delFlag;
+    }
+
+    public String getSubTable() {
+        return subTable;
+    }
+
+    public void setSubTable(String subTable) {
+        this.subTable = subTable;
     }
 
     @Override

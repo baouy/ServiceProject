@@ -19,6 +19,12 @@ public class GenApiServiceMock implements GenApiService{
 	}
 
 	@Override
+	public List<GenTableColumn> findTableColumnListByTables(String tableNames) {
+		return null;
+	}
+
+
+	@Override
 	public List<String> findTablePK(TableList tableList) {
 		return null;
 	}

@@ -3,6 +3,8 @@
         var $ = layui.jquery;
         var user_btn = ''
         var toolbarCustom_btn = ''
+
+
         for (var data of window.user_data) {
             var value = data.permissionValue;
             if (value == 'upms:user:organization' || value == 'upms:user:role' || value == 'upms:user:permission') {
@@ -34,7 +36,10 @@
         if (user_btn.indexOf('add') || user_btn.indexOf('edit')) {
             user_btn += 'save,cancel'
         }
-
+        function call(data) {
+            console.log(data)
+        }
+        window.call = call
         var user_datagrid_data = {
             local: 'remote',
             dataUrl: '/manage/user/list',
@@ -48,7 +53,12 @@
                 {name: 'username', width: '150', label: '账号', align: 'center', rule: 'required'},
                 {name: 'realname', width: '150', label: '姓名', align: 'center', rule: 'required'},
                 {name: 'avatar', width: '150', align: 'center', label: '头像'},
-                {name: 'phone', width: '150', align: 'center', label: '电话'},
+                {name: 'phone', width: '150', align: 'center', label: '电话',render:function (value,data) {
+                    function call() {
+                        console.log(data)
+                    }
+                    return '<a href="javascript:call('+this+');" style="cursor: pointer">'+value+'</a>'
+                }},
                 {name: 'email', width: '150', align: 'center', label: '邮箱'},
                 {
                     name: 'sex',

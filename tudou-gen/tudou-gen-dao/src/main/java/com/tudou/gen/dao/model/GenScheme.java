@@ -42,6 +42,12 @@ public class GenScheme extends BaseModelValid implements Serializable{
     private String moduleName;
 
     /**
+     * 文件类型
+     */
+    private String fileType;
+
+
+    /**
      * 生成子模块名
      *
      * @mbg.generated
@@ -158,6 +164,14 @@ public class GenScheme extends BaseModelValid implements Serializable{
 
     public void setModuleName(String moduleName) {
         this.moduleName = moduleName;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
 
     public String getSubModuleName() {

@@ -19,8 +19,7 @@ layui.define(['layer', 'form', 'ZJOINS'], function (exports) {
         return that;
     };
     var upload = function () {
-        var head = $("head").remove("script[role='reload']");
-        $("<scri" + "pt>" + "</scr" + "ipt>").attr({ role: 'reload', src: '/resources/nerp/layui/js/modules/qiniu.js', type: 'text/javascript' }).appendTo(head);
+
         layer.open({
             type: 1,
             id: 'fly-jie-upload',

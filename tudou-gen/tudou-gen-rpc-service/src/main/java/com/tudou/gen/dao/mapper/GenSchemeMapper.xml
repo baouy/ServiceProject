@@ -7,6 +7,7 @@
     <result column="category" jdbcType="VARCHAR" property="category" />
     <result column="package_name" jdbcType="VARCHAR" property="packageName" />
     <result column="module_name" jdbcType="VARCHAR" property="moduleName" />
+    <result column="file_type" jdbcType="VARCHAR" property="fileType" />
     <result column="sub_module_name" jdbcType="VARCHAR" property="subModuleName" />
     <result column="function_name" jdbcType="VARCHAR" property="functionName" />
     <result column="function_name_simple" jdbcType="VARCHAR" property="functionNameSimple" />
@@ -78,7 +79,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, category, package_name, module_name, sub_module_name, function_name, function_name_simple, 
+    id, name, category, package_name, module_name,file_type, sub_module_name, function_name, function_name_simple,
     function_author, gen_table_id, create_by, create_date, update_by, update_date, remarks, 
     del_flag
   </sql>
@@ -114,13 +115,13 @@
   </delete>
   <insert id="insert" parameterType="com.tudou.gen.dao.model.GenScheme">
     insert into gen_scheme (id, name, category, 
-      package_name, module_name, sub_module_name, 
+      package_name, module_name, file_type,sub_module_name,
       function_name, function_name_simple, function_author, 
       gen_table_id, create_by, create_date, 
       update_by, update_date, remarks, 
       del_flag)
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, 
-      #{packageName,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR}, #{subModuleName,jdbcType=VARCHAR}, 
+      #{packageName,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR},#{fileType,jdbcType=VARCHAR}, #{subModuleName,jdbcType=VARCHAR},
       #{functionName,jdbcType=VARCHAR}, #{functionNameSimple,jdbcType=VARCHAR}, #{functionAuthor,jdbcType=VARCHAR}, 
       #{genTableId,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{remarks,jdbcType=VARCHAR}, 
@@ -143,6 +144,9 @@
       </if>
       <if test="moduleName != null">
         module_name,
+      </if>
+      <if test="fileType != null">
+        file_type,
       </if>
       <if test="subModuleName != null">
         sub_module_name,
@@ -193,6 +197,9 @@
       </if>
       <if test="moduleName != null">
         #{moduleName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileType != null">
+        #{fileType,jdbcType=VARCHAR},
       </if>
       <if test="subModuleName != null">
         #{subModuleName,jdbcType=VARCHAR},
@@ -253,6 +260,9 @@
       <if test="record.moduleName != null">
         module_name = #{record.moduleName,jdbcType=VARCHAR},
       </if>
+      <if test="record.fileType != null">
+        file_type = #{record.fileType,jdbcType=VARCHAR},
+      </if>
       <if test="record.subModuleName != null">
         sub_module_name = #{record.subModuleName,jdbcType=VARCHAR},
       </if>
@@ -298,6 +308,7 @@
       category = #{record.category,jdbcType=VARCHAR},
       package_name = #{record.packageName,jdbcType=VARCHAR},
       module_name = #{record.moduleName,jdbcType=VARCHAR},
+      file_type = #{record.fileType,jdbcType=VARCHAR},
       sub_module_name = #{record.subModuleName,jdbcType=VARCHAR},
       function_name = #{record.functionName,jdbcType=VARCHAR},
       function_name_simple = #{record.functionNameSimple,jdbcType=VARCHAR},
@@ -327,6 +338,9 @@
       </if>
       <if test="moduleName != null">
         module_name = #{moduleName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileType != null">
+        file_type = #{fileType,jdbcType=VARCHAR},
       </if>
       <if test="subModuleName != null">
         sub_module_name = #{subModuleName,jdbcType=VARCHAR},
@@ -370,6 +384,7 @@
       category = #{category,jdbcType=VARCHAR},
       package_name = #{packageName,jdbcType=VARCHAR},
       module_name = #{moduleName,jdbcType=VARCHAR},
+      file_type = #{fileType,jdbcType=VARCHAR},
       sub_module_name = #{subModuleName,jdbcType=VARCHAR},
       function_name = #{functionName,jdbcType=VARCHAR},
       function_name_simple = #{functionNameSimple,jdbcType=VARCHAR},
