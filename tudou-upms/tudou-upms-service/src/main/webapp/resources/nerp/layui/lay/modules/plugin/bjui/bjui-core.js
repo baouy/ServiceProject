@@ -22,6 +22,7 @@ layui.define('jquery', function (exports) {
             afterInitUI: 'bjui.afterInitUI',    //
             ajaxStatus: 'bjui.ajaxStatus',     // When performing ajax request, display or hidden progress bar
             resizeGrid: 'bjui.resizeGrid',     // When the window or dialog resize completed
+            resizeCurrentGrid: 'bjui.resizeCurrentGrid',
             beforeAjaxLoad: 'bjui.beforeAjaxLoad', // When perform '$.fn.ajaxUrl', to do something...
 
             beforeLoadNavtab: 'bjui.beforeLoadNavtab',

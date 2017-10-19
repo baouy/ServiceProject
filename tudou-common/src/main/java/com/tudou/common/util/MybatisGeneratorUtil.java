@@ -149,10 +149,10 @@ public class MybatisGeneratorUtil {
 			}
 		}
 		System.out.println("========== 结束生成Service ==========");
-
 		System.out.println("========== 开始生成Controller ==========");
 		System.out.println("========== 结束生成Controller ==========");
 	}
+
 
 	// 递归删除非空文件夹
 	public static void deleteDir(File dir) {

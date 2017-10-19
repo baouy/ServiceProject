@@ -1167,7 +1167,7 @@ public class OaViewUserExample implements Serializable {
             return (Criteria) this;
         }
 
-        public Criteria andRoleIdIn(List<String> values) {
+        public Criteria andRoleIdIn(List<Integer> values) {
             addCriterion("role_id in", values, "roleId");
             return (Criteria) this;
         }

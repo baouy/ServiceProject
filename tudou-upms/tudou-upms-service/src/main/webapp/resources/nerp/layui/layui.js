@@ -89,6 +89,8 @@
             ,ZJOINtheme:'modules/plugin/zjoin/zjoin-theme'
             ,ZJOINicon:'modules/plugin/zjoin/zjoin-icon'
 
+            ,editormd:'modules/plugin/markdown/js/editormd'
+
             , mobile: 'modules/mobile' //移动大模块 | 若当前为开发目录，则为移动模块入口，否则为移动模块集合
             , 'layui.all': 'dest/layui.all' //PC模块合并版
         };

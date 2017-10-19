@@ -1,0 +1,159 @@
+<script type="text/javascript">
+    layui.define(['form', 'layedit', 'laydate'], function () {
+        var $ = layui.jquery, form = layui.form, layedit = layui.layedit, laydate = layui.laydate;
+        var oatestcustomer_Eidtor;
+
+        var selected = $('#oatestcustomer_list_table').data('selectedDatas');
+        var oatestcustomer_id;
+        if (selected && selected.length > 0) {
+            oatestcustomer_id = selected[0].id;
+        }
+        if (oatestcustomer_id != null) {
+            $('#oatestcustomer_form_customerId').val(oatestcustomer_id);
+            layer.load();
+            $.ajax({
+                url: $.cookie("tudou-oa-server") + '/manage/oatestcustomer/detail',
+                dataType: 'json',
+                type: 'POST',
+                data: {'customerId': oatestcustomer_id},
+                success: function (d) {
+                    if (d.code == 1) {
+                        var cl = layer.current();
+                        for (var x in d.data)  cl.find('#oatestcustomer_' + x).val(d.data[x]);
+                        cl.find(":radio[name='customerSex'][value=" + d.data['customerSex'] + "]").attr("checked", "true");
+                    }
+                    form.render();
+                    layer.closeAll('loading');
+                },
+                error: function () {
+                    layer.closeAll('loading');
+                }
+            });
+        }
+
+        $(".layui-layer-btn0").bind('click', function () {
+            if (oatestcustomer_Eidtor) layedit.sync(oatestcustomer_Eidtor);
+            $("#oatestcustomer_form_save_btn").click();
+        });
+
+        form.on('submit(oatestcustomer_form_submit)', function (data) {
+
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+            $.ajax({
+                url: $.cookie("tudou-oa-server") + "/manage/oatestcustomer/save",
+                type: 'post',
+                data: data.field,
+                success: function (d) {
+                    if (d.code == 1) {
+                        $('#oatestcustomer_list_table').datagrid('refresh_part');
+                        layer.closeCurrent();
+                    } else {
+                        layer.warn(d.data);
+                    }
+                }
+            })
+            return false;
+        });
+
+        form.render(null, 'oatestcustomer_form');
+    });
+</script>
+
+<div class="bjui-pageContent">
+    <form class="layui-form" lay-filter="oatestcustomer_form" id="oatestcustomer_form">
+        <input type="hidden" value="" name="customerId" id="oatestcustomer_customerId">
+        <div class="layui-form-item">
+            <label for="oatestcustomer_customerId" class="layui-form-label">客户id：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="customerId" id="oatestcustomer_customerId" lay-verify="required"
+                       class="layui-input" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="oatestcustomer_customerFollowId" class="layui-form-label">客户跟进id：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="customerFollowId" id="oatestcustomer_customerFollowId" lay-verify="required"
+                       class="layui-input" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="oatestcustomer_followId" class="layui-form-label">跟进id：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="followId" id="oatestcustomer_followId" lay-verify="required"
+                       class="layui-input" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="oatestcustomer_customerName" class="layui-form-label">客户姓名：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="customerName" id="oatestcustomer_customerName" lay-verify="required"
+                       class="layui-input" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="oatestcustomer_customerId" class="layui-form-label">客户id：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="customerId" id="oatestcustomer_customerId" lay-verify="required"
+                       class="layui-input" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="oatestcustomer_followName" class="layui-form-label">花名：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="followName" id="oatestcustomer_followName" lay-verify="required"
+                       class="layui-input" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="oatestcustomer_customerPhone" class="layui-form-label">客户手机号：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="customerPhone" id="oatestcustomer_customerPhone" lay-verify="required"
+                       class="layui-input" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="oatestcustomer_followId" class="layui-form-label">跟进id：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="followId" id="oatestcustomer_followId" lay-verify="required"
+                       class="layui-input" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="oatestcustomer_customerSex" class="layui-form-label">客户性别：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="customerSex" id="oatestcustomer_customerSex1" value="true" title="是">
+                <input type="radio" name="customerSex" id="oatestcustomer_customerSex2" value="false" title="否"
+                       checked="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="oatestcustomer_userId" class="layui-form-label">用户id：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="userId" id="oatestcustomer_userId" lay-verify="required" class="layui-input"
+                       value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="oatestcustomer_customerAddress" class="layui-form-label">客户地址：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="customerAddress" id="oatestcustomer_customerAddress" lay-verify="required"
+                       class="layui-input" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="oatestcustomer_createtime" class="layui-form-label">跟进时间：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="createtime" id="oatestcustomer_createtime" lay-verify="required"
+                       class="layui-input" value="">
+            </div>
+        </div>
+        <button id="oatestcustomer_form_save_btn" lay-submit="" class="layui-hide"
+                lay-filter="oatestcustomer_form_submit"></button>
+    </form>
+</div>
+
+
+	

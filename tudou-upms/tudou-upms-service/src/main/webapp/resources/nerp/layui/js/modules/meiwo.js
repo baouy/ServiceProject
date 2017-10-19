@@ -31,6 +31,8 @@ layui.define(['layer', 'element', 'table', 'zjoin', 'ZJOINdropdown', 'ZJOINselec
             try {
                 var jsonData = JSON.parse(res);
                 if (jsonData.code == 10000) {
+                    $.cookie("flowerName", null);
+                    console.log($.cookie("flowerName"));
                     //自定页
                     layer.open({
                         title:'用户登录',
@@ -182,6 +184,7 @@ layui.define(['layer', 'element', 'table', 'zjoin', 'ZJOINdropdown', 'ZJOINselec
             type: 'get',
             success: function (d) {
                 if (d.code == 1) {
+                    $.cookie("flowerName", null);
                     window.location.href = 'login.html';
                     localStorage.removeItem("timeNmu");
                 } else {

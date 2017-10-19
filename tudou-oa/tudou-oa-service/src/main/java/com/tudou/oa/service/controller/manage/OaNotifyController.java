@@ -1,8 +1,6 @@
 package com.tudou.oa.service.controller.manage;
 
 import com.tudou.common.base.BaseController;
-import com.tudou.common.base.BaseResult;
-import com.tudou.common.util.QiniuUtil;
 import com.tudou.common.util.TokenUtil;
 import com.tudou.oa.common.constant.OaResult;
 import com.tudou.oa.common.constant.OaResultConstant;
@@ -37,11 +35,6 @@ public class OaNotifyController extends BaseController {
 	@Autowired
 	private OaNotifyService oaNotifyService;
 
-	@RequestMapping(value = "/uptoken", method = RequestMethod.GET)
-	@ResponseBody
-	public Object uptocken(@ModelAttribute OaNotify oaNotify) {
-		return new BaseResult(1,"ok",QiniuUtil.getUpToken());
-	}
 
 	@ApiOperation(value = "通知通告列表")
 	@RequiresPermissions("oa:notify:read")

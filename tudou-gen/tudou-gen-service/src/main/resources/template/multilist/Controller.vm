@@ -1,6 +1,7 @@
 package ${package_name}.service.controller.manage;
 
 import com.tudou.common.base.BaseController;
+import com.tudou.common.base.BaseModelValid;
 import com.tudou.common.util.TokenUtil;
 import ${package_name}.common.constant.${smodel}Result;
 import ${package_name}.common.constant.${smodel}ResultConstant;
@@ -38,7 +39,7 @@ public class ${vmmodel}Controller extends BaseController {
 	@RequiresPermissions("${permissions}:read")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
-	public Object list(@ModelAttribute ${vmmodel} ${module}) {
+	public Object list(@ModelAttribute ${vmmodel} ${module}, @ModelAttribute BaseModelValid modelValid) {
 		${vmmodel}Example ${module}Example = new ${vmmodel}Example();
 		${vmmodel}Example.Criteria criteria = ${module}Example.createCriteria();
 
@@ -58,12 +59,11 @@ public class ${vmmodel}Controller extends BaseController {
 				    criteria.and${camelColumnName}Like("%" +${module}.get${camelColumnName}() + "%");
 				}
                 #end
-
             #end
         #end
 
-		int pagec = ${module}.getPageCurrent();
-		int pages = ${module}.getPageSize();
+		int pagec = modelValid.getPageCurrent();
+		int pages = modelValid.getPageSize();
 		List<${vmmodel}> rows = ${module}Service.selectByExampleForOffsetPage(${module}Example, pagec, pages);
 		long total = ${module}Service.countByExample(${module}Example);
 		return new ${smodel}Result(${smodel}ResultConstant.SUCCESS,rows,pages,pagec,total);

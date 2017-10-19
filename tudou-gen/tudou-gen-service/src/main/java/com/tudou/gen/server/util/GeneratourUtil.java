@@ -20,6 +20,7 @@ import static com.tudou.common.util.StringUtil.*;
 
 public class GeneratourUtil {
 
+
     private static final String project = "ServiceProject";
 
     public static void CURD(GenScheme genScheme, List<GenTableColumn> columns, GenTable genTable) {
@@ -212,6 +213,7 @@ public class GeneratourUtil {
 
         System.out.println("========== 开始生成SaveHtml ==========");
     }
+
 
 
 }

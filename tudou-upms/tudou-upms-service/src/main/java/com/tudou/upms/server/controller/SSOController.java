@@ -156,6 +156,11 @@ public class SSOController {
 
 			// 全局会话的code
 			RedisUtil.set(TUDOU_UPMS_SERVER_SESSION_ID + "_" + sessionId, code, seconds);
+
+			// 全局会话的code
+			RedisUtil.set(TUDOU_UPMS_SERVER_SESSION_ID + "_" + sessionId, code, (int) subject.getSession().getTimeout() / 1000);
+			// code校验值
+			RedisUtil.set(TUDOU_UPMS_SERVER_CODE + "_" + code, code, (int) subject.getSession().getTimeout() / 1000);
 		}
 		return new UpmsResult(UpmsResultConstant.SUCCESS, subject.getSession().getTimeout());
 	}

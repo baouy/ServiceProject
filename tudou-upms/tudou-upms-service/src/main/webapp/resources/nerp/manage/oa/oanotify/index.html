@@ -1,0 +1,136 @@
+<script>
+    layui.define(['BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins'], function () {
+        var $ = layui.jquery
+        var oanotify_btn = ''
+        var toolbar_oanotify_btn = '<div class="layui-btn-group">';
+        for (var data of user_data) {
+            var value = data.permissionValue;
+            switch (value) {
+                case 'oa:notify:create':
+                    toolbar_oanotify_btn += '<button type="button" id="oanotify_add_btn" name="' + data.name + '" url="' + data.uri + '" class="layui-btn layui-btn-small" w="1500" h="700">' + '<i class="layui-icon">' + data.icon + '</i>&nbsp;' + data.name + ' </button>'
+                    break;
+                case 'oa:notify:update':
+                    toolbar_oanotify_btn += '<button type="button" id="oanotify_edit_btn" name="' + data.name + '" url="' + data.uri + '" class="layui-btn layui-btn-small" w="1500" h="700">' + '<i class="layui-icon">' + data.icon + '</i>&nbsp;' + data.name + ' </button>'
+                    break;
+                case 'oa:notify:delete':
+                    oanotify_btn += 'del,'
+                    break;
+            }
+        }
+        toolbar_oanotify_btn += '</div>';
+
+        var oanotify_datagrid_data = {
+            local: 'remote',
+            dataUrl: $.cookie("tudou-oa-server") + '/manage/oanotify/list',
+            dataType: 'json',
+            sortAll: false,
+            loadType: 'get',
+            filterAll: true,
+            height: '100%',
+            columns: [
+                {name: 'id', hide: true},
+                {name: 'type', width: '120', align: 'center', label: '类型', type: 'select', items: notify_type_dic},
+                {name: 'title', width: '100', align: 'center', label: '标题'},
+                {name: 'content', width: '100', align: 'center', label: '内容'},
+                {name: 'files', width: '100', align: 'center', label: '附件'},
+                {
+                    name: 'status',
+                    width: '150',
+                    align: 'center',
+                    label: '状态',
+                    type: 'select',
+                    attrs: {multiple: true},
+                    items: notify_type_dic,
+                    render: function (value) {
+                        var arr = value.split(","), v = '';
+                        for (var d of arr) {
+                            for (var x of notify_type_dic) {
+                                if (x[d]) v += x[d] + ';';
+                                continue
+                            }
+                        }
+                        return v;
+                    }
+                },
+                {name: 'createBy', width: '100', align: 'center', label: '创建者'},
+                {
+                    name: 'createDate', width: '150', align: 'center', label: '创建时间', render: function (value) {
+                    return zjoin.timetrans(value);
+                }
+                },
+                {name: 'updateBy', width: '100', align: 'center', label: '更新者'},
+                {
+                    name: 'updateDate', width: '150', align: 'center', label: '更新时间', render: function (value) {
+                    return zjoin.timetrans(value);
+                }
+                },
+                {name: 'remarks', width: '100', align: 'center', label: '备注信息'},
+                {
+                    name: 'delFlag',
+                    width: '80',
+                    align: 'center',
+                    label: '删除标记',
+                    type: 'select',
+                    items: [{'0': '否'}, {'1': '是'}]
+                },
+            ],
+            paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+            fullGrid: true,
+            showToolbar: true,
+            toolbarItem: oanotify_btn,
+            inlineEditMult: false,
+            toolbarCustom: toolbar_oanotify_btn,
+            dblOnClick: 'oanotify_dblonclick',
+        }
+
+        if (oanotify_btn.indexOf('del') != -1) {
+            oanotify_datagrid_data.delConfirm = true
+            oanotify_datagrid_data.delPK = 'id'
+            oanotify_datagrid_data.delType = 'POST'
+            oanotify_datagrid_data.delUrl = $.cookie("tudou-oa-server") + '/manage/oanotify/delete'
+            oanotify_datagrid_data.delCallback = 'del_oanotify_table_back'
+        }
+
+        $('#oanotify_list_table').datagrid(oanotify_datagrid_data);
+        window.del_oanotify_table_back = del_oanotify_table_back;
+        function del_oanotify_table_back(d) {
+            if (d.code == 1) {
+                layer.ok('删除成功');
+            } else {
+                layer.warn(d.data);
+            }
+            $('#oanotify_list_table').data('selectedDatas', null);
+            $('#oanotify_list_table').datagrid('refresh_part');
+        }
+
+        $("#oanotify_add_btn").bind('click', function () {
+            var n = $(this);
+            //layer.dialog(n.attr("name"), n.attr("url"), n.attr("w"), n.attr("h"));
+            var w = window.innerWidth * 0.8, h = window.innerHeight * 0.8;
+            var selected = $('#oanotify_list_table').data('selectedTrs');
+            if(selected) selected.click();//
+            layer.dialog(n.attr("name"), n.attr("url"), w, h);
+        });
+
+        window.oanotify_dblonclick = oanotify_dblonclick;
+        function oanotify_dblonclick() {
+            $("#oanotify_edit_btn").click();
+        }
+
+        $("#oanotify_edit_btn").bind('click', function () {
+            var selected = $('#oanotify_list_table').data('selectedDatas');
+            if (null == selected || selected.length == 0) {
+                layer.warn("请选择操作数据！")
+                return;
+            }
+            var n = $(this);
+            //layer.dialog(n.attr("name"), n.attr("url"), n.attr("w"), n.attr("h"));
+            var w = window.innerWidth * 0.8, h = window.innerHeight * 0.8;
+            layer.dialog(n.attr("name"), n.attr("url"), w, h);
+        });
+    });
+</script>
+
+<div class="bjui-pageContent">
+    <table id="oanotify_list_table" class="table table-hover" data-width="100%"></table>
+</div>

@@ -59,4 +59,8 @@
     <bean id="upmsApiService" class="com.tudou.upms.rpc.service.impl.UpmsApiServiceImpl"/>
     <dubbo:service interface="com.tudou.upms.rpc.api.UpmsApiService" ref="upmsApiService" timeout="10000"/>
 
+    <!--&lt;!&ndash; 文章服务 &ndash;&gt;-->
+    <bean id="upmsMarkdownService" class="com.tudou.upms.rpc.service.impl.UpmsMarkdownServiceImpl"/>
+    <dubbo:service interface="com.tudou.upms.rpc.api.UpmsMarkdownService" ref="upmsMarkdownService" timeout="10000"/>
+
 </beans>

@@ -3305,7 +3305,8 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
                     $(window).resize()
                 }
 
-                that.resizeGrid()
+                that.resizeGrid();
+                that.resizeCurrentGrid();
             }, 50)
 
             that.delayFilterTimeout && clearInterval(that.delayFilterTimeout)
@@ -7880,7 +7881,8 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
         }
 
         // for tab
-        $('a[data-toggle="tab"]').on('shown.bs.tab', $.proxy(function (e) {
+        // edit digua 注释对bjui-tab的判断
+        /*$('a[data-toggle="tab"]').on('shown.bs.tab', $.proxy(function (e) {
             if (!that.$element.data('bjui.datagrid.init.tab')) {
                 var $target = $(e.target), $box = $target.data('target'), href = $target.attr('href')
 
@@ -7894,9 +7896,85 @@ layui.define(['BJUIpagination', 'BJUIbasedrag', 'BJUIicheck', 'form'], function 
                     }
                 }
             }
-        }, that))
+        }, that))*/
 
         $(window).on(BJUI.eventType.resizeGrid, $.proxy(_resizeGrid, that))
+    }
+
+    /**
+     * add by digua on 2017/10/19 解决弹出层引起的表格自适应使得被隐藏的标签页自适应布局错乱
+     * */
+    Datagrid.prototype.resizeCurrentGrid = function () {
+        var that = this,  parentW
+        var _resizeGrid = function () {
+            console.log("正在触发datagrid自适应")
+            debugger
+            var ww = that.$grid.width(), $headDiv = that.$tableH.next('.datagrid-thead-dialog-div'),
+                newTemplate = ((that.options.tdTemplate && that.options.templateWidth) && that.options.templateWidth > ww) || that.options.templateWidth === 0
+
+            if (newTemplate !== that.isTemplate && that.isTemplate !="" ) {
+                that.isTemplate = newTemplate
+                that.tools.coverTemplate()
+                return
+            }
+            if ((that.options.dialogFilterW && ww < that.options.dialogFilterW)
+                || that.options.dialogFilterW === 0) {
+
+                that.$tableH.hide()
+
+                if (!$headDiv.length) {
+                    //that.$tableH.after('<div class="datagrid-thead-dialog-div" style="padding:5px;"><button type="button" class="btn btn-orange datagrid-thead-dialog-view">' + BJUI.getRegional('datagrid.fAndS') + '</button><span class="datagrid-thead-dialog-filter-msg"><span class="msg-sort"></span><span class="msg-filter"></span></span></div>')
+                } else {
+                    $headDiv.show()
+                }
+                if (!that.$headFilterUl)
+                    that.filterInThead(true)
+                that.$grid.off('click.datagrid.thead.view').on('click.datagrid.thead.view', '.datagrid-thead-dialog-view', function (e) {
+                    BJUI.dialog({
+                        id: 'datagrid-thead-view',
+                        html: '<div class="bjui-pageContent"></div><div class="bjui-pageFooter"><ul><li><button type="button" class="btn btn-close">关闭</button></li></ul></div>',
+                        width: 360,
+                        height: 300,
+                        title: 'datagrid - thead - columns',
+                        onLoad: function ($dialog) {
+                            that.$headFilterUl.show().appendTo($dialog.find('.bjui-pageContent'))
+                        },
+                        beforeClose: function ($dialog) {
+                            that.$headFilterUl.hide().appendTo(that.$grid)
+                            return true
+                        }
+                    })
+                })
+            } else {
+                that.$grid.removeClass('datagrid-flowlayout')
+                that.$tableH.show()
+                $headDiv.hide()
+
+                if (that.$colgroupB.is(':hidden')) {
+                    that.$colgroupB.show()
+                }
+            }
+
+            if (that.initFixedW && String(that.options.width).endsWith('%')) {
+                parentW = that.$grid.parent().width()
+                that.fixedWidth()
+
+                if (that.options.hasChild && that.options.childOptions) {
+                    that.$tbody.find('> tr.' + that.classnames.tr_child + ':visible').each(function () {
+                        var $child = $(this), $tr = $child.prev(), $table = $tr.data('bjui.datagrid.child')
+
+                        if ($table && $table.length) {
+                            $table.datagrid('fixedWidth')
+                        }
+                    })
+                }
+            }
+
+            if (String(that.options.height).endsWith('%')) {
+                that.tools.setBoxbH()
+            }
+        }
+        $('.layui-layer').on(BJUI.eventType.resizeCurrentGrid, $.proxy(_resizeGrid, that))
     }
 
 

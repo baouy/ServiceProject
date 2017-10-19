@@ -759,7 +759,8 @@ Class.pt.move = function(){
     }
     if(dict.resizeStart){
       //digua edit on 2017/10/19 拉伸结束后内容自适应
-      layer.current().trigger(BJUI.eventType.resizeGrid)
+      var $current = layer.current().find('.bjui-datagrid');
+      if($current.length>0)  layer.current().trigger(BJUI.eventType.resizeCurrentGrid)
       delete dict.resizeStart;
       ready.moveElem.hide();
     }
