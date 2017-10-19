@@ -152,10 +152,10 @@ public class SSOController {
 			// 默认验证帐号密码正确，创建code
 			String code = UUID.randomUUID().toString();
 
-			int seconds = ssoLoginValid.getRememberMe() ? Integer.valueOf(PropertiesFileUtil.getInstance("tudou-upms-client").get("tudou.upms.rememberMe.timeout")):Integer.valueOf(PropertiesFileUtil.getInstance("tudou-upms-client").get("tudou.upms.session.timeout"))/1000;
-
-			// 全局会话的code
-			RedisUtil.set(TUDOU_UPMS_SERVER_SESSION_ID + "_" + sessionId, code, seconds);
+//			int seconds = ssoLoginValid.getRememberMe() ? Integer.valueOf(PropertiesFileUtil.getInstance("tudou-upms-client").get("tudou.upms.rememberMe.timeout")):Integer.valueOf(PropertiesFileUtil.getInstance("tudou-upms-client").get("tudou.upms.session.timeout"))/1000;
+//
+//			// 全局会话的code
+//			RedisUtil.set(TUDOU_UPMS_SERVER_SESSION_ID + "_" + sessionId, code, seconds);
 
 			// 全局会话的code
 			RedisUtil.set(TUDOU_UPMS_SERVER_SESSION_ID + "_" + sessionId, code, (int) subject.getSession().getTimeout() / 1000);
