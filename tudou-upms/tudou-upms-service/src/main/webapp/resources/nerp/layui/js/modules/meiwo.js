@@ -23,6 +23,8 @@ layui.define(['layer', 'element', 'table', 'zjoin', 'ZJOINdropdown', 'ZJOINselec
 
     window.notify_type_dic = [{'1':'会议通告'},{'2':'奖惩通告'},{'3':'活动通知'}]
 
+    window.data_scope_data = [{'1':'所有数据'},{'2':'所在公司及以下数据'},{'3':'所在公司数据'},{'4':'所在部门及以下数据'},{'5':'所在部门数据'},{'8':'个人数据'}]
+
     $.ajaxSetup({
         contentType: "application/x-www-form-urlencoded;charset=utf-8",
         complete: function (XMLHttpRequest, textStatus) {

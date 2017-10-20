@@ -80,6 +80,19 @@ public class UpmsOrganizationController extends BaseController {
 		}
 		long time = System.currentTimeMillis();
 		upmsOrganization.setCtime(time);
+
+
+		UpmsOrganizationExample upmsOrganizationExample = new UpmsOrganizationExample();
+		UpmsOrganizationExample.Criteria criteria = upmsOrganizationExample.createCriteria();
+		criteria.andPidEqualTo(upmsOrganization.getPid());
+		long num = upmsOrganizationService.countByExample(upmsOrganizationExample);
+
+		UpmsOrganizationExample upmsOrganizationExample1 = new UpmsOrganizationExample();
+		UpmsOrganizationExample.Criteria criteria1 = upmsOrganizationExample1.createCriteria();
+		criteria1.andOrganizationIdEqualTo(upmsOrganization.getPid());
+		UpmsOrganization upmsOrganization1 = upmsOrganizationService.selectFirstByExample(upmsOrganizationExample1);
+		String str = String.format("%03d", num+1);
+		upmsOrganization.setCode(upmsOrganization1.getCode() + str);
 		upmsOrganization = upmsOrganizationService.createUpmsOrganization(upmsOrganization);
 		return new UpmsResult(UpmsResultConstant.SUCCESS, upmsOrganization.getOrganizationId());
 	}

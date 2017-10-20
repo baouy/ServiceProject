@@ -5,6 +5,7 @@
     <id column="role_id" jdbcType="INTEGER" property="roleId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="data_scope" jdbcType="CHAR" property="dataScope" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="ctime" jdbcType="BIGINT" property="ctime" />
     <result column="orders" jdbcType="BIGINT" property="orders" />
@@ -68,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    role_id, name, title, description, ctime, orders
+    role_id, name, title, data_scope, description, ctime, orders
   </sql>
   <select id="selectByExample" parameterType="com.tudou.upms.dao.model.UpmsRoleExample" resultMap="BaseResultMap">
     select
@@ -102,11 +103,11 @@
   </delete>
   <insert id="insert" parameterType="com.tudou.upms.dao.model.UpmsRole">
     insert into upms_role (role_id, name, title, 
-      description, ctime, orders
-      )
+      data_scope, description, ctime, 
+      orders)
     values (#{roleId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
-      #{description,jdbcType=VARCHAR}, #{ctime,jdbcType=BIGINT}, #{orders,jdbcType=BIGINT}
-      )
+      #{dataScope,jdbcType=CHAR}, #{description,jdbcType=VARCHAR}, #{ctime,jdbcType=BIGINT}, 
+      #{orders,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.tudou.upms.dao.model.UpmsRole">
     insert into upms_role
@@ -119,6 +120,9 @@
       </if>
       <if test="title != null">
         title,
+      </if>
+      <if test="dataScope != null">
+        data_scope,
       </if>
       <if test="description != null">
         description,
@@ -139,6 +143,9 @@
       </if>
       <if test="title != null">
         #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="dataScope != null">
+        #{dataScope,jdbcType=CHAR},
       </if>
       <if test="description != null">
         #{description,jdbcType=VARCHAR},
@@ -169,6 +176,9 @@
       <if test="record.title != null">
         title = #{record.title,jdbcType=VARCHAR},
       </if>
+      <if test="record.dataScope != null">
+        data_scope = #{record.dataScope,jdbcType=CHAR},
+      </if>
       <if test="record.description != null">
         description = #{record.description,jdbcType=VARCHAR},
       </if>
@@ -188,6 +198,7 @@
     set role_id = #{record.roleId,jdbcType=INTEGER},
       name = #{record.name,jdbcType=VARCHAR},
       title = #{record.title,jdbcType=VARCHAR},
+      data_scope = #{record.dataScope,jdbcType=CHAR},
       description = #{record.description,jdbcType=VARCHAR},
       ctime = #{record.ctime,jdbcType=BIGINT},
       orders = #{record.orders,jdbcType=BIGINT}
@@ -203,6 +214,9 @@
       </if>
       <if test="title != null">
         title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="dataScope != null">
+        data_scope = #{dataScope,jdbcType=CHAR},
       </if>
       <if test="description != null">
         description = #{description,jdbcType=VARCHAR},
@@ -220,6 +234,7 @@
     update upms_role
     set name = #{name,jdbcType=VARCHAR},
       title = #{title,jdbcType=VARCHAR},
+      data_scope = #{dataScope,jdbcType=CHAR},
       description = #{description,jdbcType=VARCHAR},
       ctime = #{ctime,jdbcType=BIGINT},
       orders = #{orders,jdbcType=BIGINT}

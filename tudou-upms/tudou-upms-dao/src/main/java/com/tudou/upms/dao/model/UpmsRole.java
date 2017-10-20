@@ -25,6 +25,13 @@ public class UpmsRole implements Serializable {
     private String title;
 
     /**
+     * 数据范围
+     *
+     * @mbg.generated
+     */
+    private String dataScope;
+
+    /**
      * 角色描述
      *
      * @mbg.generated
@@ -71,6 +78,14 @@ public class UpmsRole implements Serializable {
         this.title = title;
     }
 
+    public String getDataScope() {
+        return dataScope;
+    }
+
+    public void setDataScope(String dataScope) {
+        this.dataScope = dataScope;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -104,6 +119,7 @@ public class UpmsRole implements Serializable {
         sb.append(", roleId=").append(roleId);
         sb.append(", name=").append(name);
         sb.append(", title=").append(title);
+        sb.append(", dataScope=").append(dataScope);
         sb.append(", description=").append(description);
         sb.append(", ctime=").append(ctime);
         sb.append(", orders=").append(orders);
@@ -126,6 +142,7 @@ public class UpmsRole implements Serializable {
         return (this.getRoleId() == null ? other.getRoleId() == null : this.getRoleId().equals(other.getRoleId()))
             && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
             && (this.getTitle() == null ? other.getTitle() == null : this.getTitle().equals(other.getTitle()))
+            && (this.getDataScope() == null ? other.getDataScope() == null : this.getDataScope().equals(other.getDataScope()))
             && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
             && (this.getCtime() == null ? other.getCtime() == null : this.getCtime().equals(other.getCtime()))
             && (this.getOrders() == null ? other.getOrders() == null : this.getOrders().equals(other.getOrders()));
@@ -138,6 +155,7 @@ public class UpmsRole implements Serializable {
         result = prime * result + ((getRoleId() == null) ? 0 : getRoleId().hashCode());
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         result = prime * result + ((getTitle() == null) ? 0 : getTitle().hashCode());
+        result = prime * result + ((getDataScope() == null) ? 0 : getDataScope().hashCode());
         result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
         result = prime * result + ((getCtime() == null) ? 0 : getCtime().hashCode());
         result = prime * result + ((getOrders() == null) ? 0 : getOrders().hashCode());

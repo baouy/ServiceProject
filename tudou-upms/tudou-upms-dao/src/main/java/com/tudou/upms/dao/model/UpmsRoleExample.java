@@ -307,6 +307,76 @@ public class UpmsRoleExample implements Serializable {
             return (Criteria) this;
         }
 
+        public Criteria andDataScopeIsNull() {
+            addCriterion("data_scope is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataScopeIsNotNull() {
+            addCriterion("data_scope is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataScopeEqualTo(String value) {
+            addCriterion("data_scope =", value, "dataScope");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataScopeNotEqualTo(String value) {
+            addCriterion("data_scope <>", value, "dataScope");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataScopeGreaterThan(String value) {
+            addCriterion("data_scope >", value, "dataScope");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataScopeGreaterThanOrEqualTo(String value) {
+            addCriterion("data_scope >=", value, "dataScope");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataScopeLessThan(String value) {
+            addCriterion("data_scope <", value, "dataScope");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataScopeLessThanOrEqualTo(String value) {
+            addCriterion("data_scope <=", value, "dataScope");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataScopeLike(String value) {
+            addCriterion("data_scope like", value, "dataScope");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataScopeNotLike(String value) {
+            addCriterion("data_scope not like", value, "dataScope");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataScopeIn(List<String> values) {
+            addCriterion("data_scope in", values, "dataScope");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataScopeNotIn(List<String> values) {
+            addCriterion("data_scope not in", values, "dataScope");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataScopeBetween(String value1, String value2) {
+            addCriterion("data_scope between", value1, value2, "dataScope");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataScopeNotBetween(String value1, String value2) {
+            addCriterion("data_scope not between", value1, value2, "dataScope");
+            return (Criteria) this;
+        }
+
         public Criteria andDescriptionIsNull() {
             addCriterion("description is null");
             return (Criteria) this;

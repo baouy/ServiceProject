@@ -45,6 +45,13 @@ public class UpmsOrganization implements Serializable {
      */
     private Long ctime;
 
+    /**
+     * 编码
+     *
+     * @mbg.generated
+     */
+    private String code;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getOrganizationId() {
@@ -95,6 +102,14 @@ public class UpmsOrganization implements Serializable {
         this.ctime = ctime;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -107,6 +122,7 @@ public class UpmsOrganization implements Serializable {
         sb.append(", name=").append(name);
         sb.append(", description=").append(description);
         sb.append(", ctime=").append(ctime);
+        sb.append(", code=").append(code);
         sb.append("]");
         return sb.toString();
     }
@@ -128,7 +144,8 @@ public class UpmsOrganization implements Serializable {
             && (this.getFid() == null ? other.getFid() == null : this.getFid().equals(other.getFid()))
             && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
             && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
-            && (this.getCtime() == null ? other.getCtime() == null : this.getCtime().equals(other.getCtime()));
+            && (this.getCtime() == null ? other.getCtime() == null : this.getCtime().equals(other.getCtime()))
+            && (this.getCode() == null ? other.getCode() == null : this.getCode().equals(other.getCode()));
     }
 
     @Override
@@ -141,6 +158,7 @@ public class UpmsOrganization implements Serializable {
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
         result = prime * result + ((getCtime() == null) ? 0 : getCtime().hashCode());
+        result = prime * result + ((getCode() == null) ? 0 : getCode().hashCode());
         return result;
     }
 }

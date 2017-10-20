@@ -120,6 +120,7 @@ public class OaUserDetailsController extends BaseController {
 		if (!StringUtils.isBlank(oaViewUserValid.getEmail())) {
 			criteria.andEmailLike("%" + oaViewUserValid.getEmail() + "%");
 		}
+
 		if (!StringUtils.isBlank(oaViewUser.getOrganizationId())){
 			List<String> stringList = StringUtil.stringList(oaViewUser.getOrganizationId());
 			if(stringList.size() > 1){
@@ -131,8 +132,8 @@ public class OaUserDetailsController extends BaseController {
 			}else{
 				criteria.andOrganizationIdEqualTo(stringList.get(0));
 			}
-
 		}
+
 		int pagec = oaViewUserValid.getPageCurrent();
 		int pages = oaViewUserValid.getPageSize();
 
