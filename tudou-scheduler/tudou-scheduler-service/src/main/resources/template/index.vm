@@ -1,0 +1,102 @@
+#set ($pk = '')
+<script>
+	var ${smodule}_btn = ''
+	var toolbar_${smodule}_btn = ''
+	for (var data of user_data) {
+		var value = data.permissionValue;
+		switch (value){
+			case '${permissions}:create':
+				toolbar_${smodule}_btn += '<button type="button" id="${smodule}_add_btn" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" w="1500" h="700" style="margin-left: 5px;" onclick="${smodule}_create_onclick(this)" >' + '<i class="'+data.icon+'"></i>&nbsp;' + data.name + ' </button>'
+				break;
+			case '${permissions}:update':
+				toolbar_${smodule}_btn += '<button type="button" id="${smodule}_edit_btn" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" w="1500" h="700"  style="margin-left: 5px;" onclick="${smodule}_update_onclick(this)" >' + '<i class="'+data.icon+'"></i>&nbsp;' + data.name + ' </button>'
+				break;
+			case '${permissions}:delete':
+                ${smodule}_btn += 'del,'
+				break;
+		}
+	}
+
+	var ${smodule}_datagrid_data = {
+		local: 'remote',
+		dataUrl: $.cookie("tudou-${smodel}-server")+'/manage/${smodule}/list',
+		dataType: 'json',
+		sortAll: false,
+		loadType: 'get',
+		filterAll: true,
+		height:'100%',
+		columns: [
+            #foreach($i in $columns)
+                #if($i.isList == 1)
+					{name:'${i.javaField}', width:'150',align : 'center', label:'${i.comments}'},
+                #end
+                #if($i.isPk == 1)
+                    #set ($pk = ${i.javaField})
+                #end
+            #end
+		],
+		paging: {pageSize:50, selectPageSize:'50,100,200', pageCurrent:1},
+		hiddenFields: ['$pk'],
+		fullGrid: true,
+		showToolbar: true,
+		toolbarItem: ${smodule}_btn,
+		inlineEditMult: false,
+		toolbarCustom: toolbar_${smodule}_btn,
+		dblOnClick: '${smodule}_dblonclick',
+	}
+
+	if (${smodule}_btn.indexOf('del') != -1) {
+            ${smodule}_datagrid_data.delConfirm = true
+            ${smodule}_datagrid_data.delPK = '$pk'
+            ${smodule}_datagrid_data.delType = 'POST'
+            ${smodule}_datagrid_data.delUrl = $.cookie("tudou-${smodel}-server") + '/manage/${smodule}/delete'
+            ${smodule}_datagrid_data.delCallback = 'del_${smodule}_table_back'
+	}
+
+	$('#gen_table_list_table').datagrid(${smodule}_datagrid_data);
+
+	function del_${smodule}_table_back(d) {
+		if (d.code == 1) {
+			$(this).alertmsg('ok', '删除成功');
+		} else {
+			$(this).alertmsg('warn', d.data);
+		}
+		$('${smodule}_list_table').datagrid('refresh_part');
+	}
+
+	function ${smodule}_create_onclick(n) {
+        ${smodule}_id = null
+		var url = n.attributes["url"].value;
+		var name = n.attributes["name"].value;
+		var w = n.attributes["w"].value;
+		var h = n.attributes["h"].value;
+
+		show_dialog(name,url,w,h)
+	}
+
+	function ${smodule}_dblonclick() {
+		$("#{smodule}_edit_btn").click();
+	}
+
+	var ${smodule}_id = null
+	function ${smodule}_update_onclick(n) {
+		var selected = $('#${smodule}_list_table').data('selectedDatas');
+		if (null == selected || selected.length == 0) {
+			return;
+		}
+
+        ${smodule}_id = selected[0].$pk
+
+		var url = n.attributes["url"].value;
+		var name = n.attributes["name"].value;
+		var w = n.attributes["w"].value;
+		var h = n.attributes["h"].value;
+
+		show_dialog(name,url,w,h)
+	}
+
+</script>
+
+<div class="bjui-pageContent" >
+	<table id="${smodule}_list_table" class="table table-hover" data-width="100%"> </table>
+</div>

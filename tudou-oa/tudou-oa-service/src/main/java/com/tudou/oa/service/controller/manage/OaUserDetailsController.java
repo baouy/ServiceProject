@@ -258,7 +258,7 @@ public class OaUserDetailsController extends BaseController {
 	}
 
 	@ApiOperation(value = "用户所在组织列表")
-	@RequiresPermissions(value = {"oa:userdetail:create"}, logical = Logical.OR)
+	@RequiresPermissions(value = {"oa:userdetail:create"})
 	@RequestMapping(value = "/organization/list", method = RequestMethod.GET)
 	@ResponseBody
 	public Object organization_list() {

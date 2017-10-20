@@ -1,0 +1,99 @@
+<script>
+
+    var genscheme_btn = ''
+    var toolbarGenscheme_btn = ''
+    for (var data of user_data) {
+        var value = data.permissionValue;
+        switch (value){
+            case 'gen:tablescheme:create':
+                toolbarGenscheme_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" w="550" h="550" style="margin-left: 5px;" onclick="act_genscheme_create_onclick(this)" >' + '<i class="'+data.icon+'"></i>&nbsp;' + data.name + ' </button>'
+                break;
+            case 'gen:tablescheme:update':
+                toolbarGenscheme_btn += '<button type="button" id="genscheme_edit_btn" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" w="550" h="550"  style="margin-left: 5px;" onclick="act_genscheme_update_onclick(this)" >' + '<i class="'+data.icon+'"></i>&nbsp;' + data.name + ' </button>'
+                break;
+            case 'gen:tablescheme:delete':
+                genscheme_btn += 'del,'
+                break;
+        }
+    }
+
+    var genscheme_datagrid_data = {
+        local: 'remote',
+        dataUrl: $.cookie("tudou-gen-server")+'/manage/genscheme/list',
+        dataType: 'json',
+        sortAll: false,
+        loadType: 'get',
+        filterAll: true,
+        height:'100%',
+        columns: [{name:'name', width:'150',align : 'center', label:'方案名称'},
+            {name:'packageName', width:'150',align : 'center', label:'生成模块'},
+            {name:'moduleName', width:'150',align : 'center', label:'模块名'},
+            {name:'functionName', width:'150',align : 'center', label:'功能名'},
+            {name:'functionAuthor', width:'150',align : 'center', label:'功能作者'},
+        ],
+        paging: {pageSize:50, selectPageSize:'50,100,200', pageCurrent:1},
+        hiddenFields: ['id'],
+        fullGrid: true,
+        showToolbar: true,
+        toolbarItem: genscheme_btn,
+        inlineEditMult: false,
+        toolbarCustom: toolbarGenscheme_btn,
+        dblOnClick: 'genscheme_dblonclick',
+    }
+
+    if (genscheme_btn.indexOf('del') != -1) {
+        genscheme_datagrid_data.delConfirm = true
+        genscheme_datagrid_data.delPK = 'id'
+        genscheme_datagrid_data.delType = 'POST'
+        genscheme_datagrid_data.delUrl = $.cookie("tudou-gen-server") + '/manage/gentable/delete'
+        genscheme_datagrid_data.delCallback = 'del_genscheme_table_back'
+    }
+
+    $('#gen_tablescheme_list_table').datagrid(genscheme_datagrid_data);
+
+    function del_genscheme_table_back(d) {
+        if (d.code == 1) {
+            $(this).alertmsg('ok', '删除成功');
+        } else {
+            $(this).alertmsg('warn', d.data);
+        }
+        $('#gen_tablescheme_list_table').datagrid('refresh_part');
+    }
+
+
+    function act_genscheme_create_onclick(n) {
+        genscheme_id = null
+        var url = n.attributes["url"].value;
+        var name = n.attributes["name"].value;
+        var w = n.attributes["w"].value;
+        var h = n.attributes["h"].value;
+
+        show_dialog(name,url,w,h)
+    }
+
+    function genscheme_dblonclick() {
+        $("#genscheme_edit_btn").click();
+    }
+
+    var genscheme_id = null
+    function act_genscheme_update_onclick(n) {
+        var selected = $('#gen_tablescheme_list_table').data('selectedDatas');
+        if (null == selected || selected.length == 0) {
+            return;
+        }
+
+        genscheme_id = selected[0].id
+
+        var url = n.attributes["url"].value;
+        var name = n.attributes["name"].value;
+        var w = n.attributes["w"].value;
+        var h = n.attributes["h"].value;
+
+        show_dialog(name,url,w,h)
+    }
+
+</script>
+
+<div class="bjui-pageContent" >
+	<table id="gen_tablescheme_list_table" class="table table-hover" data-width="100%"> </table>
+</div>

@@ -1,0 +1,191 @@
+<script>
+    layui.define(['BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins', 'element','laydate'], function () {
+        var $ = layui.jquery, element = layui.element,laydate = layui.laydate
+        element.on('tab(office-tab)', function (data) {
+            var url = $(this).attr('data-url'), _for = $(this).attr('data-for');
+            if (url && _for) {
+                $("#" + _for).load(url);
+            }
+        });
+
+        var toolbarCustom_oa_office_btn = '<div style="margin-left: 5px;"><label class="control-label">创建时间：</label><span class="wrap_bjui_btn_box"style="position: relative; display: inline-block;"><input type="text" id="oa_office_start_time" data-toggle="datepicker" size="15" class="form-control laydate layui-btn-input" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href=" " data-toggle="datepickerbtn" style="height: 28px; line-height: 28px;"><i class="layui-icon skin-color">&#xe97d;</i></a ></span><label class="control-label">—</label><span class="wrap_bjui_btn_box" style="position: relative; display: inline-block;"><input type="text" id="oa_office_end_time" data-toggle="datepicker" size="15" class="form-control laydate layui-btn-input" aria-required="true" style="width: 150px; padding-right: 15px;"><a class="bjui-lookup" href="javascript:;" data-toggle="datepickerbtn" style="height: 28px; line-height: 28px;"><i class="layui-icon skin-color">&#xe97d;</i></a ></span> <button type="button" id="oa_office_time_select" style="margin-left: 5px;" class="layui-btn layui-btn-small"><i class="layui-icon">&#xe8b6;</i>&nbsp; 查询 </button> <button type="button" style="margin-left: 5px;" class="layui-btn layui-btn-small" id="oa_office_seletct_clear"><i class="layui-icon">&#xe991;</i> &nbsp;重置 </button></div>'
+
+        var oa_office_datagrid_data = {
+            local: 'remote',
+            dataUrl: $.cookie("tudou-oa-server") + '/act/task/todo',
+            dataType: 'json',
+            sortAll: false,
+            loadType: 'get',
+            filterThead: false,
+            height: '100%',
+            columns: [
+                {
+                    width: '150', align: 'center', label: '标题', render: function (value, d) {
+                    if (!d.vars) return null;
+                    var name = d.vars.map.title ? d.vars.map.title : d.taskId
+                    return name;
+                }
+                },
+                {width: '150', name: 'taskName', align: 'center', label: '当前环节'},
+                {width: '150', name: 'procDefName', align: 'center', label: '流程名称'},
+                {
+                    width: '150', name: 'procDefVersion', align: 'center', label: '流程版本', render: function (value, d) {
+                    return 'V:' + value
+                }
+                },
+                {width: '150', name: 'taskCreateTime', align: 'center', label: '创建时间'},
+                {
+                    width: '150', align: 'center', label: '操作', render: function (value, d) {
+                    var name = '签收'
+                    var oa_office_url = '/act/task/claim?taskId=' + d.taskId
+                    if (d.assignee != null) {
+                        name = '任务办理'
+                        oa_office_url = '/act/task/form?taskId=' + d.taskId + '&taskName=' + d.taskName + '&taskDefKey=' + d.taskDefKey + '&procInsId=' + d.procInsId + '&procDefId=' + d.procDefId + '&status=' + d.status + '&executionId=' + d.executionId
+                    }
+//				var track_url = '/act/diagram-viewer/index.html?processDefinitionId=' + d.procDefId + '&processInstanceId=' + d.procInsId;
+                    var track_url = '/act/task/trace/photo/' + d.procDefId + '/' + d.executionId + "?t=" + new Date().getTime()
+                    var content = '<button type="button" style="font-size: 12px;" class="layui-btn layui-btn-small" onclick="oa_office_onclick(\'' + oa_office_url + '\',\'' + name + '\')"><i class="layui-icon"></i> ' + name + ' </button>'
+                            + '<button type="button" style="font-size: 12px;margin-left: 5px;" class="layui-btn layui-btn-small" onclick="oa_office_tracking_onclick(\'' + track_url + '\')"><i class="layui-icon"></i> 追踪 </button>'
+                    return content;
+                }
+                }
+            ],
+            paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+            hiddenFields: ['procInsId', 'procDefId'],
+            fullGrid: true,
+            showToolbar: true,
+            toolbarCustom: toolbarCustom_oa_office_btn,
+//		dblOnClick: 'oa_office_onclick',
+        }
+
+        $('#oa_office_wait_table').datagrid(oa_office_datagrid_data);
+
+        lay('.laydate').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        });
+
+       window.oa_office_data
+        window.oa_office_onclick = oa_office_onclick
+        function oa_office_onclick(url, name) {
+            layer.load()
+            if (name == '签收') {
+                $.ajax({
+                    url: $.cookie("tudou-oa-server") + url,
+                    dataType: 'json',
+                    type: 'GET',
+                    success: function (d) {
+                        layer.closeAll('loading')
+                        if (d.code != 1) {
+                            layer.warn("签收失败");
+                            return;
+                        }
+                        $('#oa_office_wait_table').datagrid('refresh_part');
+                        layer.ok("保存成功");
+                    },
+                    error: function () {
+                        layer.closeAll('loading')
+                        layer.warn("服务器异常，请联系管理员!");
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: $.cookie("tudou-oa-server") + url,
+                    dataType: 'json',
+                    type: 'GET',
+                    success: function (d) {
+                        layer.closeAll('loading')
+                        if (d.code != 1) {
+                            layer.warn("请求失败");
+                            return;
+                        }
+                        oa_office_data = d.data
+                        oa_office_dialog(d.data.taskName, d.data.formKey, '800px', '800px',['保存','驳回', '取消']);
+                    },
+                    error: function () {
+                        layer.closeAll('loading')
+                        layer.warn("服务器异常，请联系管理员!");
+                    }
+                });
+            }
+
+        }
+
+        window.oa_office_tracking_onclick = oa_office_tracking_onclick
+        function oa_office_tracking_onclick(url) {
+            dialog_src = $.cookie("tudou-oa-server") + url
+            oa_office_dialog('流程图', '/resources/nerp/manage/activiti/dialog.html', '800px', '500px')
+        }
+
+        $("#oa_office_time_select").bind('click',function(){
+            var starttime = '', endtime = ''
+            if ($('#oa_office_start_time').val() != 0 || $('#oa_office_end_time').val() != 0) {
+                if ($('#oa_office_start_time').val() != 0) {
+                    starttime = new Date($('#oa_office_start_time').val()).getTime()
+                }
+                if ($('#oa_office_end_time').val() != 0) {
+                    endtime = new Date($('#oa_office_end_time').val()).getTime()
+                }
+                $('#oa_office_wait_table').datagrid('refresh_url', $.cookie("tudou-oa-server") + '/act/task/todo?bdate=' + starttime + "&edate=" + endtime)
+                $('#oa_office_wait_table').datagrid('refresh_part')
+            }
+        })
+
+        $("#oa_office_seletct_clear").bind('click',function(){
+            if ($('#oa_office_start_time').val() != 0 || $('#oa_office_end_time').val() != 0) {
+                $('#oa_office_start_time').val('')
+                $('#oa_office_end_time').val('')
+                $('#oa_office_wait_table').datagrid('refresh_url', $.cookie("tudou-oa-server") + '/act/task/todo')
+                $('#oa_office_wait_table').datagrid('refresh_part');
+            }
+        })
+
+        window.oa_office_dialog = oa_office_dialog
+        function oa_office_dialog(name, url, w, h) {
+            layer.open({
+                type: 5,
+                title: name,
+                area: [w, h],
+                content: url,
+                btnAlign: 'r',
+                moveType: 1,//拖拽模式，0或者1
+                yes:function(){
+                }
+            });
+        }
+
+        function oa_office_dialog(name, url, w, h,btn) {
+            layer.open({
+                type: 5,
+                title: name,
+                area: [w, h],
+                content: url,
+                btnAlign: 'r',
+                btn: btn,
+                moveType: 1,//拖拽模式，0或者1
+                yes:function(){
+                }
+            });
+        }
+    });
+</script>
+
+
+<div class="layui-tab layui-tab-brief" lay-filter="office-tab">
+    <ul class="layui-tab-title" style="left: 0px;  top: 0px;">
+        <li class="active layui-this">待办任务</li>
+        <li data-url="/resources/nerp/manage/oa/office/complete.html" data-for="oa_office_complete_id">已办任务</li>
+        <li data-url="/resources/nerp/manage/oa/office/new.html" data-for="oa_office_new_id">发起流程</li>
+    </ul>
+    <div class="layui-tab-content layui-subpage">
+        <div class="layui-tab-item layui-show " id="oa_office_wait_id" style="padding-top: 0px;">
+            <div class="bjui-pageContent">
+                <table id="oa_office_wait_table" class="table table-hover" data-width="100%"></table>
+            </div>
+        </div>
+        <div class="layui-tab-item " id="oa_office_complete_id"></div>
+        <div class="layui-tab-item " id="oa_office_new_id"></div>
+    </div>
+</div>

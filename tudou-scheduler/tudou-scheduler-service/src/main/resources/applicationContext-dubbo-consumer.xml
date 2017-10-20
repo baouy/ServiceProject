@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd ">
+
+    <dubbo:application name="tudou-scheduler-server" owner="tudou"/>
+
+    <dubbo:registry file="./tudou-scheduler-server-dubbo.cache" address="zookeeper://127.0.0.1:2181"/>
+
+    <!-- 订阅服务 -->
+    <dubbo:consumer check="false"/>
+
+    <dubbo:reference id="schedulerJobService" interface="com.tudou.scheduler.rpc.api.SchedulerJobService" mock="true"/>
+
+    <!-- 操作日志 -->
+    <dubbo:reference id="upmsLogService" interface="com.tudou.upms.rpc.api.UpmsLogService" mock="true"/>
+    <!-- 接口服务 -->
+    <dubbo:reference id="upmsApiService" interface="com.tudou.upms.rpc.api.UpmsApiService" mock="true"/>
+
+    <dubbo:reference id="oaUserDetailsService" interface="com.tudou.oa.rpc.api.OaUserDetailsService" mock="true"/>
+
+
+</beans>

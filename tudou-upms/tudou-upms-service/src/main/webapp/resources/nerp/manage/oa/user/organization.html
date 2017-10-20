@@ -1,0 +1,101 @@
+<script>
+    layui.define(['laydate', 'ztreecheck'], function () {
+        var $ = layui.jquery
+        var oa_user_organization_object = new Object()
+        var changeDatas
+        oa_user_organization_object.nodes = 'oa_user_ajaxDataFilter'
+        oa_user_organization_object.onCheck = 'oa_user_NodeCheck'
+        window.oa_user_ajaxDataFilter = oa_user_ajaxDataFilter
+        window.oa_user_NodeCheck = oa_user_NodeCheck
+        $('#oa_user_organization_ztree').append('<ul id="job-ztree" class="ztree" data-radio-type="all" data-chk-style="radio" data-check-enable="true" data-expand-all="true" data-toggle="ztree" data-options=' + JSON.stringify(oa_user_organization_object) + '></ul>')
+        $('#oa_user_organization_ztree').initui();
+        function oa_user_ajaxDataFilter() {
+            var datas = new Array()
+            $.ajax({
+                url: $.cookie("tudou-oa-server") + '/manage/oauserdetail/organization/' + $("#user_select_id").val(),
+                type: 'get',
+                async: false,
+                success: function (responseData) {
+                    if (responseData.code == 1) {
+                        var organization = responseData.data.upmsOrganizations
+                        var upmsUserOrganizations = responseData.data.upmsUserOrganizations
+                        for (var i = 0; i < organization.length; i++) {
+                            datas[i] = organization[i]
+                            datas[i].id = organization[i].organizationId;
+                            datas[i].pId = organization[i].pid;
+                            for (var uo of upmsUserOrganizations) {
+                                if (uo.organizationId == organization[i].organizationId) {
+                                    datas[i].checked = true
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            return datas;
+        }
+
+
+        function oa_user_NodeCheck(event, treeId, treeNode, clickFlag) {
+            $(".layui-layer-btn0").fadeIn();
+            var id = treeNode.id
+            changeDatas = new Array()
+            changeDatas.push(id)
+        }
+
+        function oa_user_create_save() {
+            layer.load()
+            $.ajax({
+                        url: $.cookie("tudou-oa-server") + '/manage/oauserdetail/organization/' + $("#user_select_id").val(),
+                        dataType: 'json',
+                        type: 'POST',
+                        data: {
+                            organizationId: changeDatas
+                        },
+                        success: function (d) {
+                            layer.closeAll('loading')
+                            if (d.code == 1) {
+                                $('#manage_oa_user_table').datagrid('refresh_part');
+                                layer.ok('保存成功')
+                            } else {
+                                layer.warn("保存失败");
+                            }
+                        },
+                        error: function () {
+                            layer.closeAll('loading')
+                            layer.warn("保存失败")
+                        }
+                    }
+            );
+        }
+        $(".layui-layer-btn0").hide()
+        $(".layui-layer-btn0").bind('click',function () {
+            layer.load()
+            $.ajax({
+                        url: $.cookie("tudou-oa-server") + '/manage/oauserdetail/organization/' + $("#user_select_id").val(),
+                        dataType: 'json',
+                        type: 'POST',
+                        data: {
+                            organizationId: changeDatas
+                        },
+                        success: function (d) {
+                            layer.closeAll('loading')
+                            if (d.code == 1) {
+                                layer.closeAll();
+                                $('#manage_oa_user_table').datagrid('refresh_part');
+                               layer.ok("保存成功");
+                            } else {
+                                layer.warn( "保存失败");
+                            }
+                        },
+                        error: function () {
+                            layer.closeAll('loading')
+                            layer.warn(  "保存失败");
+                        }
+                    }
+            );
+        });
+    });
+</script>
+
+<div id="oa_user_organization_ztree" class="bjui-pageContent"></div>

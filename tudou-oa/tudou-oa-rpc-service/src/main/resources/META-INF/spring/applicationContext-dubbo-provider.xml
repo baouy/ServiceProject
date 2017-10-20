@@ -13,6 +13,8 @@
 
     <dubbo:protocol name="dubbo" port="20883"/>
 
+    <dubbo:monitor protocol="registry"/>
+
     <!--&lt;!&ndash; OA枚举 &ndash;&gt;-->
     <bean id="oaEnumService" class="com.tudou.oa.rpc.service.impl.OaEnumServiceImpl"/>
     <dubbo:service interface="com.tudou.oa.rpc.api.OaEnumService" ref="oaEnumService" timeout="10000"/>
@@ -28,5 +30,9 @@
     <!--&lt;!&ndash; 请假管理 &ndash;&gt;-->
     <bean id="oaLeaveService" class="com.tudou.oa.rpc.service.impl.OaLeaveServiceImpl"/>
     <dubbo:service interface="com.tudou.oa.rpc.api.OaLeaveService" ref="oaLeaveService" timeout="10000"/>
+
+    <!--&lt;!&ndash; 通知 &ndash;&gt;-->
+    <bean id="oaNotifyService" class="com.tudou.oa.rpc.service.impl.OaNotifyServiceImpl"/>
+    <dubbo:service interface="com.tudou.oa.rpc.api.OaNotifyService" ref="oaNotifyService" timeout="10000"/>
 
 </beans>

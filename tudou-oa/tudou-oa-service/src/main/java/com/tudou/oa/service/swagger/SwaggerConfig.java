@@ -33,7 +33,7 @@ public class SwaggerConfig {
 
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder()
-				.title("美窝云")
+				.title("Tudou")
 				.version("1.0")
 				.description("api-文档描述")
 				.build();

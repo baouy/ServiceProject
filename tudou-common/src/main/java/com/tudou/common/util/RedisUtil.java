@@ -271,4 +271,46 @@ public class RedisUtil {
 		}
 	}
 
+
+	public synchronized static void expire(String key,int seconds) {
+		try {
+			Jedis jedis = RedisUtil.getJedis();
+			jedis.expire(key, seconds);
+			jedis.close();
+		} catch (Exception e) {
+			_log.error("sadd error : " + e);
+		}
+	}
+
+
+	/**
+	 * incr
+	 * @param key
+	 * @return value
+	 */
+	public synchronized static Long incr(String key) {
+		Jedis jedis = getJedis();
+		if (null == jedis) {
+			return null;
+		}
+		long value = jedis.incr(key);
+		jedis.close();
+		return value;
+	}
+
+	/**
+	 * decr
+	 * @param key
+	 * @return value
+	 */
+	public synchronized static Long decr(String key) {
+		Jedis jedis = getJedis();
+		if (null == jedis) {
+			return null;
+		}
+		long value = jedis.decr(key);
+		jedis.close();
+		return value;
+	}
+
 }

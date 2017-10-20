@@ -62,6 +62,7 @@ public class UpmsSessionDao extends CachingSessionDAO {
             upmsSession.setStatus(cacheUpmsSession.getStatus());
             upmsSession.setAttribute("FORCE_LOGOUT", cacheUpmsSession.getAttribute("FORCE_LOGOUT"));
         }
+        //如果需要持续操作可以在线不需要屏蔽，否则屏蔽
         RedisUtil.set(TUDOU_UPMS_SHIRO_SESSION_ID + "_" + session.getId(), SerializableUtil.serialize(session), (int) session.getTimeout() / 1000);
         // 更新TUDOU_UPMS_SERVER_SESSION_ID、TUDOU_UPMS_SERVER_CODE过期时间 TODO
         _log.debug("doUpdate >>>>> sessionId={}", session.getId());

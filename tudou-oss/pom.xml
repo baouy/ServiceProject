@@ -10,6 +10,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tudou-oss</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>tudou-oss-common</module>
+        <module>tudou-oss-service</module>
+    </modules>
 
 
 </project>

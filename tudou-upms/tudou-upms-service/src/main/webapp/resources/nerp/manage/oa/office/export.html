@@ -1,0 +1,73 @@
+<script>
+    layui.define(['layedit','form'], function () {
+        var layedit = layui.layedit, form = layui.form
+        var editIndex = layedit.build('introduce');
+        // layedit.sync(editIndex);
+        //监听提交
+        form.on('submit(demo2)', function (data) {
+            layedit.sync(editIndex);
+           /* layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })*/
+            var $form = $("#wordForm");
+            $form.attr({action:$.cookie("tudou-oa-server") +'/act/export/word',method:'post'})
+            $form.submit()
+           /* $.ajax({
+             url: $.cookie("tudou-oa-server") +'/act/export/word',
+             type:'post',
+             data:data.field,
+             success:function () {
+
+             }
+             })*/
+            return false;
+        });
+    });
+</script>
+<form class="layui-form" id = "wordForm">
+    <div class="layui-form-item">
+        <label class="layui-form-label">文件名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="filename" lay-verify="required" autocomplete="off" class="layui-input"
+                   value="个人简介">
+        </div>
+        <label class="layui-form-label">标题</label>
+        <div class="layui-input-inline">
+            <input type="text" name="title" lay-verify="required" class="layui-input" value="个人简介">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" lay-verify="required" class="layui-input" value="地瓜">
+        </div>
+        <label class="layui-form-label">性别</label>
+        <div class="layui-input-inline">
+            <input type="text" name="sex" lay-verify="required" class="layui-input" value="男">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">专业</label>
+        <div class="layui-input-inline">
+            <input type="text" name="major" lay-verify="required" class="layui-input" value="计算机科学与技术">
+        </div>
+        <label class="layui-form-label">年龄</label>
+        <div class="layui-input-inline">
+            <input type="text" name="age" lay-verify="required|number" class="layui-input" value="25">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">毕业院校</label>
+        <div class="layui-input-block">
+            <input type="text" name="school" lay-verify="required" class="layui-input" value="国防科技大学">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">个人简介</label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea layui-hide" name="introduce" lay-verify="content"
+                      id="introduce">暂无简介</textarea>
+        </div>
+    </div>
+    <button class="layui-btn" lay-submit="" lay-filter="demo2">导出文件</button>
+</form>

@@ -1,0 +1,14 @@
+<script>
+
+
+
+    $('#gen_table_create_list_table').datagrid(gen_create_datagrid_data)
+
+    for (var i = 0 ; i < create_data.length; i ++){
+        $('#gen_table_create_list_table').datagrid('doEditRow',i)
+    }
+
+</script>
+
+
+<table id="gen_table_create_list_table" class="table table-hover" data-width="100%"> </table>

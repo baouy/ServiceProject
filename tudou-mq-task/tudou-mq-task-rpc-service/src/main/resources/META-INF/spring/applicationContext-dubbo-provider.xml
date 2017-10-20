@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd ">
+
+    <dubbo:application name="tudou-mq-task-rpc-service"/>
+
+    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+
+    <dubbo:protocol name="dubbo" port="20886"/>
+
+    <dubbo:monitor protocol="registry"/>
+
+    <bean id="mqMessageService" class="com.tudou.mq.rpc.service.impl.MqMessageServiceImpl"/>
+    <dubbo:service interface="com.tudou.mq.rpc.api.MqMessageService" ref="mqMessageService" timeout="10000"/>
+
+    <bean id="ptpService" class="com.tudou.mq.rpc.service.impl.PTPServiceImpl"/>
+    <dubbo:service interface="com.tudou.mq.rpc.api.PTPService" ref="ptpService" timeout="10000"/>
+
+</beans>

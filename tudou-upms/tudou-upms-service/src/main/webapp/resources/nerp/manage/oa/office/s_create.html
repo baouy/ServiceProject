@@ -1,0 +1,243 @@
+<script>
+    layui.define(['BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins','laydate'], function () {
+        var $ = layui.jquery,form = layui.form,laydate = layui.laydate,layer = layui.layer
+
+        form.render(null,'oa_office_form');
+        var taskId = oa_office_data.taskId
+        var oa_office_tag = oa_office_data.taskDefKey == 'deptLeaderAudit' ? 'deptLeaderPass' : 'hrPass'
+
+        switch (oa_office_data.taskDefKey) {
+            //领导审批
+            case 'deptLeaderAudit':
+                oa_office_tag = 'deptLeaderPass'
+                break;
+            //人事审批
+            case 'hrAudit':
+                oa_office_tag = 'hrPass'
+                $('#oa_office_remarks').attr("readonly", "true")
+                break;
+            //调整申请
+            case 'modifyApply':
+                oa_office_tag = 'reApply'
+                break;
+            //销假
+            case 'reportBack':
+                $('#oa_office_remarks').attr("readonly", "true")
+                break;
+        }
+
+        form.on('submit(oa_office_form)',function (data) {
+            var field = data.field
+            for (var n in field){
+                if (n == 'startTime' || n == 'endTime'){
+                    field[n] = new Date(field[n])
+                }
+            }
+            layer.load()
+            $.ajax({
+                url:$.cookie("tudou-oa-server") + "/manage/oaleave/save",
+                type:'post',
+                data:field,
+                success:function (da) {
+                    if(da.code==1){
+                        $('#oa_office_wait_table').datagrid('refresh');
+                        layer.closeAll();
+                        layer.ok("操作成功！")
+                    }else{
+                        layer.err(da.message)
+                    }
+                },error:function (e) {
+                    layer.closeAll('loading')
+                    layer.err('服务器异常，请联系开发人员!')
+                }
+            });
+            return false;
+        });
+
+        //创建
+        if (taskId == null) {
+            lay('.laydate').each(function(){
+                laydate.render({
+                    elem:this,
+                    trigger: 'click'
+                    ,type: 'datetime'
+                    , format: 'yyyy-MM-dd HH:mm:ss' //可任意组合
+                });
+            });
+            $('#oa_office_sure').html('保存')
+        }
+        //审批
+        else {
+            $('#oa_office_remarks_tr').fadeIn()
+            $('#oa_office_taskId').val(taskId)
+            $('#oa_office_processInstanceId').val(oa_office_data.procInsId)
+
+            $('#oa_office_leaveType').attr("disabled", "disabled")
+            $('#oa_office_startTime').attr("readonly", "true")
+            $('#oa_office_startTime').attr('data-toggle', "")
+            $('#oa_office_endTime').attr('data-toggle', "")
+            $('#oa_office_endTime').attr("readonly", "true")
+            $('#oa_office_reason').attr("readonly", "true")
+
+            $('#oa_office_create_img').attr('src', $.cookie("tudou-oa-server") + '/act/task/trace/photo/' + oa_office_data.procDefId + '/' + oa_office_data.executionId + "?t=" + new Date().getTime())
+
+            layer.load()
+            $.ajax({
+                url: $.cookie("tudou-oa-server") + '/manage/oaleave/detail',
+                dataType: 'json',
+                type: 'GET',
+                data: {
+                    'processInstanceId': oa_office_data.procInsId
+                },
+                success: function (d) {
+                    layer.closeAll('loading')
+                    if (d.code == 1) {
+                        for (var i in d.data) {
+                            switch (i) {
+                                case 'startTime':
+                                    $("#oa_office_" + i).val(zjoin.timetrans(d.data[i]))
+                                    break;
+                                case 'endTime':
+                                    $("#oa_office_" + i).val(zjoin.timetrans(d.data[i]))
+                                    break;
+                                case 'leaveType':
+                                    $("#oa_office_" + i).val(d.data[i]);
+                                    break;
+                                case 'reason':
+                                    $("#oa_office_" + i).val(d.data[i])
+                                    break;
+                                case 'remarks':
+                                    $("#oa_office_" + i).val(d.data[i])
+                                    break;
+                                case 'id':
+                                    $("#oa_office_" + i).val(d.data[i])
+                                    break;
+                            }
+                        }
+                        form.render(null, 'oa_office_form');
+                    }
+                },
+                error: function () {
+                    layer.closeAll('loading')
+                }
+            });
+
+            var oa_office_histoicflow_datagrid_data = {
+                local: 'remote',
+                dataUrl: $.cookie("tudou-oa-server") + '/act/task/histoicflow?ProcInsId=' + oa_office_data.procInsId,
+                dataType: 'json',
+                sortAll: false,
+                loadType: 'get',
+                filterThead: false,
+                height:'100%',
+                columns: [
+                    {width: '150', name: 'activityName', align: 'center', label: '执行环节'},
+                    {width: '150', name: 'assigneeName', align: 'center', label: '执行人'},
+                    {width: '150', name: 'startTime', align: 'center', label: '开始时间'},
+                    {width: '150', name: 'endTime', align: 'center', label: '结束时间'},
+                    {width: '150', name: 'comment', align: 'center', label: '提交意见'},
+                    {width: '150', name: 'durationTime', align: 'center', label: '任务历时'},
+                ],
+                paging: false,
+                fullGrid: true,
+            }
+
+            $('#oa_office_histoicflow_table').datagrid(oa_office_histoicflow_datagrid_data);
+
+            if (oa_office_data.status == 'finish') {
+                $('#oa_office_remarks').attr("readonly", "true")
+                $('#oa_office_cancel').fadeOut()
+                $('#oa_office_sure').fadeOut()
+            }
+        }
+
+        $(".layui-layer-btn0").bind('click',function (){
+            $('#oa_office_type').val(true)
+            $('#oa_office_tag').val(oa_office_tag)
+            $("#oa_office_save_btn").click();
+            return
+        });
+
+        $(".layui-layer-btn1").bind('click',function (){
+            if (taskId != null){
+                $('#oa_office_type').val(false)
+                $('#oa_office_tag').val(oa_office_tag)
+                $("#oa_office_save_btn").click();
+			}
+        });
+
+    })
+
+
+</script>
+
+<div class="bjui-pageContent">
+	<form class="layui-form" lay-filter="oa_office_form">
+
+		<input type="hidden" value="" name="type" id="oa_office_type">
+		<input type="hidden" value="" name="processInstanceId" id="oa_office_processInstanceId">
+		<input type="hidden" value="" name="taskId" id="oa_office_taskId">
+		<input type="hidden" value="" name="id" id="oa_office_id">
+		<input type="hidden" value="" name="tag" id="oa_office_tag">
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">请假类型：</label>
+			<div class="layui-input-inline">
+				<select name="leaveType" id="oa_office_leaveType" >
+					<option value="公休" selected="true">公休</option>
+					<option value="病假">病假</option>
+					<option value="事假">事假</option>
+					<option value="调休">调休</option>
+					<option value="婚假">婚假</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">开始时间：</label>
+			<div class="layui-input-inline">
+				<input type="text" name="startTime" id="oa_office_startTime" lay-verify="datetime"   class="layui-input laydate" value="">
+			</div>
+			<label class="layui-form-label">结束时间：</label>
+			<div class="layui-input-inline">
+				<input type="text" name="endTime" id="oa_office_endTime" lay-verify="datetime"   class="layui-input laydate" value="">
+			</div>
+		</div>
+		<div class="layui-form-item" style="padding-right: 20px;">
+			<label class="layui-form-label">请假原因：</label>
+			<div class="layui-input-block">
+				<textarea placeholder="请输入内容" class="layui-textarea" id="oa_office_reason" name="reason"></textarea>
+			</div>
+		</div>
+		<div id="oa_office_remarks_tr" class="layui-form-item" style="padding-right: 20px;display: none;">
+			<label class="layui-form-label">部门审批意见：</label>
+			<div class="layui-input-block">
+				<textarea placeholder="请输入内容" class="layui-textarea" id="oa_office_remarks" name="remarks"></textarea>
+			</div>
+		</div>
+		<button id="oa_office_save_btn" lay-submit="" class="layui-hide" lay-filter="oa_office_form">立即提交</button>
+	</form>
+
+	<img id="oa_office_create_img">
+
+	<div style="margin-top: 20px; height: 100%;">
+		<table id="oa_office_histoicflow_table" class="table table-hover"></table>
+	</div>
+
+
+</div>
+
+
+<!--<div class="bjui-pageFooter">-->
+	<!--<ul>-->
+		<!--<li>-->
+			<!--<button type="button" class="btn-close" data-icon="close">取消</button>-->
+		<!--</li>-->
+		<!--<li>-->
+			<!--<button id="oa_office_cancel" type="button" class="btn-orange" data-icon="undo" onclick="oa_office_rejected()" style="display: none;" >驳回</button>-->
+		<!--</li>-->
+		<!--<li>-->
+			<!--<button id="oa_office_sure" type="button" class="btn-green" data-icon="save" onclick="oa_office_s_onclick()">保存</button>-->
+		<!--</li>-->
+	<!--</ul>-->
+<!--</div>-->

@@ -1,0 +1,217 @@
+<style type="text/css">
+	.required {
+		color: red
+	}
+
+	.tr_h {
+		height: 40px;
+	}
+
+	.titleLabel {
+		height: 40px;
+	}
+
+	.titleLabel td label {
+		font-size: 18px;
+		color: #adadad
+	}
+
+</style>
+<script>
+        #set ($pk = '')
+        #foreach($i in $columns)
+            #if($i.isPk == 1)
+                #set ($pk = ${i.javaField})
+            #end
+        #end
+
+
+	if (${smodule}_id != null) {
+		$('#${smodule}_form_$pk').val(${smodule}_id)
+		$('#${smodule}_div_content').trigger('bjui.ajaxStart')
+		$.ajax({
+			url: $.cookie("tudou-${smodel}-server") + '/manage/${smodule}/detail',
+			dataType: 'json',
+			type: 'GET',
+			data: {
+				'$pk': ${smodule}_id
+			},
+			success: function (d) {
+				$('#${smodule}_div_content').trigger('bjui.ajaxStop')
+				if (d.code == 1) {
+					for (var i in d.data) {
+
+					}
+				}
+			},
+			error: function () {
+				$('#${smodule}_div_content').trigger('bjui.ajaxStop')
+			}
+		});
+	}
+
+	function ${smodule}_form_back(d) {
+		if (d.code == 1) {
+			$('#${smodule}_list_table').datagrid('refresh_part');
+			BJUI.dialog('closeCurrent', this);
+		} else {
+			$(this).alertmsg('warn', d.data);
+		}
+	}
+
+	function ${smodule}_save() {
+		#foreach($i in $columns)
+			#if($i.isEdit == 1)
+			#if($i.showType == "dateselect")
+				var time = $('#${smodule}_${i.javaField}_ts').val()
+				time = new Date(time)
+				$('#${smodule}_${i.javaField}').val(time)
+
+			#elseif($i.showType == "radiobox")
+				var radio = $('input:radio[name="${i.javaField}_ts"]:checked').val()
+				$('#${smodule}_${i.javaField}').val(radio)
+			#end
+			#end
+		#end
+
+		$('#${smodule}_form').submit();
+	}
+
+	$("#${smodule}_form").attr("action", $.cookie("tudou-${smodel}-server") + "/manage/${smodule}/save");
+
+	#foreach($i in $columns)
+		#if($i.isEdit == 1)
+		#if($i.showType == "checkbox")
+			$('#${smodule}_${i.javaField}_ts').on('ifChanged', function(event){
+				$('#${smodule}_${i.javaField}').val($(this).is(':checked'));
+				if ($(this).is(':checked')){
+				}else{
+				}
+			});
+
+		#elseif($i.showType == "select")
+			var selectpicker = $('#${smodule}_${i.javaField}')
+			selectpicker.append($("<option value=>请选择</option>"));
+			$.each($i.dictType, function(i, n) {
+				$.each(Object.keys(n), function(i, w) {
+					selectpicker.append($("<option value=" + w + ">" + n[w] + "</option>"));
+					selectpicker.selectpicker('refresh');
+				})
+			})
+
+		#elseif($i.showType == "fileselect")
+			function ${smodule}_upload_success(file, data) {
+				var json = $.parseJSON(data)
+				$(this).bjuiajax('ajaxDone', json)
+				if (json.state == 200) {
+					$('#${smodule}_${i.javaField}').val(json.content).trigger('validate')
+					$('#${smodule}_${i.javaField}_pic').html('<img src="'+ json.content +'" width="150"/>')
+				}
+			}
+		#end
+		#end
+	#end
+
+</script>
+
+<div id="${smodule}_div_content">
+	<div class="bjui-pageContent">
+		<form data-toggle="validate" data-callback="${smodule}_form_back" id="${smodule}_form">
+
+			<input type="hidden" value="" name="$pk" id="${smodule}_form_$pk">
+
+			<table class="table table-condensed table-bordered table-hover table-striped table-top bjui-tabledit"
+				   id="item_supplier_table"
+				   width="100%">
+				<tbody>
+
+                    #foreach($i in $columns)
+                        #if($i.isEdit == 1)
+						<label for="${smodule}_${i.javaField}" class="control-label x100">${i.comments}：</label>
+                            #if($i.showType == "input")
+							<tr class="tr_h">
+							<td>
+							<input type="text" name="${i.javaField}" id="${smodule}_${i.javaField}" value="" data-rule="required" size="15">
+
+                            #elseif($i.showType == "textarea")
+							<tr class="tr_h" style="height: 100px;">
+							<td>
+								<textarea id="${smodule}_${i.javaField}" name="${i.javaField}" cols="55" style="width: 465px;height: 78px;" rows="3" maxlength="500"></textarea>
+
+                            #elseif($i.showType == "select")
+							<tr class="tr_h">
+							<td>
+								<select name="${i.javaField}" id="${smodule}_${i.javaField}" data-toggle="selectpicker"
+										data-rule="required" data-width="150">
+								</select>
+
+                            #elseif($i.showType == "radiobox")
+							<tr class="tr_h">
+							<td>
+								<input type="hidden" value="" name="${i.javaField}" id="${smodule}_${i.javaField}">
+								<input type="radio" name="${i.javaField}_ts" id="${smodule}_${i.javaField}1" data-toggle="icheck" value="true"
+									   data-label="是&nbsp;&nbsp;" >
+								<input type="radio" name="${i.javaField}_ts" id="${smodule}_${i.javaField}2" data-toggle="icheck" value="false"
+									   data-label="否" checked>
+
+                            #elseif($i.showType == "checkbox")
+							<tr class="tr_h">
+							<td>
+								<input type="hidden" value="" name="${i.javaField}" id="${smodule}_${i.javaField}">
+								<input type="checkbox" id="${smodule}_${i.javaField}_ts" data-toggle="icheck"  value="true" data-label="">
+
+                            #elseif($i.showType == "dateselect")
+							<tr class="tr_h">
+							<td>
+								<input type="hidden" value="" name="${i.javaField}" id="${smodule}_${i.javaField}"
+								<input type="text" id="${smodule}_${i.javaField}_ts" value="" data-toggle="datepicker"
+									   data-pattern="yyyy-MM-dd HH:mm:ss" data-min-date="{%y}-%M-%d" size="15"
+									   data-rule="required;datetime">
+
+                            #elseif($i.showType == "userselect")
+
+                            #elseif($i.showType == "officeselect")
+
+                            #elseif($i.showType == "treeselect")
+
+                            #elseif($i.showType == "fileselect")
+							<tr class="tr_h">
+							<td>
+								<div style="display: inline-block; vertical-align: middle;">
+									<div id="${smodule}_${i.javaField}_up" data-toggle="upload" data-uploader="/v1/newitem/fileupload"
+										 data-file-size-limit="1024000000"
+										 data-file-type-exts="*.jpg;*.png;*.gif;*.mpg"
+										 data-multi="false"
+										 data-on-upload-success="${smodule}_upload_success"
+										 data-icon="cloud-upload"></div>
+									<input type="hidden" name="${i.javaField}" value="" id="${smodule}_${i.javaField}">
+									<span id="${smodule}_${i.javaField}_pic"></span>
+								</div>
+
+                            #end
+
+						</td>
+						</tr>
+
+                        #end
+                    #end
+
+				</tbody>
+			</table>
+		</form>
+	</div>
+
+
+	<div class="bjui-pageFooter">
+		<ul>
+			<li>
+				<button type="button" class="btn-close" data-icon="close">取消</button>
+			</li>
+			<li>
+				<button id="oa_office_sure" type="button" class="btn-green" data-icon="save"
+						onclick="${smodule}_save()">保存
+				</button>
+			</li>
+		</ul>
+	</div>
+</div>

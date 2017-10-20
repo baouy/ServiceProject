@@ -135,9 +135,7 @@ public class ActProcessController extends BaseController {
 	@RequestMapping(value = "/deploy", method=RequestMethod.POST)
 	@ResponseBody
 	public Object deploy(String category, MultipartFile file) {
-
 		int num = actProcessService.deploy(category, file);
-
 		if (num == 0){
 			return new OaResult(OaResultConstant.FAILED,"部署失败");
 		}else if(num == 2){

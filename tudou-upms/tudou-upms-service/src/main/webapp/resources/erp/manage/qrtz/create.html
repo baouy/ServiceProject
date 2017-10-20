@@ -1,0 +1,217 @@
+<style type="text/css">
+	.required {
+		color: red
+	}
+
+	.tr_h {
+		height: 35px;
+	}
+
+	.titleLabel {
+		height: 40px;
+	}
+
+	.titleLabel td label {
+		font-size: 18px;
+		color: #adadad
+	}
+
+
+</style>
+<script>
+
+    if (qrtz_id != null) {
+        $('#qrtz_form_id').val(qrtz_id)
+        $('#qrtz_div_content').trigger('bjui.ajaxStart')
+		$('#qrtz_jobName').attr("readonly","true");
+        $('#qrtz_jobGroup').attr("readonly","true");
+
+        $.ajax({
+            url: $.cookie("tudou-qrtz-server") + '/manage/qrtz/detail',
+            dataType: 'json',
+            type: 'GET',
+            data: {
+                'jobName': qrtz_jobname,
+				'jobGroup':qrtz_jobgroup
+            },
+            success: function (d) {
+                $('#qrtz_div_content').trigger('bjui.ajaxStop')
+                if (d.code == 1) {
+                    for (var i in d.data){
+                        $("#qrtz_" + i).val(d.data[i]);
+                        if (i == 'repeatType' || i == 'triggerType'){
+                            $("#qrtz_" + i).selectpicker('val', d.data[i]);
+						}else if (i == 'startTime' || i == 'endTime'){
+                            $('#qrtz_' + i + '_ts').val(timetrans(d.data[i]))
+                        }
+                    }
+                }
+            },
+            error: function () {
+                $('#qrtz_div_content').trigger('bjui.ajaxStop')
+            }
+        });
+    }
+
+    function qrtz_form_back(d) {
+        if (d.code == 1) {
+            $('#qrtz_scheduler_list_table').datagrid('refresh_part');
+            BJUI.dialog('closeCurrent', this);
+        } else {
+            $(this).alertmsg('warn', d.data);
+        }
+    }
+
+    function qrtz_save() {
+        var stime = $('#qrtz_startTime_ts').val()
+        stime = new Date(stime)
+        $('#qrtz_startTime').val(stime)
+
+        var etime = $('#qrtz_endTime_ts').val()
+        etime = new Date(etime)
+        $('#qrtz_endTime').val(etime)
+
+        $('#qrtz_form').submit();
+    }
+
+    $("#qrtz_form").attr("action", $.cookie("tudou-qrtz-server") + "/manage/qrtz/save");
+
+//    var selectpicker = $('#qrtz_type')
+//    selectpicker.append($("<option value=>请选择</option>"));
+//    $.each(notify_type_dic, function (i, n) {
+//        $.each(Object.keys(n), function (i, w) {
+//            selectpicker.append($("<option value=" + w + ">" + n[w] + "</option>"));
+//            selectpicker.selectpicker('refresh');
+//        })
+//    })
+
+</script>
+
+<div id="qrtz_div_content">
+	<div class="bjui-pageContent">
+		<form data-toggle="validate" data-callback="qrtz_form_back" id="qrtz_form">
+
+			<input type="hidden" value="" name="id" id="qrtz_form_id">
+
+			<table class="table table-condensed table-bordered table-hover table-striped table-top bjui-tabledit"
+				   id="item_supplier_table"
+				   width="100%">
+				<tbody>
+				<tr>
+					<label>1. (Cron)为CronTrigger的配置项，(Simple)为SimpleTrigger的配置项，(Simple/Cron)为CronTrigger/SimpleTrigger的共有配置项目;</label>
+				</tr>
+				<tr>
+					<label>2. 重复类型、时间间隔与选择的重复类型有关，具体的配置属性，请参照quartz的相关配置文档</label>
+				</tr>
+				<tr>
+					<label>3. SimpleTrigger为配置项,重复类型为(repeatHourlyForTotalCount-repeatMinutelyForTotalCount-repeatSecondlyForTotalCount)需填写重复次数，其他的类型默认为-1</label>
+				</tr>
+				<tr class="tr_h">
+					<td>
+						<label for="qrtz_jobName" class="control-label x150 required">任务名称*：</label>
+						<input type="text" name="jobName" id="qrtz_jobName" value="" data-rule="required" size="25">
+					</td>
+					<td>
+						<label for="qrtz_jobGroup" class="control-label x150 required">任务组*：</label>
+						<input type="text" name="jobGroup" id="qrtz_jobGroup" value="" data-rule="required" size="25">
+					</td>
+				</tr>
+				<tr class="tr_h">
+					<td>
+						<label for="qrtz_triggerName" class="control-label x150 required">trigger名称*：</label>
+						<input type="text" name="triggerName" id="qrtz_triggerName" value="" data-rule="required" size="25">
+					</td>
+					<td>
+						<label for="qrtz_triggerGroup" class="control-label x150 required">trigger组*：</label>
+						<input type="text" name="triggerGroup" id="qrtz_triggerGroup" value="" data-rule="required" size="25">
+					</td>
+				</tr>
+				<tr class="tr_h">
+					<td>
+						<label for="qrtz_triggerName" class="control-label x150">任务状态：</label>
+						<input type="text" name="jobStatus" id="qrtz_jobStatus" value="" readonly="true" size="25">
+					</td>
+					<td>
+						<label for="qrtz_triggerType" class="control-label x150 required">trigger类型*：</label>
+						<select name="triggerType" id="qrtz_triggerType" data-toggle="selectpicker"
+								data-rule="required" data-width="250">
+							<option value="SimpleTrigger">SimpleTrigger</option>
+							<option value="CronTrigger">CronTrigger</option>
+						</select>
+					</td>
+				</tr>
+				<tr class="tr_h">
+					<td>
+						<label for="qrtz_cronExpression" class="control-label x150 required">Cron表达式(Cron)：</label>
+						<input type="text" name="cronExpression" id="qrtz_cronExpression" value="" size="25">
+					</td>
+					<td>
+						<label for="qrtz_startTime" class="control-label x150 required">开始时间(Simple/Cron)*：</label>
+						<input type="hidden" value="" name="startTime" id="qrtz_startTime">
+						<input type="text" id="qrtz_startTime_ts" value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" data-min-date="{%y}-%M-%d" size="25" data-rule="required;datetime">
+					</td>
+				</tr>
+				<tr class="tr_h">
+					<td>
+						<label for="qrtz_endTime" class="control-label x150">结束时间(Simple/Cron)：</label>
+						<input type="hidden" value="" name="endTime" id="qrtz_endTime">
+						<input type="text" id="qrtz_endTime_ts" value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" data-min-date="{%y}-%M-%d" size="25">
+					</td>
+					<td>
+						<label for="qrtz_repeatType" class="control-label x150">重复类型：</label>
+						<select name="repeatType" id="qrtz_repeatType" data-toggle="selectpicker" data-width="250">
+							<option></option>
+							<option value="repeatForever">repeatForever</option>
+							<option value="repeatHourlyForever">repeatHourlyForever</option>
+							<option value="repeatMinutelyForever">repeatMinutelyForever</option>
+							<option value="repeatSecondlyForever">repeatSecondlyForever</option>
+							<option value="repeatHourlyForTotalCount">repeatHourlyForTotalCount</option>
+							<option value="repeatMinutelyForTotalCount">repeatMinutelyForTotalCount</option>
+							<option value="repeatSecondlyForTotalCount">repeatSecondlyForTotalCount</option>
+						</select>
+					</td>
+				</tr>
+				<tr class="tr_h">
+					<td>
+						<label for="qrtz_repeatCount" class="control-label x150">重复次数：</label>
+						<input type="text" name="repeatCount" id="qrtz_repeatCount" value="" size="25">
+					</td>
+					<td>
+						<label for="qrtz_repeatInterval" class="control-label x150">时间间隔：</label>
+						<input type="text" id="qrtz_repeatInterval" name="repeatInterval" value="" size="15">
+						<select data-toggle="selectpicker" name="repeatUnit" id="qrtz_repeatUnit" data-width="95">
+							<option value="hour">hour</option>
+							<option value="minute">minute</option>
+							<option value="second">second</option>
+						</select>
+					</td>
+				</tr>
+				<tr class="tr_h">
+					<td>
+						<label for="qrtz_jobClass" class="control-label x150 required">执行类名*：</label>
+						<input type="text" name="jobClass" id="qrtz_jobClass" value="" data-rule="required" size="25">
+					</td>
+					<td>
+						<label for="qrtz_desc" class="control-label x150">说明：</label>
+						<input type="text" name="desc" id="qrtz_desc" value="" data-rule="required" size="25">
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+
+
+	<div class="bjui-pageFooter">
+		<ul>
+			<li>
+				<button type="button" class="btn-close" data-icon="close">取消</button>
+			</li>
+			<li>
+				<button id="qrtz_office_sure" type="button" class="btn-green" data-icon="save"
+						onclick="qrtz_save()">保存
+				</button>
+			</li>
+		</ul>
+	</div>
+</div>

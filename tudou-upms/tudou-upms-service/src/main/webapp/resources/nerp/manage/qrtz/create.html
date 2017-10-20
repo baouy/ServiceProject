@@ -1,0 +1,197 @@
+<script>
+    layui.define(['laydate','jquery'], function () {
+        var $ = layui.jquery,form = layui.form,laydate = layui.laydate,layer = layui.layer
+
+        form.render(null,'qrtz_save_form')
+        lay('.laydate').each(function(){
+            laydate.render({
+                elem:this,
+                trigger: 'click'
+                ,type: 'datetime'
+                , format: 'yyyy-MM-dd HH:mm:ss' //可任意组合
+            });
+        });
+
+        if (qrtz_selected != null) {
+            $('#qrtz_form_id').val(qrtz_selected[0].jobId)
+            $('#qrtz_jobName').attr("readonly", "true");
+            $('#qrtz_jobGroup').attr("readonly", "true");
+            layer.load()
+            $.ajax({
+                url: $.cookie("tudou-qrtz-server") + '/manage/qrtz/detail',
+                dataType: 'json',
+                type: 'GET',
+                data: {
+                    'jobName': qrtz_selected[0].jobName,
+                    'jobGroup': qrtz_selected[0].jobGroup
+                },
+                success: function (d) {
+                    layer.closeAll('loading')
+                    if (d.code == 1) {
+                        for (var i in d.data) {
+                            $("#qrtz_" + i).val(d.data[i])
+							if (i == 'startTime' || i == 'endTime') {
+                                $('#qrtz_' + i).val(zjoin.timetrans(d.data[i]))
+                            }
+                        }
+                        form.render(null,'qrtz_save_form')
+                    }
+                },
+                error: function () {
+                    layer.closeAll('loading')
+                }
+            });
+        }
+
+        $(".layui-layer-btn0").bind('click',function (){
+            $("#qrtz_save_btn").click();
+            return
+        });
+
+        form.on('submit(qrtz_save_form)',function (data) {
+            var field = data.field
+            for (var n in field){
+                if (n == 'startTime' || n == 'endTime'){
+                    field[n] = new Date(field[n])
+                }
+            }
+            layer.load()
+            $.ajax({
+                url: $.cookie("tudou-gen-server") + '/manage/qrtz/save',
+                dataType: 'json',
+                type: 'post',
+                data: field,
+                success: function (d) {
+                    layer.closeAll('loading')
+                    if (d.code == 1) {
+                        $('#qrtz_scheduler_list_table').datagrid('refresh_part');
+                        layer.closeAll();
+                        layer.ok("提交成功!");
+                    } else {
+                        layer.warn(d.data);
+                    }
+                }, error: function (d) {
+                    layer.closeAll('loading')
+                    layer.warn("加载失败,请联系管理员!");
+                }})
+            return false;
+        })
+
+    })
+
+</script>
+
+	<div class="bjui-pageContent">
+		<form class="layui-form" lay-filter="qrtz_save_form">
+
+			<input type="hidden" value="" name="id" id="qrtz_form_id">
+				<div class="layui-form-mid layui-word-aux" style="font-size: 10px">1. (Cron)为CronTrigger的配置项，(Simple)为SimpleTrigger的配置项，(Simple/Cron)为CronTrigger/SimpleTrigger的共有配置项目;</div>
+				<div class="layui-form-mid layui-word-aux" style="font-size: 10px">2. 重复类型、时间间隔与选择的重复类型有关，具体的配置属性，请参照quartz的相关配置文档</div>
+			<div class="layui-form-mid layui-word-aux" style="font-size: 10px">3. SimpleTrigger为配置项,重复类型为(repeatHourlyForTotalCount-repeatMinutelyForTotalCount-repeatSecondlyForTotalCount)需填写重复次数，其他的类型默认为-1</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">任务名称*：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="jobName" id="qrtz_jobName" lay-verify="required" autocomplete="off" class="layui-input" value="">
+				</div>
+
+				<label class="layui-form-label">任务组*：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="jobGroup" id="qrtz_jobGroup" lay-verify="required" autocomplete="off" class="layui-input" value="">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">trigger名称*：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="triggerName" id="qrtz_triggerName" lay-verify="required" autocomplete="off" class="layui-input" value="">
+				</div>
+
+				<label class="layui-form-label">trigger组*：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="triggerGroup" id="qrtz_triggerGroup" lay-verify="required" autocomplete="off" class="layui-input" value="">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">任务状态*：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="jobStatus" id="qrtz_jobStatus" lay-verify="required" autocomplete="off" class="layui-input" value="">
+				</div>
+
+				<label class="layui-form-label">trigger类型*：</label>
+				<div class="layui-input-inline">
+					<select name="triggerType" id="qrtz_triggerType" lay-verify="required">
+						<option value="SimpleTrigger">SimpleTrigger</option>
+						<option value="CronTrigger">CronTrigger</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">Cron表达式(Cron)：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="cronExpression" id="qrtz_cronExpression" autocomplete="off" class="layui-input" value="">
+				</div>
+
+				<label class="layui-form-label">开始时间(Simple/Cron)*：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="startTime" id="qrtz_startTime" lay-verify="required;datetime"   class="layui-input laydate" value="">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">结束时间(Simple/Cron)：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="endTime" id="qrtz_endTime" lay-verify="datetime"   class="layui-input laydate" value="">
+				</div>
+
+				<label class="layui-form-label">重复类型*：</label>
+				<div class="layui-input-inline">
+					<select name="repeatType" id="qrtz_repeatType">
+						<option></option>
+						<option value="repeatForever">repeatForever</option>
+						<option value="repeatHourlyForever">repeatHourlyForever</option>
+						<option value="repeatMinutelyForever">repeatMinutelyForever</option>
+						<option value="repeatSecondlyForever">repeatSecondlyForever</option>
+						<option value="repeatHourlyForTotalCount">repeatHourlyForTotalCount</option>
+						<option value="repeatMinutelyForTotalCount">repeatMinutelyForTotalCount</option>
+						<option value="repeatSecondlyForTotalCount">repeatSecondlyForTotalCount</option>
+					</select>
+				</div>
+
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">重复次数：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="repeatCount" id="qrtz_repeatCount" autocomplete="off" class="layui-input" value="">
+				</div>
+
+				<label class="layui-form-label">时间间隔：</label>
+				<div class="layui-input-inline">
+					<select name="repeatInterval" id="qrtz_repeatInterval" >
+						<option value="hour">hour</option>
+						<option value="minute">minute</option>
+						<option value="second">second</option>
+					</select>
+				</div>
+
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">执行类名*：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="jobClass" id="qrtz_jobClass" lay-verify="required" autocomplete="off" class="layui-input" value="">
+				</div>
+				<label class="layui-form-label">说明：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="desc" id="qrtz_desc" autocomplete="off" class="layui-input" value="">
+				</div>
+			</div>
+			<button id="qrtz_save_btn" lay-submit="" class="layui-hide" lay-filter="qrtz_save_form">
+				立即提交
+			</button>
+		</form>
+
+</div>

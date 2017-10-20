@@ -1,0 +1,175 @@
+<script type="text/javascript">
+    layui.define(['form','layedit','laydate'],function () {
+        var $ = layui.jquery, form = layui.form,layedit=layui.layedit,laydate= layui.laydate;
+        var ${smodule}_Eidtor;
+		#set ($pk = '')
+		#foreach($i in $columns)
+			#if($i.isPk == 1)
+				#set ($pk = ${i.javaField})
+			#end
+		#end
+
+        var selected = $('#${smodule}_list_table').data('selectedDatas');
+        var ${smodule}_id;
+        if (selected && selected.length > 0) {${smodule}_id = selected[0].id;}
+        if (${smodule}_id != null) {
+            $('#${smodule}_form_$pk').val(${smodule}_id);
+            layer.load();
+            $.ajax({
+                url: $.cookie("tudou-${smodel}-server") + '/manage/${smodule}/detail',
+                dataType: 'json',
+                type: 'POST',
+                data: {'$pk': ${smodule}_id},
+                success: function (d) {
+                    if (d.code == 1) {
+                        var cl = layer.current();
+                        for(var x in d.data)  cl.find('#${smodule}_'+x).val(d.data[x]);
+                    #foreach($i in $columns)
+                        #if($i.isEdit == 1)
+                            #if($i.showType == "fileselect")
+                                if(d.data['${i.javaField}'])$('#${smodule}_${i.javaField}_up').attr('src',d.data['${i.javaField}']);
+                            #elseif($i.showType == "radiobox")
+                                cl.find(":radio[name='${i.javaField}'][value="+d.data['${i.javaField}']+"]").attr("checked", "true");
+                            #elseif($i.showType == "checkbox")
+                                if(d.data['${i.javaField}']){
+                                    var arr = d.data['${i.javaField}'].split(',');
+                                    for(var x in arr){
+                                        cl.find(":checkbox[name='${i.javaField}'][value="+x+"]").attr("checked", "true");
+                                    }
+                                }
+                            #elseif($i.showType == "textarea")
+                                $('#${smodule}_${i.javaField}').html(d.data['${i.javaField}']);
+                                ${smodule}_Eidtor = layedit.build('${smodule}_${i.javaField}');
+                            #end
+                        #end
+                    #end
+                    }
+                    form.render();
+                    layer.closeAll('loading');
+                },
+                error: function () {
+                    layer.closeAll('loading');
+                }
+            });
+        }
+
+        $(".layui-layer-btn0").bind('click',function () {
+            if(${smodule}_Eidtor) layedit.sync(${smodule}_Eidtor);
+            $("#${smodule}_form_save_btn").click();
+        });
+
+        form.on('submit(${smodule}_form_submit)',function (data) {
+
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+            $.ajax({
+                url:$.cookie("tudou-${smodel}-server") + "/manage/${smodule}/save",
+                type:'post',
+                data:data.field,
+                success:function (d) {
+                    if(d.code==1){
+                        $('#${smodule}_list_table').datagrid('refresh_part');
+                        layer.closeCurrent();
+                    }else {
+                        layer.warn( d.data);
+                    }
+                }
+            })
+            return false;
+        });
+
+		#foreach($i in $columns)
+			#if($i.isEdit == 1)
+				#if($i.showType == "checkbox")
+                    var checkbox = $('#${smodule}_${i.javaField}_box');
+                    $.each($i.dictType, function (i, n) {
+                        $.each(Object.keys(n), function (i, w) {
+                            checkbox.append($('<input type="checkbox" name="${i.javaField}" value="'+ w + '" title='+ n[w] + '>'));
+                        })
+                    });
+				#elseif($i.showType == "select")
+                    var selectpicker = $('#${smodule}_${i.javaField}');
+                    selectpicker.append($("<option value=>请选择</option>"));
+                    $.each($i.dictType, function (i, n) {
+                        $.each(Object.keys(n), function (i, w) {
+                            selectpicker.append($("<option value=" + w + ">" + n[w] + "</option>"));
+                        })
+                    });
+                #elseif($i.showType == "textarea")
+                    ${smodule}_Eidtor = layedit.build('${smodule}_${i.javaField}');
+                #elseif($i.showType == "dateselect")
+                    laydate.render({
+                        elem: '#${smodule}_${i.javaField}'
+                        ,format: 'yyyy-MM-dd'
+                    });
+				#elseif($i.showType == "fileselect")
+                    zjoin.set({image: $("#${smodule}_${i.javaField}_up"), input: $("#${smodule}_${i.javaField}")});
+				#end
+			#end
+		#end
+        form.render(null,'${smodule}_form');
+    });
+</script>
+
+	<div class="bjui-pageContent">
+		<form class="layui-form" lay-filter="${smodule}_form" id="${smodule}_form">
+			<input type="hidden" value="" name="$pk" id="${smodule}_$pk">
+    #foreach($i in $columns)
+        #if($i.isEdit == 1)
+        <div class="layui-form-item">
+            <label for="${smodule}_${i.javaField}" class="layui-form-label">${i.comments}：</label>
+            #if($i.showType == "input")
+            <div class="layui-input-inline">
+                <input type="text" name="${i.javaField}" id="${smodule}_${i.javaField}" lay-verify="required" class="layui-input" value="">
+            </div>
+            #elseif($i.showType == "textarea")
+            <div class="layui-input-block" style="width: 85%" >
+                <textarea id="${smodule}_${i.javaField}" name="${i.javaField}" ></textarea>
+            </div>
+            #elseif($i.showType == "select")
+            <div class="layui-input-inline">
+                <select name="${i.javaField}" id="${smodule}_${i.javaField}" ></select>
+            </div>
+            #elseif($i.showType == "radiobox")
+            <div class="layui-input-block">
+                <input type="radio" name="${i.javaField}" id="${smodule}_${i.javaField}1" value="true" title="是" >
+                <input type="radio" name="${i.javaField}" id="${smodule}_${i.javaField}2" value="false" title="否" checked ="">
+            </div>
+            #elseif($i.showType == "checkbox")
+            <div class="layui-input-block" id="${smodule}_${i.javaField}_box">
+            </div>
+            #elseif($i.showType == "dateselect")
+            <div class="layui-input-inline">
+                <input type="text" id="${smodule}_${i.javaField}" name="${i.javaField}" value="" lay-verify="date" class="layui-input">
+            </div>
+            #elseif($i.showType == "userselect")
+            #elseif($i.showType == "officeselect")
+            #elseif($i.showType == "treeselect")
+            #elseif($i.showType == "fileselect")
+            <div class="layui-input-inline">
+                <img id="${smodule}_${i.javaField}_up" src="/resources/nerp/layui/images/default-cover.png"  class="zjoin-upload" />
+                <input type="hidden" name="${i.javaField}" value="" id="${smodule}_${i.javaField}">
+                </div>
+            #end
+            </div>
+        #end
+    #end
+            <button id="${smodule}_form_save_btn" lay-submit="" class="layui-hide" lay-filter="${smodule}_form_submit"></button>
+		</form>
+	</div>
+
+
+	#*<div class="bjui-pageFooter">
+		<ul>
+			<li>
+				<button type="button" class="btn-close" data-icon="close">取消</button>
+			</li>
+			<li>
+				<button id="oa_office_sure" type="button" class="btn-green" data-icon="save"
+						onclick="${smodule}_save()">保存
+				</button>
+			</li>
+		</ul>
+	</div>*#

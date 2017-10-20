@@ -1,8 +1,10 @@
 package com.tudou.upms.server.controller;
 import com.tudou.common.util.MD5Util;
+import com.tudou.common.util.PropertiesFileUtil;
 import com.tudou.common.util.RedisUtil;
 import com.tudou.upms.client.shiro.session.UpmsSession;
 import com.tudou.upms.client.shiro.session.UpmsSessionDao;
+import com.tudou.upms.client.util.SerializableUtil;
 import com.tudou.upms.common.constant.UpmsResult;
 import com.tudou.upms.common.constant.UpmsResultConstant;
 import com.tudou.upms.dao.model.UpmsSystemExample;
@@ -55,6 +57,8 @@ public class SSOController {
 	private final static String TUDOU_UPMS_SERVER_SESSION_IDS = "tudou-upms-server-session-ids";
 	// code key
 	private final static String TUDOU_UPMS_SERVER_CODE = "tudou-upms-server-code";
+
+	private final static String TUDOU_UPMS_SHIRO_SESSION_ID = "tudou-upms-shiro-session-id";
 
 	@Autowired
 	UpmsSessionDao upmsSessionDao;
@@ -132,6 +136,7 @@ public class SSOController {
 			UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(ssoLoginValid.getUsername(), ssoLoginValid.getPassword());
 			try {
 				usernamePasswordToken.setRememberMe(ssoLoginValid.getRememberMe());
+				usernamePasswordToken.setHost(session.getHost());
 				subject.login(usernamePasswordToken);
 			} catch (UnknownAccountException e) {
 				return new UpmsResult(UpmsResultConstant.INVALID_USERNAME, "帐号不存在！");
@@ -146,13 +151,18 @@ public class SSOController {
 			RedisUtil.lpush(TUDOU_UPMS_SERVER_SESSION_IDS, sessionId.toString());
 			// 默认验证帐号密码正确，创建code
 			String code = UUID.randomUUID().toString();
+
+			int seconds = ssoLoginValid.getRememberMe() ? Integer.valueOf(PropertiesFileUtil.getInstance("tudou-upms-client").get("tudou.upms.rememberMe.timeout")):Integer.valueOf(PropertiesFileUtil.getInstance("tudou-upms-client").get("tudou.upms.session.timeout"))/1000;
+
+			// 全局会话的code
+			RedisUtil.set(TUDOU_UPMS_SERVER_SESSION_ID + "_" + sessionId, code, seconds);
+
 			// 全局会话的code
 			RedisUtil.set(TUDOU_UPMS_SERVER_SESSION_ID + "_" + sessionId, code, (int) subject.getSession().getTimeout() / 1000);
 			// code校验值
 			RedisUtil.set(TUDOU_UPMS_SERVER_CODE + "_" + code, code, (int) subject.getSession().getTimeout() / 1000);
 		}
-
-		return new UpmsResult(UpmsResultConstant.SUCCESS, null);
+		return new UpmsResult(UpmsResultConstant.SUCCESS, subject.getSession().getTimeout());
 	}
 
 	@ApiOperation(value = "修改密码")

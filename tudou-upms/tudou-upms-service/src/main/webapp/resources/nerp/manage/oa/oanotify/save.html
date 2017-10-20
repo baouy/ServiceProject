@@ -1,0 +1,130 @@
+<script type="text/javascript">
+    layui.define(['form','layedit','laydate'],function () {
+        var $ = layui.jquery, form = layui.form,layedit=layui.layedit,laydate= layui.laydate;
+        var oanotify_Eidtor;
+																																																																			
+        var selected = $('#oanotify_list_table').data('selectedDatas');
+        var oanotify_id;
+        if (selected && selected.length > 0) {oanotify_id = selected[0].id;}
+        if (oanotify_id != null) {
+            $('#oanotify_form_id').val(oanotify_id);
+            layer.load();
+            $.ajax({
+                url: $.cookie("tudou-oa-server") + '/manage/oanotify/detail',
+                dataType: 'json',
+                type: 'POST',
+                data: {'id': oanotify_id},
+                success: function (d) {
+                    if (d.code == 1) {
+                        var cl = layer.current();
+                        for(var x in d.data)  cl.find('#oanotify_'+x).val(d.data[x]);
+                                                                                                                                                                                                                                                                                                                                                    $('#oanotify_content').html(d.data['content']);
+                                oanotify_Eidtor = layedit.build('oanotify_content');
+                                                                                                                                                            if(d.data['files'])$('#oanotify_files_up').attr('src',d.data['files']);
+                                                                                                                                                            if(d.data['status']){
+                                    var arr = d.data['status'].split(',');
+                                    for(var x in arr){
+                                        cl.find(":checkbox[name='status'][value="+x+"]").attr("checked", "true");
+                                    }
+                                }
+                                                                                                                                                                                                                                                                                                                                                                                                                        }
+                    form.render();
+                    layer.closeAll('loading');
+                },
+                error: function () {
+                    layer.closeAll('loading');
+                }
+            });
+        }
+
+        $(".layui-layer-btn0").bind('click',function () {
+            if(oanotify_Eidtor) layedit.sync(oanotify_Eidtor);
+            $("#oanotify_form_save_btn").click();
+        });
+
+        form.on('submit(oanotify_form_submit)',function (data) {
+
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+            $.ajax({
+                url:$.cookie("tudou-oa-server") + "/manage/oanotify/save",
+                type:'post',
+                data:data.field,
+                success:function (d) {
+                    if(d.code==1){
+                        $('#oanotify_list_table').datagrid('refresh_part');
+                        layer.closeCurrent();
+                    }else {
+                        layer.warn( d.data);
+                    }
+                }
+            })
+            return false;
+        });
+
+														                    var selectpicker = $('#oanotify_type');
+                    selectpicker.append($("<option value=>请选择</option>"));
+                    $.each(notify_type_dic, function (i, n) {
+                        $.each(Object.keys(n), function (i, w) {
+                            selectpicker.append($("<option value=" + w + ">" + n[w] + "</option>"));
+                        })
+                    });
+                																								                    oanotify_Eidtor = layedit.build('oanotify_content');
+                												                    zjoin.set({image: $("#oanotify_files_up"), input: $("#oanotify_files")});
+																                    var checkbox = $('#oanotify_status_box');
+                    $.each(notify_type_dic, function (i, n) {
+                        $.each(Object.keys(n), function (i, w) {
+                            checkbox.append($('<input type="checkbox" name="status" value="'+ w + '" title='+ n[w] + '>'));
+                        })
+                    });
+																																														        form.render(null,'oanotify_form');
+    });
+</script>
+
+	<div class="bjui-pageContent">
+		<form class="layui-form" lay-filter="oanotify_form" id="oanotify_form">
+			<input type="hidden" value="" name="id" id="oanotify_id">
+                                <div class="layui-form-item">
+            <label for="oanotify_type" class="layui-form-label">类型：</label>
+                        <div class="layui-input-inline">
+                <select name="type" id="oanotify_type" ></select>
+            </div>
+                        </div>
+                            <div class="layui-form-item">
+            <label for="oanotify_title" class="layui-form-label">标题：</label>
+                        <div class="layui-input-inline">
+                <input type="text" name="title" id="oanotify_title" lay-verify="required" class="layui-input" value="">
+            </div>
+                        </div>
+                            <div class="layui-form-item">
+            <label for="oanotify_content" class="layui-form-label">内容：</label>
+                        <div class="layui-input-block" style="width: 85%" >
+                <textarea id="oanotify_content" name="content" ></textarea>
+            </div>
+                        </div>
+                            <div class="layui-form-item">
+            <label for="oanotify_files" class="layui-form-label">附件：</label>
+                        <div class="layui-input-inline">
+                <img id="oanotify_files_up" src="/resources/nerp/layui/images/default-cover.png"  class="zjoin-upload" />
+                <input type="hidden" name="files" value="" id="oanotify_files">
+                </div>
+                        </div>
+                            <div class="layui-form-item">
+            <label for="oanotify_status" class="layui-form-label">状态：</label>
+                        <div class="layui-input-block" id="oanotify_status_box">
+            </div>
+                        </div>
+                                                                            <div class="layui-form-item">
+            <label for="oanotify_remarks" class="layui-form-label">备注信息：</label>
+                        <div class="layui-input-inline">
+                <input type="text" name="remarks" id="oanotify_remarks" lay-verify="required" class="layui-input" value="">
+            </div>
+                        </div>
+                                    <button id="oanotify_form_save_btn" lay-submit="" class="layui-hide" lay-filter="oanotify_form_submit"></button>
+		</form>
+	</div>
+
+
+	

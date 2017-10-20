@@ -1,0 +1,103 @@
+<script type="text/javascript">
+	layui.define(['jquery', 'BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins'], function () {
+		var $ = layui.jquery;
+		var gen_btn = ''
+		var toolbarGen_btn = ''
+		for (var data of user_data) {
+			var value = data.permissionValue;
+			switch (value) {
+				case 'gen:table:create':
+					toolbarGen_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" w="1500" h="700" style="margin-left: 5px;" onclick="act_gen_create_onclick(this)" >' + '<i class="' + data.icon + '"></i>&nbsp;' + data.name + ' </button>'
+					break;
+				case 'gen:table:update':
+					toolbarGen_btn += '<button type="button" id="gen_edit_btn" name=' + data.name + ' url=' + data.uri + ' class="btn btn-green" w="1500" h="700"  style="margin-left: 5px;" onclick="act_gen_update_onclick(this)" >' + '<i class="' + data.icon + '"></i>&nbsp;' + data.name + ' </button>'
+					break;
+				case 'gen:table:delete':
+					gen_btn += 'del,'
+					break;
+			}
+		}
+
+		var gen_datagrid_data = {
+			local: 'remote',
+			dataUrl: $.cookie("tudou-gen-server") + '/manage/gentable/list',
+			dataType: 'json',
+			sortAll: false,
+			loadType: 'get',
+			filterAll: true,
+			height: '100%',
+			columns: [{name: 'name', width: '150', align: 'center', label: '表名'},
+				{name: 'comments', width: '150', align: 'center', label: '说明'},
+				{name: 'className', width: '150', align: 'center', label: '类名'}
+			],
+			paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+			hiddenFields: ['id'],
+			fullGrid: true,
+			showToolbar: true,
+			toolbarItem: gen_btn,
+			inlineEditMult: false,
+			toolbarCustom: toolbarGen_btn,
+			dblOnClick: 'gen_dblonclick',
+		}
+
+		if (gen_btn.indexOf('del') != -1) {
+			gen_datagrid_data.delConfirm = true
+			gen_datagrid_data.delPK = 'id'
+			gen_datagrid_data.delType = 'POST'
+			gen_datagrid_data.delUrl = $.cookie("tudou-gen-server") + '/manage/gentable/delete'
+			gen_datagrid_data.delCallback = 'del_gen_table_back'
+		}
+
+		$('#gen_table_list_table').datagrid(gen_datagrid_data);
+
+		function del_gen_table_back(d) {
+			if (d.code == 1) {
+				$(this).alertmsg('ok', '删除成功');
+			} else {
+				$(this).alertmsg('warn', d.data);
+			}
+			$('#gen_table_list_table').datagrid('refresh_part');
+		}
+
+
+		function act_gen_create_onclick(n) {
+			gen_id = null
+			gen_name = null
+			var url = n.attributes["url"].value;
+			var name = n.attributes["name"].value;
+			var w = n.attributes["w"].value;
+			var h = n.attributes["h"].value;
+
+			show_dialog(name, url, w, h)
+		}
+
+		function gen_dblonclick() {
+			$("#gen_edit_btn").click();
+		}
+
+		var gen_id = null, gen_name = null, gen_comments = null, gen_className = null
+
+		function act_gen_update_onclick(n) {
+			var selected = $('#gen_table_list_table').data('selectedDatas');
+			if (null == selected || selected.length == 0) {
+				return;
+			}
+
+			gen_id = selected[0].id
+			gen_name = selected[0].name
+			gen_comments = selected[0].comments
+			gen_className = selected[0].className
+
+			var url = n.attributes["url"].value;
+			var name = n.attributes["name"].value;
+			var w = n.attributes["w"].value;
+			var h = n.attributes["h"].value;
+
+			show_dialog(name, url, w, h)
+		}
+	});
+</script>
+
+<div class="bjui-pageContent" >
+	<table id="gen_table_list_table" class="table table-hover" data-width="100%"> </table>
+</div>

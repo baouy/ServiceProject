@@ -1,0 +1,67 @@
+<script>
+    layui.define(['jquery', 'BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins'], function () {
+        var $ = layui.jquery
+        var process_runing_btn = ''
+        for (var data of user_data) {
+            var value = data.permissionValue;
+            if (value == 'act:process:delete') {
+                process_runing_btn += 'del,'
+            }
+        }
+
+        var act_process_runing_datagrid_data = {
+            local: 'remote',
+            dataUrl: $.cookie("tudou-oa-server") + '/act/process/running',
+            dataType: 'json',
+            sortAll: false,
+            loadType: 'get',
+            filterAll: true,
+            height: '97%',
+            columns: [
+                {name: 'id', width: '150', label: '流程ID', align: 'center'},
+                {name: 'processInstanceId', width: '150', label: '流程实例ID', align: 'center'},
+                {name: 'procDefKey', width: '150', label: '流程实例KEY', align: 'center'},
+                {name: 'processDefinitionId', width: '150', label: '流程定义ID', align: 'center'},
+                {name: 'version', width: '150', align: 'center', label: '流程版本'},
+                {name: 'activityId', width: '150', align: 'center', label: '当前环节'},
+                {
+                    name: 'suspended',
+                    width: '150',
+                    align: 'center',
+                    label: '状态',
+                    type: 'select',
+                    items: [{'true': '启动中'}, {'false': '暂停中'}]
+                },
+
+
+            ],
+            paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+            fullGrid: true,
+            showToolbar: true,
+            toolbarItem: process_runing_btn,
+            inlineEditMult: false,
+        }
+
+        if (window.process_btn.indexOf('del') != -1) {
+            act_process_datagrid_data.delConfirm = true
+            act_process_datagrid_data.delPK = 'processInstanceId'
+            act_process_datagrid_data.delType = 'POST'
+            act_process_datagrid_data.delUrl = $.cookie("tudou-oa-server") + '/act/process/deleteProcIns'
+            act_process_datagrid_data.delCallback = 'del_act_process_runing_back'
+        }
+
+        $('#act_process_runing_datagrid_data').datagrid(act_process_runing_datagrid_data);
+
+        function del_act_process_runing_back(d) {
+            if (d.code == 1) {
+                $(this).alertmsg('ok', '删除成功');
+            } else {
+                $(this).alertmsg('warn', d.data);
+            }
+            $('#act_process_runing_datagrid_data').datagrid('refresh_part');
+        }
+    });
+</script>
+<div class="bjui-pageContent" style="top:135px;">
+<table id="act_process_runing_datagrid_data" class="table table-hover" data-width="100%"></table>
+    </div>

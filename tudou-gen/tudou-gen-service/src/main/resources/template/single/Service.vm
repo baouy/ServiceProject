@@ -1,0 +1,13 @@
+package ${package_name}.rpc.api;
+
+import com.tudou.common.base.BaseService;
+import ${package_name}.dao.model.${vmmodel};
+import ${package_name}.dao.model.${vmmodel}Example;
+
+/**
+* ${vmmodel}Service接口
+* Created by tudou on ${ctime}.
+*/
+public interface ${vmmodel}Service extends BaseService<${vmmodel}, ${vmmodel}Example> {
+
+}

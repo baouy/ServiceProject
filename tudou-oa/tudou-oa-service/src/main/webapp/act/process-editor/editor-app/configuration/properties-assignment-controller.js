@@ -91,6 +91,121 @@ var KisBpmAssignmentPopupCtrl = [ '$scope', function($scope) {
     	$scope.property.mode = 'read';
     	$scope.$hide();
     };
+
+    //-----------add select User/Group button handler By DavidWang--------------
+    //代理人(审批人)/候选人
+    $scope.selectUser = function (multiple) {
+        var title = "选择代理人(单选)"
+        var ids = ($scope.assignment.assignee ? $scope.assignment.assignee : 0);
+        var name = ($scope.assignment.assigneeName ? $scope.assignment.assigneeName : 0);
+        if (multiple == 1) {
+            title = "选择候选人(多选)";
+            //候选人id
+            ids = 0;
+            name = 0
+            if($scope.assignment.candidateUsers) {
+                var idsArr = [];
+                var nameArr = []
+                //alert( $scope.assignment.candidateUsers.length);
+                for (var i = 0; i < $scope.assignment.candidateUsers.length; i++) {
+                    if ($scope.assignment.candidateUsers[i].value)
+                        idsArr.push($scope.assignment.candidateUsers[i].value);
+                    if ($scope.assignment.candidateUsers[i].name)
+                        nameArr.push($scope.assignment.candidateUsers[i].name);
+                }
+                if (idsArr.length > 0) {
+                    ids = idsArr.join(",");
+                    name = nameArr.join(',')
+                }
+            }
+        }
+        modals.openWin({
+            winId: 'userSelectWin',
+            url: appContextRoot + '/user/select/' + multiple + '/' + ids + '/'+name,
+            width: '800px',
+            title: title
+        })
+    };
+
+    //候选组
+    $scope.selectGroup = function () {
+        var ids = 0;
+        var names = 0;
+        if($scope.assignment.candidateGroups) {
+            var idsArr = [];
+            var nameArr = [];
+            for (var i = 0; i < $scope.assignment.candidateGroups.length; i++) {
+                if ($scope.assignment.candidateGroups[i].value)
+                    idsArr.push($scope.assignment.candidateGroups[i].value);
+                if ($scope.assignment.candidateGroups[i].name)
+                    nameArr.push($scope.assignment.candidateGroups[i].name);
+            }
+            if (idsArr.length > 0) {
+                ids = idsArr.join(",");
+                names = nameArr.join(',');
+            }
+        }
+        modals.openWin({
+            winId: 'groupSelectWin',
+            url: appContextRoot + '/group/select/' + ids +"/"+names,
+            width: '1200px',
+            title: '选择候选组(多选)'
+        })
+    }
+
+    //回填受理人
+    $scope.setAssignee = function (assignee, userName) {
+        $scope.assignment.assignee = assignee;
+        $scope.assignment.assigneeName = userName;
+        //jQuery("#assigneeNameField").val(userName);
+        $scope.$apply();
+    };
+
+    //回填候选人
+    $scope.setCandidateUsers = function (userIds, userNames) {
+        var users = null;
+        if (!userIds) {
+            $scope.assignment.candidateUsers = users;
+        } else {
+            var userIdArr = userIds.split(",");
+            var userNameArr = userNames.split(",");
+            users = [];
+            for (var i = 0; i < userIdArr.length; i++) {
+                var userObj = {};
+                userObj["value"] = userIdArr[i];
+                userObj["name"] = userNameArr[i];
+                users.push(userObj);
+            }
+            $scope.assignment.candidateUsers = users;
+
+        }
+        $scope.$apply();
+    };
+
+    //回填候选组
+    $scope.setCandidateGroups = function (groupIds, groupNames) {
+        var groups = null;
+        if (!groupIds) {
+            $scope.assignment.candidateGroups = groups;
+        } else {
+            var groupIdArr = groupIds.split(",");
+            var groupNameArr = groupNames.split(",");
+            groups = [];
+            for (var i = 0; i < groupIdArr.length; i++) {
+                var groupObj = {};
+                groupObj["value"] = groupIdArr[i];
+                groupObj["name"] = groupNameArr[i];
+                groups.push(groupObj);
+            }
+            $scope.assignment.candidateGroups = groups;
+        }
+        //加上这句话回填后界面立即生效
+        $scope.$apply();
+    };
+
+    //--------------------------------------------------------------------------
+
+
     
     var handleAssignmentInput = function($scope) {
     	if ($scope.assignment.candidateUsers)

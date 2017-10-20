@@ -1,0 +1,164 @@
+<script>
+	layui.define(['BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins'],function () {
+		var $ = layui.jquery,form = layui.form
+		var oa_user_datagrid_data = {
+			local: 'remote',
+			height: '100%',
+			dataUrl: $.cookie("tudou-oa-server") + '/manage/oauserdetail/list',
+			dataType: 'json',
+			loadType: 'get',
+			sortAll: false,
+			filterAll: true,
+			columns: [
+				{name: 'workNum', width: '90', label: '工号'},
+				{name: 'realname', width: '80', label: '姓名'},
+				{name: 'flowerName', width: '90', label: '花名'},
+				{name: 'username', width: '180', label: '登录名'},
+				{name: 'organization', width: '180', label: '组织'},
+				{name: 'department', width: '180', label: '部门'},
+				{name: 'role', width: '180', label: '岗位'},
+				{name: 'phone', width: '180', label: '手机号',render:function (value,data) {
+					return '<a onclick="call(data)" style="cursor: pointer">'+value+'</a>'
+				}},
+				{name: 'sex', width: '80', label: '性别', type: 'select', items: [{'0': '女'}, {'1': '男'}]},
+				{name: 'companyMobile', width: '180', label: '公司电话'},
+				{name: 'companyEmail', width: '100', label: '公司邮箱'},
+				{name: 'idNumber', width: '150', label: '身份证号码'},
+				{name: 'idAddress', width: '150', label: '身份证地址'},
+				{
+					name: 'locked',
+					type: 'select',
+					items: [{'0': '在职'}, {'1': '离职'}, {'2': '待入职'}],
+					width: '80',
+					label: '人员状态'
+				},
+				{name: 'email', width: '100', label: '个人邮箱'}
+
+			],
+			paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+//			fullGrid: true,
+			showToolbar: true,
+			inlineEditMult: false,
+
+		}
+
+		var oa_user_btn = ''
+		var oa_toolbarCustom_btn = ''
+		for (var data of user_data) {
+			var value = data.permissionValue;
+			if (value == 'oa:userdetail:create') {
+				oa_toolbarCustom_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + '  class="layui-btn layui-btn-small"style="margin-left: 5px;" id="oa_user_add_dialog" >' +
+						'<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
+			} else if (value == 'oa:userdetail:update') {
+				oa_toolbarCustom_btn += '<button id="oa_userdetail_edit" type="button" name=' + data.name + ' url=' + data.uri + ' w=' + 1000 + ' h=' + 700 + ' class="layui-btn layui-btn-small oa_userdetail_edit" style="margin-left: 5px;">' +
+						'<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
+				oa_user_datagrid_data.dblOnClick = 'oa_user_other_dialog'
+			} else if (value == 'oa:userdetail:organization' || value == 'upms:user:role') {
+				oa_toolbarCustom_btn += '<button  type="button" name=' + data.name + ' url=' + data.uri + ' w=' + 1000 + ' h=' + 700 + ' class="layui-btn layui-btn-small oa_userdetail_edit" style="margin-left: 5px;" >' +
+						'<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
+			} else if (value == 'oa:userdetail:leave') {
+				oa_toolbarCustom_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + ' w=' + 1000 + ' h=' + 500 + ' class="layui-btn layui-btn-small layui-btn-danger oa_userdetail_edit" style="margin-left: 5px;" >' +
+						'<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
+			}
+		}
+
+		oa_user_datagrid_data.toolbarItem = oa_user_btn
+		oa_user_datagrid_data.toolbarCustom = oa_toolbarCustom_btn
+
+		$('#manage_oa_user_table').datagrid(oa_user_datagrid_data);
+
+		$("#oa_user_add_dialog").bind('click',function(){
+
+			var url =$(this).attr('url');
+			var name = $(this).attr('name');
+			layer.open({
+				type: 5,
+				title: name,
+				area: ['1000px', '700px'],
+				content: url,
+				btn: ['保存', '取消'],
+				btnAlign: 'r',
+				moveType: 1,//拖拽模式，0或者1
+				yes:function(){
+				}
+			});
+		})
+
+		window.oa_user_other_dialog = oa_user_other_dialog;
+		function oa_user_other_dialog(n) {
+			debugger
+			if (n == undefined) {
+				n = $('#oa_userdetail_edit')
+			}
+			var selected = $('#manage_oa_user_table').data('selectedDatas');
+			if (null == selected || selected.length == 0) {
+				return;
+			}
+
+			$("#user_select_id").val( selected[0].userId);
+			var url = n.attr("url");
+			var name =  n.attr("name");
+			var w =  n.attr("w");
+			var h =  n.attr("h");
+			layer.open({
+				type: 5,
+				title: name,
+				area: [w+'px', h+'px'],
+				content: url,
+				btn: ['保存', '取消'],
+				btnAlign: 'r',
+				moveType: 1,//拖拽模式，0或者1
+				yes:function(){
+				}
+			});
+		}
+
+		$(".oa_userdetail_edit").bind('click',function(){
+			oa_user_other_dialog($(this))
+		})
+
+		//获取枚举
+		function oa_user_select_back(selectpicker, type) {
+			if (types.length > 0) {
+				for (var typed of types) {
+					if (typed[type] != undefined) {
+						var d = typed[type]
+						$.each(d, function (i) {
+							selectpicker.append($("<option value=" + d[i].eid + ">" + d[i].name + "</option>"));
+						});
+						form.render('select','oauserform');
+					}
+				}
+				return;
+			}
+
+			$.ajax({
+				url: $.cookie("tudou-oa-server") + '/manage/oaenum/list',
+				dataType: 'json',
+				type: 'GET',
+				data: {
+					type: type,
+				},
+				success: function (d) {
+					if (d.code != 1) {
+						return;
+					}
+					var typed = new Object()
+					typed[type] = d.data
+					types.push(typed)
+					$.each(d.data, function (i) {
+						selectpicker.append($("<option value=" + d.data[i].eid + ">" + d.data[i].name + "</option>"));
+					});
+					form.render('select','oauserform');
+				},error:function (e) {
+
+                }
+			});
+		}
+		window.oa_user_select_back = oa_user_select_back;
+	});
+</script>
+<div class="bjui-pageContent">
+	<input type="hidden" id = "user_select_id">
+	<table id="manage_oa_user_table" class="table table-bordered" data-width="100%"></table>
+</div>

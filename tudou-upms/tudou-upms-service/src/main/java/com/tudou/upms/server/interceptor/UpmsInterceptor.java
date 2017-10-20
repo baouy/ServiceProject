@@ -28,8 +28,6 @@ public class UpmsInterceptor extends HandlerInterceptorAdapter {
     @Autowired
     UpmsApiService upmsApiService;
 
-
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 过滤ajax

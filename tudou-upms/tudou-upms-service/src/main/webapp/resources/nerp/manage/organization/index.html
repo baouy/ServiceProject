@@ -1,0 +1,332 @@
+<script type="text/javascript">
+
+    layui.define(['jquery', 'BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins', 'form','ztreeedit'], function () {
+        var $ = layui.jquery,form = layui.form
+        var organization_del_treeNode
+        var organization_data = new Array()
+        var organization_object = new Object()
+        var organization_treeNode;
+
+        organization_object.nodes = 'o_ajaxDataFilter'
+        organization_object.maxAddLevel = 6
+        organization_object.removeHoverDom = 'edit'
+        organization_object.editEnable = 'true'
+
+        for (var data of user_data) {
+            var value = data.permissionValue
+            organization_data[value] = value
+            switch (value) {
+                case 'upms:organization:create':
+                    organization_object.addHoverDom = 'edit'
+                    organization_object.onClick = 'O_NodeCheck'
+                    break;
+                case 'upms:organization:update':
+                    organization_object.editEnable = 'true'
+                    organization_object.onDrop = 'o_ztree_onDrop'
+                    organization_object.onClick = 'O_NodeCheck'
+                    break;
+                case 'upms:organization:delete':
+                    organization_object.showRemoveBtn = 'true'
+                    organization_object.beforeRemove = 'o_ztree_onRemove'
+                    break;
+            }
+        }
+
+        window.O_NodeCheck = O_NodeCheck
+        window.o_ztree_onRemove = o_ztree_onRemove
+        window.o_ztree_onDrop = o_ztree_onDrop
+        window.o_ajaxDataFilter = o_ajaxDataFilter
+
+        $('#organization_ztree').append('<ul id="o-menu-ztree" class="ztree" data-toggle="ztree" data-radio-type="all" data-expand-all="true" data-options=' + JSON.stringify(organization_object) + '></ul>')
+        $("#organization_ztree").initui();
+
+
+        form.on('submit(organization_save)',function () {
+
+            var id = organization_treeNode.id
+
+            var pid = organization_treeNode.pId
+
+            //新增
+            if (id == undefined && pid != null) {
+                organization_create()
+            }
+
+            //编辑
+            if (id != undefined && pid != null) {
+                organization_update()
+            }
+
+            return false
+
+        });
+
+        function organization_check(check) {
+            return check in organization_data
+        }
+
+        function O_NodeCheck(event, treeId, treeNode, clickFlag) {
+
+            var id = treeNode.id
+
+            var pid = treeNode.pId
+
+            //新增菜单
+            if (id == undefined && pid != null) {
+                console.log('新增');
+                if (organization_check('upms:organization:create'))
+                    $('#organization_right').fadeIn();
+                $('#organization_save').html('<i class="layui-icon">&#xe161;</i>&nbsp; 保存')
+                organization_treeNode = treeNode
+                $('#org_itemclass_name').val('');
+                $('#itemclass_description').val('')
+            }
+
+            //系统层级
+            if (id != undefined && pid == null) {
+                console.log('系统层');
+                $('#organization_right').fadeOut();
+            }
+
+            //编辑
+            if (id != undefined && pid != null) {
+                console.log('编辑');
+                if (organization_check('upms:organization:update'))
+                    $('#organization_right').fadeIn();
+                $('#organization_save').html('<i class="layui-icon">&#xe920;</i>&nbsp; 更新')
+                organization_treeNode = treeNode
+                $('#org_itemclass_name').val(treeNode.name);
+                $('#itemclass_description').val(treeNode.description)
+            }
+
+            if (id == undefined && pid == undefined) {
+                console.log('提示错误');
+                $('#organization_right').fadeOut();
+            }
+
+        }
+
+        function o_ajaxDataFilter() {
+            var datas = new Array()
+            datas[0] = new Object()
+            datas[0].id = 0
+            datas[0].pId = null
+            datas[0].fid = 0
+            datas[0].name = '集团'
+            $.ajax({
+                url: $.cookie("tudou-upms-server") + '/manage/organization/list',
+                type: 'get',
+                async: false,
+                success: function (responseData) {
+                    if (responseData) {
+                        var organization = responseData.data;
+                        for (var i = 0; i < organization.length; i++) {
+                            datas[i + 1] = organization[i]
+                            datas[i + 1].id = organization[i].organizationId;
+                            datas[i + 1].pId = organization[i].pid;
+                        }
+
+                        return datas;
+                    }
+
+                }
+            });
+            return datas;
+        }
+
+        function organization_create() {
+
+            var name, description, pid, fid
+
+            pid = organization_treeNode.pId
+            name = $('#org_itemclass_name').val()
+            description = $('#itemclass_description').val()
+            fid = organization_treeNode.getParentNode().fid == 0 ? organization_treeNode.getParentNode().id : organization_treeNode.getParentNode().fid
+
+            $('#permission_pagecontent').trigger('bjui.ajaxStart')
+
+            $.ajax({
+                    url: $.cookie("tudou-upms-server") + '/manage/organization/create',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: {
+                        pid: pid,
+                        name: name,
+                        fid: fid,
+                        description: description
+                    },
+                    success: function (d) {
+                        var zTree = $.fn.zTree.getZTreeObj("o-menu-ztree")
+                        var upNode = zTree.getSelectedNodes()[0];
+                        if (d.code == 1) {
+                            upNode.id = d.data
+                            upNode.permissionId = d.data
+                            upNode.pid = pid
+                            upNode.fid = fid
+                            upNode.name = name
+                            upNode.description = description
+                            zTree.updateNode(upNode)
+                            zTree.cancelSelectedNode();
+                            $('#organization_right').fadeOut();
+                        } else {
+                            if (d.data instanceof Array) {
+                                $.each(d.data, function (index, value) {
+                                    layer.warn( value.errorMsg);
+                                });
+                            } else {
+                                layer.warn( d.data);
+                            }
+                        }
+                        $('#organization_pagecontent').trigger('bjui.ajaxStop')
+                    },
+                    error: function () {
+                        $('#organization_pagecontent').trigger('bjui.ajaxStop')
+                    }
+                }
+            );
+
+        }
+
+
+        function organization_update() {
+            var name, description, pid, organizationId, fid
+
+            organizationId = organization_treeNode.organizationId
+            pid = organization_treeNode.pId
+            name = $('#org_itemclass_name').val()
+            description = $('#itemclass_description').val()
+            fid = organization_treeNode.getParentNode().fid == 0 ? organization_treeNode.getParentNode().id : organization_treeNode.getParentNode().fid
+
+            $('#permission_pagecontent').trigger('bjui.ajaxStart')
+
+            $.ajax({
+                    url: $.cookie("tudou-upms-server") + '/manage/organization/update',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: {
+                        organizationId: organizationId,
+                        pid: pid,
+                        name: name,
+                        fid: fid,
+                        description: description
+                    },
+                    success: function (d) {
+                        var zTree = $.fn.zTree.getZTreeObj("o-menu-ztree")
+                        var upNode = zTree.getSelectedNodes()[0];
+                        if (d.code == 1) {
+                            upNode.id = d.data
+                            upNode.permissionId = d.data
+                            upNode.pid = pid
+                            upNode.name = name
+                            upNode.fid = fid
+                            upNode.description = description
+                            zTree.updateNode(upNode)
+                            zTree.cancelSelectedNode();
+                            $('#organization_right').fadeOut();
+                        } else {
+                            if (d.data instanceof Array) {
+                                $.each(d.data, function (index, value) {
+                                    layer.warn( value.errorMsg);
+                                });
+                            } else {
+                                layer.warn( d.data);
+                            }
+                        }
+                        $('#organization_pagecontent').trigger('bjui.ajaxStop')
+                    },
+                    error: function () {
+                        $('#organization_pagecontent').trigger('bjui.ajaxStop')
+                    }
+                }
+            );
+        }
+
+        function o_ztree_onDrop(treeId, treeNodes, targetNode, moveType, isCopy) {
+            var pid = targetNode[0].pId
+            if (pid == null) {
+                $('#organization_right').fadeOut()
+                layer.warn('拖拽错误,无法成为父级')
+                return
+            }
+        }
+
+        function o_ztree_onRemove(treeId, treeNode) {
+            if (treeNode.level == 0) {
+                return false
+            }
+            if (treeNode.id == undefined) {
+                return true
+            }
+            organization_del_treeNode = treeNode
+            layer.confirm('是否确定吗?', {icon: 3},
+                function (index) {
+                    o_show_remove()
+                    layer.close(index);
+                }, function () {
+                });
+            return false;
+        }
+
+        function o_show_remove() {
+            var zTree = $.fn.zTree.getZTreeObj("o-menu-ztree")
+            $('#organization_pagecontent').trigger('bjui.ajaxStart')
+			layer.load()
+            $.ajax({
+                    url: $.cookie("tudou-upms-server") + '/manage/organization/delete',
+                    data: {organizationId: organization_del_treeNode.id},
+                    type: 'POST',
+                    success: function (d) {
+                        if (d.code == 1) {
+                            zTree.removeNode(organization_del_treeNode);
+                            $('#organization_right').fadeOut();
+                        } else {
+                            $(this).alertmsg('warn', d.data);
+                        }
+                        layer.closeAll('loading')
+                    },
+                    error: function () {
+                        layer.closeAll('loading')
+                    }
+                }
+            );
+        }
+    })
+</script>
+
+<div class="bjui-pageContent" id="organization_pagecontent">
+	<div class="roleLeft"
+		 style="border: 0px solid green;width: 250px !important;position: relative;height: 100%;float: left;">
+		<div id="organization_ztree">
+		</div>
+
+	</div>
+	<div id="organization_right" class="roleRight"
+		 style="width: 55% !important;position: relative;height: 100%;float: left;margin: 0px 10px;display:none">
+		<div class="bs-example" data-content="详细信息">
+			<form id="organization_from" class="layui-form" lay-filter="organization_from">
+				<fieldset>
+					<legend>详细信息</legend>
+					<div class="form-group">
+						<label for="org_itemclass_name" class="layui-form-label">名称：</label>
+						<div class="layui-input-inline">
+						<input type="text" size="20" class="layui-input" name="name" id="org_itemclass_name" lay-verify="required"
+							   placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="itemclass_description" class="layui-form-label">描述：</label>
+						<div class="layui-input-inline">
+						<input type="text" size="20" class="layui-input" name="description"
+							   id="itemclass_description" lay-verify="required">
+						</div>
+					</div>
+
+					<div class="form-group" style="padding-top:8px; border-top:1px #DDD solid;">
+						<label class="layui-form-label"></label>
+						<button class="layui-btn" id="organization_save" lay-submit="" lay-filter="organization_save"></button>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>

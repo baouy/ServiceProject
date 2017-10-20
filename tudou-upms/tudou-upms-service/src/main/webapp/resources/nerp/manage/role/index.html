@@ -1,0 +1,133 @@
+<script type="text/javascript">
+    layui.define(['jquery', 'BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins'], function () {
+        var $ = layui.jquery, role_btn = '', toolbarCustom_role_btn = '';
+        for (var data of user_data) {
+            var value = data.permissionValue;
+            if (value == 'upms:role:permission') {
+                toolbarCustom_role_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + ' class="layui-btn layui-btn-small role_dialog" style="margin-left: 5px;" ><i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
+            }
+
+            switch (value) {
+                case 'upms:role:create':
+                    role_btn += 'add,'
+                    break;
+                case 'upms:role:update':
+                    role_btn += 'edit,'
+                    break;
+                case 'upms:role:delete':
+                    role_btn += 'del,'
+                    break;
+            }
+        }
+
+        if (role_btn.indexOf('add') || role_btn.indexOf('edit')) {
+            role_btn += 'save,cancel'
+        }
+        var role_datagrid_data = {
+            local: 'remote',
+            dataUrl: $.cookie("tudou-upms-server") + '/manage/role/list',
+            dataType: 'json',
+            sortAll: false,
+            loadType: 'get',
+            filterAll: true,
+            height: '100%',
+            columns: [
+                {
+                    name: 'roleId',
+                    align: 'center',
+                    width: '150',
+                    align: 'center',
+                    label: '编号',
+                    attrs: {'readonly': "true"}
+                },
+                {name: 'name', width: '150', align: 'center', label: '角色名称', align: 'center', rule: 'required'},
+                {name: 'title', align: 'center', width: '150', label: '角色标题', align: 'center', rule: 'required'},
+                {name: 'description', align: 'center', width: '150', label: '角色描述', align: 'center', rule: 'required'},
+            ],
+            paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+            fullGrid: true,
+            showToolbar: true,
+            toolbarItem: role_btn,
+            inlineEditMult: false,
+            toolbarCustom: toolbarCustom_role_btn,
+        }
+
+        if (role_btn.indexOf('add') != -1) {
+            role_datagrid_data.editUrl = 'edit'
+            role_datagrid_data.ifvalue = 'roleId'
+            role_datagrid_data.addUrl = $.cookie("tudou-upms-server") + '/manage/role/create'
+            role_datagrid_data.editCallback = 'manage_back_organization_edit'
+        }
+
+        if (role_btn.indexOf('edit') != -1) {
+            role_datagrid_data.editUrl = $.cookie("tudou-upms-server") + '/manage/role/update'
+            role_datagrid_data.editdblOnclick = true
+            role_datagrid_data.editCallback = 'manage_role_back_edit'
+        }
+
+        if (role_btn.indexOf('del') != -1) {
+            role_datagrid_data.delConfirm = true
+            role_datagrid_data.delPK = 'roleId'
+            role_datagrid_data.delType = 'POST'
+            role_datagrid_data.delUrl = $.cookie("tudou-upms-server") + '/manage/role/delete'
+            role_datagrid_data.delCallback = 'del_role_back'
+        }
+
+        $('#manage_role_table').datagrid(role_datagrid_data);
+
+
+        window.manage_role_back_edit = manage_role_back_edit
+        window.del_role_back = del_role_back
+
+        function manage_role_back_edit(d) {
+            if (d.code == 1) {
+                layer.ok('保存成功');
+            } else {
+                if (d.data instanceof Array) {
+                    $.each(d.data, function (index, value) {
+                        layer.warn(value.errorMsg)
+                    });
+                } else {
+                    layer.warn(d.data)
+                }
+            }
+            $('#manage_role_table').datagrid('refresh_part');
+        }
+
+        function del_role_back(d) {
+            if (d.code == 1) {
+                layer.ok('删除成功');
+                $('#manage_role_table').datagrid('refresh_part');
+            } else {
+                layer.warn(d.data);
+            }
+        }
+
+        $(".role_dialog").bind('click', function () {
+            var n = $(this);
+            var selected = $('#manage_role_table').data('selectedDatas');
+            if (null == selected || selected.length == 0) {
+                return;
+            }
+            $("#role_select_id").val( selected[0].roleId);
+            var url = n.attr('url');
+            var name = n.attr("name");
+            layer.open({
+                type: 5,
+                title: name,
+                area: ['700px', '700px'],
+                content: url,
+                btn: ['保存', '取消'],
+                btnAlign: 'r',
+                moveType: 1,//拖拽模式，0或者1
+                yes:function(){
+                }
+            });
+        });
+
+    });
+</script>
+<div class="bjui-pageContent">
+    <input type="hidden" id="role_select_id">
+    <table id="manage_role_table" class="table table-hover" data-width="100%"></table>
+</div>

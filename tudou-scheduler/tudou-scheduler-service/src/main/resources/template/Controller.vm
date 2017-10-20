@@ -1,0 +1,150 @@
+package ${package_name}.service.controller.manage;
+
+import com.tudou.common.base.BaseController;
+import com.tudou.common.util.TokenUtil;
+import ${package_name}.common.constant.${smodel}Result;
+import ${package_name}.common.constant.${smodel}ResultConstant;
+import ${package_name}.dao.model.${vmmodel};
+import ${package_name}.dao.model.${vmmodel}Example;
+import ${package_name}.rpc.api.${vmmodel}Service;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Date;
+import java.util.List;
+/**
+ * ${modelname}controller
+ * Created by tudou on ${ctime}.
+ */
+@Controller
+@RequestMapping("/manage/${smodule}")
+@Api(value = "${modelname}控制器", description = "${modelname}管理")
+public class ${vmmodel}Controller extends BaseController {
+
+    private static Logger _log = LoggerFactory.getLogger(${vmmodel}Controller.class);
+
+    @Autowired
+    private ${vmmodel}Service ${module}Service;
+
+	@ApiOperation(value = "${modelname}列表")
+	@RequiresPermissions("${permissions}:read")
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	@ResponseBody
+	public Object list(@ModelAttribute ${vmmodel} ${module}) {
+		${vmmodel}Example ${module}Example = new ${vmmodel}Example();
+		${vmmodel}Example.Criteria criteria = ${module}Example.createCriteria();
+
+        #foreach($i in $columns)
+            #set ($camelColumnName = $i.javaField.substring(0,1).toUpperCase() + $i.javaField.substring(1,$i.javaField.length()))
+            #if($i.isQuery == 1)
+                #if($i.javaType == "String")
+				    if (!StringUtils.isBlank(${module}.get${camelColumnName}())){
+				        criteria.and${camelColumnName}Like("%" +${module}.get${camelColumnName}() + "%");
+                    }
+                #elseif($i.javaType == "java.util.Date")
+##                    if (${module}.get${camelColumnName}() != null){
+##                        criteria.and${camelColumnName}Like("%" +${module}.get${camelColumnName}() + "%");
+##                    }
+                #else
+				if (${module}.get${camelColumnName}() != null){
+				    criteria.and${camelColumnName}Like("%" +${module}.get${camelColumnName}() + "%");
+				}
+                #end
+
+            #end
+        #end
+
+		int pagec = ${module}.getPageCurrent();
+		int pages = ${module}.getPageSize();
+		List<${vmmodel}> rows = ${module}Service.selectByExampleForOffsetPage(${module}Example, pagec, pages);
+		long total = ${module}Service.countByExample(${module}Example);
+		return new ${smodel}Result(${smodel}ResultConstant.SUCCESS,rows,pages,pagec,total);
+	}
+
+    @ApiOperation(value = "${modelname}详情")
+    @RequiresPermissions("${permissions}:update")
+    @RequestMapping(value = "/detail", method = RequestMethod.POST)
+    @ResponseBody
+    public Object detail(@ModelAttribute ${vmmodel} ${module}) {
+        ${vmmodel}Example ${module}Example = new ${vmmodel}Example();
+        ${vmmodel}Example.Criteria criteria = ${module}Example.createCriteria();
+        criteria.andIdEqualTo(${module}.getId());
+        ${module} =  ${module}Service.selectFirstByExample(${module}Example);
+
+        return new ${smodel}Result(${smodel}ResultConstant.SUCCESS,${module});
+    }
+
+
+    @ApiOperation(value = "${modelname}保存修改")
+    @RequiresPermissions(value = {"${permissions}:update","${permissions}:create"},logical = Logical.OR)
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @ResponseBody
+    public Object save(@ModelAttribute ${vmmodel} ${module}) {
+        Date new_time = new Date();
+        #foreach($i in $columns)
+            #if($i.isPk == 1)
+                #set ($camelColumnName = $i.javaField.substring(0,1).toUpperCase() + $i.javaField.substring(1,$i.javaField.length()))
+                #if($i.javaType == "String")
+				if (!StringUtils.isBlank(${module}.get${camelColumnName}())){
+                #else
+				    if(${module}.get${camelColumnName}() != null){
+                #end
+			//编辑
+                ${vmmodel}Example ${module}Example = new ${vmmodel}Example();
+                ${vmmodel}Example.Criteria criteria = ${module}Example.createCriteria();
+			criteria.andIdEqualTo(${module}.get${camelColumnName}());
+            #end
+            #set ($camelColumnName = $i.javaField.substring(0,1).toUpperCase() + $i.javaField.substring(1,$i.javaField.length()))
+            #if($i.javaField == "updateBy")
+                ${module}.set${camelColumnName}(TokenUtil.getUserName());
+            #end
+            #if($i.javaField == "updateDate")
+                ${module}.set${camelColumnName}(new_time);
+            #end
+        #end
+            ${module}Service.updateByExample(${module},${module}Example);
+            }else{
+            //新增
+            #foreach($i in $columns)
+                #set ($camelColumnName = $i.javaField.substring(0,1).toUpperCase() + $i.javaField.substring(1,$i.javaField.length()))
+                #if($i.javaField == "createBy")
+                    ${module}.set${camelColumnName}(TokenUtil.getUserName());
+                #end
+                #if($i.javaField == "createDate")
+                    ${module}.set${camelColumnName}(new_time);
+                #end
+                #end
+            ${module}Service.insertSelective(${module});
+}
+
+        return new ${smodel}Result(${smodel}ResultConstant.SUCCESS,${module});
+    }
+
+
+    @ApiOperation(value = "删除${modelname}")
+    @RequiresPermissions("${permissions}:delete")
+    @RequestMapping(value = "/delete",method = RequestMethod.POST)
+    @ResponseBody
+    public Object delete(@RequestParam ${vmmodel} ${module}) {
+        ${vmmodel}Example ${module}Example = new ${vmmodel}Example();
+        ${vmmodel}Example.Criteria criteria = ${module}Example.createCriteria();
+        #foreach($i in $columns)
+            #if($i.isPk == 1)
+                #set ($camelColumnName = $i.javaField.substring(0,1).toUpperCase() + $i.javaField.substring(1,$i.javaField.length()))
+			    criteria.andIdEqualTo(${module}.get${camelColumnName}());
+            #end
+        #end
+        int count = ${module}Service.deleteByExample(${module}Example);
+        return new ${smodel}Result(${smodel}ResultConstant.SUCCESS, count);
+    }
+
+
+}

@@ -1,0 +1,216 @@
+<script>
+    layui.define(['jquery', 'BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins'], function () {
+        var toolbarGenscheme_btn = ''
+        for (var data of user_data) {
+            var value = data.permissionValue;
+            switch (value) {
+                case 'qrtz:scheduler:create':
+                    toolbarGenscheme_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + '  class="layui-btn layui-btn-small"style="margin-left: 5px;" id="qrtz_create_onclick" >' + '<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
+                    break;
+                case 'qrtz:scheduler:update':
+                    toolbarGenscheme_btn += '<button type="button" name=' + data.name + ' url=' + data.uri + '  class="layui-btn layui-btn-small"style="margin-left: 5px;" id="qrtz_update_onclick" >' + '<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
+                    break;
+                case 'qrtz:scheduler:pause':
+                    toolbarGenscheme_btn += '<button type="button" permission = '+ data.permissionValue +' name=' + data.name + '  class="layui-btn layui-btn-small layui-btn-warm" style="margin-left: 5px;" id="qrtz_update_pause" >' + '<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
+                    break;
+                case 'qrtz:scheduler:restore':
+                    toolbarGenscheme_btn += '<button type="button" permission = '+ data.permissionValue +' name=' + data.name + '  class="layui-btn layui-btn-small"style="margin-left: 5px;" id="qrtz_update_restore" >' + '<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
+                    break;
+                case 'qrtz:scheduler:delete':
+                    toolbarGenscheme_btn += '<button type="button" permission = '+ data.permissionValue +' name=' + data.name + '  class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 5px;" id="qrtz_update_delete" >' + '<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
+                    break;
+                case 'qrtz:scheduler:trigger':
+                    toolbarGenscheme_btn += '<button type="button" permission = '+ data.permissionValue +' name=' + data.name + '  class="layui-btn layui-btn-small layui-btn-normal" style="margin-left: 5px;" id="qrtz_update_trigger" >' + '<i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
+                    break;
+            }
+        }
+
+        var qrtz_datagrid_data = {
+            local: 'remote',
+            dataUrl: $.cookie("tudou-qrtz-server") + '/manage/qrtz/list',
+            dataType: 'json',
+            sortAll: false,
+            loadType: 'get',
+            filterAll: true,
+            height: '100%',
+            columns: [{name: 'jobName', width: '150', align: 'center', label: '任务名称'},
+                {name: 'jobGroup', width: '150', align: 'center', label: '任务组'},
+                {name: 'triggerName', width: '150', align: 'center', label: 'trigger名'},
+                {name: 'triggerGroup', width: '150', align: 'center', label: 'trigger组'},
+                {name: 'triggerType', width: '150', align: 'center', label: 'trigger类型'},
+                {
+                    name: 'jobStatus', width: '150', align: 'center', label: '任务状态', render: function (value) {
+                    if (value == 'NORMAL') {
+                        return '正常'
+                    } else {
+                        return '停止'
+                    }
+                }
+                },
+                {name: 'jobClass', width: '150', align: 'center', label: '执行类名'},
+                {name: 'cronExpression', width: '150', align: 'center', label: 'cron表达式'},
+                {
+                    name: 'startTime', width: '150', align: 'center', label: '开始时间', render: function (value) {
+                    return zjoin.timetrans(value);
+                }
+                },
+                {
+                    name: 'endTime', width: '150', align: 'center', label: '结束时间', render: function (value) {
+                    return zjoin.timetrans(value);
+                }
+                },
+                {name: 'repeatType', width: '150', align: 'center', label: '重复类型'},
+                {name: 'repeatCount', width: '150', align: 'center', label: '重复次数'},
+                {name: 'repeatIntervalStr', width: '150', align: 'center', label: '时间间隔'},
+                {name: 'desc', width: '150', align: 'center', label: '备注'},
+            ],
+            paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+            hiddenFields: ['jobId'],
+            fullGrid: true,
+            showToolbar: true,
+            inlineEditMult: false,
+            toolbarCustom: toolbarGenscheme_btn,
+            dblOnClick: 'qrtz_dblonclick',
+        }
+
+        $('#qrtz_scheduler_list_table').datagrid(qrtz_datagrid_data);
+
+        window.qrtz_dblonclick = qrtz_dblonclick
+        function qrtz_dblonclick() {
+            $("#qrtz_update_onclick").click();
+        }
+
+        window.qrtz_selected = null
+        $('#qrtz_create_onclick').bind('click',function () {
+            qrtz_selected = null
+            var url = $(this).attr('url')
+            var name = $(this).attr('name')
+            layer.open({
+                type: 5,
+                title: name,
+                area: ['800px', '700px'],
+                content: url,
+                btn: ['保存','取消'],
+                btnAlign: 'r',
+                moveType: 1,//拖拽模式，0或者1
+                yes:function(){
+                }
+            });
+
+        })
+		
+		$('#qrtz_update_onclick').bind('click',function () {
+            qrtz_selected = $('#qrtz_scheduler_list_table').data('selectedDatas');
+            if (null == qrtz_selected || qrtz_selected.length == 0) {
+                return;
+            }
+            var url = $(this).attr('url')
+            var name = $(this).attr('name')
+            layer.open({
+                type: 5,
+                title: name,
+                area: ['800px', '700px'],
+                content: url,
+                btn: ['保存','取消'],
+                btnAlign: 'r',
+                moveType: 1,//拖拽模式，0或者1
+                yes:function(){
+                }
+            });
+        })
+
+		$('#qrtz_update_pause').bind('click',function () {
+            qrtz_all_onclick($(this))
+        })
+
+        $('#qrtz_update_restore').bind('click',function () {
+            qrtz_all_onclick($(this))
+        })
+
+        $('#qrtz_update_delete').bind('click',function () {
+            qrtz_all_onclick($(this))
+        })
+
+        $('#qrtz_update_trigger').bind('click',function () {
+            qrtz_all_onclick($(this))
+        })
+
+        var qrtz_jobname = null, qrtz_jobgroup = null, qrtz_type = null
+        function qrtz_all_onclick(n) {
+            qrtz_selected = $('#qrtz_scheduler_list_table').data('selectedDatas');
+            if (null == qrtz_selected || qrtz_selected.length == 0) {
+                return;
+            }
+            qrtz_type = n.attr('permission');
+            qrtz_jobname = qrtz_selected[0].jobName
+            qrtz_jobgroup = qrtz_selected[0].jobGroup
+            var name = '是否确定'
+            switch (qrtz_type) {
+                case 'qrtz:scheduler:pause':
+                    name += '暂停吗?'
+                    break;
+                case 'qrtz:scheduler:restore':
+                    name += '恢复吗?'
+                    break;
+                case 'qrtz:scheduler:delete':
+                    name += '删除吗?'
+                    break;
+                case 'qrtz:scheduler:trigger':
+                    name += '运行吗?'
+                    break;
+            }
+            qrtz_alert_sure(name)
+        }
+
+        function qrtz_alert_sure(context) {
+            layer.confirm(context, {icon: 3},
+                function(index){
+                    switch (qrtz_type) {
+                        case 'qrtz:scheduler:pause':
+                            qrtz_ajax('/manage/qrtz/pause')
+                            break;
+                        case 'qrtz:scheduler:restore':
+                            qrtz_ajax('/manage/qrtz/restore')
+                            break;
+                        case 'qrtz:scheduler:delete':
+                            qrtz_ajax('/manage/qrtz/delete')
+                            break;
+                        case 'qrtz:scheduler:trigger':
+                            qrtz_ajax('/manage/qrtz/trigger')
+                            break;
+                    }
+                    layer.close(index);
+                }, function(){});
+        }
+
+        function qrtz_ajax(url) {
+            layer.load()
+            $.ajax({
+                url: $.cookie("tudou-qrtz-server") + url,
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    "jobName": qrtz_jobname,
+                    "jobGroup": qrtz_jobgroup
+                },
+                success: function (d) {
+                    if (d.code == 1) {
+                        layer.ok('操作成功')
+                        $('#qrtz_scheduler_list_table').datagrid('refresh_part')
+                    } else {
+                        layer.warn(d.data)
+                    }
+                    layer.closeAll('loading')
+                },
+                error: function () {
+                    layer.closeAll('loading')
+                }
+            });
+        }
+    })
+
+</script>
+
+<div class="bjui-pageContent" >
+	<table id="qrtz_scheduler_list_table" class="table table-hover" data-width="100%"> </table>
+</div>

@@ -1,0 +1,162 @@
+<script type="text/javascript">
+    layui.define(['jquery', 'BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins'], function () {
+        var $ = layui.jquery;
+        var model_btn = ''
+        var toolbarCustom_model_btn = ''
+        for (var data of user_data) {
+            var value = data.permissionValue;
+
+            if (value == 'act:model:create') {
+                toolbarCustom_model_btn += '<button id ="act_model_create" type="button" name=' + data.name + ' url=' + data.uri + ' class="layui-btn layui-btn-small"  style="margin-left: 5px;" >' + '<i class="layui-icon">&#xe145;</i>&nbsp;' + data.name + ' </button>'
+            }
+
+            if (value == 'act:model:update') {
+                toolbarCustom_model_btn += '<button id="act_model_update" type="button" name=' + data.name + ' class="layui-btn layui-btn-small"  style="margin-left: 5px;"  >' + '<i class="layui-icon">&#xe254;</i>&nbsp;' + data.name + ' </button>'
+            }
+
+            if (value == 'act:model:deploy') {
+                toolbarCustom_model_btn += '<button id ="act_confirm" type="button" name=' + data.name + ' class="layui-btn layui-btn-small"  style="margin-left: 5px;" >' + '<i class="layui-icon">&#xeb12;</i>&nbsp;' + data.name + ' </button>'
+            }
+
+            if (value == 'act:model:export') {
+                toolbarCustom_model_btn += '<button id = "act_deploy_confirm" type="button" name=' + data.name + ' class="layui-btn layui-btn-small"  style="margin-left: 5px;" >' + '<i class="layui-icon">&#xe0c3;</i>&nbsp;' + data.name + ' </button>'
+            }
+
+            if (value == 'act:model:delete') {
+                model_btn += 'del,'
+            }
+        }
+
+        var act_model_datagrid_data = {
+            local: 'remote',
+            dataUrl: $.cookie("tudou-oa-server") + '/act/model/list',
+            dataType: 'json',
+            sortAll: false,
+            loadType: 'get',
+            filterAll: true,
+            height: '100%',
+            columns: [
+                {name: 'category', width: '150', label: '流程分类', align: 'center'},
+                {name: 'id', width: '150', label: '模型ID', align: 'center'},
+                {name: 'key', width: '150', label: '模型标识', align: 'center'},
+                {name: 'name', width: '150', label: '模型名称', align: 'center'},
+                {name: 'version', width: '150', align: 'center', label: '版本号'},
+                {
+                    name: 'createTime', width: '150', align: 'center', label: '创建时间', render: function (value) {
+                    return zjoin.timetrans(value);
+                }
+                },
+                {
+                    name: 'lastUpdateTime', width: '150', align: 'center', label: '最后更新时间', render: function (value) {
+                    return zjoin.timetrans(value);
+                }
+                },
+            ],
+            paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+            fullGrid: true,
+            showToolbar: true,
+            toolbarItem: model_btn,
+            inlineEditMult: false,
+            dblOnClick: 'act_model_update',
+            toolbarCustom: toolbarCustom_model_btn,
+
+        }
+
+        if (model_btn.indexOf('del') != -1) {
+            act_model_datagrid_data.delConfirm = true
+            act_model_datagrid_data.delPK = 'id'
+            act_model_datagrid_data.delType = 'POST'
+            act_model_datagrid_data.delUrl = $.cookie("tudou-oa-server") + '/act/model/delete'
+            act_model_datagrid_data.delCallback = 'del_act_model_back'
+        }
+
+        $('#manage_act_model_table').datagrid(act_model_datagrid_data);
+
+        function del_act_model_back(d) {
+            if (d.code == 1) {
+                layer.ok('删除成功');
+            } else {
+                layer.warn(d.data);
+            }
+            $('#manage_act_model_table').datagrid('refresh_part');
+        }
+
+        var act_model_id;
+
+        $("#act_model_create").bind('click', function () {
+            var n = $(this);
+            var url = n.attr("url");
+            var name = n.attr("name");
+            layer.open({
+                type: 5,
+                title: name,
+                area: ['650px', '200px'],
+                content: url,
+                btn: ['保存', '取消'],
+                btnAlign: 'r',
+                moveType: 1,//拖拽模式，0或者1
+                yes: function () {
+                }
+            });
+        });
+        $("#act_model_update").bind('click', function () {
+            act_model_update()
+        });
+        $("#act_confirm").bind('click', function () {
+            var selected = $("#manage_act_model_table").data('selectedDatas');
+            if (null == selected || selected.length == 0) {
+                return;
+            }
+            act_model_id = selected[0].id
+            layer.confirm('确定部署吗?', {icon: 3},
+                    function (index) {
+                        $.ajax({
+                            url: $.cookie("tudou-oa-server") + '/act/model/deploy',
+                            dataType: 'json',
+                            type: 'POST',
+                            data: {
+                                'id': act_model_id
+                            },
+                            success: function (d) {
+                                if (d.code == 1) {
+                                    $('#manage_act_model_table').datagrid('refresh_part');
+                                } else {
+                                    layer.warn(d.data);
+                                }
+                            },
+                            error: function (e) {
+                                layer.warn("部署失败!");
+                            }
+                        });
+                        layer.close(index);
+                    }, function () {
+                    });
+        });
+        $("#act_deploy_confirm").bind('click', function () {
+            var selected = $("#manage_act_model_table").data('selectedDatas');
+            if (null == selected || selected.length == 0) {
+                return;
+            }
+            act_model_id = selected[0].id
+            layer.confirm('确定导出吗?', {icon: 3},
+                    function (index) {
+                        window.open($.cookie("tudou-oa-server") + '/act/model/export?id=' + act_model_id)
+                        layer.close(index);
+                    }, function () {
+                    });
+        });
+        window.act_model_update=act_model_update
+        function act_model_update() {
+            var selected = $('#manage_act_model_table').data('selectedDatas');
+            if (null == selected || selected.length == 0) {
+                return;
+            }
+            act_model_id = selected[0].id
+            window.open($.cookie("tudou-oa-server") + "/act/process-editor/modeler.jsp?modelId=" + act_model_id)
+        }
+
+    });
+</script>
+<div class="bjui-pageContent">
+    <table id="manage_act_model_table" class="table table-hover" data-width="100%"></table>
+</div>

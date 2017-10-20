@@ -1,0 +1,91 @@
+<script type="text/javascript">
+	layui.define(['jquery', 'BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins'], function () {
+		var $ = layui.jquery,layer= layui.layer,toolbarCustom_seesion_btn = '';
+
+		for (var data of user_data) {
+			var value = data.permissionValue;
+			switch (value) {
+				case 'upms:session:forceout':
+                    toolbarCustom_seesion_btn += '<button type="button" id="session_exit" class="layui-btn layui-btn-small layui-btn-danger" style="margin-left: 5px;" ><i class="layui-icon">'+data.icon+'</i>&nbsp;' + data.name + ' </button>'
+					break;
+			}
+		}
+
+		$('#manage_session_table').datagrid({
+			local: 'remote',
+			dataUrl: $.cookie("tudou-upms-server") + '/manage/session/list',
+			dataType: 'json',
+			sortAll: false,
+			loadType: 'get',
+			filterThead: false,
+			height: '100%',
+			columns: [{name: 'id', width: '150', align: 'center', label: '编号'},
+				{
+					name: 'startTimestamp', width: '150', align: 'center', label: '创建时间', render: function (value) {
+					return zjoin.timetrans(value);
+				}
+				},
+				{
+					name: 'lastAccessTime', width: '150', align: 'center', label: '最后访问时间', render: function (value) {
+					return zjoin.timetrans(value);
+				}
+				},
+				{name: 'expired', width: '150', align: 'center', label: '是否过期'},
+				{name: 'host', width: '150', align: 'center', label: '访问者IP'},
+				{name: 'userAgent', width: '150', align: 'center', label: '用户标识'},
+				{
+					name: 'status',
+					width: '150',
+					align: 'center',
+					label: '状态',
+					type: 'select',
+					items: [{'on_line': '在线'}, {'off_line': '离线'}, {'force_logout': '踢离'}]
+				},
+			],
+			paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+			fullGrid: true,
+            showToolbar: true,
+            toolbarCustom: toolbarCustom_seesion_btn,
+		});
+
+		var selected;
+		$("#session_exit").bind('click',function(){
+			selected = $("#manage_session_table").data('selectedDatas');
+			if (null == selected || selected.length == 0) {
+				return;
+			}
+			layer.confirm( '是否确定?', {icon: 3},
+					function(index){
+						var ids = new Array();
+						for (var i = 0; i < selected.length; i++) {
+							ids.push(selected[i].id);
+						}
+						layer.load()
+						$.ajax({
+							url: $.cookie("tudou-upms-server") + '/manage/session/forceout/' + ids.join(','),
+							dataType: 'json',
+							type: 'get',
+							success: function (d) {
+                                layer.closeAll('loading')
+								if (d.code == 1) {
+                                    layer.ok('操作成功');
+									$('#manage_session_table').datagrid('refresh');
+								} else {
+									layer.warn( d.data);
+								}
+							},
+							error: function (e) {
+                                layer.closeAll('loading')
+								layer.err( "退出失败!");
+							}
+						});
+						layer.close(index);
+					}, function(){});
+		});
+
+	});
+</script>
+
+<div class="bjui-pageContent" >
+	<table id="manage_session_table" class="table table-hover" data-width="100%"> </table>
+</div>

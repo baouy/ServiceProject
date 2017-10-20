@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tudou.mq.dao.mapper.MqMessageMapper">
+  <resultMap id="BaseResultMap" type="com.tudou.mq.dao.model.MqMessage">
+    <id column="message_id" jdbcType="INTEGER" property="messageId" />
+    <result column="message_name" jdbcType="VARCHAR" property="messageName" />
+    <result column="message_content" jdbcType="VARCHAR" property="messageContent" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="ctime" jdbcType="BIGINT" property="ctime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    message_id, message_name, message_content, status, ctime
+  </sql>
+  <select id="selectByExample" parameterType="com.tudou.mq.dao.model.MqMessageExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from mq_message
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mq_message
+    where message_id = #{messageId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from mq_message
+    where message_id = #{messageId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.tudou.mq.dao.model.MqMessageExample">
+    delete from mq_message
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.tudou.mq.dao.model.MqMessage">
+    insert into mq_message (message_id, message_name, message_content, 
+      status, ctime)
+    values (#{messageId,jdbcType=INTEGER}, #{messageName,jdbcType=VARCHAR}, #{messageContent,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{ctime,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tudou.mq.dao.model.MqMessage">
+    insert into mq_message
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="messageId != null">
+        message_id,
+      </if>
+      <if test="messageName != null">
+        message_name,
+      </if>
+      <if test="messageContent != null">
+        message_content,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="ctime != null">
+        ctime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="messageId != null">
+        #{messageId,jdbcType=INTEGER},
+      </if>
+      <if test="messageName != null">
+        #{messageName,jdbcType=VARCHAR},
+      </if>
+      <if test="messageContent != null">
+        #{messageContent,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="ctime != null">
+        #{ctime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.tudou.mq.dao.model.MqMessageExample" resultType="java.lang.Long">
+    select count(*) from mq_message
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update mq_message
+    <set>
+      <if test="record.messageId != null">
+        message_id = #{record.messageId,jdbcType=INTEGER},
+      </if>
+      <if test="record.messageName != null">
+        message_name = #{record.messageName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.messageContent != null">
+        message_content = #{record.messageContent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=TINYINT},
+      </if>
+      <if test="record.ctime != null">
+        ctime = #{record.ctime,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update mq_message
+    set message_id = #{record.messageId,jdbcType=INTEGER},
+      message_name = #{record.messageName,jdbcType=VARCHAR},
+      message_content = #{record.messageContent,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=TINYINT},
+      ctime = #{record.ctime,jdbcType=BIGINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tudou.mq.dao.model.MqMessage">
+    update mq_message
+    <set>
+      <if test="messageName != null">
+        message_name = #{messageName,jdbcType=VARCHAR},
+      </if>
+      <if test="messageContent != null">
+        message_content = #{messageContent,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="ctime != null">
+        ctime = #{ctime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where message_id = #{messageId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tudou.mq.dao.model.MqMessage">
+    update mq_message
+    set message_name = #{messageName,jdbcType=VARCHAR},
+      message_content = #{messageContent,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      ctime = #{ctime,jdbcType=BIGINT}
+    where message_id = #{messageId,jdbcType=INTEGER}
+  </update>
+  <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+</mapper>

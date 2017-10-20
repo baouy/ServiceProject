@@ -33,6 +33,8 @@ public class MybatisGeneratorUtil {
 	 * @param jdbc_driver   驱动路径
 	 * @param jdbc_url      链接
 	 * @param jdbc_username 帐号
+	 *
+	 *
 	 * @param jdbc_password 密码
 	 * @param module        项目模块
 	 * @param database      数据库
@@ -125,7 +127,6 @@ public class MybatisGeneratorUtil {
 				context.put("model", model);
 				context.put("ctime", ctime);
 				VelocityUtil.generate(service_vm, service, context);
-				System.out.println(service);
 			}
 			// 生成serviceMock
 			File serviceMockFile = new File(serviceMock);
@@ -135,7 +136,6 @@ public class MybatisGeneratorUtil {
 				context.put("model", model);
 				context.put("ctime", ctime);
 				VelocityUtil.generate(serviceMock_vm, serviceMock, context);
-				System.out.println(serviceMock);
 			}
 			// 生成serviceImpl
 			File serviceImplFile = new File(serviceImpl);
@@ -146,14 +146,13 @@ public class MybatisGeneratorUtil {
 				context.put("mapper", StringUtil.toLowerCaseFirstOne(model));
 				context.put("ctime", ctime);
 				VelocityUtil.generate(serviceImpl_vm, serviceImpl, context);
-				System.out.println(serviceImpl);
 			}
 		}
 		System.out.println("========== 结束生成Service ==========");
-
 		System.out.println("========== 开始生成Controller ==========");
 		System.out.println("========== 结束生成Controller ==========");
 	}
+
 
 	// 递归删除非空文件夹
 	public static void deleteDir(File dir) {
@@ -165,5 +164,7 @@ public class MybatisGeneratorUtil {
 		}
 		dir.delete();
 	}
+
+
 
 }
