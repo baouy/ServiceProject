@@ -1,0 +1,113 @@
+<script>
+    layui.define(['BJUIajax', 'BJUIdatagrid', 'BJUIinitui', 'BJUIplugins'], function () {
+        var $ = layui.jquery
+        var oatestcustomer_btn = ''
+        var toolbar_oatestcustomer_btn = '<div class="layui-btn-group">';
+        for (var data of user_data) {
+            var value = data.permissionValue;
+            switch (value) {
+                case 'oa:testcustomer:create':
+                    toolbar_oatestcustomer_btn += '<button type="button" id="oatestcustomer_add_btn" name="' + data.name + '" url="' + data.uri + '" class="layui-btn layui-btn-small" w="1500" h="700">' + '<i class="layui-icon">' + data.icon + '</i>&nbsp;' + data.name + ' </button>'
+                    break;
+                case 'oa:testcustomer:update':
+                    toolbar_oatestcustomer_btn += '<button type="button" id="oatestcustomer_edit_btn" name="' + data.name + '" url="' + data.uri + '" class="layui-btn layui-btn-small" w="1500" h="700">' + '<i class="layui-icon">' + data.icon + '</i>&nbsp;' + data.name + ' </button>'
+                    break;
+                case 'oa:testcustomer:delete':
+                    oatestcustomer_btn += 'del,'
+                    break;
+            }
+        }
+        toolbar_oatestcustomer_btn += '<button type="button" id="test_edit_btn" name="' + data.name + '" url="' + data.uri + '" class="layui-btn layui-btn-small" w="1500" h="700">' + '<i class="layui-icon">' + data.icon + '</i>&nbsp;' + data.name + ' </button>'
+        toolbar_oatestcustomer_btn += '</div>';
+
+        var oatestcustomer_datagrid_data = {
+            local: 'remote',
+            dataUrl: $.cookie("tudou-oa-server") + '/manage/oatestcustomer/list',
+            dataType: 'json',
+            sortAll: false,
+            loadType: 'get',
+            filterAll: true,
+            height: '100%',
+            columns: [
+                {name: 'customerId', hide: true},
+                {name: 'customerFollowId', width: '100', align: 'center', label: '客户跟进id'},
+                {name: 'followId', width: '100', align: 'center', label: '跟进id'},
+                {name: 'customerName', width: '100', align: 'center', label: '客户姓名'},
+                {name: 'customerId', hide: true},
+                {name: 'followName', width: '100', align: 'center', label: '花名'},
+                {name: 'customerPhone', width: '100', align: 'center', label: '客户手机号'},
+                {
+                    name: 'customerSex',
+                    width: '80',
+                    align: 'center',
+                    label: '客户性别',
+                    type: 'select',
+                    items: [{'0': '否'}, {'1': '是'}]
+                },
+                {name: 'userId', width: '100', align: 'center', label: '用户id'},
+            ],
+            paging: {pageSize: 50, selectPageSize: '50,100,200', pageCurrent: 1},
+            fullGrid: true,
+            showToolbar: true,
+            toolbarItem: oatestcustomer_btn,
+            inlineEditMult: false,
+            toolbarCustom: toolbar_oatestcustomer_btn,
+            dblOnClick: 'oatestcustomer_dblonclick',
+            hiddenFields: ['customerId']
+        }
+
+        if (oatestcustomer_btn.indexOf('del') != -1) {
+            oatestcustomer_datagrid_data.delConfirm = true;
+            oatestcustomer_datagrid_data.delPK = 'customerId';
+            oatestcustomer_datagrid_data.delType = 'POST';
+            oatestcustomer_datagrid_data.delUrl = $.cookie("tudou-oa-server") + '/manage/oatestcustomer/delete';
+            oatestcustomer_datagrid_data.delCallback = 'del_oatestcustomer_table_back';
+        }
+
+        $('#oatestcustomer_list_table').datagrid(oatestcustomer_datagrid_data);
+        window.del_oatestcustomer_table_back = del_oatestcustomer_table_back;
+        function del_oatestcustomer_table_back(d) {
+            if (d.code == 1) {
+                layer.ok('删除成功');
+            } else {
+                layer.warn(d.data);
+            }
+            $('#oatestcustomer_list_table').data('selectedDatas', null);
+            $('#oatestcustomer_list_table').datagrid('refresh_part');
+        }
+
+        $("#oatestcustomer_add_btn").bind('click', function () {
+            var n = $(this);
+            //layer.dialog(n.attr("name"), n.attr("url"), n.attr("w"), n.attr("h"));
+            var w = window.innerWidth * 0.8, h = window.innerHeight * 0.8;
+            var selected = $('#oatestcustomer_list_table').data('selectedTrs');
+            if (selected) selected.click();//避免有选中数据的时候点新增会触发编辑
+            layer.dialog(n.attr("name"), n.attr("url"), w, h);
+        });
+
+        window.oatestcustomer_dblonclick = oatestcustomer_dblonclick;
+        function oatestcustomer_dblonclick() {
+            $("#oatestcustomer_edit_btn").click();
+        }
+
+        $("#oatestcustomer_edit_btn").bind('click', function () {
+            var selected = $('#oatestcustomer_list_table').data('selectedDatas');
+            if (null == selected || selected.length == 0) {
+                layer.warn("请选择操作数据！");
+                return;
+            }
+            var n = $(this);
+            //layer.dialog(n.attr("name"), n.attr("url"), n.attr("w"), n.attr("h"));
+            var w = window.innerWidth * 0.8, h = window.innerHeight * 0.8;
+            layer.dialog(n.attr("name"), n.attr("url"), w, h);
+        });
+        $("#test_edit_btn").bind('click',function () {
+            var w = window.innerWidth * 0.8, h = window.innerHeight * 0.8;
+            layer.dialog("测试","/resources/nerp/manage/main.html", w, h);
+        })
+    });
+</script>
+
+<div class="bjui-pageContent">
+    <table id="oatestcustomer_list_table" class="table table-hover" data-width="100%"></table>
+</div>

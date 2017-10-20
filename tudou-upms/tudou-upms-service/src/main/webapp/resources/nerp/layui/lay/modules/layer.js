@@ -101,6 +101,7 @@ var layer = {
     var type = typeof options === 'function';
     if(type) yes = options;
     return layer.open($.extend({
+      id:'meiwo-layer-'+$(".admin-this").attr('lay-id'),
       content: content,
       yes: yes
     }, type ? {} : options));
@@ -108,6 +109,7 @@ var layer = {
 
   dialog: function (name,url,w,h) {
     layer.open({
+      id:'meiwo-layer-'+$(".admin-this").attr('lay-id'),
       type: 5,
       title: name,
       area: [w+'px', h+'px'],
@@ -128,6 +130,7 @@ var layer = {
       yes = options;
     }
     return layer.open($.extend({
+      id:'meiwo-layer-'+$(".admin-this").attr('lay-id'),
       content: content,
       btn: ready.btn,
       yes: yes,
@@ -141,6 +144,7 @@ var layer = {
     var anim = doms.anim.length - 1;
     if(type) end = options;
     return layer.open($.extend({
+      id:'meiwo-layer-'+$(".admin-this").attr('lay-id'),
       content: content,
       time: 3000,
       shade: false,
@@ -169,6 +173,7 @@ var layer = {
     var anim = doms.anim.length - 1;
     if(type) end = options;
     return layer.open($.extend({
+      id:'meiwo-layer-'+$(".admin-this").attr('lay-id'),
       content: content?content:'ok',
       time: 2500,
       shade: false,
@@ -197,6 +202,7 @@ var layer = {
     var anim = doms.anim.length - 1;
     if(type) end = options;
     return layer.open($.extend({
+      id:'meiwo-layer-'+$(".admin-this").attr('lay-id'),
       content: content,
       time: 2500,
       shade: false,
@@ -225,6 +231,7 @@ var layer = {
     var anim = doms.anim.length - 1;
     if(type) end = options;
     return layer.open($.extend({
+      id:'meiwo-layer-'+$(".admin-this").attr('lay-id'),
       content: content,
       time: 2500,
       shade: false,
@@ -253,6 +260,7 @@ var layer = {
     var anim = doms.anim.length - 1;
     if(type) end = options;
     return layer.open($.extend({
+      id:'meiwo-layer-'+$(".admin-this").attr('lay-id'),
       content: content,
       time: 2500,
       shade: false,
@@ -281,6 +289,7 @@ var layer = {
     var anim = doms.anim.length - 1;
     if(type) end = options;
     return layer.open($.extend({
+      id:'meiwo-layer-'+$(".admin-this").attr('lay-id'),
       content: content,
       time: 2500,
       shade: false,
@@ -303,6 +312,7 @@ var layer = {
   },
   load: function(icon, options){
     return layer.open($.extend({
+      id:'meiwo-layer-'+$(".admin-this").attr('lay-id'),
       type: 3,
       icon: icon || 0,
       resize: false,
@@ -326,6 +336,7 @@ var layer = {
 
 var Class = function(setings){  
   var that = this;
+
   that.index = ++layer.index;
   that.config = $.extend({}, that.config, ready.config, setings);
   document.body ? that.creat() : setTimeout(function(){
@@ -342,7 +353,7 @@ doms.anim = ['layer-anim', 'layer-anim-01', 'layer-anim-02', 'layer-anim-03', 'l
 //默认配置
 Class.pt.config = {
   type: 0,
-  shade: 0.3,
+  shade: 0,
   fixed: true,
   move: doms[1],
   title: '&#x4FE1;&#x606F;',
@@ -376,7 +387,7 @@ Class.pt.vessel = function(conType, callback){
     config.shade ? ('<div class="layui-layer-shade" id="layui-layer-shade'+ times +'" times="'+ times +'" style="'+ ('z-index:'+ (zIndex-1) +'; background-color:'+ (config.shade[1]||'#000') +'; opacity:'+ (config.shade[0]||config.shade) +'; filter:alpha(opacity='+ (config.shade[0]*100||config.shade*100) +');') +'"></div>') : '',
     
     //主体
-    '<div class="'+ doms[0] + (' layui-layer-'+ready.type[config.type]) + (((config.type == 0 || config.type == 2) && !config.shade) ? ' layui-layer-border' : '') + ' ' + (config.skin||'') +'" id="'+ doms[0] + times +'" type="'+ ready.type[config.type] +'" times="'+ times +'" showtime="'+ config.time +'" conType="'+ (conType ? 'object' : 'string') +'" style="z-index: '+ zIndex +'; width:'+ config.area[0] + ';height:' + config.area[1] + (config.fixed ? '' : ';position:absolute;') +'">'
+    '<div class="layui-layer-current '+ doms[0] + (' layui-layer-'+ready.type[config.type]) + (((config.type == 0 || config.type == 2) && !config.shade) ? ' layui-layer-border' : '') + ' ' + (config.skin||'') +'" id="'+ doms[0] + times +'" type="'+ ready.type[config.type] +'" times="'+ times +'" showtime="'+ config.time +'" conType="'+ (conType ? 'object' : 'string') +'" style="z-index: '+ zIndex +'; width:'+ config.area[0] + ';height:' + config.area[1] + (config.fixed ? '' : ';position:absolute;') +'">'
       + (conType && config.type != 2 ? '' : titleHTML)
       + '<div id="'+ (config.id||'') +'" class="layui-layer-content'+ ((config.type == 0 && config.icon !== -1) ? ' layui-layer-padding' :'') + (config.type == 3 ? ' layui-layer-loading'+config.icon : '') +'">'
         + (config.type == 0 && config.icon !== -1 ? '<i class="layui-layer-ico layui-layer-ico'+ config.icon +'"></i>' : '')
@@ -759,7 +770,8 @@ Class.pt.move = function(){
     }
     if(dict.resizeStart){
       //digua edit on 2017/10/19 拉伸结束后内容自适应
-      layer.current().trigger(BJUI.eventType.resizeGrid)
+      var $current = layer.current().find('.bjui-datagrid');
+      if($current.length>0)  layer.current().trigger(BJUI.eventType.resizeCurrentGrid)
       delete dict.resizeStart;
       ready.moveElem.hide();
     }
@@ -909,13 +921,10 @@ layer.getChildFrame = function(selector, index){
 };
 
 layer.current = function () {
-  var index = $('.'+doms[0]).attr('times');
+  var index = $('.layui-layer-current').attr('times');
   return $('#'+ doms[0] + index).find('.layui-layer-content')
 }
-layer.closeCurrent = function () {
-  var index = $('.'+doms[0]).attr('times');
-  layer.close(index);
-}
+
 
 //得到当前iframe层的索引，子iframe时使用
 layer.getFrameIndex = function(name){
@@ -1057,6 +1066,10 @@ layer.title = function(name, index){
   title.html(name);
 };
 
+layer.hide = function (id) {
+  var layero = $('#'+id);
+  if(layero) layero.parent('.layui-layer').addClass('layui-hide');
+}
 //关闭layer总方法
 layer.close = function(index){
   var layero = $('#'+ doms[0] + index), type = layero.attr('type'), closeAnim = 'layer-anim-close';
@@ -1107,6 +1120,11 @@ layer.close = function(index){
   }
 };
 
+  layer.closeCurrent = function () {
+    var index = $('.layui-layer-current').attr('times');
+    layer.close(index);
+  }
+
 //关闭所有层
 layer.closeAll = function(type){
   $.each($('.'+doms[0]), function(){
@@ -1147,7 +1165,7 @@ layer.prompt = function(options, yes){
   delete options.success;
   
   return layer.open($.extend({
-    type: 1
+   type: 1
     ,btn: ['&#x786E;&#x5B9A;','&#x53D6;&#x6D88;']
     ,content: content
     ,skin: 'layui-layer-prompt' + skin('prompt')
@@ -1182,6 +1200,7 @@ layer.tab = function(options){
   delete options.success;
   
   return layer.open($.extend({
+
     type: 1,
     skin: 'layui-layer-tab' + skin('tab'),
     resize: false,
